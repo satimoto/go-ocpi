@@ -1,2 +1,2 @@
-# go-hub-api
-Satimoto hub API using golang
+# go-ocpi-api
+Satimoto OCPI hub API using golang
