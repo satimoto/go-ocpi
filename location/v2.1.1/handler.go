@@ -59,7 +59,9 @@ func (r *LocationResolver) locationContext(next http.Handler) http.Handler {
 func (r *LocationResolver) getLocation(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	location := ctx.Value("location").(db.Location)
-	if err := render.Render(rw, request, r.CreateLocationPayload(ctx, location)); err != nil {
+	payload := r.CreateLocationPayload(ctx, location)
+
+	if err := render.Render(rw, request, rest.OCPISuccess(payload)); err != nil {
 		render.Render(rw, request, rest.OCPIServerError(nil, err.Error()))
 	}
 }

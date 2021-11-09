@@ -25,8 +25,9 @@ func (r *VersionDetailResolver) routes() *chi.Mux {
 
 func (r *VersionDetailResolver) getVersionDetail(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	payload := r.CreateVersionDetailPayload(ctx)
 
-	if err := render.Render(rw, request, r.CreateVersionDetailPayload(ctx)); err != nil {
+	if err := render.Render(rw, request, rest.OCPISuccess(payload)); err != nil {
 		render.Render(rw, request, rest.OCPIServerError(nil, err.Error()))
 	}
 }
