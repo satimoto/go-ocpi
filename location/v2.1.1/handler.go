@@ -36,6 +36,7 @@ func (r *LocationResolver) routes() *chi.Mux {
 
 	return router
 }
+
 func (r *LocationResolver) locationContext(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, request *http.Request) {
 		ctx := request.Context()

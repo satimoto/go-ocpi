@@ -63,7 +63,6 @@ func NewResolver(repositoryService *db.RepositoryService) *LocationResolver {
 	}
 }
 
-
 func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payload *LocationPayload) *db.Location {
 	if payload != nil {
 		location, err := r.Repository.GetLocationByUid(ctx, uid)
