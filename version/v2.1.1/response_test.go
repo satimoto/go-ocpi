@@ -15,9 +15,9 @@ func TestCreateVersionDetailPayload(t *testing.T) {
 	ctx := context.Background()
 
 	os.Setenv("API_DOMAIN", "http://localhost:8080")
-    defer os.Unsetenv("API_DOMAIN")
+	defer os.Unsetenv("API_DOMAIN")
 
-	t.Run("Test", func(t *testing.T) {
+	t.Run("Create payload", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		versionResolver := versionMocks.NewResolver(mockRepository)
 

@@ -52,8 +52,9 @@ func (r *ConnectorResolver) connectorContext(next http.Handler) http.Handler {
 func (r *ConnectorResolver) getConnector(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	connector := ctx.Value("connector").(db.Connector)
+	payload := r.CreateConnectorPayload(ctx, connector)
 
-	if err := render.Render(rw, request, r.CreateConnectorPayload(ctx, connector)); err != nil {
+	if err := render.Render(rw, request, rest.OCPISuccess(payload)); err != nil {
 		render.Render(rw, request, rest.OCPIServerError(nil, err.Error()))
 	}
 }

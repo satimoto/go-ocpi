@@ -49,8 +49,9 @@ func (r *EvseResolver) evseContext(next http.Handler) http.Handler {
 func (r *EvseResolver) getEvse(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	evse := ctx.Value("evse").(db.Evse)
+	payload := r.CreateEvsePayload(ctx, evse)
 
-	if err := render.Render(rw, request, r.CreateEvsePayload(ctx, evse)); err != nil {
+	if err := render.Render(rw, request, rest.OCPISuccess(payload)); err != nil {
 		render.Render(rw, request, rest.OCPIServerError(nil, err.Error()))
 	}
 }
