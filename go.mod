@@ -10,8 +10,8 @@ require (
 	github.com/go-chi/render v1.0.1
 	github.com/joho/godotenv v1.4.0
 	github.com/nsf/jsondiff v0.0.0-20210926074059-1e845ec5d249
-	github.com/satimoto/go-datastore v0.0.6
-	github.com/satimoto/go-datastore-mocks v0.0.6
+	github.com/satimoto/go-datastore v0.0.7
+	github.com/satimoto/go-datastore-mocks v0.0.7
 	github.com/twpayne/go-geom v1.4.1
 )
 
@@ -20,6 +20,7 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/mock v1.6.0 // indirect
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/lib/pq v1.10.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

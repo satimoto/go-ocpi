@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/satimoto/go-datastore/db"
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
+	"github.com/satimoto/go-datastore/db"
 	locationMocks "github.com/satimoto/go-ocpi-api/location/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/mocks"
 	"github.com/satimoto/go-ocpi-api/util"
