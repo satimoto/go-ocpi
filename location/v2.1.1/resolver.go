@@ -5,6 +5,7 @@ import (
 
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/businessdetail"
+	credential "github.com/satimoto/go-ocpi-api/credential/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/displaytext"
 	"github.com/satimoto/go-ocpi-api/energymix"
 	evse "github.com/satimoto/go-ocpi-api/evse/v2.1.1"
@@ -19,7 +20,6 @@ type LocationRepository interface {
 	DeleteLocationDirections(ctx context.Context, locationID int64) error
 	DeleteLocationImages(ctx context.Context, locationID int64) error
 	DeleteRelatedLocations(ctx context.Context, locationID int64) error
-	GetCredentialByPartyAndCountryCode(ctx context.Context, arg db.GetCredentialByPartyAndCountryCodeParams) (db.Credential, error)
 	GetLocation(ctx context.Context, id int64) (db.Location, error)
 	GetLocationByUid(ctx context.Context, uid string) (db.Location, error)
 	ListEvses(ctx context.Context, locationID int64) ([]db.Evse, error)
@@ -41,6 +41,7 @@ type LocationRepository interface {
 type LocationResolver struct {
 	Repository LocationRepository
 	*businessdetail.BusinessDetailResolver
+	*credential.CredentialResolver
 	*displaytext.DisplayTextResolver
 	*energymix.EnergyMixResolver
 	*evse.EvseResolver
@@ -54,6 +55,7 @@ func NewResolver(repositoryService *db.RepositoryService) *LocationResolver {
 	return &LocationResolver{
 		Repository:             repo,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
+		CredentialResolver:     credential.NewResolver(repositoryService),
 		DisplayTextResolver:    displaytext.NewResolver(repositoryService),
 		EnergyMixResolver:      energymix.NewResolver(repositoryService),
 		EvseResolver:           evse.NewResolver(repositoryService),
@@ -62,7 +64,6 @@ func NewResolver(repositoryService *db.RepositoryService) *LocationResolver {
 		OpeningTimeResolver:    openingtime.NewResolver(repositoryService),
 	}
 }
-
 
 func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payload *LocationPayload) *db.Location {
 	if payload != nil {
@@ -90,7 +91,7 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payl
 		if payload.OpeningTimes != nil {
 			r.OpeningTimeResolver.ReplaceOpeningTime(ctx, openingTimeID, payload.OpeningTimes)
 		}
-	
+
 		if payload.Operator != nil {
 			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, operatorID, payload.Operator)
 		}
@@ -98,11 +99,11 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payl
 		if payload.Owner != nil {
 			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, ownerID, payload.Owner)
 		}
-	
+
 		if payload.Suboperator != nil {
 			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, suboperatorID, payload.Suboperator)
 		}
-	
+
 		if err == nil {
 			locationParams := NewUpdateLocationByUidParams(location)
 			locationParams.Geom = *geomPoint
@@ -116,35 +117,35 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payl
 			if payload.Address != nil {
 				locationParams.Address = *payload.Address
 			}
-				
+
 			if payload.City != nil {
 				locationParams.City = *payload.City
 			}
-		
+
 			if payload.ChargingWhenClosed != nil {
 				locationParams.ChargingWhenClosed = *payload.ChargingWhenClosed
 			}
-		
+
 			if payload.Country != nil {
 				locationParams.Country = *payload.Country
 			}
-				
+
 			if payload.LastUpdated != nil {
 				locationParams.LastUpdated = *payload.LastUpdated
 			}
-		
+
 			if payload.PostalCode != nil {
 				locationParams.PostalCode = *payload.PostalCode
 			}
-		
+
 			if payload.Name != nil {
 				locationParams.Name = util.SqlNullString(payload.Name)
 			}
-				
+
 			if payload.TimeZone != nil {
 				locationParams.TimeZone = util.SqlNullString(payload.TimeZone)
 			}
-		
+
 			if payload.Type != nil {
 				locationParams.Type = *payload.Type
 			}
@@ -166,19 +167,19 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payl
 		if payload.Directions != nil {
 			r.replaceDirections(ctx, location.ID, payload)
 		}
-	
+
 		if payload.Facilities != nil {
 			r.replaceFacilities(ctx, location.ID, payload)
 		}
-	
+
 		if payload.Evses != nil {
 			r.replaceEvses(ctx, location.ID, payload)
 		}
-	
+
 		if payload.Images != nil {
 			r.replaceImages(ctx, location.ID, payload)
 		}
-	
+
 		if payload.RelatedLocations != nil {
 			r.replaceRelatedLocations(ctx, location.ID, payload)
 		}
