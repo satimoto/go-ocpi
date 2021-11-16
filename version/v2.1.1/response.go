@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/satimoto/go-datastore/db"
 )
 
 var (
-	version   = "2.1.1"
+	version = "2.1.1"
 )
 
 type VersionDetailPayload struct {
@@ -16,13 +18,21 @@ type VersionDetailPayload struct {
 	Endpoints []*EndpointPayload `json:"endpoints"`
 }
 
+func (r *VersionDetailPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+	return nil
+}
+
 type EndpointPayload struct {
 	Identifier string `json:"identifier"`
 	Url        string `json:"url"`
 }
 
-func (r *VersionDetailPayload) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
+func NewCreateVersionEndpointParams(versionID int64, payload *EndpointPayload) db.CreateVersionEndpointParams {
+	return db.CreateVersionEndpointParams{
+		VersionID:  versionID,
+		Identifier: payload.Identifier,
+		Url:        payload.Url,
+	}
 }
 
 func (r *VersionDetailResolver) CreateEndpointPayload(ctx context.Context, apiDomain string, identifier string) *EndpointPayload {

@@ -8,6 +8,7 @@ import (
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-ocpi-api/mocks"
+	utilMocks "github.com/satimoto/go-ocpi-api/util/mocks"
 	versionMocks "github.com/satimoto/go-ocpi-api/version/v2.1.1/mocks"
 )
 
@@ -19,7 +20,8 @@ func TestCreateVersionDetailPayload(t *testing.T) {
 
 	t.Run("Create payload", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		versionResolver := versionMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &utilMocks.MockHTTPRequester{}
+		versionResolver := versionMocks.NewResolver(mockRepository, utilMocks.NewOCPIRequester(mockHTTPRequester))
 
 		response := versionResolver.CreateVersionDetailPayload(ctx)
 		responseJson, _ := json.Marshal(response)

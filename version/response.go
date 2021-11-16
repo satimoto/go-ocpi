@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/go-chi/render"
+	"github.com/satimoto/go-datastore/db"
 )
 
 type VersionPayload struct {
@@ -16,6 +17,14 @@ type VersionPayload struct {
 
 func (r *VersionPayload) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
+}
+
+func NewCreateVersionParams(credentialID int64, payload *VersionPayload) db.CreateVersionParams {
+	return db.CreateVersionParams{
+		CredentialID: credentialID,
+		Version:      *payload.Version,
+		Url:          *payload.Url,
+	}
 }
 
 func (r *VersionResolver) CreateLocationPayload(ctx context.Context, apiDomain string, version string) *VersionPayload {

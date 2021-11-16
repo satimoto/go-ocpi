@@ -21,9 +21,9 @@ func Initialize(d *sql.DB) *chi.Mux {
 
 	router.Use(middleware.Timeout(30 * time.Second))
 
+	// Add routes
 	router.Mount("/", version.New(repositoryService))
 
-	// Adds routes
 	router.Route("/2.1.1", func(r chi.Router) {
 		r.Mount("/", router211.Routes(repositoryService))
 	})
