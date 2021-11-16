@@ -7,10 +7,13 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/satimoto/go-datastore/db"
 	router211 "github.com/satimoto/go-ocpi-api/router/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/version"
 )
 
-func Initialize(db *sql.DB) *chi.Mux {
+func Initialize(d *sql.DB) *chi.Mux {
+	repositoryService := db.NewRepositoryService(d)
 	router := chi.NewRouter()
 
 	// Set middleware
@@ -18,9 +21,11 @@ func Initialize(db *sql.DB) *chi.Mux {
 
 	router.Use(middleware.Timeout(30 * time.Second))
 
-	// Adds routes
+	// Add routes
+	router.Mount("/", version.New(repositoryService))
+
 	router.Route("/2.1.1", func(r chi.Router) {
-		r.Mount("/", router211.Routes(db))
+		r.Mount("/", router211.Routes(repositoryService))
 	})
 
 	return router
