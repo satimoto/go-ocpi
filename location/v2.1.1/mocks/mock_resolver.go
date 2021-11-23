@@ -11,15 +11,16 @@ import (
 	image "github.com/satimoto/go-ocpi-api/image/mocks"
 	location "github.com/satimoto/go-ocpi-api/location/v2.1.1"
 	openingtime "github.com/satimoto/go-ocpi-api/openingtime/mocks"
+	"github.com/satimoto/go-ocpi-api/util"
 )
 
-func NewResolver(repositoryService *mocks.MockRepositoryService) *location.LocationResolver {
+func NewResolver(repositoryService *mocks.MockRepositoryService, requester *util.OCPIRequester) *location.LocationResolver {
 	repo := location.LocationRepository(repositoryService)
 
 	return &location.LocationResolver{
 		Repository:             repo,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
-		CredentialResolver:     credential.NewResolver(repositoryService),
+		CredentialResolver:     credential.NewResolver(repositoryService, requester),
 		EnergyMixResolver:      energymix.NewResolver(repositoryService),
 		EvseResolver:           evse.NewResolver(repositoryService),
 		DisplayTextResolver:    displaytext.NewResolver(repositoryService),

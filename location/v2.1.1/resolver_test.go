@@ -13,6 +13,7 @@ import (
 	locationMocks "github.com/satimoto/go-ocpi-api/location/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/mocks"
 	"github.com/satimoto/go-ocpi-api/util"
+	utilMocks "github.com/satimoto/go-ocpi-api/util/mocks"
 	"github.com/twpayne/go-geom"
 )
 
@@ -21,7 +22,8 @@ func TestReplaceLocation(t *testing.T) {
 
 	t.Run("Create Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		locationResolver := locationMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &utilMocks.MockHTTPRequester{}
+		locationResolver := locationMocks.NewResolver(mockRepository, utilMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 
@@ -78,7 +80,8 @@ func TestReplaceLocation(t *testing.T) {
 
 	t.Run("Update Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		locationResolver := locationMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &utilMocks.MockHTTPRequester{}
+		locationResolver := locationMocks.NewResolver(mockRepository, utilMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := util.NewGeomPoint("31.3434", "-62.6996")
@@ -133,7 +136,8 @@ func TestReplaceLocation(t *testing.T) {
 
 	t.Run("Update Location with Evses", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		locationResolver := locationMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &utilMocks.MockHTTPRequester{}
+		locationResolver := locationMocks.NewResolver(mockRepository, utilMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := util.NewGeomPoint("31.3434", "-62.6996")
