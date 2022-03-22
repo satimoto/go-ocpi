@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	chiproxy "github.com/awslabs/aws-lambda-go-api-proxy/chi"
 	"github.com/satimoto/go-datastore/util"
-	"github.com/satimoto/go-ocpi-api/router"
+	"github.com/satimoto/go-ocpi-api/internal/api"
 )
 
 var (
@@ -32,12 +32,14 @@ func init() {
 
 	dataSourceName := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=%s", dbUser, dbPass, dbHost, dbName, sslMode)
 	d, err := sql.Open("postgres", dataSourceName)
+	
 	if err != nil {
 		log.Fatal(err)
 	}
+	
 	database = d
-
-	chiLambda = chiproxy.New(router.Initialize(database))
+	routerService := api.NewRouter(database)
+	chiLambda = chiproxy.New(routerService.Handler())
 }
 
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {

@@ -9,7 +9,7 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/satimoto/go-datastore/util"
-	"github.com/satimoto/go-ocpi-api/router"
+	"github.com/satimoto/go-ocpi-api/internal/api"
 )
 
 var (
@@ -37,9 +37,11 @@ func init() {
 
 func main() {
 	defer database.Close()
-	handler := router.Initialize(database)
 
-	err := http.ListenAndServe(":8080", handler)
+	routerService := api.NewRouter(database)
+	handler := routerService.Handler()
+
+	err := http.ListenAndServe(":9001", handler)
 	if err != nil {
 		log.Println("Error serving")
 	}

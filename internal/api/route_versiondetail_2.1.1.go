@@ -1,0 +1,15 @@
+package api
+
+import (
+	"github.com/go-chi/chi/v5"
+	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
+)
+
+func (rs *RouterService) mountVersionDetails() *chi.Mux {
+	versionDetailResolver := versiondetail.NewResolver(rs.RepositoryService)
+	router := chi.NewRouter()
+
+	router.Get("/", versionDetailResolver.GetVersionDetail)
+
+	return router
+}
