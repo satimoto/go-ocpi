@@ -10,8 +10,8 @@ func (rs *RouterService) mountCredentials() *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Delete("/", credentialResolver.DeleteCredential)
-	router.Post("/", credentialResolver.PostCredential)
-	router.Put("/", credentialResolver.PutCredential)
+	router.Post("/", credentialResolver.UpdateCredential)
+	router.Put("/", credentialResolver.UpdateCredential)
 
 	credentialContextRouter := router.With(credentialResolver.CredentialContextByToken)
 	credentialContextRouter.Get("/", credentialResolver.GetCredential)
