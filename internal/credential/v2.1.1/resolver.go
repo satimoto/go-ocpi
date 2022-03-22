@@ -3,11 +3,8 @@ package credential
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
-	"net/http"
 	"time"
 
-	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
@@ -98,22 +95,4 @@ func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential d
 	}
 
 	return nil, ocpi.OCPIRegistrationError(nil)
-}
-
-func (r *CredentialResolver) updateCredential(ctx context.Context, cred db.Credential, rw http.ResponseWriter, request *http.Request) {
-	payload := CredentialPayload{}
-
-	if err := json.NewDecoder(request.Body).Decode(&payload); err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
-	}
-
-	c, err := r.ReplaceCredential(ctx, cred, &payload)
-
-	if err != nil {
-		errResponse := err.(*ocpi.OCPIResponse)
-		render.Render(rw, request, errResponse)
-	}
-
-	credentialPayload := r.CreateCredentialPayload(ctx, *c)
-	render.Render(rw, request, ocpi.OCPISuccess(credentialPayload))
 }

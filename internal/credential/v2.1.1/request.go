@@ -1,6 +1,7 @@
 package credential
 
 import (
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -42,24 +43,25 @@ func (r *CredentialResolver) GetCredential(rw http.ResponseWriter, request *http
 	}
 }
 
-func (r *CredentialResolver) PostCredential(rw http.ResponseWriter, request *http.Request) {
+func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	cred, err := credential.GetCredentialByToken(r.Repository, ctx, request)
+	payload := CredentialPayload{}
 
 	if err == nil && len(cred.ClientToken.String) == 0 {
-		r.updateCredential(ctx, cred, rw, request)
-		return
-	}
+		if err := json.NewDecoder(request.Body).Decode(&payload); err != nil {
+			render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		}
 
-	http.Error(rw, http.StatusText(405), 405)
-}
+		c, err := r.ReplaceCredential(ctx, cred, &payload)
 
-func (r *CredentialResolver) PutCredential(rw http.ResponseWriter, request *http.Request) {
-	ctx := request.Context()
-	cred, err := credential.GetCredentialByToken(r.Repository, ctx, request)
+		if err != nil {
+			errResponse := err.(*ocpi.OCPIResponse)
+			render.Render(rw, request, errResponse)
+		}
 
-	if err == nil && len(cred.ClientToken.String) > 0 {
-		r.updateCredential(ctx, cred, rw, request)
+		credentialPayload := r.CreateCredentialPayload(ctx, *c)
+		render.Render(rw, request, ocpi.OCPISuccess(credentialPayload))
 		return
 	}
 
