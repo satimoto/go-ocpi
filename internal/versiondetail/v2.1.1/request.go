@@ -1,4 +1,4 @@
-package version
+package versiondetail
 
 import (
 	"net/http"

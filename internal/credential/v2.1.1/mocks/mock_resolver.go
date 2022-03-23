@@ -6,7 +6,7 @@ import (
 	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 	version "github.com/satimoto/go-ocpi-api/internal/version/mocks"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/version/v2.1.1/mocks"
+	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1/mocks"
 )
 
 func NewResolver(repositoryService *mocks.MockRepositoryService, requester *util.OCPIRequester) *credential.CredentialResolver {
