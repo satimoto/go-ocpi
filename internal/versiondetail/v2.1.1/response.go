@@ -1,4 +1,4 @@
-package version
+package versiondetail
 
 import (
 	"context"
@@ -47,6 +47,7 @@ func (r *VersionDetailResolver) CreateVersionDetailPayload(ctx context.Context) 
 
 	var endpoints []*EndpointPayload
 	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "locations"))
+	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "tariffs"))
 
 	return &VersionDetailPayload{
 		Version:   version,

@@ -1,4 +1,4 @@
-package version_test
+package versiondetail_test
 
 import (
 	"context"
