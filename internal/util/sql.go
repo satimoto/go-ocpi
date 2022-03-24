@@ -4,6 +4,23 @@ import (
 	"database/sql"
 )
 
+func SqlNullFloat64(i interface{}) sql.NullFloat64 {
+	n := sql.NullFloat64{}
+
+	switch t := i.(type) {
+	case *float64:
+		if t == nil {
+			n.Scan(nil)
+		} else {
+			n.Scan(*t)
+		}
+	default:
+		n.Scan(t)
+	}
+
+	return n
+}
+
 func SqlNullInt32(i interface{}) sql.NullInt32 {
 	n := sql.NullInt32{}
 
