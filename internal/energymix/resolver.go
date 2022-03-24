@@ -8,7 +8,13 @@ import (
 
 type EnergyMixRepository interface {
 	CreateEnergyMix(ctx context.Context, arg db.CreateEnergyMixParams) (db.EnergyMix, error)
+	CreateEnergySource(ctx context.Context, arg db.CreateEnergySourceParams) (db.EnergySource, error)
+	CreateEnvironmentalImpact(ctx context.Context, arg db.CreateEnvironmentalImpactParams) (db.EnvironmentalImpact, error)
+	DeleteEnergySources(ctx context.Context, energyMixID int64) error
+	DeleteEnvironmentalImpacts(ctx context.Context, energyMixID int64) error
 	GetEnergyMix(ctx context.Context, id int64) (db.EnergyMix, error)
+	ListEnergySources(ctx context.Context, energyMixID int64) ([]db.EnergySource, error)
+	ListEnvironmentalImpacts(ctx context.Context, energyMixID int64) ([]db.EnvironmentalImpact, error)
 	UpdateEnergyMix(ctx context.Context, arg db.UpdateEnergyMixParams) (db.EnergyMix, error)
 }
 
@@ -32,7 +38,32 @@ func (r *EnergyMixResolver) ReplaceEnergyMix(ctx context.Context, id *int64, pay
 		} else {
 			energyMixParams := NewUpdateEnergyMixParams(*id, payload)
 
-			r.Repository.UpdateEnergyMix(ctx, energyMixParams)	
+			r.Repository.UpdateEnergyMix(ctx, energyMixParams)
+		}
+
+		r.ReplaceEnergySources(ctx, id, *payload)
+		r.ReplaceEnvironmentalImpacts(ctx, id, *payload)
+	}
+}
+
+func (r *EnergyMixResolver) ReplaceEnergySources(ctx context.Context, energyMixID *int64, payload EnergyMixPayload) {
+	if energyMixID != nil {
+		r.Repository.DeleteEnergySources(ctx, *energyMixID)
+
+		for _, energySource := range payload.EnergySources {
+			energySourceParams := NewCreateEnergySourceParams(*energyMixID, energySource)
+			r.Repository.CreateEnergySource(ctx, energySourceParams)
+		}
+	}
+}
+
+func (r *EnergyMixResolver) ReplaceEnvironmentalImpacts(ctx context.Context, energyMixID *int64, payload EnergyMixPayload) {
+	if energyMixID != nil {
+		r.Repository.DeleteEnvironmentalImpacts(ctx, *energyMixID)
+
+		for _, environImpact := range payload.EnvironImpact {
+			environImpactParams := NewCreateEnvironmentalImpactParams(*energyMixID, environImpact)
+			r.Repository.CreateEnvironmentalImpact(ctx, environImpactParams)
 		}
 	}
 }
