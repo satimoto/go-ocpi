@@ -16,7 +16,7 @@ func Paginate(next http.Handler) http.Handler {
 			dateFrom := util.ParseTime(dateFromParam)
 
 			if dateFrom != nil {
-				ctx = context.WithValue(ctx, "dateFrom", dateFrom)
+				ctx = context.WithValue(ctx, "date_from", dateFrom)
 			}
 		}
 
@@ -24,7 +24,7 @@ func Paginate(next http.Handler) http.Handler {
 			dateTo := util.ParseTime(dateToParam)
 
 			if dateTo != nil {
-				ctx = context.WithValue(ctx, "dateTo", dateTo)
+				ctx = context.WithValue(ctx, "date_to", dateTo)
 			}
 		}
 
