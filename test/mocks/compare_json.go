@@ -11,9 +11,13 @@ var (
 )
 
 func CompareJson(t *testing.T, actualBytes []byte, expectedBytes []byte) {
-	diffRes, diff := jsondiff.Compare(expectedBytes, actualBytes, &diffOpts)
+	CompareJsonWithDifference(t, actualBytes, expectedBytes, jsondiff.FullMatch)
+}
 
-	if diffRes != jsondiff.FullMatch {
+func CompareJsonWithDifference(t *testing.T, actualBytes []byte, expectedBytes []byte, difference jsondiff.Difference) {
+	diffRes, diff := jsondiff.Compare(actualBytes, expectedBytes, &diffOpts)
+
+	if diffRes != difference {
 		t.Errorf("JSON mismatch: %v", diff)
 		t.Logf("JSON: %v", string(actualBytes))
 	}
