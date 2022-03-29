@@ -2,6 +2,7 @@ package util
 
 import (
 	"database/sql"
+	"time"
 )
 
 func SqlNullFloat64(i interface{}) sql.NullFloat64 {
@@ -60,6 +61,23 @@ func SqlNullString(i interface{}) sql.NullString {
 
 	switch t := i.(type) {
 	case *string:
+		if t == nil {
+			n.Scan(nil)
+		} else {
+			n.Scan(*t)
+		}
+	default:
+		n.Scan(t)
+	}
+	
+	return n
+}
+
+func SqlNullTime(i interface{}) sql.NullTime {
+	n := sql.NullTime{}
+
+	switch t := i.(type) {
+	case *time.Time:
 		if t == nil {
 			n.Scan(nil)
 		} else {

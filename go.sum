@@ -230,6 +230,8 @@ github.com/satimoto/go-datastore v0.1.2-0.20220327194317-c221a988de12 h1:+t5es+t
 github.com/satimoto/go-datastore v0.1.2-0.20220327194317-c221a988de12/go.mod h1:7c9FKADIp4N+5B84fmOc7PtFBH5KwSZmlbczs/2efV8=
 github.com/satimoto/go-datastore v0.1.2-0.20220328075210-a861e9687638 h1:0z8Oue+iMV1UIJkjrX+2TzQbmAAyW4oj+yq2RGsJxcs=
 github.com/satimoto/go-datastore v0.1.2-0.20220328075210-a861e9687638/go.mod h1:7c9FKADIp4N+5B84fmOc7PtFBH5KwSZmlbczs/2efV8=
+github.com/satimoto/go-datastore v0.1.2-0.20220328201126-2ca362909e59 h1:Mdo+8yAOqP+HWum5nH/UIIys35cauAm1scmT5VV367A=
+github.com/satimoto/go-datastore v0.1.2-0.20220328201126-2ca362909e59/go.mod h1:7c9FKADIp4N+5B84fmOc7PtFBH5KwSZmlbczs/2efV8=
 github.com/satimoto/go-datastore-mocks v0.0.7 h1:eOEomfP27WxEe1LGDrMiPHc9DRTRUpu/OvkH0mPNiBc=
 github.com/satimoto/go-datastore-mocks v0.0.7/go.mod h1:fBhVJVF1lC3C8e994weHGqcXdOpVLgjx0XZwodMU20Y=
 github.com/satimoto/go-datastore-mocks v0.1.2-0.20220323204444-499e7f95fa67 h1:DqKmhNBbl3NlQ0/kJLrEM03M2HxdrShekIDf9L2lYCM=
@@ -244,6 +246,8 @@ github.com/satimoto/go-datastore-mocks v0.1.2-0.20220325213409-79ef41aa6cab h1:k
 github.com/satimoto/go-datastore-mocks v0.1.2-0.20220325213409-79ef41aa6cab/go.mod h1:l9fQi8bivzuBM1+t03l9tr0Er7WjbP3qzlqsB33NxhM=
 github.com/satimoto/go-datastore-mocks v0.1.2-0.20220326214547-8ff99075a828 h1:+VGJyIqe0U+3cRfuSWz/dmmEPUT5tUSa12ZmEulQdUQ=
 github.com/satimoto/go-datastore-mocks v0.1.2-0.20220326214547-8ff99075a828/go.mod h1:bpi57YA+Qo3t9ernF/QvVaMTABLBrrVq1yC3bK/bmYg=
+github.com/satimoto/go-datastore-mocks v0.1.2-0.20220328205514-ed0df4914505 h1:ZcKMMUs9R/qqCKT69DF5flJpSof7otEsnkD8OxdexHQ=
+github.com/satimoto/go-datastore-mocks v0.1.2-0.20220328205514-ed0df4914505/go.mod h1:AoUWcz7zdFinE1cvgctmT9NYOw4VsMLX3FgJUr9BUic=
 github.com/schollz/closestmatch v2.1.0+incompatible/go.mod h1:RtP1ddjLong6gTkbtmuhtR2uUrrJOpYzYRvbcPAid+g=
 github.com/sergi/go-diff v1.1.0/go.mod h1:STckp+ISIX8hZLjrqAeVduY0gWCT9IjLuqbuNXdaHfM=
 github.com/shurcooL/httpfs v0.0.0-20171119174359-809beceb2371/go.mod h1:ZY1cvUeJuFPAdZ/B6v7RHavJWZn2YPVFQ1OSXhCGOkg=

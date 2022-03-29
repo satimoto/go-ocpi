@@ -2,7 +2,6 @@ package evse
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 	"time"
 
@@ -155,7 +154,7 @@ func NewCreateStatusScheduleParams(evseID int64, payload *StatusSchedulePayload)
 	return db.CreateStatusScheduleParams{
 		EvseID:      evseID,
 		PeriodBegin: *payload.PeriodBegin,
-		PeriodEnd:   sql.NullTime{Time: *payload.PeriodEnd},
+		PeriodEnd:   util.SqlNullTime(payload.PeriodEnd),
 	}
 }
 

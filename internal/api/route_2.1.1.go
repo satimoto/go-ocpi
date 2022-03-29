@@ -11,6 +11,7 @@ func (rs *RouterService) mount211() *chi.Mux {
 	router.Mount("/", rs.mountVersionDetails())
 	router.Mount("/credentials", rs.mountCredentials())
 	router.Mount("/locations", rs.mountLocations())
+	router.Mount("/sessions", rs.mountSessions())
 	router.Mount("/tariffs", rs.mountTariffs())
 	router.Mount("/tokens", rs.mountTokens())
 
