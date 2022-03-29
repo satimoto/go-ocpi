@@ -53,12 +53,12 @@ func TestCreateLocationPayload(t *testing.T) {
 		statusSchedules := []db.StatusSchedule{}
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
 			PeriodBegin: *util.ParseTime("2018-12-16T10:10:02Z"),
-			PeriodEnd:   sql.NullTime{Time: *util.ParseTime("2018-12-16T10:30:02Z")},
+			PeriodEnd:   util.SqlNullTime( *util.ParseTime("2018-12-16T10:30:02Z")),
 			Status:      db.EvseStatusBLOCKED,
 		})
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
 			PeriodBegin: *util.ParseTime("2018-12-16T10:30:02Z"),
-			PeriodEnd:   sql.NullTime{Time: *util.ParseTime("2018-12-16T11:00:02Z")},
+			PeriodEnd:   util.SqlNullTime( *util.ParseTime("2018-12-16T11:00:02Z")),
 			Status:      db.EvseStatusCHARGING,
 		})
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
