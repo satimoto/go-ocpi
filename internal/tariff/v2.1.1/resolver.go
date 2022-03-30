@@ -2,6 +2,7 @@ package tariff
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/satimoto/go-datastore/db"
 	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
@@ -17,6 +18,7 @@ type TariffRepository interface {
 	DeleteTariffByUid(ctx context.Context, uid string) error
 	GetTariffByUid(ctx context.Context, uid string) (db.Tariff, error)
 	ListTariffAltTexts(ctx context.Context, tariffID int64) ([]db.DisplayText, error)
+	ListTariffsByCdr(ctx context.Context, cdrID sql.NullInt64) ([]db.Tariff, error)
 	SetTariffAltText(ctx context.Context, arg db.SetTariffAltTextParams) error
 	UpdateTariffByUid(ctx context.Context, arg db.UpdateTariffByUidParams) (db.Tariff, error)
 }
@@ -40,7 +42,7 @@ func NewResolver(repositoryService *db.RepositoryService) *TariffResolver {
 	}
 }
 
-func (r *TariffResolver) ReplaceTariff(ctx context.Context, uid string, payload *TariffPayload) *db.Tariff {
+func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid string, payload *TariffPayload) *db.Tariff {
 	if payload != nil {
 		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
 		energyMixID := util.NilInt64(tariff.EnergyMixID)
@@ -68,6 +70,7 @@ func (r *TariffResolver) ReplaceTariff(ctx context.Context, uid string, payload 
 			tariff, err = r.Repository.UpdateTariffByUid(ctx, tariffParams)
 		} else {
 			tariffParams := NewCreateTariffParams(payload)
+			tariffParams.CdrID = util.SqlNullInt64(cdrID)
 			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)
 
 			tariff, err = r.Repository.CreateTariff(ctx, tariffParams)
