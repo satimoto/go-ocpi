@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/element"
@@ -75,8 +74,8 @@ func (r *TariffResolver) CreateTariffPayload(ctx context.Context, tariff db.Tari
 	return response
 }
 
-func (r *TariffResolver) CreateTariffListPayload(ctx context.Context, tariffs []db.Tariff) []render.Renderer {
-	list := []render.Renderer{}
+func (r *TariffResolver) CreateTariffListPayload(ctx context.Context, tariffs []db.Tariff) []*TariffPayload {
+	list := []*TariffPayload{}
 	for _, tariff := range tariffs {
 		list = append(list, r.CreateTariffPayload(ctx, tariff))
 	}

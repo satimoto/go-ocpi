@@ -46,8 +46,12 @@ func (r *VersionDetailResolver) CreateVersionDetailPayload(ctx context.Context) 
 	apiDomain := os.Getenv("API_DOMAIN")
 
 	var endpoints []*EndpointPayload
+	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "cdrs"))
+	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "credentials"))
 	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "locations"))
+	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "sessions"))
 	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "tariffs"))
+	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "tokens"))
 
 	return &VersionDetailPayload{
 		Version:   version,

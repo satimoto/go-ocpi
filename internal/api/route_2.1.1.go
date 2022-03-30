@@ -9,6 +9,7 @@ func (rs *RouterService) mount211() *chi.Mux {
 
 	//router.Use(credential.CredentialContextByToken(versionResolver.Repository))
 	router.Mount("/", rs.mountVersionDetails())
+	router.Mount("/cdrs", rs.mountCdrs())
 	router.Mount("/credentials", rs.mountCredentials())
 	router.Mount("/locations", rs.mountLocations())
 	router.Mount("/sessions", rs.mountSessions())
