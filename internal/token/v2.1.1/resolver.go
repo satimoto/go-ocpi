@@ -11,6 +11,7 @@ import (
 type TokenRepository interface {
 	CreateToken(ctx context.Context, arg db.CreateTokenParams) (db.Token, error)
 	DeleteTokenByUid(ctx context.Context, uid string) error
+	GetToken(ctx context.Context, id int64) (db.Token, error)
 	GetTokenByUid(ctx context.Context, uid string) (db.Token, error)
 	ListTokens(ctx context.Context, arg db.ListTokensParams) ([]db.Token, error)
 	UpdateTokenByUid(ctx context.Context, arg db.UpdateTokenByUidParams) (db.Token, error)
