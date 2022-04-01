@@ -15,6 +15,7 @@ import (
 
 type CdrPayload struct {
 	ID               *string                                 `json:"id"`
+	AuthorizationID  *string                                 `json:"authorization_id,omitempty"`
 	StartDateTime    *time.Time                              `json:"start_date_time"`
 	StopDateTime     *time.Time                              `json:"stop_date_time,omitempty"`
 	AuthID           *string                                 `json:"auth_id"`
@@ -39,6 +40,7 @@ func (r *CdrPayload) Render(writer http.ResponseWriter, request *http.Request) e
 func NewCdrPayload(cdr db.Cdr) *CdrPayload {
 	return &CdrPayload{
 		ID:               &cdr.Uid,
+		AuthorizationID:  util.NilString(cdr.AuthorizationID.String),
 		StartDateTime:    &cdr.StartDateTime,
 		StopDateTime:     util.NilTime(cdr.StopDateTime.Time),
 		AuthID:           &cdr.AuthID,
@@ -57,6 +59,7 @@ func NewCdrPayload(cdr db.Cdr) *CdrPayload {
 func NewCreateCdrParams(payload *CdrPayload) db.CreateCdrParams {
 	return db.CreateCdrParams{
 		Uid:              *payload.ID,
+		AuthorizationID:  util.SqlNullString(payload.AuthorizationID),
 		StartDateTime:    *payload.StartDateTime,
 		StopDateTime:     util.SqlNullTime(payload.StopDateTime),
 		AuthID:           *payload.AuthID,

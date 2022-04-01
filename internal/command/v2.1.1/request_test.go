@@ -20,22 +20,22 @@ import (
 func setupRoutes(commandResolver *command.CommandResolver) *chi.Mux {
 	router := chi.NewRouter()
 
-	router.Route("/reserve/{command_id}", func(commandRouter chi.Router) {
+	router.Route("/RESERVE_NOW/{command_id}", func(commandRouter chi.Router) {
 		commandContextRouter := commandRouter.With(commandResolver.CommandReservationContext)
 		commandContextRouter.Post("/", commandResolver.PostCommandReservationResponse)
 	})
 
-	router.Route("/start/{command_id}", func(commandRouter chi.Router) {
+	router.Route("/START_SESSION/{command_id}", func(commandRouter chi.Router) {
 		commandContextRouter := commandRouter.With(commandResolver.CommandStartContext)
 		commandContextRouter.Post("/", commandResolver.PostCommandStartResponse)
 	})
 
-	router.Route("/stop/{command_id}", func(commandRouter chi.Router) {
+	router.Route("/STOP_SESSION/{command_id}", func(commandRouter chi.Router) {
 		commandContextRouter := commandRouter.With(commandResolver.CommandStopContext)
 		commandContextRouter.Post("/", commandResolver.PostCommandStopResponse)
 	})
 
-	router.Route("/unlock/{command_id}", func(commandRouter chi.Router) {
+	router.Route("/UNLOCK_CONNECTOR/{command_id}", func(commandRouter chi.Router) {
 		commandContextRouter := commandRouter.With(commandResolver.CommandUnlockContext)
 		commandContextRouter.Post("/", commandResolver.PostCommandUnlockResponse)
 	})
@@ -71,12 +71,12 @@ func TestCommandReservationRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/reserve/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest("POST", "/RESERVE_NOW/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
 		if err != nil {
-			t.Fatal("Creating 'POST /reserve/{command_id}' request failed!")
+			t.Fatal("Creating 'POST /RESERVE_NOW/{command_id}' request failed!")
 		}
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
@@ -95,21 +95,21 @@ func TestCommandReservationRequest(t *testing.T) {
 		responseRecorder := httptest.NewRecorder()
 
 		cr := db.CommandReservation{
-			ID: 1,
-			Status: db.CommandResponseTypeREQUESTED,
-			TokenID: 1,
-			ExpiryDate: *util.ParseTime("2015-06-29T20:39:09Z"),
+			ID:            1,
+			Status:        db.CommandResponseTypeREQUESTED,
+			TokenID:       1,
+			ExpiryDate:    *util.ParseTime("2015-06-29T20:39:09Z"),
 			ReservationID: 2,
-			LocationID: "LOC00001",
+			LocationID:    "LOC00001",
 		}
 		mockRepository.SetGetCommandReservationMockData(dbMocks.CommandReservationMockData{CommandReservation: cr, Error: nil})
 
-		request, err := http.NewRequest("POST", "/reserve/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest("POST", "/RESERVE_NOW/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
 		if err != nil {
-			t.Fatal("Creating 'POST /reserve/{command_id}' request failed!")
+			t.Fatal("Creating 'POST /RESERVE_NOW/{command_id}' request failed!")
 		}
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
@@ -159,12 +159,12 @@ func TestCommandStartRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/start/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest("POST", "/START_SESSION/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
 		if err != nil {
-			t.Fatal("Creating 'POST /start/{command_id}' request failed!")
+			t.Fatal("Creating 'POST /START_SESSION/{command_id}' request failed!")
 		}
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
@@ -175,7 +175,7 @@ func TestCommandStartRequest(t *testing.T) {
 		}`), jsondiff.SupersetMatch)
 	})
 
-	t.Run("Accept command reservation", func(t *testing.T) {
+	t.Run("Accept command start", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		commandResolver := commandMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
@@ -183,19 +183,19 @@ func TestCommandStartRequest(t *testing.T) {
 		responseRecorder := httptest.NewRecorder()
 
 		cr := db.CommandStart{
-			ID: 1,
-			Status: db.CommandResponseTypeREQUESTED,
-			TokenID: 1,
+			ID:         1,
+			Status:     db.CommandResponseTypeREQUESTED,
+			TokenID:    1,
 			LocationID: "LOC00001",
 		}
 		mockRepository.SetGetCommandStartMockData(dbMocks.CommandStartMockData{CommandStart: cr, Error: nil})
 
-		request, err := http.NewRequest("POST", "/start/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest("POST", "/START_SESSION/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
 		if err != nil {
-			t.Fatal("Creating 'POST /start/{command_id}' request failed!")
+			t.Fatal("Creating 'POST /START_SESSION/{command_id}' request failed!")
 		}
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
@@ -243,12 +243,12 @@ func TestCommandStopRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/stop/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest("POST", "/STOP_SESSION/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
 		if err != nil {
-			t.Fatal("Creating 'POST /stop/{command_id}' request failed!")
+			t.Fatal("Creating 'POST /STOP_SESSION/{command_id}' request failed!")
 		}
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
@@ -259,7 +259,7 @@ func TestCommandStopRequest(t *testing.T) {
 		}`), jsondiff.SupersetMatch)
 	})
 
-	t.Run("Accept command reservation", func(t *testing.T) {
+	t.Run("Accept command stop", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		commandResolver := commandMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
@@ -267,18 +267,18 @@ func TestCommandStopRequest(t *testing.T) {
 		responseRecorder := httptest.NewRecorder()
 
 		cr := db.CommandStop{
-			ID: 1,
-			Status: db.CommandResponseTypeREQUESTED,
+			ID:        1,
+			Status:    db.CommandResponseTypeREQUESTED,
 			SessionID: "SESSION0001",
 		}
 		mockRepository.SetGetCommandStopMockData(dbMocks.CommandStopMockData{CommandStop: cr, Error: nil})
 
-		request, err := http.NewRequest("POST", "/stop/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest("POST", "/STOP_SESSION/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
 		if err != nil {
-			t.Fatal("Creating 'POST /stop/{command_id}' request failed!")
+			t.Fatal("Creating 'POST /STOP_SESSION/{command_id}' request failed!")
 		}
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
@@ -326,12 +326,12 @@ func TestCommandUnlockRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/unlock/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest("POST", "/UNLOCK_CONNECTOR/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
 		if err != nil {
-			t.Fatal("Creating 'POST /unlock/{command_id}' request failed!")
+			t.Fatal("Creating 'POST /UNLOCK_CONNECTOR/{command_id}' request failed!")
 		}
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
@@ -342,7 +342,7 @@ func TestCommandUnlockRequest(t *testing.T) {
 		}`), jsondiff.SupersetMatch)
 	})
 
-	t.Run("Accept command reservation", func(t *testing.T) {
+	t.Run("Accept command unlock", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		commandResolver := commandMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
@@ -350,20 +350,20 @@ func TestCommandUnlockRequest(t *testing.T) {
 		responseRecorder := httptest.NewRecorder()
 
 		cr := db.CommandUnlock{
-			ID: 1,
-			Status: db.CommandResponseTypeREQUESTED,
-			LocationID: "LOC00001",
-			EvseUid: "EVSE0001",
+			ID:          1,
+			Status:      db.CommandResponseTypeREQUESTED,
+			LocationID:  "LOC00001",
+			EvseUid:     "EVSE0001",
 			ConnectorID: "CONN0001",
 		}
 		mockRepository.SetGetCommandUnlockMockData(dbMocks.CommandUnlockMockData{CommandUnlock: cr, Error: nil})
 
-		request, err := http.NewRequest("POST", "/unlock/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest("POST", "/UNLOCK_CONNECTOR/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
 		if err != nil {
-			t.Fatal("Creating 'POST /unlock/{command_id}' request failed!")
+			t.Fatal("Creating 'POST /UNLOCK_CONNECTOR/{command_id}' request failed!")
 		}
 
 		commandRoutes.ServeHTTP(responseRecorder, request)

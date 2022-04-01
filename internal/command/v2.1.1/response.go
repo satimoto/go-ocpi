@@ -26,7 +26,7 @@ func (r *CommandReservationPayload) Render(writer http.ResponseWriter, request *
 }
 
 func NewCommandReservationPayload(command db.CommandReservation) *CommandReservationPayload {
-	responseUrl := fmt.Sprintf("%s/%s/commands/reserve/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
+	responseUrl := fmt.Sprintf("%s/%s/commands/RESERVE_NOW/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
 
 	return &CommandReservationPayload{
 		ResponseUrl:   &responseUrl,
@@ -65,10 +65,11 @@ func (r *CommandResponsePayload) Render(writer http.ResponseWriter, request *htt
 }
 
 type CommandStartPayload struct {
-	ResponseUrl *string             `json:"response_url"`
-	Token       *token.TokenPayload `json:"token"`
-	LocationID  *string             `json:"location_id"`
-	EvseUid     *string             `json:"evse_uid,omitempty"`
+	ResponseUrl     *string             `json:"response_url"`
+	Token           *token.TokenPayload `json:"token"`
+	AuthorizationID *string             `json:"authorization_id,omitempty"`
+	LocationID      *string             `json:"location_id"`
+	EvseUid         *string             `json:"evse_uid,omitempty"`
 }
 
 func (r *CommandStartPayload) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -76,12 +77,13 @@ func (r *CommandStartPayload) Render(writer http.ResponseWriter, request *http.R
 }
 
 func NewCommandStartPayload(command db.CommandStart) *CommandStartPayload {
-	responseUrl := fmt.Sprintf("%s/%s/commands/start/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
+	responseUrl := fmt.Sprintf("%s/%s/commands/START_SESSION/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
 
 	return &CommandStartPayload{
-		ResponseUrl: &responseUrl,
-		LocationID:  &command.LocationID,
-		EvseUid:     util.NilString(command.EvseUid.String),
+		ResponseUrl:     &responseUrl,
+		AuthorizationID: util.NilString(command.AuthorizationID.String),
+		LocationID:      &command.LocationID,
+		EvseUid:         util.NilString(command.EvseUid.String),
 	}
 }
 
@@ -112,7 +114,7 @@ func (r *CommandStopPayload) Render(writer http.ResponseWriter, request *http.Re
 }
 
 func NewCommandStopPayload(command db.CommandStop) *CommandStopPayload {
-	responseUrl := fmt.Sprintf("%s/%s/commands/stop/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
+	responseUrl := fmt.Sprintf("%s/%s/commands/STOP_SESSION/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
 
 	return &CommandStopPayload{
 		ResponseUrl: &responseUrl,
@@ -143,7 +145,7 @@ func (r *CommandUnlockPayload) Render(writer http.ResponseWriter, request *http.
 }
 
 func NewCommandUnlockPayload(command db.CommandUnlock) *CommandUnlockPayload {
-	responseUrl := fmt.Sprintf("%s/%s/commands/unlock/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
+	responseUrl := fmt.Sprintf("%s/%s/commands/UNLOCK_CONNECTOR/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
 
 	return &CommandUnlockPayload{
 		ResponseUrl: &responseUrl,

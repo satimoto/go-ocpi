@@ -28,8 +28,7 @@ func TestCreateCommandReservationPayload(t *testing.T) {
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		commandResolver := commandMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 
-		tok := db.Token{
-		}
+		tok := db.Token{}
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
 
 		cr := db.CommandReservation{
@@ -40,7 +39,7 @@ func TestCreateCommandReservationPayload(t *testing.T) {
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
-			"response_url": "http://localhost:9001/2.1.1/commands/reserve/0",
+			"response_url": "http://localhost:9001/2.1.1/commands/RESERVE_NOW/0",
 			"token": {
 				"auth_id": "",
 				"issuer": "",
@@ -76,19 +75,19 @@ func TestCreateCommandReservationPayload(t *testing.T) {
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
 
 		cr := db.CommandReservation{
-			ID: 1,
-			Status: db.CommandResponseTypeREQUESTED,
-			TokenID: 1,
-			ExpiryDate: *util.ParseTime("2015-06-29T20:39:09Z"),
+			ID:            1,
+			Status:        db.CommandResponseTypeREQUESTED,
+			TokenID:       1,
+			ExpiryDate:    *util.ParseTime("2015-06-29T20:39:09Z"),
 			ReservationID: 2,
-			LocationID: "LOC00001",
+			LocationID:    "LOC00001",
 		}
 
 		response := commandResolver.CreateCommandReservationPayload(ctx, cr)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
-			"response_url": "http://localhost:9001/2.1.1/commands/reserve/1",
+			"response_url": "http://localhost:9001/2.1.1/commands/RESERVE_NOW/1",
 			"token": {
 				"uid": "TOKEN00001",
 				"type": "OTHER",
@@ -117,8 +116,7 @@ func TestCreateCommandStartPayload(t *testing.T) {
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		commandResolver := commandMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 
-		tok := db.Token{
-		}
+		tok := db.Token{}
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
 
 		cr := db.CommandStart{
@@ -129,7 +127,7 @@ func TestCreateCommandStartPayload(t *testing.T) {
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
-			"response_url": "http://localhost:9001/2.1.1/commands/start/0",
+			"response_url": "http://localhost:9001/2.1.1/commands/START_SESSION/0",
 			"token": {
 				"auth_id": "",
 				"issuer": "",
@@ -143,7 +141,7 @@ func TestCreateCommandStartPayload(t *testing.T) {
 		}`))
 	})
 
-	t.Run("Command reservation", func(t *testing.T) {
+	t.Run("Command start", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		commandResolver := commandMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
@@ -163,9 +161,9 @@ func TestCreateCommandStartPayload(t *testing.T) {
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
 
 		cr := db.CommandStart{
-			ID: 1,
-			Status: db.CommandResponseTypeREQUESTED,
-			TokenID: 1,
+			ID:         1,
+			Status:     db.CommandResponseTypeREQUESTED,
+			TokenID:    1,
 			LocationID: "LOC00001",
 		}
 
@@ -173,7 +171,7 @@ func TestCreateCommandStartPayload(t *testing.T) {
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
-			"response_url": "http://localhost:9001/2.1.1/commands/start/1",
+			"response_url": "http://localhost:9001/2.1.1/commands/START_SESSION/1",
 			"token": {
 				"uid": "TOKEN00001",
 				"type": "OTHER",
@@ -206,19 +204,19 @@ func TestCreateCommandStopPayload(t *testing.T) {
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
-			"response_url": "http://localhost:9001/2.1.1/commands/stop/0",
+			"response_url": "http://localhost:9001/2.1.1/commands/STOP_SESSION/0",
 			"session_id": ""
 		}`))
 	})
 
-	t.Run("Command reservation", func(t *testing.T) {
+	t.Run("Command stop", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		commandResolver := commandMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 
 		cr := db.CommandStop{
-			ID: 1,
-			Status: db.CommandResponseTypeREQUESTED,
+			ID:        1,
+			Status:    db.CommandResponseTypeREQUESTED,
 			SessionID: "SESSION001",
 		}
 
@@ -226,7 +224,7 @@ func TestCreateCommandStopPayload(t *testing.T) {
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
-			"response_url": "http://localhost:9001/2.1.1/commands/stop/1",
+			"response_url": "http://localhost:9001/2.1.1/commands/STOP_SESSION/1",
 			"session_id": "SESSION001"
 		}`))
 	})
@@ -248,23 +246,23 @@ func TestCreateCommandUnlockPayload(t *testing.T) {
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
-			"response_url": "http://localhost:9001/2.1.1/commands/unlock/0",
+			"response_url": "http://localhost:9001/2.1.1/commands/UNLOCK_CONNECTOR/0",
 			"location_id": "",
 			"evse_uid": "",
 			"connector_id": ""
 		}`))
 	})
 
-	t.Run("Command reservation", func(t *testing.T) {
+	t.Run("Command unlock", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		commandResolver := commandMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 
 		cr := db.CommandUnlock{
-			ID: 1,
-			Status: db.CommandResponseTypeREQUESTED,
-			LocationID: "LOC00001",
-			EvseUid: "EVSE00001",
+			ID:          1,
+			Status:      db.CommandResponseTypeREQUESTED,
+			LocationID:  "LOC00001",
+			EvseUid:     "EVSE00001",
 			ConnectorID: "CONN00001",
 		}
 
@@ -272,7 +270,7 @@ func TestCreateCommandUnlockPayload(t *testing.T) {
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
-			"response_url": "http://localhost:9001/2.1.1/commands/unlock/1",
+			"response_url": "http://localhost:9001/2.1.1/commands/UNLOCK_CONNECTOR/1",
 			"location_id": "LOC00001",
 			"evse_uid": "EVSE00001",
 			"connector_id": "CONN00001"
