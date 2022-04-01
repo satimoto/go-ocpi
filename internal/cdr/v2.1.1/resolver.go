@@ -4,10 +4,12 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-ocpi-api/internal/calibration"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 type CdrRepository interface {
@@ -20,6 +22,7 @@ type CdrRepository interface {
 
 type CdrResolver struct {
 	Repository CdrRepository
+	*calibration.CalibrationResolver
 	*chargingperiod.ChargingPeriodResolver
 	*credential.CredentialResolver
 	*location.LocationResolver
@@ -30,6 +33,7 @@ func NewResolver(repositoryService *db.RepositoryService) *CdrResolver {
 	repo := CdrRepository(repositoryService)
 	return &CdrResolver{
 		Repository:             repo,
+		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
 		CredentialResolver:     credential.NewResolver(repositoryService),
 		LocationResolver:       location.NewResolver(repositoryService),
@@ -46,6 +50,12 @@ func (r *CdrResolver) CreateCdr(ctx context.Context, payload *CdrPayload) *db.Cd
 		} else {
 			location := r.LocationResolver.ReplaceLocation(ctx, *payload.Location.ID, payload.Location)
 			cdrParams.LocationID = location.ID
+		}
+
+		if payload.SignedData != nil {
+			if calibration := r.CalibrationResolver.CreateCalibration(ctx, *&payload.SignedData); calibration != nil {
+				cdrParams.CalibrationID = util.SqlNullInt64(calibration.ID)
+			}
 		}
 
 		if cdr, err := r.Repository.CreateCdr(ctx, cdrParams); err == nil {

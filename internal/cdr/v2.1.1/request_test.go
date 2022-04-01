@@ -260,6 +260,7 @@ func TestCdrRequest(t *testing.T) {
 			"locationID": 0,
 			"meterID": {"String": "", "Valid": false},
 			"currency": "EUR",
+			"calibrationID": {"Int64": 0, "Valid": false},
 			"totalCost": 4,
 			"totalEnergy": 15.342,
 			"totalTime": 1.973,
