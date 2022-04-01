@@ -9,22 +9,22 @@ func (rs *RouterService) mountCommands() *chi.Mux {
 	commandResolver := command.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
 
-	router.Route("/reserve/{command_id}", func(commandRouter chi.Router) {
+	router.Route("/RESERVE_NOW/{command_id}", func(commandRouter chi.Router) {
 		commandContextRouter := commandRouter.With(commandResolver.CommandReservationContext)
 		commandContextRouter.Post("/", commandResolver.PostCommandReservationResponse)
 	})
 
-	router.Route("/start/{command_id}", func(commandRouter chi.Router) {
+	router.Route("/START_SESSION/{command_id}", func(commandRouter chi.Router) {
 		commandContextRouter := commandRouter.With(commandResolver.CommandStartContext)
 		commandContextRouter.Post("/", commandResolver.PostCommandStartResponse)
 	})
 
-	router.Route("/stop/{command_id}", func(commandRouter chi.Router) {
+	router.Route("/STOP_SESSION/{command_id}", func(commandRouter chi.Router) {
 		commandContextRouter := commandRouter.With(commandResolver.CommandStopContext)
 		commandContextRouter.Post("/", commandResolver.PostCommandStopResponse)
 	})
 
-	router.Route("/unlock/{command_id}", func(commandRouter chi.Router) {
+	router.Route("/UNLOCK_CONNECTOR/{command_id}", func(commandRouter chi.Router) {
 		commandContextRouter := commandRouter.With(commandResolver.CommandUnlockContext)
 		commandContextRouter.Post("/", commandResolver.PostCommandUnlockResponse)
 	})

@@ -10,10 +10,13 @@ import (
 
 type TokenRepository interface {
 	CreateToken(ctx context.Context, arg db.CreateTokenParams) (db.Token, error)
+	CreateTokenAuthorization(ctx context.Context, arg db.CreateTokenAuthorizationParams) (db.TokenAuthorization, error)
 	DeleteTokenByUid(ctx context.Context, uid string) error
 	GetToken(ctx context.Context, id int64) (db.Token, error)
 	GetTokenByUid(ctx context.Context, uid string) (db.Token, error)
 	ListTokens(ctx context.Context, arg db.ListTokensParams) ([]db.Token, error)
+	SetTokenAuthorizationConnector(ctx context.Context, arg db.SetTokenAuthorizationConnectorParams) error
+	SetTokenAuthorizationEvse(ctx context.Context, arg db.SetTokenAuthorizationEvseParams) error
 	UpdateTokenByUid(ctx context.Context, arg db.UpdateTokenByUidParams) (db.Token, error)
 }
 
@@ -25,9 +28,26 @@ type TokenResolver struct {
 func NewResolver(repositoryService *db.RepositoryService) *TokenResolver {
 	repo := TokenRepository(repositoryService)
 	return &TokenResolver{
-		Repository:          repo,
-		CredentialResolver:  credential.NewResolver(repositoryService),
+		Repository:         repo,
+		CredentialResolver: credential.NewResolver(repositoryService),
 	}
+}
+
+func (r *TokenResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, payload *LocationReferencesPayload) *db.TokenAuthorization {
+	tokenAuthorizationParams := NewCreateTokenAuthorizationParams(token.ID)
+
+	if payload != nil {
+		tokenAuthorizationParams.LocationID = util.SqlNullString(payload.LocationID)
+	}
+
+	if tokenAuthorization, err := r.Repository.CreateTokenAuthorization(ctx, tokenAuthorizationParams); err == nil {
+		r.createTokenAuthorizationEvses(ctx, tokenAuthorization.ID, payload)
+		r.createTokenAuthorizationConnectors(ctx, tokenAuthorization.ID, payload)
+
+		return &tokenAuthorization
+	}
+
+	return nil
 }
 
 func (r *TokenResolver) ReplaceToken(ctx context.Context, uid string, payload *TokenPayload) *db.Token {
@@ -80,4 +100,26 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, uid string, payload *T
 	}
 
 	return nil
+}
+
+func (r *TokenResolver) createTokenAuthorizationConnectors(ctx context.Context, tokenAuthorizationID int64, payload *LocationReferencesPayload) {
+	if payload != nil {
+		for _, connectorId := range payload.ConnectorIds {
+			r.Repository.SetTokenAuthorizationConnector(ctx, db.SetTokenAuthorizationConnectorParams{
+				TokenAuthorizationID: tokenAuthorizationID,
+				ConnectorUid:         *connectorId,
+			})
+		}
+	}
+}
+
+func (r *TokenResolver) createTokenAuthorizationEvses(ctx context.Context, tokenAuthorizationID int64, payload *LocationReferencesPayload) {
+	if payload != nil {
+		for _, evseUid := range payload.EvseUids {
+			r.Repository.SetTokenAuthorizationEvse(ctx, db.SetTokenAuthorizationEvseParams{
+				TokenAuthorizationID: tokenAuthorizationID,
+				EvseUid:              *evseUid,
+			})
+		}
+	}
 }

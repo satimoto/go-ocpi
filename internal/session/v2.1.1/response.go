@@ -14,6 +14,7 @@ import (
 
 type SessionPayload struct {
 	ID              *string                                 `json:"id"`
+	AuthorizationID *string                                 `json:"authorization_id,omitempty"`
 	StartDatetime   *time.Time                              `json:"start_datetime"`
 	EndDatetime     *time.Time                              `json:"end_datetime,omitempty"`
 	Kwh             *float64                                `json:"kwh"`
@@ -34,50 +35,53 @@ func (r *SessionPayload) Render(writer http.ResponseWriter, request *http.Reques
 
 func NewSessionPayload(session db.Session) *SessionPayload {
 	return &SessionPayload{
-		ID:            &session.Uid,
-		StartDatetime: &session.StartDatetime,
-		EndDatetime:   util.NilTime(session.EndDatetime.Time),
-		Kwh:           &session.Kwh,
-		AuthID:        &session.AuthID,
-		AuthMethod:    &session.AuthMethod,
-		MeterID:       util.NilString(session.MeterID.String),
-		Currency:      &session.Currency,
-		TotalCost:     util.NilFloat64(session.TotalCost.Float64),
-		Status:        &session.Status,
-		LastUpdated:   &session.LastUpdated,
+		ID:              &session.Uid,
+		AuthorizationID: util.NilString(session.AuthorizationID.String),
+		StartDatetime:   &session.StartDatetime,
+		EndDatetime:     util.NilTime(session.EndDatetime.Time),
+		Kwh:             &session.Kwh,
+		AuthID:          &session.AuthID,
+		AuthMethod:      &session.AuthMethod,
+		MeterID:         util.NilString(session.MeterID.String),
+		Currency:        &session.Currency,
+		TotalCost:       util.NilFloat64(session.TotalCost.Float64),
+		Status:          &session.Status,
+		LastUpdated:     &session.LastUpdated,
 	}
 }
 
 func NewCreateSessionParams(payload *SessionPayload) db.CreateSessionParams {
 	return db.CreateSessionParams{
-		Uid:           *payload.ID,
-		StartDatetime: *payload.StartDatetime,
-		EndDatetime:   util.SqlNullTime(payload.EndDatetime),
-		Kwh:           *payload.Kwh,
-		AuthID:        *payload.AuthID,
-		AuthMethod:    *payload.AuthMethod,
-		MeterID:       util.SqlNullString(payload.MeterID),
-		Currency:      *payload.Currency,
-		TotalCost:     util.SqlNullFloat64(payload.TotalCost),
-		Status:        *payload.Status,
-		LastUpdated:   *payload.LastUpdated,
+		Uid:             *payload.ID,
+		AuthorizationID: util.SqlNullString(payload.AuthorizationID),
+		StartDatetime:   *payload.StartDatetime,
+		EndDatetime:     util.SqlNullTime(payload.EndDatetime),
+		Kwh:             *payload.Kwh,
+		AuthID:          *payload.AuthID,
+		AuthMethod:      *payload.AuthMethod,
+		MeterID:         util.SqlNullString(payload.MeterID),
+		Currency:        *payload.Currency,
+		TotalCost:       util.SqlNullFloat64(payload.TotalCost),
+		Status:          *payload.Status,
+		LastUpdated:     *payload.LastUpdated,
 	}
 }
 
 func NewUpdateSessionByUidParams(session db.Session) db.UpdateSessionByUidParams {
 	return db.UpdateSessionByUidParams{
-		Uid:           session.Uid,
-		StartDatetime: session.StartDatetime,
-		EndDatetime:   session.EndDatetime,
-		Kwh:           session.Kwh,
-		AuthID:        session.AuthID,
-		AuthMethod:    session.AuthMethod,
-		LocationID:    session.LocationID,
-		MeterID:       session.MeterID,
-		Currency:      session.Currency,
-		TotalCost:     session.TotalCost,
-		Status:        session.Status,
-		LastUpdated:   session.LastUpdated,
+		Uid:             session.Uid,
+		AuthorizationID: session.AuthorizationID,
+		StartDatetime:   session.StartDatetime,
+		EndDatetime:     session.EndDatetime,
+		Kwh:             session.Kwh,
+		AuthID:          session.AuthID,
+		AuthMethod:      session.AuthMethod,
+		LocationID:      session.LocationID,
+		MeterID:         session.MeterID,
+		Currency:        session.Currency,
+		TotalCost:       session.TotalCost,
+		Status:          session.Status,
+		LastUpdated:     session.LastUpdated,
 	}
 }
 

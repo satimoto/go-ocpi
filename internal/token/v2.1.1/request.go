@@ -40,7 +40,8 @@ func (r *TokenResolver) AuthorizeToken(rw http.ResponseWriter, request *http.Req
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	payload := r.CreateAuthorizationInfoPayload(ctx, token, locationReferencesPayload, nil)
+	tokenAuthorization := r.CreateTokenAuthorization(ctx, token, locationReferencesPayload)
+	payload := r.CreateAuthorizationInfoPayload(ctx, token, tokenAuthorization, locationReferencesPayload, nil)
 
 	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))

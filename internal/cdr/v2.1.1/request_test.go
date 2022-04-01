@@ -252,6 +252,7 @@ func TestCdrRequest(t *testing.T) {
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "CDR0003",
+			"authorizationID": {"String": "", "Valid": false},
 			"startDateTime": "2015-06-29T21:39:09Z",
 			"stopDateTime": {"Time": "2015-06-29T21:39:09Z", "Valid": true},
 			"authID": "DE8ACC12E46L89",

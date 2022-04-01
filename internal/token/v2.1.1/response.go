@@ -6,15 +6,17 @@ import (
 	"time"
 
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 type AuthorizationInfoPayload struct {
-	Allowed  *db.TokenAllowedType            `json:"allowed"`
-	Location *LocationReferencesPayload      `json:"location,omitempty"`
-	Info     *displaytext.DisplayTextPayload `json:"info,omitempty"`
+	Allowed         *db.TokenAllowedType            `json:"allowed"`
+	AuthorizationID *string                         `json:"authorization_id"`
+	Location        *LocationReferencesPayload      `json:"location,omitempty"`
+	Info            *displaytext.DisplayTextPayload `json:"info,omitempty"`
 }
 
 func (r *AuthorizationInfoPayload) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -27,8 +29,12 @@ func NewAuthorizationInfoPayload(token db.Token) *AuthorizationInfoPayload {
 	}
 }
 
-func (r *TokenResolver) CreateAuthorizationInfoPayload(ctx context.Context, token db.Token, location *LocationReferencesPayload, info *displaytext.DisplayTextPayload) *AuthorizationInfoPayload {
+func (r *TokenResolver) CreateAuthorizationInfoPayload(ctx context.Context, token db.Token, tokenAuthorization *db.TokenAuthorization, location *LocationReferencesPayload, info *displaytext.DisplayTextPayload) *AuthorizationInfoPayload {
 	response := NewAuthorizationInfoPayload(token)
+
+	if tokenAuthorization != nil {
+		response.AuthorizationID = &tokenAuthorization.AuthorizationID
+	}
 
 	if location != nil {
 		response.Location = location
@@ -49,6 +55,13 @@ type LocationReferencesPayload struct {
 
 func (r *LocationReferencesPayload) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
+}
+
+func NewCreateTokenAuthorizationParams(tokenID int64) db.CreateTokenAuthorizationParams {
+	return db.CreateTokenAuthorizationParams{
+		TokenID:         tokenID,
+		AuthorizationID: uuid.NewString(),
+	}
 }
 
 type TokenPayload struct {
