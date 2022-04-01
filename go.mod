@@ -13,8 +13,8 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
 	github.com/nsf/jsondiff v0.0.0-20210926074059-1e845ec5d249
-	github.com/satimoto/go-datastore v0.1.2-0.20220401075358-82275136ef10
-	github.com/satimoto/go-datastore-mocks v0.1.2-0.20220331205036-30556f0c2220
+	github.com/satimoto/go-datastore v0.1.2-0.20220401194459-02329beafda2
+	github.com/satimoto/go-datastore-mocks v0.1.2-0.20220401201407-e4a040fb8ad8
 	github.com/twpayne/go-geom v1.4.1
 )
 

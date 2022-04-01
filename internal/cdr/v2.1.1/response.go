@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-ocpi-api/internal/calibration"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
@@ -25,6 +26,7 @@ type CdrPayload struct {
 	Currency         *string                                 `json:"currency"`
 	Tariffs          []*tariff.TariffPayload                 `json:"tariffs"`
 	ChargingPeriods  []*chargingperiod.ChargingPeriodPayload `json:"charging_periods"`
+	SignedData       *calibration.CalibrationPayload         `json:"signed_data,omitempty"`
 	TotalCost        *float64                                `json:"total_cost"`
 	TotalEnergy      *float64                                `json:"total_energy"`
 	TotalTime        *float64                                `json:"total_time"`
@@ -84,6 +86,12 @@ func (r *CdrResolver) CreateCdrPayload(ctx context.Context, cdr db.Cdr) *CdrPayl
 
 	if location, err := r.LocationResolver.Repository.GetLocation(ctx, cdr.LocationID); err == nil {
 		response.Location = r.LocationResolver.CreateLocationPayload(ctx, location)
+	}
+
+	if cdr.CalibrationID.Valid {
+		if calibration, err := r.CalibrationResolver.Repository.GetCalibration(ctx, cdr.CalibrationID.Int64); err == nil {
+			response.SignedData = r.CalibrationResolver.CreateCalibrationPayload(ctx, calibration)
+		}
 	}
 
 	if tariffs, err := r.TariffResolver.Repository.ListTariffsByCdr(ctx, util.SqlNullInt64(cdr.ID)); err == nil {

@@ -146,6 +146,78 @@ func TestCreateCdrPayload(t *testing.T) {
 			"total_time": 1.973,
 			"total_parking_time": 45,
 			"last_updated": "2015-06-29T22:01:13Z"
-	}`))
+		}`))
+	})
+
+	t.Run("With charge periods", func(t *testing.T) {
+		mockRepository := dbMocks.NewMockRepositoryService()
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		cdrResolver := cdrMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
+
+		calibration := db.Calibration{
+			EncodingMethod: "Alfen Eichrecht",
+		}
+		mockRepository.SetGetCalibrationMockData(dbMocks.CalibrationMockData{Calibration: calibration, Error: nil})
+
+		calibrationValues := []db.CalibrationValue{}
+		calibrationValues = append(calibrationValues, db.CalibrationValue{
+			Nature:   "Start",
+			PlainData: "ABC123",
+			SignedData: "SIGNEDABC123",
+		})
+		calibrationValues = append(calibrationValues, db.CalibrationValue{
+			Nature:   "End",
+			PlainData: "XYZ987",
+			SignedData: "SIGNEDXYZ987",
+		})
+		mockRepository.SetListCalibrationValuesMockData(dbMocks.CalibrationValuesMockData{CalibrationValues: calibrationValues, Error: nil})
+
+		sess := db.Cdr{
+			ID:               2,
+			Uid:              "CDR0002",
+			StartDateTime:    *util.ParseTime("2015-06-29T21:39:09Z"),
+			StopDateTime:     util.SqlNullTime(util.ParseTime("2015-06-29T21:39:09Z")),
+			AuthID:           "DE8ACC12E46L89",
+			AuthMethod:       db.AuthMethodTypeAUTHREQUEST,
+			Currency:         "EUR",
+			CalibrationID:    util.SqlNullInt64(1),
+			TotalCost:        4.0,
+			TotalEnergy:      15.342,
+			TotalTime:        1.973,
+			TotalParkingTime: util.SqlNullFloat64(45),
+			LastUpdated:      *util.ParseTime("2015-06-29T22:01:13Z"),
+		}
+
+		response := cdrResolver.CreateCdrPayload(ctx, sess)
+		responseJson, _ := json.Marshal(response)
+
+		mocks.CompareJson(t, responseJson, []byte(`{
+			"id": "CDR0002",
+			"start_date_time": "2015-06-29T21:39:09Z",
+			"stop_date_time": "2015-06-29T21:39:09Z",
+			"auth_id": "DE8ACC12E46L89",
+			"auth_method": "AUTH_REQUEST",
+			"location": null,
+			"currency": "EUR",
+			"tariffs": [],
+			"charging_periods": [],
+			"signed_data": {
+				"encoding_method": "Alfen Eichrecht",
+				"signed_values": [{
+					"nature": "Start",
+					"plain_data": "ABC123",
+					"signed_data": "SIGNEDABC123"
+				}, {
+					"nature": "End",
+					"plain_data": "XYZ987",
+					"signed_data": "SIGNEDXYZ987"
+				}]
+			},
+			"total_cost": 4,
+			"total_energy": 15.342,
+			"total_time": 1.973,
+			"total_parking_time": 45,
+			"last_updated": "2015-06-29T22:01:13Z"
+		}`))
 	})
 }
