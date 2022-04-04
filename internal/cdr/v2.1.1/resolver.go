@@ -6,7 +6,6 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/calibration"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
-	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/util"
@@ -24,7 +23,6 @@ type CdrResolver struct {
 	Repository CdrRepository
 	*calibration.CalibrationResolver
 	*chargingperiod.ChargingPeriodResolver
-	*credential.CredentialResolver
 	*location.LocationResolver
 	*tariff.TariffResolver
 }
@@ -35,7 +33,6 @@ func NewResolver(repositoryService *db.RepositoryService) *CdrResolver {
 		Repository:             repo,
 		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
-		CredentialResolver:     credential.NewResolver(repositoryService),
 		LocationResolver:       location.NewResolver(repositoryService),
 		TariffResolver:         tariff.NewResolver(repositoryService),
 	}

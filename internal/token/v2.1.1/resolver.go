@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
-	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
@@ -22,14 +21,12 @@ type TokenRepository interface {
 
 type TokenResolver struct {
 	Repository TokenRepository
-	*credential.CredentialResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *TokenResolver {
 	repo := TokenRepository(repositoryService)
 	return &TokenResolver{
 		Repository:         repo,
-		CredentialResolver: credential.NewResolver(repositoryService),
 	}
 }
 

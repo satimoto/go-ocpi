@@ -10,7 +10,7 @@ import (
 
 func TestTariffUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		payload := tariff.TariffPayload{}
+		payload := tariff.TariffPushPayload{}
 		response := []byte(`{
 			"id": null,
 			"currency": null,
@@ -25,7 +25,7 @@ func TestTariffUnmarshal(t *testing.T) {
 	})
 
 	t.Run("Base data", func(t *testing.T) {
-		payload := tariff.TariffPayload{}
+		payload := tariff.TariffPushPayload{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -41,7 +41,7 @@ func TestTariffUnmarshal(t *testing.T) {
 	})
 
 	t.Run("With alt text and element", func(t *testing.T) {
-		payload := tariff.TariffPayload{}
+		payload := tariff.TariffPushPayload{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -67,7 +67,7 @@ func TestTariffUnmarshal(t *testing.T) {
 	})
 
 	t.Run("With multiple elements", func(t *testing.T) {
-		payload := tariff.TariffPayload{}
+		payload := tariff.TariffPushPayload{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -140,7 +140,7 @@ func TestTariffUnmarshal(t *testing.T) {
 	})
 
 	t.Run("With energy mix", func(t *testing.T) {
-		payload := tariff.TariffPayload{}
+		payload := tariff.TariffPushPayload{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",

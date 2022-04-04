@@ -9,6 +9,7 @@ import (
 func (rs *RouterService) mountTokens() *chi.Mux {
 	tokenResolver := token.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
+	router.Use(rs.CredentialContextByToken)
 
 	paginationContextRouter := router.With(middleware.Paginate)
 	paginationContextRouter.Get("/", tokenResolver.ListTokens)

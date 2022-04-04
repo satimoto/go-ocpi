@@ -13,7 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreateTariffPayload(t *testing.T) {
+func TestCreateTariffPushPayload(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("Empty", func(t *testing.T) {
@@ -23,7 +23,7 @@ func TestCreateTariffPayload(t *testing.T) {
 
 		loc := db.Tariff{}
 
-		response := tariffResolver.CreateTariffPayload(ctx, loc)
+		response := tariffResolver.CreateTariffPushPayload(ctx, loc)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -65,7 +65,7 @@ func TestCreateTariffPayload(t *testing.T) {
 			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := tariffResolver.CreateTariffPayload(ctx, tar)
+		response := tariffResolver.CreateTariffPushPayload(ctx, tar)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -129,7 +129,7 @@ func TestCreateTariffPayload(t *testing.T) {
 			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := tariffResolver.CreateTariffPayload(ctx, tar)
+		response := tariffResolver.CreateTariffPushPayload(ctx, tar)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -210,7 +210,7 @@ func TestCreateTariffPayload(t *testing.T) {
 			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := tariffResolver.CreateTariffPayload(ctx, tar)
+		response := tariffResolver.CreateTariffPushPayload(ctx, tar)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{

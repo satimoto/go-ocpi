@@ -20,55 +20,24 @@ import (
 func setupRoutes(sessionResolver *session.SessionResolver) *chi.Mux {
 	router := chi.NewRouter()
 
-	router.Route("/{country_code}/{party_id}", func(credentialRouter chi.Router) {
-		credentialRouter.Use(sessionResolver.CredentialResolver.CredentialContextByPartyAndCountry)
+	router.Route("/{country_code}/{party_id}/{session_id}", func(sessionRouter chi.Router) {
+		sessionRouter.Put("/", sessionResolver.UpdateSession)
 
-		credentialRouter.Route("/{session_id}", func(sessionRouter chi.Router) {
-			sessionRouter.Put("/", sessionResolver.UpdateSession)
-
-			sessionContextRouter := sessionRouter.With(sessionResolver.SessionContext)
-			sessionContextRouter.Get("/", sessionResolver.GetSession)
-			sessionContextRouter.Patch("/", sessionResolver.UpdateSession)
-		})
+		sessionContextRouter := sessionRouter.With(sessionResolver.SessionContext)
+		sessionContextRouter.Get("/", sessionResolver.GetSession)
+		sessionContextRouter.Patch("/", sessionResolver.UpdateSession)
 	})
 
 	return router
 }
 
 func TestSessionRequest(t *testing.T) {
-	t.Run("Invalid credential", func(t *testing.T) {
-		mockRepository := dbMocks.NewMockRepositoryService()
-		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
-		sessionRoutes := setupRoutes(sessionResolver)
-		responseRecorder := httptest.NewRecorder()
-
-		request, err := http.NewRequest("GET", "/DE/ABC", nil)
-
-		if err != nil {
-			t.Fatal("Creating 'GET /{country_code}/{party_id}' request failed!")
-		}
-
-		sessionRoutes.ServeHTTP(responseRecorder, request)
-
-		mocks.CompareJsonWithDifference(t, responseRecorder.Body.Bytes(), []byte(`{
-			"status_code": 2003,
-			"status_message": "Unknown resource"
-		}`), jsondiff.SupersetMatch)
-	})
-
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		sessionResolver := sessionMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 		sessionRoutes := setupRoutes(sessionResolver)
 		responseRecorder := httptest.NewRecorder()
-
-		cred := db.Credential{
-			CountryCode: "DE",
-			PartyID: "ABC",
-		}
-		mockRepository.SetGetCredentialByPartyAndCountryCodeMockData(dbMocks.CredentialMockData{Credential: cred, Error: nil})
 
 		request, err := http.NewRequest("GET", "/DE/ABC", nil)
 
@@ -92,19 +61,19 @@ func TestSessionRequest(t *testing.T) {
 
 		cred := db.Credential{
 			CountryCode: "DE",
-			PartyID: "ABC",
+			PartyID:     "ABC",
 		}
 		mockRepository.SetGetCredentialByPartyAndCountryCodeMockData(dbMocks.CredentialMockData{Credential: cred, Error: nil})
 
 		sess := db.Session{
-			Uid: "SESSION0001",
+			Uid:           "SESSION0001",
 			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z"),
-			Kwh: 0,
-			AuthID: "DE8ACC12E46L89",
-			AuthMethod: db.AuthMethodTypeAUTHREQUEST,
-			Currency: "EUR",
-			Status: db.SessionStatusTypePENDING,
-			LastUpdated: *util.ParseTime("2015-06-29T22:39:09Z"),
+			Kwh:           0,
+			AuthID:        "DE8ACC12E46L89",
+			AuthMethod:    db.AuthMethodTypeAUTHREQUEST,
+			Currency:      "EUR",
+			Status:        db.SessionStatusTypePENDING,
+			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z"),
 		}
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})
 
@@ -143,7 +112,7 @@ func TestSessionRequest(t *testing.T) {
 
 		cred := db.Credential{
 			CountryCode: "DE",
-			PartyID: "ABC",
+			PartyID:     "ABC",
 		}
 		mockRepository.SetGetCredentialByPartyAndCountryCodeMockData(dbMocks.CredentialMockData{Credential: cred, Error: nil})
 
@@ -155,24 +124,24 @@ func TestSessionRequest(t *testing.T) {
 
 		dimensions := []db.ChargingPeriodDimension{}
 		dimensions = append(dimensions, db.ChargingPeriodDimension{
-			Type: db.ChargingPeriodDimensionTypeFLAT,
+			Type:   db.ChargingPeriodDimensionTypeFLAT,
 			Volume: 1,
 		})
 		dimensions = append(dimensions, db.ChargingPeriodDimension{
-			Type: db.ChargingPeriodDimensionTypeTIME,
+			Type:   db.ChargingPeriodDimensionTypeTIME,
 			Volume: 1.973,
 		})
 		mockRepository.SetListChargingPeriodDimensionsMockData(dbMocks.ChargingPeriodDimensionsMockData{ChargingPeriodDimensions: dimensions, Error: nil})
 
 		sess := db.Session{
-			Uid: "SESSION0001",
+			Uid:           "SESSION0001",
 			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z"),
-			Kwh: 15.342,
-			AuthID: "DE8ACC12E46L89",
-			AuthMethod: db.AuthMethodTypeAUTHREQUEST,
-			Currency: "EUR",
-			Status: db.SessionStatusTypeACTIVE,
-			LastUpdated: *util.ParseTime("2015-06-29T22:39:09Z"),
+			Kwh:           15.342,
+			AuthID:        "DE8ACC12E46L89",
+			AuthMethod:    db.AuthMethodTypeAUTHREQUEST,
+			Currency:      "EUR",
+			Status:        db.SessionStatusTypeACTIVE,
+			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z"),
 		}
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})
 
@@ -220,7 +189,7 @@ func TestSessionRequest(t *testing.T) {
 
 		cred := db.Credential{
 			CountryCode: "DE",
-			PartyID: "ABC",
+			PartyID:     "ABC",
 		}
 		mockRepository.SetGetCredentialByPartyAndCountryCodeMockData(dbMocks.CredentialMockData{Credential: cred, Error: nil})
 
@@ -232,25 +201,25 @@ func TestSessionRequest(t *testing.T) {
 
 		dimensions := []db.ChargingPeriodDimension{}
 		dimensions = append(dimensions, db.ChargingPeriodDimension{
-			Type: db.ChargingPeriodDimensionTypeFLAT,
+			Type:   db.ChargingPeriodDimensionTypeFLAT,
 			Volume: 1,
 		})
 		dimensions = append(dimensions, db.ChargingPeriodDimension{
-			Type: db.ChargingPeriodDimensionTypeTIME,
+			Type:   db.ChargingPeriodDimensionTypeTIME,
 			Volume: 1.973,
 		})
 		mockRepository.SetListChargingPeriodDimensionsMockData(dbMocks.ChargingPeriodDimensionsMockData{ChargingPeriodDimensions: dimensions, Error: nil})
 
 		sess := db.Session{
-			Uid: "SESSION0001",
+			Uid:           "SESSION0001",
 			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z"),
-			Kwh: 15.342,
-			AuthID: "DE8ACC12E46L89",
-			AuthMethod: db.AuthMethodTypeAUTHREQUEST,
-			LocationID: 1,
-			Currency: "EUR",
-			Status: db.SessionStatusTypeACTIVE,
-			LastUpdated: *util.ParseTime("2015-06-29T22:39:09Z"),
+			Kwh:           15.342,
+			AuthID:        "DE8ACC12E46L89",
+			AuthMethod:    db.AuthMethodTypeAUTHREQUEST,
+			LocationID:    1,
+			Currency:      "EUR",
+			Status:        db.SessionStatusTypeACTIVE,
+			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z"),
 		}
 		// Push context
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})

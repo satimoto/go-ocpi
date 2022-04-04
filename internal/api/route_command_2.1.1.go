@@ -8,6 +8,7 @@ import (
 func (rs *RouterService) mountCommands() *chi.Mux {
 	commandResolver := command.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
+	router.Use(rs.CredentialContextByToken)
 
 	router.Route("/RESERVE_NOW/{command_id}", func(commandRouter chi.Router) {
 		commandContextRouter := commandRouter.With(commandResolver.CommandReservationContext)

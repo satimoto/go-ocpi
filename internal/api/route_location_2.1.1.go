@@ -8,19 +8,16 @@ import (
 func (rs *RouterService) mountLocations() *chi.Mux {
 	locationResolver := location.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
+	router.Use(rs.CredentialContextByToken)
 
-	router.Route("/{country_code}/{party_id}", func(credentialRouter chi.Router) {
-		credentialRouter.Use(locationResolver.CredentialResolver.CredentialContextByPartyAndCountry)
+	router.Route("/{country_code}/{party_id}/{location_id}", func(locationRouter chi.Router) {
+		locationRouter.Put("/", locationResolver.UpdateLocation)
 
-		credentialRouter.Route("/{location_id}", func(locationRouter chi.Router) {
-			locationRouter.Put("/", locationResolver.UpdateLocation)
+		locationContextRouter := locationRouter.With(locationResolver.LocationContext)
+		locationContextRouter.Get("/", locationResolver.GetLocation)
+		locationContextRouter.Patch("/", locationResolver.UpdateLocation)
 
-			locationContextRouter := locationRouter.With(locationResolver.LocationContext)
-			locationContextRouter.Get("/", locationResolver.GetLocation)
-			locationContextRouter.Patch("/", locationResolver.UpdateLocation)
-
-			locationContextRouter.Mount("/", rs.mountEvses())
-		})
+		locationContextRouter.Mount("/", rs.mountEvses())
 	})
 
 	return router

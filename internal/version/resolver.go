@@ -33,7 +33,6 @@ func NewResolver(repositoryService *db.RepositoryService) *VersionResolver {
 	}
 }
 
-
 func (r *VersionResolver) PickBestVersion(ctx context.Context, credentialID int64) *db.Version {
 	if versions, err := r.Repository.ListVersions(ctx, credentialID); err == nil {
 		for _, version := range versions {

@@ -5,7 +5,6 @@ import (
 	"database/sql"
 
 	"github.com/satimoto/go-datastore/db"
-	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/element"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
@@ -25,7 +24,6 @@ type TariffRepository interface {
 
 type TariffResolver struct {
 	Repository TariffRepository
-	*credential.CredentialResolver
 	*displaytext.DisplayTextResolver
 	*element.ElementResolver
 	*energymix.EnergyMixResolver
@@ -35,14 +33,13 @@ func NewResolver(repositoryService *db.RepositoryService) *TariffResolver {
 	repo := TariffRepository(repositoryService)
 	return &TariffResolver{
 		Repository:          repo,
-		CredentialResolver:  credential.NewResolver(repositoryService),
 		DisplayTextResolver: displaytext.NewResolver(repositoryService),
 		ElementResolver:     element.NewResolver(repositoryService),
 		EnergyMixResolver:   energymix.NewResolver(repositoryService),
 	}
 }
 
-func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid string, payload *TariffPayload) *db.Tariff {
+func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid string, payload *TariffPushPayload) *db.Tariff {
 	if payload != nil {
 		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
 		energyMixID := util.NilInt64(tariff.EnergyMixID)
@@ -90,7 +87,7 @@ func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid st
 	return nil
 }
 
-func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int64, payload *TariffPayload) {
+func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int64, payload *TariffPushPayload) {
 	r.Repository.DeleteTariffAltTexts(ctx, tariffID)
 
 	for _, displayTextPayload := range payload.TariffAltText {
@@ -105,6 +102,6 @@ func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int6
 	}
 }
 
-func (r *TariffResolver) replaceElements(ctx context.Context, tariffID int64, payload *TariffPayload) {
+func (r *TariffResolver) replaceElements(ctx context.Context, tariffID int64, payload *TariffPushPayload) {
 	r.ElementResolver.ReplaceElements(ctx, tariffID, payload.Elements)
 }

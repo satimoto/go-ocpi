@@ -24,7 +24,7 @@ type CdrPayload struct {
 	Location         *location.LocationPayload               `json:"location"`
 	MeterID          *string                                 `json:"meter_id,omitempty"`
 	Currency         *string                                 `json:"currency"`
-	Tariffs          []*tariff.TariffPayload                 `json:"tariffs"`
+	Tariffs          []*tariff.TariffPushPayload             `json:"tariffs"`
 	ChargingPeriods  []*chargingperiod.ChargingPeriodPayload `json:"charging_periods"`
 	SignedData       *calibration.CalibrationPayload         `json:"signed_data,omitempty"`
 	TotalCost        *float64                                `json:"total_cost"`
