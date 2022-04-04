@@ -7,20 +7,20 @@ import (
 )
 
 type OCPIVersionsResponse struct {
-	Data          []*VersionPayload `json:"data,omitempty"`
-	StatusCode    int16             `json:"status_code"`
-	StatusMessage string            `json:"status_message"`
-	Timestamp     time.Time         `json:"timestamp"`
+	Data          []*VersionDto `json:"data,omitempty"`
+	StatusCode    int16         `json:"status_code"`
+	StatusMessage string        `json:"status_message"`
+	Timestamp     time.Time     `json:"timestamp"`
 }
 
-func (r *VersionResolver) UnmarshalPayload(body io.ReadCloser) (*VersionPayload, error) {
-	payload := VersionPayload{}
+func (r *VersionResolver) UnmarshalDto(body io.ReadCloser) (*VersionDto, error) {
+	dto := VersionDto{}
 
-	if err := json.NewDecoder(body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err
 	}
 
-	return &payload, nil
+	return &dto, nil
 }
 
 func (r *VersionResolver) UnmarshalResponse(body io.ReadCloser) (*OCPIVersionsResponse, error) {

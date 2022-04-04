@@ -37,27 +37,27 @@ func NewResolver(repositoryService *db.RepositoryService) *CredentialResolver {
 	}
 }
 
-func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential db.Credential, payload *CredentialPayload) (*db.Credential, error) {
-	if payload != nil {
+func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential db.Credential, dto *CredentialDto) (*db.Credential, error) {
+	if dto != nil {
 		token := credential.ClientToken.String
 		url := credential.Url
 		partyID := credential.PartyID
 		countryCode := credential.CountryCode
 
-		if payload.Token != nil {
-			token = *payload.Token
+		if dto.Token != nil {
+			token = *dto.Token
 		}
 
-		if payload.Url != nil {
-			url = *payload.Url
+		if dto.Url != nil {
+			url = *dto.Url
 		}
 
-		if payload.PartyID != nil {
-			partyID = *payload.PartyID
+		if dto.PartyID != nil {
+			partyID = *dto.PartyID
 		}
 
-		if payload.CountryCode != nil {
-			countryCode = *payload.CountryCode
+		if dto.CountryCode != nil {
+			countryCode = *dto.CountryCode
 		}
 
 		header := util.OCPIRequestHeader{
@@ -82,8 +82,8 @@ func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential d
 				LastUpdated: time.Now(),
 			}
 
-			if payload.BusinessDetail != nil {
-				r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, &credential.BusinessDetailID, payload.BusinessDetail)
+			if dto.BusinessDetail != nil {
+				r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, &credential.BusinessDetailID, dto.BusinessDetail)
 			}
 
 			if cred, err := r.Repository.UpdateCredential(ctx, params); err == nil {

@@ -11,9 +11,9 @@ import (
 
 func (r *VersionResolver) GetVersions(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
-	payload := r.CreateVersionListPayload(ctx)
+	dto := r.CreateVersionListDto(ctx)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
+	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 }

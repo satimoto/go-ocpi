@@ -5,12 +5,12 @@ import (
 	"io"
 )
 
-func (r *LocationResolver) UnmarshalPayload(body io.ReadCloser) (*LocationPayload, error) {
-	payload := LocationPayload{}
+func (r *LocationResolver) UnmarshalDto(body io.ReadCloser) (*LocationDto, error) {
+	dto := LocationDto{}
 
-	if err := json.NewDecoder(body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err
 	}
 
-	return &payload, nil
+	return &dto, nil
 }

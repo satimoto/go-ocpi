@@ -8,119 +8,119 @@ import (
 	"github.com/satimoto/go-datastore/db"
 )
 
-type ExceptionalPeriodPayload struct {
+type ExceptionalPeriodDto struct {
 	PeriodBegin *time.Time `json:"period_begin"`
 	PeriodEnd   *time.Time `json:"period_end"`
 }
 
-func (r *ExceptionalPeriodPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *ExceptionalPeriodDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewExceptionalPeriodPayload(exceptionalPeriod db.ExceptionalPeriod) *ExceptionalPeriodPayload {
-	return &ExceptionalPeriodPayload{
+func NewExceptionalPeriodDto(exceptionalPeriod db.ExceptionalPeriod) *ExceptionalPeriodDto {
+	return &ExceptionalPeriodDto{
 		PeriodBegin: &exceptionalPeriod.PeriodBegin,
 		PeriodEnd:   &exceptionalPeriod.PeriodEnd,
 	}
 }
 
-func NewCreateExceptionalPeriodParams(id int64, periodType db.PeriodType, payload *ExceptionalPeriodPayload) db.CreateExceptionalPeriodParams {
+func NewCreateExceptionalPeriodParams(id int64, periodType db.PeriodType, dto *ExceptionalPeriodDto) db.CreateExceptionalPeriodParams {
 	return db.CreateExceptionalPeriodParams{
 		OpeningTimeID: id,
-		PeriodType: periodType,
-		PeriodBegin:   *payload.PeriodBegin,
-		PeriodEnd:     *payload.PeriodEnd,
+		PeriodType:    periodType,
+		PeriodBegin:   *dto.PeriodBegin,
+		PeriodEnd:     *dto.PeriodEnd,
 	}
 }
-func (r *OpeningTimeResolver) CreateExceptionalPeriodPayload(ctx context.Context, exceptionalPeriod db.ExceptionalPeriod) *ExceptionalPeriodPayload {
-	return NewExceptionalPeriodPayload(exceptionalPeriod)
+func (r *OpeningTimeResolver) CreateExceptionalPeriodDto(ctx context.Context, exceptionalPeriod db.ExceptionalPeriod) *ExceptionalPeriodDto {
+	return NewExceptionalPeriodDto(exceptionalPeriod)
 }
 
-func (r *OpeningTimeResolver) CreateExceptionalPeriodListPayload(ctx context.Context, exceptionalPeriods []db.ExceptionalPeriod) []*ExceptionalPeriodPayload {
-	list := []*ExceptionalPeriodPayload{}
+func (r *OpeningTimeResolver) CreateExceptionalPeriodListDto(ctx context.Context, exceptionalPeriods []db.ExceptionalPeriod) []*ExceptionalPeriodDto {
+	list := []*ExceptionalPeriodDto{}
 	for _, exceptionalPeriod := range exceptionalPeriods {
-		list = append(list, r.CreateExceptionalPeriodPayload(ctx, exceptionalPeriod))
+		list = append(list, r.CreateExceptionalPeriodDto(ctx, exceptionalPeriod))
 	}
 	return list
 }
 
-type OpeningTimePayload struct {
-	RegularHours        []*RegularHourPayload       `json:"regular_hours"`
-	Twentyfourseven     bool                        `json:"twentyfourseven"`
-	ExceptionalOpenings []*ExceptionalPeriodPayload `json:"exceptional_openings"`
-	ExceptionalClosings []*ExceptionalPeriodPayload `json:"exceptional_closings"`
+type OpeningTimeDto struct {
+	RegularHours        []*RegularHourDto       `json:"regular_hours"`
+	Twentyfourseven     bool                    `json:"twentyfourseven"`
+	ExceptionalOpenings []*ExceptionalPeriodDto `json:"exceptional_openings"`
+	ExceptionalClosings []*ExceptionalPeriodDto `json:"exceptional_closings"`
 }
 
-func (r *OpeningTimePayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *OpeningTimeDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewOpeningTimePayload(openingTime db.OpeningTime) *OpeningTimePayload {
-	return &OpeningTimePayload{
+func NewOpeningTimeDto(openingTime db.OpeningTime) *OpeningTimeDto {
+	return &OpeningTimeDto{
 		Twentyfourseven: openingTime.Twentyfourseven,
 	}
 }
 
-func NewUpdateOpeningTimeParams(id int64, payload *OpeningTimePayload) db.UpdateOpeningTimeParams {
+func NewUpdateOpeningTimeParams(id int64, dto *OpeningTimeDto) db.UpdateOpeningTimeParams {
 	return db.UpdateOpeningTimeParams{
 		ID:              id,
-		Twentyfourseven: payload.Twentyfourseven,
+		Twentyfourseven: dto.Twentyfourseven,
 	}
 }
 
-func (r *OpeningTimeResolver) CreateOpeningTimePayload(ctx context.Context, openingTime db.OpeningTime) *OpeningTimePayload {
-	response := NewOpeningTimePayload(openingTime)
+func (r *OpeningTimeResolver) CreateOpeningTimeDto(ctx context.Context, openingTime db.OpeningTime) *OpeningTimeDto {
+	response := NewOpeningTimeDto(openingTime)
 
 	if regularHours, err := r.Repository.ListRegularHours(ctx, openingTime.ID); err == nil {
-		response.RegularHours = r.CreateRegularHourListPayload(ctx, regularHours)
+		response.RegularHours = r.CreateRegularHourListDto(ctx, regularHours)
 	}
 
 	if exceptionalOpenings, err := r.Repository.ListExceptionalOpeningPeriods(ctx, openingTime.ID); err == nil {
-		response.ExceptionalOpenings = r.CreateExceptionalPeriodListPayload(ctx, exceptionalOpenings)
+		response.ExceptionalOpenings = r.CreateExceptionalPeriodListDto(ctx, exceptionalOpenings)
 	}
 
 	if exceptionalClosings, err := r.Repository.ListExceptionalClosingPeriods(ctx, openingTime.ID); err == nil {
-		response.ExceptionalClosings = r.CreateExceptionalPeriodListPayload(ctx, exceptionalClosings)
+		response.ExceptionalClosings = r.CreateExceptionalPeriodListDto(ctx, exceptionalClosings)
 	}
 
 	return response
 }
 
-type RegularHourPayload struct {
+type RegularHourDto struct {
 	Weekday     int16  `json:"weekday"`
 	PeriodBegin string `json:"period_begin"`
 	PeriodEnd   string `json:"period_end"`
 }
 
-func (r *RegularHourPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *RegularHourDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewRegularHourPayload(regularHour db.RegularHour) *RegularHourPayload {
-	return &RegularHourPayload{
+func NewRegularHourDto(regularHour db.RegularHour) *RegularHourDto {
+	return &RegularHourDto{
 		Weekday:     regularHour.Weekday,
 		PeriodBegin: regularHour.PeriodBegin,
 		PeriodEnd:   regularHour.PeriodEnd,
 	}
 }
 
-func NewCreateRegularHourParams(id int64, payload *RegularHourPayload) db.CreateRegularHourParams {
+func NewCreateRegularHourParams(id int64, dto *RegularHourDto) db.CreateRegularHourParams {
 	return db.CreateRegularHourParams{
 		OpeningTimeID: id,
-		Weekday:       payload.Weekday,
-		PeriodBegin:   payload.PeriodBegin,
-		PeriodEnd:     payload.PeriodEnd,
+		Weekday:       dto.Weekday,
+		PeriodBegin:   dto.PeriodBegin,
+		PeriodEnd:     dto.PeriodEnd,
 	}
 }
 
-func (r *OpeningTimeResolver) CreateRegularHourPayload(ctx context.Context, regularHour db.RegularHour) *RegularHourPayload {
-	return NewRegularHourPayload(regularHour)
+func (r *OpeningTimeResolver) CreateRegularHourDto(ctx context.Context, regularHour db.RegularHour) *RegularHourDto {
+	return NewRegularHourDto(regularHour)
 }
 
-func (r *OpeningTimeResolver) CreateRegularHourListPayload(ctx context.Context, regularHours []db.RegularHour) []*RegularHourPayload {
-	list := []*RegularHourPayload{}
+func (r *OpeningTimeResolver) CreateRegularHourListDto(ctx context.Context, regularHours []db.RegularHour) []*RegularHourDto {
+	list := []*RegularHourDto{}
 	for _, regularHour := range regularHours {
-		list = append(list, r.CreateRegularHourPayload(ctx, regularHour))
+		list = append(list, r.CreateRegularHourDto(ctx, regularHour))
 	}
 	return list
 }

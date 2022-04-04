@@ -13,9 +13,9 @@ import (
 func (r *ConnectorResolver) GetConnector(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	connector := ctx.Value("connector").(db.Connector)
-	payload := r.CreateConnectorPayload(ctx, connector)
+	dto := r.CreateConnectorDto(ctx, connector)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
+	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 }
@@ -24,13 +24,13 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 	ctx := request.Context()
 	evse := ctx.Value("evse").(db.Evse)
 	uid := chi.URLParam(request, "connector_id")
-	payload := ConnectorPayload{}
+	dto := ConnectorDto{}
 
-	if err := json.NewDecoder(request.Body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	connector := r.ReplaceConnector(ctx, evse.ID, uid, &payload)
+	connector := r.ReplaceConnector(ctx, evse.ID, uid, &dto)
 
 	err := r.Repository.UpdateEvseLastUpdated(ctx, db.UpdateEvseLastUpdatedParams{
 		ID:          evse.ID,

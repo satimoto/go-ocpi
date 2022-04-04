@@ -12,9 +12,9 @@ import (
 func (r *SessionResolver) GetSession(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	session := ctx.Value("session").(db.Session)
-	payload := r.CreateSessionPayload(ctx, session)
+	dto := r.CreateSessionDto(ctx, session)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
+	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 }
@@ -22,13 +22,13 @@ func (r *SessionResolver) GetSession(rw http.ResponseWriter, request *http.Reque
 func (r *SessionResolver) UpdateSession(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	uid := chi.URLParam(request, "session_id")
-	payload, err := r.UnmarshalPayload(request.Body)
+	dto, err := r.UnmarshalDto(request.Body)
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	session := r.ReplaceSession(ctx, uid, payload)
+	session := r.ReplaceSession(ctx, uid, dto)
 
 	if session == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))

@@ -13,7 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreateConnectorPayload(t *testing.T) {
+func TestCreateConnectorDto(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("Test", func(t *testing.T) {
@@ -31,7 +31,7 @@ func TestCreateConnectorPayload(t *testing.T) {
 			LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z"),
 		}
 
-		response := connectorResolver.CreateConnectorPayload(ctx, connector)
+		response := connectorResolver.CreateConnectorDto(ctx, connector)
 		responseJson, _ := json.Marshal(response)
 
 		connectorParams := db.CreateConnectorParams{

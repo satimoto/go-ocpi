@@ -5,25 +5,25 @@ import (
 	"io"
 )
 
-func (r *TokenResolver) UnmarshalPayload(body io.ReadCloser) (*TokenPayload, error) {
-	payload := TokenPayload{}
+func (r *TokenResolver) UnmarshalDto(body io.ReadCloser) (*TokenDto, error) {
+	dto := TokenDto{}
 
-	if err := json.NewDecoder(body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err
 	}
 
-	return &payload, nil
+	return &dto, nil
 }
 
-func (r *TokenResolver) UnmarshalLocationReferencesPayload(body io.ReadCloser) (*LocationReferencesPayload, error) {
+func (r *TokenResolver) UnmarshalLocationReferencesDto(body io.ReadCloser) (*LocationReferencesDto, error) {
 	if body != nil {
-		payload := LocationReferencesPayload{}
+		dto := LocationReferencesDto{}
 
-		if err := json.NewDecoder(body).Decode(&payload); err != nil {
+		if err := json.NewDecoder(body).Decode(&dto); err != nil {
 			return nil, err
 		}
 
-		return &payload, nil
+		return &dto, nil
 	}
 
 	return nil, nil

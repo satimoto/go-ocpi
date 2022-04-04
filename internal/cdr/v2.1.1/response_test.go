@@ -12,7 +12,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreateCdrPayload(t *testing.T) {
+func TestCreateCdrDto(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("Empty", func(t *testing.T) {
@@ -24,7 +24,7 @@ func TestCreateCdrPayload(t *testing.T) {
 			ID: 1,
 		}
 
-		response := cdrResolver.CreateCdrPayload(ctx, sess)
+		response := cdrResolver.CreateCdrDto(ctx, sess)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -62,7 +62,7 @@ func TestCreateCdrPayload(t *testing.T) {
 			LastUpdated:   *util.ParseTime("2015-06-29T22:01:13Z"),
 		}
 
-		response := cdrResolver.CreateCdrPayload(ctx, c)
+		response := cdrResolver.CreateCdrDto(ctx, c)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -119,7 +119,7 @@ func TestCreateCdrPayload(t *testing.T) {
 			LastUpdated:      *util.ParseTime("2015-06-29T22:01:13Z"),
 		}
 
-		response := cdrResolver.CreateCdrPayload(ctx, sess)
+		response := cdrResolver.CreateCdrDto(ctx, sess)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -161,13 +161,13 @@ func TestCreateCdrPayload(t *testing.T) {
 
 		calibrationValues := []db.CalibrationValue{}
 		calibrationValues = append(calibrationValues, db.CalibrationValue{
-			Nature:   "Start",
-			PlainData: "ABC123",
+			Nature:     "Start",
+			PlainData:  "ABC123",
 			SignedData: "SIGNEDABC123",
 		})
 		calibrationValues = append(calibrationValues, db.CalibrationValue{
-			Nature:   "End",
-			PlainData: "XYZ987",
+			Nature:     "End",
+			PlainData:  "XYZ987",
 			SignedData: "SIGNEDXYZ987",
 		})
 		mockRepository.SetListCalibrationValuesMockData(dbMocks.CalibrationValuesMockData{CalibrationValues: calibrationValues, Error: nil})
@@ -188,7 +188,7 @@ func TestCreateCdrPayload(t *testing.T) {
 			LastUpdated:      *util.ParseTime("2015-06-29T22:01:13Z"),
 		}
 
-		response := cdrResolver.CreateCdrPayload(ctx, sess)
+		response := cdrResolver.CreateCdrDto(ctx, sess)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{

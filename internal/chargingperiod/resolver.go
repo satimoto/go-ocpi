@@ -23,12 +23,12 @@ func NewResolver(repositoryService *db.RepositoryService) *ChargingPeriodResolve
 	return &ChargingPeriodResolver{repo}
 }
 
-func (r *ChargingPeriodResolver) ReplaceChargingPeriod(ctx context.Context, payload *ChargingPeriodPayload) *db.ChargingPeriod {
-	if payload != nil {
-		chargingPeriod, err := r.Repository.CreateChargingPeriod(ctx, *payload.StartDateTime)
+func (r *ChargingPeriodResolver) ReplaceChargingPeriod(ctx context.Context, dto *ChargingPeriodDto) *db.ChargingPeriod {
+	if dto != nil {
+		chargingPeriod, err := r.Repository.CreateChargingPeriod(ctx, *dto.StartDateTime)
 
 		if err == nil {
-			r.ReplaceChargingPeriodDimensions(ctx, &chargingPeriod.ID, *payload)
+			r.ReplaceChargingPeriodDimensions(ctx, &chargingPeriod.ID, *dto)
 
 			return &chargingPeriod
 		}
@@ -37,11 +37,11 @@ func (r *ChargingPeriodResolver) ReplaceChargingPeriod(ctx context.Context, payl
 	return nil
 }
 
-func (r *ChargingPeriodResolver) ReplaceChargingPeriodDimensions(ctx context.Context, chargingPeriodID *int64, payload ChargingPeriodPayload) {
+func (r *ChargingPeriodResolver) ReplaceChargingPeriodDimensions(ctx context.Context, chargingPeriodID *int64, dto ChargingPeriodDto) {
 	if chargingPeriodID != nil {
 		r.Repository.DeleteChargingPeriodDimensions(ctx, *chargingPeriodID)
 
-		for _, dimension := range payload.Dimensions {
+		for _, dimension := range dto.Dimensions {
 			dimensionParams := NewCreateChargingPeriodDimensionParams(*chargingPeriodID, dimension)
 			r.Repository.CreateChargingPeriodDimension(ctx, dimensionParams)
 		}

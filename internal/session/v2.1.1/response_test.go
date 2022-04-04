@@ -12,7 +12,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreateSessionPayload(t *testing.T) {
+func TestCreateSessionDto(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("Empty", func(t *testing.T) {
@@ -22,7 +22,7 @@ func TestCreateSessionPayload(t *testing.T) {
 
 		sess := db.Session{}
 
-		response := sessionResolver.CreateSessionPayload(ctx, sess)
+		response := sessionResolver.CreateSessionDto(ctx, sess)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -45,17 +45,17 @@ func TestCreateSessionPayload(t *testing.T) {
 		sessionResolver := sessionMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 
 		sess := db.Session{
-			Uid: "SESSION0001",
+			Uid:           "SESSION0001",
 			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z"),
-			Kwh: 0,
-			AuthID: "DE8ACC12E46L89",
-			AuthMethod: db.AuthMethodTypeAUTHREQUEST,
-			Currency: "EUR",
-			Status: db.SessionStatusTypePENDING,
-			LastUpdated: *util.ParseTime("2015-06-29T22:39:09Z"),
+			Kwh:           0,
+			AuthID:        "DE8ACC12E46L89",
+			AuthMethod:    db.AuthMethodTypeAUTHREQUEST,
+			Currency:      "EUR",
+			Status:        db.SessionStatusTypePENDING,
+			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z"),
 		}
 
-		response := sessionResolver.CreateSessionPayload(ctx, sess)
+		response := sessionResolver.CreateSessionDto(ctx, sess)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -85,27 +85,27 @@ func TestCreateSessionPayload(t *testing.T) {
 
 		dimensions := []db.ChargingPeriodDimension{}
 		dimensions = append(dimensions, db.ChargingPeriodDimension{
-			Type: db.ChargingPeriodDimensionTypeFLAT,
+			Type:   db.ChargingPeriodDimensionTypeFLAT,
 			Volume: 1,
 		})
 		dimensions = append(dimensions, db.ChargingPeriodDimension{
-			Type: db.ChargingPeriodDimensionTypeTIME,
+			Type:   db.ChargingPeriodDimensionTypeTIME,
 			Volume: 1.973,
 		})
 		mockRepository.SetListChargingPeriodDimensionsMockData(dbMocks.ChargingPeriodDimensionsMockData{ChargingPeriodDimensions: dimensions, Error: nil})
 
 		sess := db.Session{
-			Uid: "SESSION0001",
+			Uid:           "SESSION0001",
 			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z"),
-			Kwh: 15.342,
-			AuthID: "DE8ACC12E46L89",
-			AuthMethod: db.AuthMethodTypeAUTHREQUEST,
-			Currency: "EUR",
-			Status: db.SessionStatusTypeACTIVE,
-			LastUpdated: *util.ParseTime("2015-06-29T22:39:09Z"),
+			Kwh:           15.342,
+			AuthID:        "DE8ACC12E46L89",
+			AuthMethod:    db.AuthMethodTypeAUTHREQUEST,
+			Currency:      "EUR",
+			Status:        db.SessionStatusTypeACTIVE,
+			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z"),
 		}
 
-		response := sessionResolver.CreateSessionPayload(ctx, sess)
+		response := sessionResolver.CreateSessionDto(ctx, sess)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{

@@ -13,9 +13,9 @@ import (
 func (r *EvseResolver) GetEvse(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	evse := ctx.Value("evse").(db.Evse)
-	payload := r.CreateEvsePayload(ctx, evse)
+	dto := r.CreateEvseDto(ctx, evse)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
+	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 }
@@ -24,13 +24,13 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 	ctx := request.Context()
 	location := ctx.Value("location").(db.Location)
 	uid := chi.URLParam(request, "evse_id")
-	payload := EvsePayload{}
+	dto := EvseDto{}
 
-	if err := json.NewDecoder(request.Body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	evse := r.ReplaceEvse(ctx, location.ID, uid, &payload)
+	evse := r.ReplaceEvse(ctx, location.ID, uid, &dto)
 
 	err := r.Repository.UpdateLocationLastUpdated(ctx, db.UpdateLocationLastUpdatedParams{
 		ID:          location.ID,

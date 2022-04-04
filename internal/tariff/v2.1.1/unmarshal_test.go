@@ -10,7 +10,7 @@ import (
 
 func TestTariffUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		payload := tariff.TariffPushPayload{}
+		dto := tariff.TariffPushDto{}
 		response := []byte(`{
 			"id": null,
 			"currency": null,
@@ -18,14 +18,14 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": null
 		}`)
 
-		json.Unmarshal([]byte(`{}`), &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal([]byte(`{}`), &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, response)
 	})
 
 	t.Run("Base data", func(t *testing.T) {
-		payload := tariff.TariffPushPayload{}
+		dto := tariff.TariffPushDto{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -34,14 +34,14 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With alt text and element", func(t *testing.T) {
-		payload := tariff.TariffPushPayload{}
+		dto := tariff.TariffPushDto{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -60,14 +60,14 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With multiple elements", func(t *testing.T) {
-		payload := tariff.TariffPushPayload{}
+		dto := tariff.TariffPushDto{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -133,14 +133,14 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With energy mix", func(t *testing.T) {
-		payload := tariff.TariffPushPayload{}
+		dto := tariff.TariffPushDto{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -177,8 +177,8 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

@@ -38,30 +38,30 @@ func NewResolver(repositoryService *db.RepositoryService) *CdrResolver {
 	}
 }
 
-func (r *CdrResolver) CreateCdr(ctx context.Context, payload *CdrPayload) *db.Cdr {
-	if payload != nil {
-		cdrParams := NewCreateCdrParams(payload)
+func (r *CdrResolver) CreateCdr(ctx context.Context, dto *CdrDto) *db.Cdr {
+	if dto != nil {
+		cdrParams := NewCreateCdrParams(dto)
 
-		if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *payload.Location.ID); err == nil {
+		if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
 			cdrParams.LocationID = location.ID
 		} else {
-			location := r.LocationResolver.ReplaceLocation(ctx, *payload.Location.ID, payload.Location)
+			location := r.LocationResolver.ReplaceLocation(ctx, *dto.Location.ID, dto.Location)
 			cdrParams.LocationID = location.ID
 		}
 
-		if payload.SignedData != nil {
-			if calibration := r.CalibrationResolver.CreateCalibration(ctx, *&payload.SignedData); calibration != nil {
+		if dto.SignedData != nil {
+			if calibration := r.CalibrationResolver.CreateCalibration(ctx, *&dto.SignedData); calibration != nil {
 				cdrParams.CalibrationID = util.SqlNullInt64(calibration.ID)
 			}
 		}
 
 		if cdr, err := r.Repository.CreateCdr(ctx, cdrParams); err == nil {
-			if payload.ChargingPeriods != nil {
-				r.createChargingPeriods(ctx, cdr.ID, payload)
+			if dto.ChargingPeriods != nil {
+				r.createChargingPeriods(ctx, cdr.ID, dto)
 			}
 
-			if payload.Tariffs != nil {
-				r.createTariffs(ctx, cdr.ID, payload)
+			if dto.Tariffs != nil {
+				r.createTariffs(ctx, cdr.ID, dto)
 			}
 
 			return &cdr
@@ -71,9 +71,9 @@ func (r *CdrResolver) CreateCdr(ctx context.Context, payload *CdrPayload) *db.Cd
 	return nil
 }
 
-func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, payload *CdrPayload) {
-	for _, chargingPeriodPayload := range payload.ChargingPeriods {
-		chargingPeriod := r.ChargingPeriodResolver.ReplaceChargingPeriod(ctx, chargingPeriodPayload)
+func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, dto *CdrDto) {
+	for _, chargingPeriodDto := range dto.ChargingPeriods {
+		chargingPeriod := r.ChargingPeriodResolver.ReplaceChargingPeriod(ctx, chargingPeriodDto)
 
 		if chargingPeriod != nil {
 			r.Repository.SetCdrChargingPeriod(ctx, db.SetCdrChargingPeriodParams{
@@ -84,8 +84,8 @@ func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, pa
 	}
 }
 
-func (r *CdrResolver) createTariffs(ctx context.Context, cdrID int64, payload *CdrPayload) {
-	for _, tariffPayload := range payload.Tariffs {
-		r.TariffResolver.ReplaceTariff(ctx, &cdrID, *tariffPayload.ID, tariffPayload)
+func (r *CdrResolver) createTariffs(ctx context.Context, cdrID int64, dto *CdrDto) {
+	for _, tariffDto := range dto.Tariffs {
+		r.TariffResolver.ReplaceTariff(ctx, &cdrID, *tariffDto.ID, tariffDto)
 	}
 }

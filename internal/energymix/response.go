@@ -8,125 +8,125 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type EnergyMixPayload struct {
-	IsGreenEnergy     bool                          `json:"is_green_energy"`
-	EnergySources     []*EnergySourcePayload        `json:"energy_sources,omitempty"`
-	EnvironImpact     []*EnvironmentalImpactPayload `json:"environ_impact,omitempty"`
-	SupplierName      *string                       `json:"supplier_name,omitempty"`
-	EnergyProductName *string                       `json:"energy_product_name,omitempty"`
+type EnergyMixDto struct {
+	IsGreenEnergy     bool                      `json:"is_green_energy"`
+	EnergySources     []*EnergySourceDto        `json:"energy_sources,omitempty"`
+	EnvironImpact     []*EnvironmentalImpactDto `json:"environ_impact,omitempty"`
+	SupplierName      *string                   `json:"supplier_name,omitempty"`
+	EnergyProductName *string                   `json:"energy_product_name,omitempty"`
 }
 
-func (r *EnergyMixPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *EnergyMixDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewEnergyMixPayload(energyMix db.EnergyMix) *EnergyMixPayload {
-	return &EnergyMixPayload{
+func NewEnergyMixDto(energyMix db.EnergyMix) *EnergyMixDto {
+	return &EnergyMixDto{
 		IsGreenEnergy:     energyMix.IsGreenEnergy,
 		SupplierName:      util.NilString(energyMix.SupplierName.String),
 		EnergyProductName: util.NilString(energyMix.EnergyProductName.String),
 	}
 }
 
-func NewCreateEnergyMixParams(payload *EnergyMixPayload) db.CreateEnergyMixParams {
+func NewCreateEnergyMixParams(dto *EnergyMixDto) db.CreateEnergyMixParams {
 	return db.CreateEnergyMixParams{
-		IsGreenEnergy:     payload.IsGreenEnergy,
-		SupplierName:      util.SqlNullString(payload.SupplierName),
-		EnergyProductName: util.SqlNullString(payload.EnergyProductName),
+		IsGreenEnergy:     dto.IsGreenEnergy,
+		SupplierName:      util.SqlNullString(dto.SupplierName),
+		EnergyProductName: util.SqlNullString(dto.EnergyProductName),
 	}
 }
 
-func NewUpdateEnergyMixParams(id int64, payload *EnergyMixPayload) db.UpdateEnergyMixParams {
+func NewUpdateEnergyMixParams(id int64, dto *EnergyMixDto) db.UpdateEnergyMixParams {
 	return db.UpdateEnergyMixParams{
 		ID:                id,
-		IsGreenEnergy:     payload.IsGreenEnergy,
-		SupplierName:      util.SqlNullString(payload.SupplierName),
-		EnergyProductName: util.SqlNullString(payload.EnergyProductName),
+		IsGreenEnergy:     dto.IsGreenEnergy,
+		SupplierName:      util.SqlNullString(dto.SupplierName),
+		EnergyProductName: util.SqlNullString(dto.EnergyProductName),
 	}
 }
 
-func (r *EnergyMixResolver) CreateEnergyMixPayload(ctx context.Context, energyMix db.EnergyMix) *EnergyMixPayload {
-	response := NewEnergyMixPayload(energyMix)
+func (r *EnergyMixResolver) CreateEnergyMixDto(ctx context.Context, energyMix db.EnergyMix) *EnergyMixDto {
+	response := NewEnergyMixDto(energyMix)
 
 	if energySources, err := r.Repository.ListEnergySources(ctx, energyMix.ID); err == nil {
-		response.EnergySources = r.CreateEnergySourceListPayload(ctx, energySources)
+		response.EnergySources = r.CreateEnergySourceListDto(ctx, energySources)
 	}
 
 	if environImpacts, err := r.Repository.ListEnvironmentalImpacts(ctx, energyMix.ID); err == nil {
-		response.EnvironImpact = r.CreateEnvironmentalImpactListPayload(ctx, environImpacts)
+		response.EnvironImpact = r.CreateEnvironmentalImpactListDto(ctx, environImpacts)
 	}
 
 	return response
 }
 
-type EnergySourcePayload struct {
+type EnergySourceDto struct {
 	Source     db.EnergySourceCategory `json:"source"`
 	Percentage float64                 `json:"percentage"`
 }
 
-func (r *EnergySourcePayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *EnergySourceDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewEnergySourcePayload(energySource db.EnergySource) *EnergySourcePayload {
-	return &EnergySourcePayload{
+func NewEnergySourceDto(energySource db.EnergySource) *EnergySourceDto {
+	return &EnergySourceDto{
 		Source:     energySource.Source,
 		Percentage: energySource.Percentage,
 	}
 }
 
-func NewCreateEnergySourceParams(id int64, payload *EnergySourcePayload) db.CreateEnergySourceParams {
+func NewCreateEnergySourceParams(id int64, dto *EnergySourceDto) db.CreateEnergySourceParams {
 	return db.CreateEnergySourceParams{
 		EnergyMixID: id,
-		Source:      payload.Source,
-		Percentage:  payload.Percentage,
+		Source:      dto.Source,
+		Percentage:  dto.Percentage,
 	}
 }
 
-func (r *EnergyMixResolver) CreateEnergySourcePayload(ctx context.Context, energySource db.EnergySource) *EnergySourcePayload {
-	return NewEnergySourcePayload(energySource)
+func (r *EnergyMixResolver) CreateEnergySourceDto(ctx context.Context, energySource db.EnergySource) *EnergySourceDto {
+	return NewEnergySourceDto(energySource)
 }
 
-func (r *EnergyMixResolver) CreateEnergySourceListPayload(ctx context.Context, energySources []db.EnergySource) []*EnergySourcePayload {
-	list := []*EnergySourcePayload{}
+func (r *EnergyMixResolver) CreateEnergySourceListDto(ctx context.Context, energySources []db.EnergySource) []*EnergySourceDto {
+	list := []*EnergySourceDto{}
 	for _, energySource := range energySources {
-		list = append(list, r.CreateEnergySourcePayload(ctx, energySource))
+		list = append(list, r.CreateEnergySourceDto(ctx, energySource))
 	}
 	return list
 }
 
-type EnvironmentalImpactPayload struct {
+type EnvironmentalImpactDto struct {
 	Source db.EnvironmentalImpactCategory `json:"source"`
 	Amount float64                        `json:"amount"`
 }
 
-func (r *EnvironmentalImpactPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *EnvironmentalImpactDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewEnvironmentalImpactPayload(environmentalImpact db.EnvironmentalImpact) *EnvironmentalImpactPayload {
-	return &EnvironmentalImpactPayload{
+func NewEnvironmentalImpactDto(environmentalImpact db.EnvironmentalImpact) *EnvironmentalImpactDto {
+	return &EnvironmentalImpactDto{
 		Source: environmentalImpact.Source,
 		Amount: environmentalImpact.Amount,
 	}
 }
 
-func NewCreateEnvironmentalImpactParams(id int64, payload *EnvironmentalImpactPayload) db.CreateEnvironmentalImpactParams {
+func NewCreateEnvironmentalImpactParams(id int64, dto *EnvironmentalImpactDto) db.CreateEnvironmentalImpactParams {
 	return db.CreateEnvironmentalImpactParams{
 		EnergyMixID: id,
-		Source:      payload.Source,
-		Amount:      payload.Amount,
+		Source:      dto.Source,
+		Amount:      dto.Amount,
 	}
 }
 
-func (r *EnergyMixResolver) CreateEnvironmentalImpactPayload(ctx context.Context, environImpact db.EnvironmentalImpact) *EnvironmentalImpactPayload {
-	return NewEnvironmentalImpactPayload(environImpact)
+func (r *EnergyMixResolver) CreateEnvironmentalImpactDto(ctx context.Context, environImpact db.EnvironmentalImpact) *EnvironmentalImpactDto {
+	return NewEnvironmentalImpactDto(environImpact)
 }
 
-func (r *EnergyMixResolver) CreateEnvironmentalImpactListPayload(ctx context.Context, environImpacts []db.EnvironmentalImpact) []*EnvironmentalImpactPayload {
-	list := []*EnvironmentalImpactPayload{}
+func (r *EnergyMixResolver) CreateEnvironmentalImpactListDto(ctx context.Context, environImpacts []db.EnvironmentalImpact) []*EnvironmentalImpactDto {
+	list := []*EnvironmentalImpactDto{}
 	for _, environImpact := range environImpacts {
-		list = append(list, r.CreateEnvironmentalImpactPayload(ctx, environImpact))
+		list = append(list, r.CreateEnvironmentalImpactDto(ctx, environImpact))
 	}
 	return list
 }

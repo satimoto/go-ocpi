@@ -8,71 +8,71 @@ import (
 	"github.com/satimoto/go-datastore/db"
 )
 
-type ChargingPeriodPayload struct {
-	StartDateTime *time.Time                        `json:"start_date_time"`
-	Dimensions    []*ChargingPeriodDimensionPayload `json:"dimensions"`
+type ChargingPeriodDto struct {
+	StartDateTime *time.Time                    `json:"start_date_time"`
+	Dimensions    []*ChargingPeriodDimensionDto `json:"dimensions"`
 }
 
-func (r *ChargingPeriodPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *ChargingPeriodDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewChargingPeriodPayload(chargingPeriod db.ChargingPeriod) *ChargingPeriodPayload {
-	return &ChargingPeriodPayload{
+func NewChargingPeriodDto(chargingPeriod db.ChargingPeriod) *ChargingPeriodDto {
+	return &ChargingPeriodDto{
 		StartDateTime: &chargingPeriod.StartDateTime,
 	}
 }
 
-func (r *ChargingPeriodResolver) CreateChargingPeriodPayload(ctx context.Context, chargingPeriod db.ChargingPeriod) *ChargingPeriodPayload {
-	response := NewChargingPeriodPayload(chargingPeriod)
+func (r *ChargingPeriodResolver) CreateChargingPeriodDto(ctx context.Context, chargingPeriod db.ChargingPeriod) *ChargingPeriodDto {
+	response := NewChargingPeriodDto(chargingPeriod)
 
 	if chargingPeriodDimensions, err := r.Repository.ListChargingPeriodDimensions(ctx, chargingPeriod.ID); err == nil {
-		response.Dimensions = r.CreateChargingPeriodDimensionListPayload(ctx, chargingPeriodDimensions)
+		response.Dimensions = r.CreateChargingPeriodDimensionListDto(ctx, chargingPeriodDimensions)
 	}
 
 	return response
 }
 
-func (r *ChargingPeriodResolver) CreateChargingPeriodListPayload(ctx context.Context, chargingPeriods []db.ChargingPeriod) []*ChargingPeriodPayload {
-	list := []*ChargingPeriodPayload{}
+func (r *ChargingPeriodResolver) CreateChargingPeriodListDto(ctx context.Context, chargingPeriods []db.ChargingPeriod) []*ChargingPeriodDto {
+	list := []*ChargingPeriodDto{}
 	for _, chargingPeriod := range chargingPeriods {
-		list = append(list, r.CreateChargingPeriodPayload(ctx, chargingPeriod))
+		list = append(list, r.CreateChargingPeriodDto(ctx, chargingPeriod))
 	}
 	return list
 }
 
-type ChargingPeriodDimensionPayload struct {
+type ChargingPeriodDimensionDto struct {
 	Type   db.ChargingPeriodDimensionType `json:"type"`
 	Volume float64                        `json:"volume"`
 }
 
-func (r *ChargingPeriodDimensionPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *ChargingPeriodDimensionDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewChargingPeriodDimensionPayload(chargingPeriodDimension db.ChargingPeriodDimension) *ChargingPeriodDimensionPayload {
-	return &ChargingPeriodDimensionPayload{
+func NewChargingPeriodDimensionDto(chargingPeriodDimension db.ChargingPeriodDimension) *ChargingPeriodDimensionDto {
+	return &ChargingPeriodDimensionDto{
 		Type:   chargingPeriodDimension.Type,
 		Volume: chargingPeriodDimension.Volume,
 	}
 }
 
-func NewCreateChargingPeriodDimensionParams(id int64, payload *ChargingPeriodDimensionPayload) db.CreateChargingPeriodDimensionParams {
+func NewCreateChargingPeriodDimensionParams(id int64, dto *ChargingPeriodDimensionDto) db.CreateChargingPeriodDimensionParams {
 	return db.CreateChargingPeriodDimensionParams{
 		ChargingPeriodID: id,
-		Type:             payload.Type,
-		Volume:           payload.Volume,
+		Type:             dto.Type,
+		Volume:           dto.Volume,
 	}
 }
 
-func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionPayload(ctx context.Context, chargingPeriodDimension db.ChargingPeriodDimension) *ChargingPeriodDimensionPayload {
-	return NewChargingPeriodDimensionPayload(chargingPeriodDimension)
+func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionDto(ctx context.Context, chargingPeriodDimension db.ChargingPeriodDimension) *ChargingPeriodDimensionDto {
+	return NewChargingPeriodDimensionDto(chargingPeriodDimension)
 }
 
-func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionListPayload(ctx context.Context, chargingPeriodDimensions []db.ChargingPeriodDimension) []*ChargingPeriodDimensionPayload {
-	list := []*ChargingPeriodDimensionPayload{}
+func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionListDto(ctx context.Context, chargingPeriodDimensions []db.ChargingPeriodDimension) []*ChargingPeriodDimensionDto {
+	list := []*ChargingPeriodDimensionDto{}
 	for _, chargingPeriodDimension := range chargingPeriodDimensions {
-		list = append(list, r.CreateChargingPeriodDimensionPayload(ctx, chargingPeriodDimension))
+		list = append(list, r.CreateChargingPeriodDimensionDto(ctx, chargingPeriodDimension))
 	}
 	return list
 }

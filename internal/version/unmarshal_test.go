@@ -25,13 +25,13 @@ func TestUnmarshalResponse(t *testing.T) {
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		versionResolver := versionMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 
-		payload := versionResolver.CreateVersionListPayload(ctx)
-		response := ocpi.OCPISuccess(payload)
+		dto := versionResolver.CreateVersionListDto(ctx)
+		response := ocpi.OCPISuccess(dto)
 		responseJson, _ := json.Marshal(response)
 		readerCloser := io.NopCloser(strings.NewReader(string(responseJson)))
 		unmarshalReponse, _ := versionResolver.UnmarshalResponse(readerCloser)
-		versionPayload := unmarshalReponse.Data
-		versionJson, _ := json.Marshal(versionPayload)
+		versionDto := unmarshalReponse.Data
+		versionJson, _ := json.Marshal(versionDto)
 
 		mocks.CompareJson(t, versionJson, []byte(`[{
 			"version": "2.1.1",

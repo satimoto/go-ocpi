@@ -7,38 +7,37 @@ import (
 	"github.com/satimoto/go-datastore/db"
 )
 
-
-type DisplayTextPayload struct {
+type DisplayTextDto struct {
 	Language string `json:"language"`
 	Text     string `json:"text"`
 }
 
-func (r *DisplayTextPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *DisplayTextDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewDisplayTextPayload(displayText db.DisplayText) *DisplayTextPayload {
-	return &DisplayTextPayload{
+func NewDisplayTextDto(displayText db.DisplayText) *DisplayTextDto {
+	return &DisplayTextDto{
 		Language: displayText.Language,
 		Text:     displayText.Text,
 	}
 }
 
-func NewCreateDisplayTextParams(payload *DisplayTextPayload) db.CreateDisplayTextParams {
+func NewCreateDisplayTextParams(dto *DisplayTextDto) db.CreateDisplayTextParams {
 	return db.CreateDisplayTextParams{
-		Language: payload.Language,
-		Text:     payload.Text,
+		Language: dto.Language,
+		Text:     dto.Text,
 	}
 }
 
-func (r *DisplayTextResolver) CreateDisplayTextPayload(ctx context.Context, displayText db.DisplayText) *DisplayTextPayload {
-	return NewDisplayTextPayload(displayText)
+func (r *DisplayTextResolver) CreateDisplayTextDto(ctx context.Context, displayText db.DisplayText) *DisplayTextDto {
+	return NewDisplayTextDto(displayText)
 }
 
-func (r *DisplayTextResolver) CreateDisplayTextListPayload(ctx context.Context, displayTexts []db.DisplayText) []*DisplayTextPayload {
-	list := []*DisplayTextPayload{}
+func (r *DisplayTextResolver) CreateDisplayTextListDto(ctx context.Context, displayTexts []db.DisplayText) []*DisplayTextDto {
+	list := []*DisplayTextDto{}
 	for _, displayText := range displayTexts {
-		list = append(list, r.CreateDisplayTextPayload(ctx, displayText))
+		list = append(list, r.CreateDisplayTextDto(ctx, displayText))
 	}
 	return list
 }

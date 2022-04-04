@@ -24,9 +24,9 @@ func (r *TariffResolver) DeleteTariff(rw http.ResponseWriter, request *http.Requ
 func (r *TariffResolver) GetTariff(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	tariff := ctx.Value("tariff").(db.Tariff)
-	payload := r.CreateTariffPushPayload(ctx, tariff)
+	dto := r.CreateTariffPushDto(ctx, tariff)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
+	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 }
@@ -34,13 +34,13 @@ func (r *TariffResolver) GetTariff(rw http.ResponseWriter, request *http.Request
 func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	uid := chi.URLParam(request, "tariff_id")
-	payload, err := r.UnmarshalTariffPushPayload(request.Body)
+	dto, err := r.UnmarshalTariffPushDto(request.Body)
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	tariff := r.ReplaceTariff(ctx, nil, uid, payload)
+	tariff := r.ReplaceTariff(ctx, nil, uid, dto)
 
 	if tariff == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))

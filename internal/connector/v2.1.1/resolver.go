@@ -27,8 +27,8 @@ func NewResolver(repositoryService *db.RepositoryService) *ConnectorResolver {
 	return &ConnectorResolver{repo}
 }
 
-func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, uid string, payload *ConnectorPayload) *db.Connector {
-	if payload != nil {
+func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, uid string, dto *ConnectorDto) *db.Connector {
+	if dto != nil {
 		connector, err := r.Repository.GetConnectorByUid(ctx, db.GetConnectorByUidParams{
 			EvseID: evseID,
 			Uid:    uid,
@@ -37,37 +37,37 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, 
 		if err == nil {
 			connectorParams := db.NewUpdateConnectorByUidParams(connector)
 
-			if payload.Standard != nil {
-				connectorParams.Standard = *payload.Standard
+			if dto.Standard != nil {
+				connectorParams.Standard = *dto.Standard
 			}
 
-			if payload.Format != nil {
-				connectorParams.Format = *payload.Format
+			if dto.Format != nil {
+				connectorParams.Format = *dto.Format
 			}
 
-			if payload.PowerType != nil {
-				connectorParams.PowerType = *payload.PowerType
+			if dto.PowerType != nil {
+				connectorParams.PowerType = *dto.PowerType
 			}
 
-			if payload.Amperage != nil {
-				connectorParams.Amperage = *payload.Amperage
+			if dto.Amperage != nil {
+				connectorParams.Amperage = *dto.Amperage
 			}
 
-			if payload.Voltage != nil {
-				connectorParams.Voltage = *payload.Voltage
+			if dto.Voltage != nil {
+				connectorParams.Voltage = *dto.Voltage
 			}
 
-			if payload.TariffID != nil {
-				connectorParams.TariffID = util.SqlNullString(payload.TariffID)
+			if dto.TariffID != nil {
+				connectorParams.TariffID = util.SqlNullString(dto.TariffID)
 			}
 
-			if payload.LastUpdated != nil {
-				connectorParams.LastUpdated = *payload.LastUpdated
+			if dto.LastUpdated != nil {
+				connectorParams.LastUpdated = *dto.LastUpdated
 			}
 
 			connector, err = r.Repository.UpdateConnectorByUid(ctx, connectorParams)
 		} else {
-			connectorParams := NewCreateConnectorParams(evseID, payload)
+			connectorParams := NewCreateConnectorParams(evseID, dto)
 
 			connector, err = r.Repository.CreateConnector(ctx, connectorParams)
 		}
@@ -78,9 +78,9 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, 
 	return nil
 }
 
-func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evseID int64, payload []*ConnectorPayload) {
-	if payload != nil {
-		for _, connector := range payload {
+func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evseID int64, dto []*ConnectorDto) {
+	if dto != nil {
+		for _, connector := range dto {
 			if connector.Id != nil {
 				r.ReplaceConnector(ctx, evseID, *connector.Id, connector)
 			}

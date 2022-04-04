@@ -13,7 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreateCredentialPayload(t *testing.T) {
+func TestCreateCredentialDto(t *testing.T) {
 	ctx := context.Background()
 
 	os.Setenv("API_DOMAIN", "https://api.local:8080")
@@ -25,7 +25,7 @@ func TestCreateCredentialPayload(t *testing.T) {
 	defer os.Unsetenv("API_COUNTRY_CODE")
 	defer os.Unsetenv("WEB_DOMAIN")
 
-	t.Run("Create payload", func(t *testing.T) {
+	t.Run("Create dto", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		credentialResolver := credentialMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
@@ -39,7 +39,7 @@ func TestCreateCredentialPayload(t *testing.T) {
 			LastUpdated:      *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := credentialResolver.CreateCredentialPayload(ctx, credential)
+		response := credentialResolver.CreateCredentialDto(ctx, credential)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{

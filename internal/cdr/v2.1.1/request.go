@@ -13,22 +13,22 @@ import (
 func (r *CdrResolver) GetCdr(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	cdr := ctx.Value("cdr").(db.Cdr)
-	payload := r.CreateCdrPayload(ctx, cdr)
+	dto := r.CreateCdrDto(ctx, cdr)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
+	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 }
 
 func (r *CdrResolver) PostCdr(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
-	payload, err := r.UnmarshalPayload(request.Body)
+	dto, err := r.UnmarshalDto(request.Body)
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	cdr := r.CreateCdr(ctx, payload)
+	cdr := r.CreateCdr(ctx, dto)
 
 	if cdr == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))

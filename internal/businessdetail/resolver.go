@@ -29,34 +29,34 @@ func NewResolver(repositoryService *db.RepositoryService) *BusinessDetailResolve
 	}
 }
 
-func NewCreateBusinessDetailParams(payload *BusinessDetailPayload) db.CreateBusinessDetailParams {
+func NewCreateBusinessDetailParams(dto *BusinessDetailDto) db.CreateBusinessDetailParams {
 	return db.CreateBusinessDetailParams{
-		Name:    payload.Name,
-		Website: util.SqlNullString(payload.Website),
+		Name:    dto.Name,
+		Website: util.SqlNullString(dto.Website),
 	}
 }
 
-func NewUpdateBusinessDetailParams(id int64, payload *BusinessDetailPayload) db.UpdateBusinessDetailParams {
+func NewUpdateBusinessDetailParams(id int64, dto *BusinessDetailDto) db.UpdateBusinessDetailParams {
 	return db.UpdateBusinessDetailParams{
 		ID:      id,
-		Name:    payload.Name,
-		Website: util.SqlNullString(payload.Website),
+		Name:    dto.Name,
+		Website: util.SqlNullString(dto.Website),
 	}
 }
 
-func (r *BusinessDetailResolver) ReplaceBusinessDetail(ctx context.Context, id *int64, payload *BusinessDetailPayload) {
-	if payload != nil {
-		logoID := r.ImageResolver.CreateImage(ctx, payload.Logo)
+func (r *BusinessDetailResolver) ReplaceBusinessDetail(ctx context.Context, id *int64, dto *BusinessDetailDto) {
+	if dto != nil {
+		logoID := r.ImageResolver.CreateImage(ctx, dto.Logo)
 
 		if id == nil {
-			businessDetailParams := NewCreateBusinessDetailParams(payload)
+			businessDetailParams := NewCreateBusinessDetailParams(dto)
 			businessDetailParams.LogoID = util.SqlNullInt64(logoID)
 
 			if businessDetail, err := r.Repository.CreateBusinessDetail(ctx, businessDetailParams); err == nil {
 				id = &businessDetail.ID
 			}
 		} else {
-			businessDetailParams := NewUpdateBusinessDetailParams(*id, payload)
+			businessDetailParams := NewUpdateBusinessDetailParams(*id, dto)
 			businessDetailParams.LogoID = util.SqlNullInt64(logoID)
 
 			r.Repository.UpdateBusinessDetail(ctx, businessDetailParams)

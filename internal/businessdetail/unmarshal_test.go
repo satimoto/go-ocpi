@@ -10,44 +10,44 @@ import (
 
 func TestBusinessDetailUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		payload := businessdetail.BusinessDetailPayload{}
+		dto := businessdetail.BusinessDetailDto{}
 		response := []byte(`{
 			"name": ""
 		}`)
 
-		json.Unmarshal([]byte(`{}`), &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal([]byte(`{}`), &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, response)
 	})
 
 	t.Run("Name only", func(t *testing.T) {
-		payload := businessdetail.BusinessDetailPayload{}
+		dto := businessdetail.BusinessDetailDto{}
 		request := []byte(`{
 			"name": "Business Name"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("Name and Website", func(t *testing.T) {
-		payload := businessdetail.BusinessDetailPayload{}
+		dto := businessdetail.BusinessDetailDto{}
 		request := []byte(`{
 			"name": "Business Name",
 			"website": "https://business.com"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("Name, Website and Logo", func(t *testing.T) {
-		payload := businessdetail.BusinessDetailPayload{}
+		dto := businessdetail.BusinessDetailDto{}
 		request := []byte(`{
 			"name": "Business Name",
 			"website": "https://business.com",
@@ -58,8 +58,8 @@ func TestBusinessDetailUnmarshal(t *testing.T) {
 			}
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

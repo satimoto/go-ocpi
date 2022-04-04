@@ -20,12 +20,12 @@ func NewResolver(repositoryService *db.RepositoryService) *PriceComponentResolve
 	return &PriceComponentResolver{repo}
 }
 
-func (r *PriceComponentResolver) ReplacePriceComponents(ctx context.Context, elementID int64, payload []*PriceComponentPayload) {
-	if payload != nil {
-		for _, priceComponentPayload := range payload {
-			priceComponentParams := NewCreatePriceComponentParams(priceComponentPayload)
+func (r *PriceComponentResolver) ReplacePriceComponents(ctx context.Context, elementID int64, dto []*PriceComponentDto) {
+	if dto != nil {
+		for _, priceComponentDto := range dto {
+			priceComponentParams := NewCreatePriceComponentParams(priceComponentDto)
 			priceComponentParams.ElementID = elementID
-	
+
 			r.Repository.CreatePriceComponent(ctx, priceComponentParams)
 		}
 	}

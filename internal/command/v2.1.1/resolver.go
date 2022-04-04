@@ -37,37 +37,37 @@ func NewResolver(repositoryService *db.RepositoryService) *CommandResolver {
 	}
 }
 
-func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command db.CommandReservation, payload *CommandResponsePayload) {
-	if payload != nil {
+func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command db.CommandReservation, dto *CommandResponseDto) {
+	if dto != nil {
 		commandParams := NewUpdateCommandReservationParams(command)
-		commandParams.Status = *payload.Result
+		commandParams.Status = *dto.Result
 
 		r.Repository.UpdateCommandReservation(ctx, commandParams)
 	}
 }
 
-func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.CommandStart, payload *CommandResponsePayload) {
-	if payload != nil {
+func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.CommandStart, dto *CommandResponseDto) {
+	if dto != nil {
 		commandParams := NewUpdateCommandStartParams(command)
-		commandParams.Status = *payload.Result
+		commandParams.Status = *dto.Result
 
 		r.Repository.UpdateCommandStart(ctx, commandParams)
 	}
 }
 
-func (r *CommandResolver) UpdateCommandStop(ctx context.Context, command db.CommandStop, payload *CommandResponsePayload) {
-	if payload != nil {
+func (r *CommandResolver) UpdateCommandStop(ctx context.Context, command db.CommandStop, dto *CommandResponseDto) {
+	if dto != nil {
 		commandParams := NewUpdateCommandStopParams(command)
-		commandParams.Status = *payload.Result
+		commandParams.Status = *dto.Result
 
 		r.Repository.UpdateCommandStop(ctx, commandParams)
 	}
 }
 
-func (r *CommandResolver) UpdateCommandUnlock(ctx context.Context, command db.CommandUnlock, payload *CommandResponsePayload) {
-	if payload != nil {
+func (r *CommandResolver) UpdateCommandUnlock(ctx context.Context, command db.CommandUnlock, dto *CommandResponseDto) {
+	if dto != nil {
 		commandParams := NewUpdateCommandUnlockParams(command)
-		commandParams.Status = *payload.Result
+		commandParams.Status = *dto.Result
 
 		r.Repository.UpdateCommandUnlock(ctx, commandParams)
 	}

@@ -17,7 +17,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-func (r *LocationResolver) CreateFacilityListPayload(ctx context.Context, facilities []db.Facility) []*string {
+func (r *LocationResolver) CreateFacilityListDto(ctx context.Context, facilities []db.Facility) []*string {
 	list := []*string{}
 	for i := 0; i < len(facilities); i++ {
 		list = append(list, &facilities[i].Text)
@@ -25,36 +25,36 @@ func (r *LocationResolver) CreateFacilityListPayload(ctx context.Context, facili
 	return list
 }
 
-type LocationPayload struct {
-	ID                 *string                               `json:"id"`
-	Type               *db.LocationType                      `json:"type"`
-	Name               *string                               `json:"name,omitempty"`
-	Address            *string                               `json:"address"`
-	City               *string                               `json:"city"`
-	PostalCode         *string                               `json:"postal_code"`
-	Country            *string                               `json:"country"`
-	Coordinates        *geolocation.GeoLocationPayload       `json:"coordinates"`
-	RelatedLocations   []*geolocation.GeoLocationPayload     `json:"related_locations"`
-	Evses              []*evse.EvsePayload                   `json:"evses"`
-	Directions         []*displaytext.DisplayTextPayload     `json:"directions"`
-	Facilities         []*string                             `json:"facilities"`
-	Operator           *businessdetail.BusinessDetailPayload `json:"operator,omitempty"`
-	Suboperator        *businessdetail.BusinessDetailPayload `json:"suboperator,omitempty"`
-	Owner              *businessdetail.BusinessDetailPayload `json:"owner,omitempty"`
-	TimeZone           *string                               `json:"time_zone,omitempty"`
-	OpeningTimes       *openingtime.OpeningTimePayload       `json:"opening_times,omitempty"`
-	ChargingWhenClosed *bool                                 `json:"charging_when_closed"`
-	Images             []*image.ImagePayload                 `json:"images"`
-	EnergyMix          *energymix.EnergyMixPayload           `json:"energy_mix"`
-	LastUpdated        *time.Time                            `json:"last_updated"`
+type LocationDto struct {
+	ID                 *string                           `json:"id"`
+	Type               *db.LocationType                  `json:"type"`
+	Name               *string                           `json:"name,omitempty"`
+	Address            *string                           `json:"address"`
+	City               *string                           `json:"city"`
+	PostalCode         *string                           `json:"postal_code"`
+	Country            *string                           `json:"country"`
+	Coordinates        *geolocation.GeoLocationDto       `json:"coordinates"`
+	RelatedLocations   []*geolocation.GeoLocationDto     `json:"related_locations"`
+	Evses              []*evse.EvseDto                   `json:"evses"`
+	Directions         []*displaytext.DisplayTextDto     `json:"directions"`
+	Facilities         []*string                         `json:"facilities"`
+	Operator           *businessdetail.BusinessDetailDto `json:"operator,omitempty"`
+	Suboperator        *businessdetail.BusinessDetailDto `json:"suboperator,omitempty"`
+	Owner              *businessdetail.BusinessDetailDto `json:"owner,omitempty"`
+	TimeZone           *string                           `json:"time_zone,omitempty"`
+	OpeningTimes       *openingtime.OpeningTimeDto       `json:"opening_times,omitempty"`
+	ChargingWhenClosed *bool                             `json:"charging_when_closed"`
+	Images             []*image.ImageDto                 `json:"images"`
+	EnergyMix          *energymix.EnergyMixDto           `json:"energy_mix"`
+	LastUpdated        *time.Time                        `json:"last_updated"`
 }
 
-func (r *LocationPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *LocationDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewLocationPayload(location db.Location) *LocationPayload {
-	return &LocationPayload{
+func NewLocationDto(location db.Location) *LocationDto {
+	return &LocationDto{
 		ID:                 &location.Uid,
 		Type:               &location.Type,
 		Name:               util.NilString(location.Name.String),
@@ -68,18 +68,18 @@ func NewLocationPayload(location db.Location) *LocationPayload {
 	}
 }
 
-func NewCreateLocationParams(payload *LocationPayload) db.CreateLocationParams {
+func NewCreateLocationParams(dto *LocationDto) db.CreateLocationParams {
 	return db.CreateLocationParams{
-		Uid:                *payload.ID,
-		Type:               *payload.Type,
-		Name:               util.SqlNullString(payload.Name),
-		Address:            *payload.Address,
-		City:               *payload.City,
-		PostalCode:         *payload.PostalCode,
-		Country:            *payload.Country,
-		TimeZone:           util.SqlNullString(payload.TimeZone),
-		ChargingWhenClosed: *payload.ChargingWhenClosed,
-		LastUpdated:        *payload.LastUpdated,
+		Uid:                *dto.ID,
+		Type:               *dto.Type,
+		Name:               util.SqlNullString(dto.Name),
+		Address:            *dto.Address,
+		City:               *dto.City,
+		PostalCode:         *dto.PostalCode,
+		Country:            *dto.Country,
+		TimeZone:           util.SqlNullString(dto.TimeZone),
+		ChargingWhenClosed: *dto.ChargingWhenClosed,
+		LastUpdated:        *dto.LastUpdated,
 	}
 }
 
@@ -104,70 +104,70 @@ func NewUpdateLocationByUidParams(location db.Location) db.UpdateLocationByUidPa
 	}
 }
 
-func (r *LocationResolver) CreateLocationPayload(ctx context.Context, location db.Location) *LocationPayload {
-	response := NewLocationPayload(location)
+func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Location) *LocationDto {
+	response := NewLocationDto(location)
 
 	if geoLocation, err := r.GeoLocationResolver.Repository.GetGeoLocation(ctx, location.GeoLocationID); err == nil {
-		response.Coordinates = r.GeoLocationResolver.CreateGeoLocationPayload(ctx, geoLocation)
+		response.Coordinates = r.GeoLocationResolver.CreateGeoLocationDto(ctx, geoLocation)
 	}
 
 	if relatedLocations, err := r.Repository.ListRelatedLocations(ctx, location.ID); err == nil {
-		response.RelatedLocations = r.GeoLocationResolver.CreateGeoLocationListPayload(ctx, relatedLocations)
+		response.RelatedLocations = r.GeoLocationResolver.CreateGeoLocationListDto(ctx, relatedLocations)
 	}
 
 	if evses, err := r.Repository.ListEvses(ctx, location.ID); err == nil {
-		response.Evses = r.EvseResolver.CreateEvseListPayload(ctx, evses)
+		response.Evses = r.EvseResolver.CreateEvseListDto(ctx, evses)
 	}
 
 	if directions, err := r.Repository.ListLocationDirections(ctx, location.ID); err == nil {
-		response.Directions = r.DisplayTextResolver.CreateDisplayTextListPayload(ctx, directions)
+		response.Directions = r.DisplayTextResolver.CreateDisplayTextListDto(ctx, directions)
 	}
 
 	if facilities, err := r.Repository.ListLocationFacilities(ctx, location.ID); err == nil {
-		response.Facilities = r.CreateFacilityListPayload(ctx, facilities)
+		response.Facilities = r.CreateFacilityListDto(ctx, facilities)
 	}
 
 	if location.EnergyMixID.Valid {
 		if energyMix, err := r.EnergyMixResolver.Repository.GetEnergyMix(ctx, location.EnergyMixID.Int64); err == nil {
-			response.EnergyMix = r.EnergyMixResolver.CreateEnergyMixPayload(ctx, energyMix)
+			response.EnergyMix = r.EnergyMixResolver.CreateEnergyMixDto(ctx, energyMix)
 		}
 	}
 
 	if location.OperatorID.Valid {
 		if operator, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.OperatorID.Int64); err == nil {
-			response.Operator = r.BusinessDetailResolver.CreateBusinessDetailPayload(ctx, operator)
+			response.Operator = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, operator)
 		}
 	}
 
 	if location.SuboperatorID.Valid {
 		if suboperator, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.SuboperatorID.Int64); err == nil {
-			response.Suboperator = r.BusinessDetailResolver.CreateBusinessDetailPayload(ctx, suboperator)
+			response.Suboperator = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, suboperator)
 		}
 	}
 
 	if location.OwnerID.Valid {
 		if owner, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.OwnerID.Int64); err == nil {
-			response.Owner = r.BusinessDetailResolver.CreateBusinessDetailPayload(ctx, owner)
+			response.Owner = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, owner)
 		}
 	}
 
 	if location.OpeningTimeID.Valid {
 		if openingTime, err := r.OpeningTimeResolver.Repository.GetOpeningTime(ctx, location.OpeningTimeID.Int64); err == nil {
-			response.OpeningTimes = r.OpeningTimeResolver.CreateOpeningTimePayload(ctx, openingTime)
+			response.OpeningTimes = r.OpeningTimeResolver.CreateOpeningTimeDto(ctx, openingTime)
 		}
 	}
 
 	if images, err := r.Repository.ListLocationImages(ctx, location.ID); err == nil {
-		response.Images = r.ImageResolver.CreateImageListPayload(ctx, images)
+		response.Images = r.ImageResolver.CreateImageListDto(ctx, images)
 	}
 
 	return response
 }
 
-func (r *LocationResolver) CreateLocationListPayload(ctx context.Context, locations []db.Location) []render.Renderer {
+func (r *LocationResolver) CreateLocationListDto(ctx context.Context, locations []db.Location) []render.Renderer {
 	list := []render.Renderer{}
 	for _, location := range locations {
-		list = append(list, r.CreateLocationPayload(ctx, location))
+		list = append(list, r.CreateLocationDto(ctx, location))
 	}
 	return list
 }

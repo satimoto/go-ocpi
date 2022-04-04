@@ -12,25 +12,25 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type AuthorizationInfoPayload struct {
-	Allowed         *db.TokenAllowedType            `json:"allowed"`
-	AuthorizationID *string                         `json:"authorization_id"`
-	Location        *LocationReferencesPayload      `json:"location,omitempty"`
-	Info            *displaytext.DisplayTextPayload `json:"info,omitempty"`
+type AuthorizationInfoDto struct {
+	Allowed         *db.TokenAllowedType        `json:"allowed"`
+	AuthorizationID *string                     `json:"authorization_id"`
+	Location        *LocationReferencesDto      `json:"location,omitempty"`
+	Info            *displaytext.DisplayTextDto `json:"info,omitempty"`
 }
 
-func (r *AuthorizationInfoPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *AuthorizationInfoDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewAuthorizationInfoPayload(token db.Token) *AuthorizationInfoPayload {
-	return &AuthorizationInfoPayload{
+func NewAuthorizationInfoDto(token db.Token) *AuthorizationInfoDto {
+	return &AuthorizationInfoDto{
 		Allowed: &token.Allowed,
 	}
 }
 
-func (r *TokenResolver) CreateAuthorizationInfoPayload(ctx context.Context, token db.Token, tokenAuthorization *db.TokenAuthorization, location *LocationReferencesPayload, info *displaytext.DisplayTextPayload) *AuthorizationInfoPayload {
-	response := NewAuthorizationInfoPayload(token)
+func (r *TokenResolver) CreateAuthorizationInfoDto(ctx context.Context, token db.Token, tokenAuthorization *db.TokenAuthorization, location *LocationReferencesDto, info *displaytext.DisplayTextDto) *AuthorizationInfoDto {
+	response := NewAuthorizationInfoDto(token)
 
 	if tokenAuthorization != nil {
 		response.AuthorizationID = &tokenAuthorization.AuthorizationID
@@ -47,13 +47,13 @@ func (r *TokenResolver) CreateAuthorizationInfoPayload(ctx context.Context, toke
 	return response
 }
 
-type LocationReferencesPayload struct {
+type LocationReferencesDto struct {
 	LocationID   *string   `json:"location_id"`
 	EvseUids     []*string `json:"evse_uids,omitempty"`
 	ConnectorIds []*string `json:"connector_ids,omitempty"`
 }
 
-func (r *LocationReferencesPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *LocationReferencesDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
@@ -64,7 +64,7 @@ func NewCreateTokenAuthorizationParams(tokenID int64) db.CreateTokenAuthorizatio
 	}
 }
 
-type TokenPayload struct {
+type TokenDto struct {
 	Uid          *string                `json:"uid"`
 	Type         *db.TokenType          `json:"type"`
 	AuthID       *string                `json:"auth_id"`
@@ -76,12 +76,12 @@ type TokenPayload struct {
 	LastUpdated  *time.Time             `json:"last_updated"`
 }
 
-func (r *TokenPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *TokenDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewTokenPayload(token db.Token) *TokenPayload {
-	return &TokenPayload{
+func NewTokenDto(token db.Token) *TokenDto {
+	return &TokenDto{
 		Uid:          &token.Uid,
 		Type:         &token.Type,
 		AuthID:       &token.AuthID,
@@ -94,17 +94,17 @@ func NewTokenPayload(token db.Token) *TokenPayload {
 	}
 }
 
-func NewCreateTokenParams(payload *TokenPayload) db.CreateTokenParams {
+func NewCreateTokenParams(dto *TokenDto) db.CreateTokenParams {
 	return db.CreateTokenParams{
-		Uid:          *payload.Uid,
-		Type:         *payload.Type,
-		AuthID:       *payload.AuthID,
-		VisualNumber: util.SqlNullString(payload.VisualNumber),
-		Issuer:       *payload.Issuer,
-		Valid:        *payload.Valid,
-		Whitelist:    *payload.Whitelist,
-		Language:     util.SqlNullString(payload.Language),
-		LastUpdated:  *payload.LastUpdated,
+		Uid:          *dto.Uid,
+		Type:         *dto.Type,
+		AuthID:       *dto.AuthID,
+		VisualNumber: util.SqlNullString(dto.VisualNumber),
+		Issuer:       *dto.Issuer,
+		Valid:        *dto.Valid,
+		Whitelist:    *dto.Whitelist,
+		Language:     util.SqlNullString(dto.Language),
+		LastUpdated:  *dto.LastUpdated,
 	}
 }
 
@@ -123,14 +123,14 @@ func NewUpdateTokenByUidParams(token db.Token) db.UpdateTokenByUidParams {
 	}
 }
 
-func (r *TokenResolver) CreateTokenPayload(ctx context.Context, token db.Token) *TokenPayload {
-	return NewTokenPayload(token)
+func (r *TokenResolver) CreateTokenDto(ctx context.Context, token db.Token) *TokenDto {
+	return NewTokenDto(token)
 }
 
-func (r *TokenResolver) CreateTokenListPayload(ctx context.Context, tokens []db.Token) []render.Renderer {
+func (r *TokenResolver) CreateTokenListDto(ctx context.Context, tokens []db.Token) []render.Renderer {
 	list := []render.Renderer{}
 	for _, token := range tokens {
-		list = append(list, r.CreateTokenPayload(ctx, token))
+		list = append(list, r.CreateTokenDto(ctx, token))
 	}
 	return list
 }

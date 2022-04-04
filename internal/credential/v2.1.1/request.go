@@ -36,9 +36,9 @@ func (r *CredentialResolver) DeleteCredential(rw http.ResponseWriter, request *h
 func (r *CredentialResolver) GetCredential(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	cred := ctx.Value("credential").(db.Credential)
-	payload := r.CreateCredentialPayload(ctx, cred)
+	dto := r.CreateCredentialDto(ctx, cred)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
+	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 }
@@ -46,22 +46,22 @@ func (r *CredentialResolver) GetCredential(rw http.ResponseWriter, request *http
 func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	cred, err := credential.GetCredentialByToken(r.Repository, ctx, request)
-	payload := CredentialPayload{}
+	dto := CredentialDto{}
 
 	if err == nil && len(cred.ClientToken.String) == 0 {
-		if err := json.NewDecoder(request.Body).Decode(&payload); err != nil {
+		if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
 			render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 		}
 
-		c, err := r.ReplaceCredential(ctx, cred, &payload)
+		c, err := r.ReplaceCredential(ctx, cred, &dto)
 
 		if err != nil {
 			errResponse := err.(*ocpi.OCPIResponse)
 			render.Render(rw, request, errResponse)
 		}
 
-		credentialPayload := r.CreateCredentialPayload(ctx, *c)
-		render.Render(rw, request, ocpi.OCPISuccess(credentialPayload))
+		credentialDto := r.CreateCredentialDto(ctx, *c)
+		render.Render(rw, request, ocpi.OCPISuccess(credentialDto))
 		return
 	}
 

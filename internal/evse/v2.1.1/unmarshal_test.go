@@ -10,17 +10,17 @@ import (
 
 func TestEvseUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		payload := evse.EvsePayload{}
+		dto := evse.EvseDto{}
 		request := []byte(`{}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Status Schedules", func(t *testing.T) {
-		payload := evse.EvsePayload{}
+		dto := evse.EvseDto{}
 		request := []byte(`{
 			"uid": "3257",
 			"evse_id": "BE-BEC-E041503002",
@@ -47,14 +47,14 @@ func TestEvseUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Capabilities", func(t *testing.T) {
-		payload := evse.EvsePayload{}
+		dto := evse.EvseDto{}
 		request := []byte(`{
 			"uid": "3257",
 			"evse_id": "BE-BEC-E041503002",
@@ -68,14 +68,14 @@ func TestEvseUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Connectors", func(t *testing.T) {
-		payload := evse.EvsePayload{}
+		dto := evse.EvseDto{}
 		request := []byte(`{
 			"uid": "3256",
 			"evse_id": "BE-BEC-E041503001",
@@ -109,8 +109,8 @@ func TestEvseUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-28T08:12:01Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

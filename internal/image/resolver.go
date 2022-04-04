@@ -22,8 +22,8 @@ func NewResolver(repositoryService *db.RepositoryService) *ImageResolver {
 	return &ImageResolver{repo}
 }
 
-func NewImagePayload(image db.Image) *ImagePayload {
-	return &ImagePayload{
+func NewImageDto(image db.Image) *ImageDto {
+	return &ImageDto{
 		Url:       image.Url,
 		Thumbnail: util.NilString(image.Thumbnail.String),
 		Category:  image.Category,
@@ -33,19 +33,19 @@ func NewImagePayload(image db.Image) *ImagePayload {
 	}
 }
 
-func NewCreateImageParams(payload *ImagePayload) db.CreateImageParams {
+func NewCreateImageParams(dto *ImageDto) db.CreateImageParams {
 	return db.CreateImageParams{
-		Url:       payload.Url,
-		Thumbnail: util.SqlNullString(payload.Thumbnail),
-		Category:  payload.Category,
-		Width:     sql.NullInt32{Int32: *payload.Width},
-		Height:    sql.NullInt32{Int32: *payload.Height},
+		Url:       dto.Url,
+		Thumbnail: util.SqlNullString(dto.Thumbnail),
+		Category:  dto.Category,
+		Width:     sql.NullInt32{Int32: *dto.Width},
+		Height:    sql.NullInt32{Int32: *dto.Height},
 	}
 }
 
-func (r *ImageResolver) CreateImage(ctx context.Context, payload *ImagePayload) *int64 {
-	if payload != nil {
-		imageParams := NewCreateImageParams(payload)
+func (r *ImageResolver) CreateImage(ctx context.Context, dto *ImageDto) *int64 {
+	if dto != nil {
+		imageParams := NewCreateImageParams(dto)
 
 		image, err := r.Repository.CreateImage(ctx, imageParams)
 
