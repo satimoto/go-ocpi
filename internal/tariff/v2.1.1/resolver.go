@@ -39,46 +39,46 @@ func NewResolver(repositoryService *db.RepositoryService) *TariffResolver {
 	}
 }
 
-func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid string, payload *TariffPushPayload) *db.Tariff {
-	if payload != nil {
+func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid string, dto *TariffPushDto) *db.Tariff {
+	if dto != nil {
 		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
 		energyMixID := util.NilInt64(tariff.EnergyMixID)
 
-		if payload.EnergyMix != nil {
-			r.EnergyMixResolver.ReplaceEnergyMix(ctx, energyMixID, payload.EnergyMix)
+		if dto.EnergyMix != nil {
+			r.EnergyMixResolver.ReplaceEnergyMix(ctx, energyMixID, dto.EnergyMix)
 		}
 
 		if err == nil {
 			tariffParams := NewUpdateTariffByUidParams(tariff)
 			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)
 
-			if payload.Currency != nil {
-				tariffParams.Currency = *payload.Currency
+			if dto.Currency != nil {
+				tariffParams.Currency = *dto.Currency
 			}
 
-			if payload.LastUpdated != nil {
-				tariffParams.LastUpdated = *payload.LastUpdated
+			if dto.LastUpdated != nil {
+				tariffParams.LastUpdated = *dto.LastUpdated
 			}
 
-			if payload.TariffAltUrl != nil {
-				tariffParams.TariffAltUrl = util.SqlNullString(payload.TariffAltUrl)
+			if dto.TariffAltUrl != nil {
+				tariffParams.TariffAltUrl = util.SqlNullString(dto.TariffAltUrl)
 			}
 
 			tariff, err = r.Repository.UpdateTariffByUid(ctx, tariffParams)
 		} else {
-			tariffParams := NewCreateTariffParams(payload)
+			tariffParams := NewCreateTariffParams(dto)
 			tariffParams.CdrID = util.SqlNullInt64(cdrID)
 			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)
 
 			tariff, err = r.Repository.CreateTariff(ctx, tariffParams)
 		}
 
-		if payload.TariffAltText != nil {
-			r.replaceTariffAltText(ctx, tariff.ID, payload)
+		if dto.TariffAltText != nil {
+			r.replaceTariffAltText(ctx, tariff.ID, dto)
 		}
 
-		if payload.Elements != nil {
-			r.replaceElements(ctx, tariff.ID, payload)
+		if dto.Elements != nil {
+			r.replaceElements(ctx, tariff.ID, dto)
 		}
 
 		return &tariff
@@ -87,11 +87,11 @@ func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid st
 	return nil
 }
 
-func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int64, payload *TariffPushPayload) {
+func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int64, dto *TariffPushDto) {
 	r.Repository.DeleteTariffAltTexts(ctx, tariffID)
 
-	for _, displayTextPayload := range payload.TariffAltText {
-		displayTextParams := displaytext.NewCreateDisplayTextParams(displayTextPayload)
+	for _, displayTextDto := range dto.TariffAltText {
+		displayTextParams := displaytext.NewCreateDisplayTextParams(displayTextDto)
 
 		if displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams); err == nil {
 			r.Repository.SetTariffAltText(ctx, db.SetTariffAltTextParams{
@@ -102,6 +102,6 @@ func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int6
 	}
 }
 
-func (r *TariffResolver) replaceElements(ctx context.Context, tariffID int64, payload *TariffPushPayload) {
-	r.ElementResolver.ReplaceElements(ctx, tariffID, payload.Elements)
+func (r *TariffResolver) replaceElements(ctx context.Context, tariffID int64, dto *TariffPushDto) {
+	r.ElementResolver.ReplaceElements(ctx, tariffID, dto.Elements)
 }

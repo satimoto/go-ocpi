@@ -33,14 +33,14 @@ func NewResolver(repositoryService *db.RepositoryService) *VersionDetailResolver
 	}
 }
 
-func (r *VersionDetailResolver) ReplaceVersionEndpoints(ctx context.Context, versionID int64, payload *VersionDetailPayload) []*db.VersionEndpoint {
+func (r *VersionDetailResolver) ReplaceVersionEndpoints(ctx context.Context, versionID int64, dto *VersionDetailDto) []*db.VersionEndpoint {
 	endpoints := []*db.VersionEndpoint{}
 
-	if payload != nil {
+	if dto != nil {
 		r.Repository.DeleteVersionEndpoints(ctx, versionID)
 
-		for _, endpointPayload := range payload.Endpoints {
-			endpointParams := NewCreateVersionEndpointParams(versionID, endpointPayload)
+		for _, endpointDto := range dto.Endpoints {
+			endpointParams := NewCreateVersionEndpointParams(versionID, endpointDto)
 
 			if endpoint, err := r.Repository.CreateVersionEndpoint(ctx, endpointParams); err == nil {
 				endpoints = append(endpoints, &endpoint)

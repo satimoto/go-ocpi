@@ -11,13 +11,13 @@ import (
 func (r *CommandResolver) PostCommandReservationResponse(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	command := ctx.Value("command").(db.CommandReservation)
-	commandResponsePayload, err := r.UnmarshalCommandResponsePayload(request.Body)
+	commandResponseDto, err := r.UnmarshalCommandResponseDto(request.Body)
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	r.UpdateCommandReservation(ctx, command, commandResponsePayload)
+	r.UpdateCommandReservation(ctx, command, commandResponseDto)
 
 	if err := render.Render(rw, request, ocpi.OCPISuccess(nil)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
@@ -27,13 +27,13 @@ func (r *CommandResolver) PostCommandReservationResponse(rw http.ResponseWriter,
 func (r *CommandResolver) PostCommandStartResponse(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	command := ctx.Value("command").(db.CommandStart)
-	commandResponsePayload, err := r.UnmarshalCommandResponsePayload(request.Body)
+	commandResponseDto, err := r.UnmarshalCommandResponseDto(request.Body)
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	r.UpdateCommandStart(ctx, command, commandResponsePayload)
+	r.UpdateCommandStart(ctx, command, commandResponseDto)
 
 	if err := render.Render(rw, request, ocpi.OCPISuccess(nil)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
@@ -43,13 +43,13 @@ func (r *CommandResolver) PostCommandStartResponse(rw http.ResponseWriter, reque
 func (r *CommandResolver) PostCommandStopResponse(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	command := ctx.Value("command").(db.CommandStop)
-	commandResponsePayload, err := r.UnmarshalCommandResponsePayload(request.Body)
+	commandResponseDto, err := r.UnmarshalCommandResponseDto(request.Body)
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	r.UpdateCommandStop(ctx, command, commandResponsePayload)
+	r.UpdateCommandStop(ctx, command, commandResponseDto)
 
 	if err := render.Render(rw, request, ocpi.OCPISuccess(nil)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
@@ -59,13 +59,13 @@ func (r *CommandResolver) PostCommandStopResponse(rw http.ResponseWriter, reques
 func (r *CommandResolver) PostCommandUnlockResponse(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	command := ctx.Value("command").(db.CommandUnlock)
-	commandResponsePayload, err := r.UnmarshalCommandResponsePayload(request.Body)
+	commandResponseDto, err := r.UnmarshalCommandResponseDto(request.Body)
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	r.UpdateCommandUnlock(ctx, command, commandResponsePayload)
+	r.UpdateCommandUnlock(ctx, command, commandResponseDto)
 
 	if err := render.Render(rw, request, ocpi.OCPISuccess(nil)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))

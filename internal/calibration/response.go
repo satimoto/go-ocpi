@@ -8,20 +8,20 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type CalibrationPayload struct {
-	EncodingMethod        *string                    `json:"encoding_method"`
-	EncodingMethodVersion *int32                     `json:"encoding_method_version,omitempty"`
-	PublicKey             *string                    `json:"public_key,omitempty"`
-	SignedValues          []*CalibrationValuePayload `json:"signed_values"`
-	Url                   *string                    `json:"url,omitempty"`
+type CalibrationDto struct {
+	EncodingMethod        *string                `json:"encoding_method"`
+	EncodingMethodVersion *int32                 `json:"encoding_method_version,omitempty"`
+	PublicKey             *string                `json:"public_key,omitempty"`
+	SignedValues          []*CalibrationValueDto `json:"signed_values"`
+	Url                   *string                `json:"url,omitempty"`
 }
 
-func (r *CalibrationPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *CalibrationDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewCalibrationPayload(calibration db.Calibration) *CalibrationPayload {
-	return &CalibrationPayload{
+func NewCalibrationDto(calibration db.Calibration) *CalibrationDto {
+	return &CalibrationDto{
 		EncodingMethod:        &calibration.EncodingMethod,
 		EncodingMethodVersion: util.NilInt32(calibration.EncodingMethodVersion.Int32),
 		PublicKey:             util.NilString(calibration.PublicKey.String),
@@ -29,60 +29,60 @@ func NewCalibrationPayload(calibration db.Calibration) *CalibrationPayload {
 	}
 }
 
-func NewCreateCalibrationParams(payload *CalibrationPayload) db.CreateCalibrationParams {
+func NewCreateCalibrationParams(dto *CalibrationDto) db.CreateCalibrationParams {
 	return db.CreateCalibrationParams{
-		EncodingMethod:        *payload.EncodingMethod,
-		EncodingMethodVersion: util.SqlNullInt32(payload.EncodingMethodVersion),
-		PublicKey:             util.SqlNullString(payload.PublicKey),
-		Url:                   util.SqlNullString(payload.Url),
+		EncodingMethod:        *dto.EncodingMethod,
+		EncodingMethodVersion: util.SqlNullInt32(dto.EncodingMethodVersion),
+		PublicKey:             util.SqlNullString(dto.PublicKey),
+		Url:                   util.SqlNullString(dto.Url),
 	}
 }
 
-func (r *CalibrationResolver) CreateCalibrationPayload(ctx context.Context, calibration db.Calibration) *CalibrationPayload {
-	response := NewCalibrationPayload(calibration)
+func (r *CalibrationResolver) CreateCalibrationDto(ctx context.Context, calibration db.Calibration) *CalibrationDto {
+	response := NewCalibrationDto(calibration)
 
 	if calibrationValues, err := r.Repository.ListCalibrationValues(ctx, calibration.ID); err == nil {
-		response.SignedValues = r.CreateCalibrationValueListPayload(ctx, calibrationValues)
+		response.SignedValues = r.CreateCalibrationValueListDto(ctx, calibrationValues)
 	}
 
 	return response
 }
 
-type CalibrationValuePayload struct {
+type CalibrationValueDto struct {
 	Nature     *string `json:"nature"`
 	PlainData  *string `json:"plain_data"`
 	SignedData *string `json:"signed_data"`
 }
 
-func (r *CalibrationValuePayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *CalibrationValueDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewCalibrationValuePayload(calibrationValue db.CalibrationValue) *CalibrationValuePayload {
-	return &CalibrationValuePayload{
+func NewCalibrationValueDto(calibrationValue db.CalibrationValue) *CalibrationValueDto {
+	return &CalibrationValueDto{
 		Nature:     &calibrationValue.Nature,
 		PlainData:  &calibrationValue.PlainData,
 		SignedData: &calibrationValue.SignedData,
 	}
 }
 
-func NewCreateCalibrationValueParams(id int64, payload *CalibrationValuePayload) db.CreateCalibrationValueParams {
+func NewCreateCalibrationValueParams(id int64, dto *CalibrationValueDto) db.CreateCalibrationValueParams {
 	return db.CreateCalibrationValueParams{
 		CalibrationID: id,
-		Nature:        *payload.Nature,
-		PlainData:     *payload.PlainData,
-		SignedData:    *payload.SignedData,
+		Nature:        *dto.Nature,
+		PlainData:     *dto.PlainData,
+		SignedData:    *dto.SignedData,
 	}
 }
 
-func (r *CalibrationResolver) CreateCalibrationValuePayload(ctx context.Context, calibrationValue db.CalibrationValue) *CalibrationValuePayload {
-	return NewCalibrationValuePayload(calibrationValue)
+func (r *CalibrationResolver) CreateCalibrationValueDto(ctx context.Context, calibrationValue db.CalibrationValue) *CalibrationValueDto {
+	return NewCalibrationValueDto(calibrationValue)
 }
 
-func (r *CalibrationResolver) CreateCalibrationValueListPayload(ctx context.Context, calibrationValues []db.CalibrationValue) []*CalibrationValuePayload {
-	list := []*CalibrationValuePayload{}
+func (r *CalibrationResolver) CreateCalibrationValueListDto(ctx context.Context, calibrationValues []db.CalibrationValue) []*CalibrationValueDto {
+	list := []*CalibrationValueDto{}
 	for _, calibrationValue := range calibrationValues {
-		list = append(list, r.CreateCalibrationValuePayload(ctx, calibrationValue))
+		list = append(list, r.CreateCalibrationValueDto(ctx, calibrationValue))
 	}
 	return list
 }

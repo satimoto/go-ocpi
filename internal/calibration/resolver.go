@@ -22,14 +22,14 @@ func NewResolver(repositoryService *db.RepositoryService) *CalibrationResolver {
 	return &CalibrationResolver{repo}
 }
 
-func (r *CalibrationResolver) CreateCalibration(ctx context.Context, payload *CalibrationPayload) *db.Calibration {
-	if payload != nil {
-		calibrationParams := NewCreateCalibrationParams(payload)
+func (r *CalibrationResolver) CreateCalibration(ctx context.Context, dto *CalibrationDto) *db.Calibration {
+	if dto != nil {
+		calibrationParams := NewCreateCalibrationParams(dto)
 
 		calibration, err := r.Repository.CreateCalibration(ctx, calibrationParams)
 
 		if err == nil {
-			r.createCalibrationValues(ctx, &calibration.ID, *payload)
+			r.createCalibrationValues(ctx, &calibration.ID, *dto)
 
 			return &calibration
 		}
@@ -38,9 +38,9 @@ func (r *CalibrationResolver) CreateCalibration(ctx context.Context, payload *Ca
 	return nil
 }
 
-func (r *CalibrationResolver) createCalibrationValues(ctx context.Context, calibrationID *int64, payload CalibrationPayload) {
+func (r *CalibrationResolver) createCalibrationValues(ctx context.Context, calibrationID *int64, dto CalibrationDto) {
 	if calibrationID != nil {
-		for _, calibrationValue := range payload.SignedValues {
+		for _, calibrationValue := range dto.SignedValues {
 			calibrationValueParams := NewCreateCalibrationValueParams(*calibrationID, calibrationValue)
 			r.Repository.CreateCalibrationValue(ctx, calibrationValueParams)
 		}

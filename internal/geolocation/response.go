@@ -8,49 +8,49 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type GeoLocationPayload struct {
+type GeoLocationDto struct {
 	Latitude  string  `json:"latitude"`
 	Longitude string  `json:"longitude"`
 	Name      *string `json:"name,omitempty"`
 }
 
-func (r *GeoLocationPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *GeoLocationDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewGeoLocationPayload(geoLocation db.GeoLocation) *GeoLocationPayload {
-	return &GeoLocationPayload{
+func NewGeoLocationDto(geoLocation db.GeoLocation) *GeoLocationDto {
+	return &GeoLocationDto{
 		Latitude:  geoLocation.Latitude,
 		Longitude: geoLocation.Longitude,
 		Name:      util.NilString(geoLocation.Name.String),
 	}
 }
 
-func NewCreateGeoLocationParams(payload *GeoLocationPayload) db.CreateGeoLocationParams {
+func NewCreateGeoLocationParams(dto *GeoLocationDto) db.CreateGeoLocationParams {
 	return db.CreateGeoLocationParams{
-		Latitude:  payload.Latitude,
-		Longitude: payload.Longitude,
-		Name:      util.SqlNullString(payload.Name),
+		Latitude:  dto.Latitude,
+		Longitude: dto.Longitude,
+		Name:      util.SqlNullString(dto.Name),
 	}
 }
 
-func NewUpdateGeoLocationParams(id int64, payload *GeoLocationPayload) db.UpdateGeoLocationParams {
+func NewUpdateGeoLocationParams(id int64, dto *GeoLocationDto) db.UpdateGeoLocationParams {
 	return db.UpdateGeoLocationParams{
 		ID:        id,
-		Latitude:  payload.Latitude,
-		Longitude: payload.Longitude,
-		Name:      util.SqlNullString(payload.Name),
+		Latitude:  dto.Latitude,
+		Longitude: dto.Longitude,
+		Name:      util.SqlNullString(dto.Name),
 	}
 }
 
-func (r *GeoLocationResolver) CreateGeoLocationPayload(ctx context.Context, geoLocation db.GeoLocation) *GeoLocationPayload {
-	return NewGeoLocationPayload(geoLocation)
+func (r *GeoLocationResolver) CreateGeoLocationDto(ctx context.Context, geoLocation db.GeoLocation) *GeoLocationDto {
+	return NewGeoLocationDto(geoLocation)
 }
 
-func (r *GeoLocationResolver) CreateGeoLocationListPayload(ctx context.Context, geoLocations []db.GeoLocation) []*GeoLocationPayload {
-	list := []*GeoLocationPayload{}
+func (r *GeoLocationResolver) CreateGeoLocationListDto(ctx context.Context, geoLocations []db.GeoLocation) []*GeoLocationDto {
+	list := []*GeoLocationDto{}
 	for _, geoLocation := range geoLocations {
-		list = append(list, r.CreateGeoLocationPayload(ctx, geoLocation))
+		list = append(list, r.CreateGeoLocationDto(ctx, geoLocation))
 	}
 	return list
 }

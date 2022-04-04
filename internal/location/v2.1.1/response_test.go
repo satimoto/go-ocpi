@@ -13,7 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreateLocationPayload(t *testing.T) {
+func TestCreateLocationDto(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("Empty", func(t *testing.T) {
@@ -23,7 +23,7 @@ func TestCreateLocationPayload(t *testing.T) {
 
 		loc := db.Location{}
 
-		response := locationResolver.CreateLocationPayload(ctx, loc)
+		response := locationResolver.CreateLocationDto(ctx, loc)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -53,12 +53,12 @@ func TestCreateLocationPayload(t *testing.T) {
 		statusSchedules := []db.StatusSchedule{}
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
 			PeriodBegin: *util.ParseTime("2018-12-16T10:10:02Z"),
-			PeriodEnd:   util.SqlNullTime( *util.ParseTime("2018-12-16T10:30:02Z")),
+			PeriodEnd:   util.SqlNullTime(*util.ParseTime("2018-12-16T10:30:02Z")),
 			Status:      db.EvseStatusBLOCKED,
 		})
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
 			PeriodBegin: *util.ParseTime("2018-12-16T10:30:02Z"),
-			PeriodEnd:   util.SqlNullTime( *util.ParseTime("2018-12-16T11:00:02Z")),
+			PeriodEnd:   util.SqlNullTime(*util.ParseTime("2018-12-16T11:00:02Z")),
 			Status:      db.EvseStatusCHARGING,
 		})
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
@@ -124,7 +124,7 @@ func TestCreateLocationPayload(t *testing.T) {
 			LastUpdated: *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := locationResolver.CreateLocationPayload(ctx, loc)
+		response := locationResolver.CreateLocationDto(ctx, loc)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -232,7 +232,7 @@ func TestCreateLocationPayload(t *testing.T) {
 			LastUpdated:        *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := locationResolver.CreateLocationPayload(ctx, loc)
+		response := locationResolver.CreateLocationDto(ctx, loc)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -314,7 +314,7 @@ func TestCreateLocationPayload(t *testing.T) {
 			LastUpdated:        *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := locationResolver.CreateLocationPayload(ctx, loc)
+		response := locationResolver.CreateLocationDto(ctx, loc)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{

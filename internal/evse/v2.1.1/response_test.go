@@ -13,7 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreateCapabilityListPayload(t *testing.T) {
+func TestCreateCapabilityListDto(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("Test", func(t *testing.T) {
@@ -25,14 +25,14 @@ func TestCreateCapabilityListPayload(t *testing.T) {
 		capabilities = append(capabilities, db.Capability{Text: "Test2", Description: "Test"})
 		capabilities = append(capabilities, db.Capability{Text: "Test3", Description: "Test"})
 
-		response := evseResolver.CreateCapabilityListPayload(ctx, capabilities)
+		response := evseResolver.CreateCapabilityListDto(ctx, capabilities)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`["Test1", "Test2", "Test3"]`))
 	})
 }
 
-func TestCreateEvsePayload(t *testing.T) {
+func TestCreateEvseDto(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("With Status Schedules", func(t *testing.T) {
@@ -42,12 +42,12 @@ func TestCreateEvsePayload(t *testing.T) {
 		statusSchedules := []db.StatusSchedule{}
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
 			PeriodBegin: *util.ParseTime("2018-12-16T10:10:02Z"),
-			PeriodEnd:   util.SqlNullTime( *util.ParseTime("2018-12-16T10:30:02Z")),
+			PeriodEnd:   util.SqlNullTime(*util.ParseTime("2018-12-16T10:30:02Z")),
 			Status:      db.EvseStatusBLOCKED,
 		})
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
 			PeriodBegin: *util.ParseTime("2018-12-16T10:30:02Z"),
-			PeriodEnd:   util.SqlNullTime( *util.ParseTime("2018-12-16T11:00:02Z")),
+			PeriodEnd:   util.SqlNullTime(*util.ParseTime("2018-12-16T11:00:02Z")),
 			Status:      db.EvseStatusCHARGING,
 		})
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
@@ -65,7 +65,7 @@ func TestCreateEvsePayload(t *testing.T) {
 			LastUpdated:       *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := evseResolver.CreateEvsePayload(ctx, evse)
+		response := evseResolver.CreateEvseDto(ctx, evse)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -112,7 +112,7 @@ func TestCreateEvsePayload(t *testing.T) {
 			LastUpdated: *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := evseResolver.CreateEvsePayload(ctx, evse)
+		response := evseResolver.CreateEvseDto(ctx, evse)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -165,7 +165,7 @@ func TestCreateEvsePayload(t *testing.T) {
 			LastUpdated:       *util.ParseTime("2015-06-28T08:12:01Z"),
 		}
 
-		response := evseResolver.CreateEvsePayload(ctx, evse)
+		response := evseResolver.CreateEvseDto(ctx, evse)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -231,7 +231,7 @@ func TestCreateEvsePayload(t *testing.T) {
 			LastUpdated:       *util.ParseTime("2015-06-28T08:12:01Z"),
 		}
 
-		response := evseResolver.CreateEvsePayload(ctx, evse)
+		response := evseResolver.CreateEvseDto(ctx, evse)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{

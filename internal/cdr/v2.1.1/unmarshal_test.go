@@ -10,7 +10,7 @@ import (
 
 func TestCdrUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		payload := cdr.CdrPayload{}
+		dto := cdr.CdrDto{}
 		response := []byte(`{
 			"id": null,
 			"start_date_time": null,
@@ -26,14 +26,14 @@ func TestCdrUnmarshal(t *testing.T) {
 			"last_updated": null
 		}`)
 
-		json.Unmarshal([]byte(`{}`), &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal([]byte(`{}`), &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, response)
 	})
 
 	t.Run("Base data", func(t *testing.T) {
-		payload := cdr.CdrPayload{}
+		dto := cdr.CdrDto{}
 		request := []byte(`{
 			"id": "CDR0001",
 			"start_date_time": "2015-06-29T21:39:09Z",
@@ -50,14 +50,14 @@ func TestCdrUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T22:01:13Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With charge points", func(t *testing.T) {
-		payload := cdr.CdrPayload{}
+		dto := cdr.CdrDto{}
 		request := []byte(`{
 			"id": "CDR0002",
 			"start_date_time": "2015-06-29T21:39:09Z",
@@ -84,8 +84,8 @@ func TestCdrUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T22:01:13Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

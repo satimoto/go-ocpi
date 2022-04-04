@@ -14,33 +14,33 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type CdrPayload struct {
-	ID               *string                                 `json:"id"`
-	AuthorizationID  *string                                 `json:"authorization_id,omitempty"`
-	StartDateTime    *time.Time                              `json:"start_date_time"`
-	StopDateTime     *time.Time                              `json:"stop_date_time,omitempty"`
-	AuthID           *string                                 `json:"auth_id"`
-	AuthMethod       *db.AuthMethodType                      `json:"auth_method"`
-	Location         *location.LocationPayload               `json:"location"`
-	MeterID          *string                                 `json:"meter_id,omitempty"`
-	Currency         *string                                 `json:"currency"`
-	Tariffs          []*tariff.TariffPushPayload             `json:"tariffs"`
-	ChargingPeriods  []*chargingperiod.ChargingPeriodPayload `json:"charging_periods"`
-	SignedData       *calibration.CalibrationPayload         `json:"signed_data,omitempty"`
-	TotalCost        *float64                                `json:"total_cost"`
-	TotalEnergy      *float64                                `json:"total_energy"`
-	TotalTime        *float64                                `json:"total_time"`
-	TotalParkingTime *float64                                `json:"total_parking_time,omitempty"`
-	Remark           *string                                 `json:"remark,omitempty"`
-	LastUpdated      *time.Time                              `json:"last_updated"`
+type CdrDto struct {
+	ID               *string                             `json:"id"`
+	AuthorizationID  *string                             `json:"authorization_id,omitempty"`
+	StartDateTime    *time.Time                          `json:"start_date_time"`
+	StopDateTime     *time.Time                          `json:"stop_date_time,omitempty"`
+	AuthID           *string                             `json:"auth_id"`
+	AuthMethod       *db.AuthMethodType                  `json:"auth_method"`
+	Location         *location.LocationDto               `json:"location"`
+	MeterID          *string                             `json:"meter_id,omitempty"`
+	Currency         *string                             `json:"currency"`
+	Tariffs          []*tariff.TariffPushDto             `json:"tariffs"`
+	ChargingPeriods  []*chargingperiod.ChargingPeriodDto `json:"charging_periods"`
+	SignedData       *calibration.CalibrationDto         `json:"signed_data,omitempty"`
+	TotalCost        *float64                            `json:"total_cost"`
+	TotalEnergy      *float64                            `json:"total_energy"`
+	TotalTime        *float64                            `json:"total_time"`
+	TotalParkingTime *float64                            `json:"total_parking_time,omitempty"`
+	Remark           *string                             `json:"remark,omitempty"`
+	LastUpdated      *time.Time                          `json:"last_updated"`
 }
 
-func (r *CdrPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *CdrDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewCdrPayload(cdr db.Cdr) *CdrPayload {
-	return &CdrPayload{
+func NewCdrDto(cdr db.Cdr) *CdrDto {
+	return &CdrDto{
 		ID:               &cdr.Uid,
 		AuthorizationID:  util.NilString(cdr.AuthorizationID.String),
 		StartDateTime:    &cdr.StartDateTime,
@@ -58,53 +58,53 @@ func NewCdrPayload(cdr db.Cdr) *CdrPayload {
 	}
 }
 
-func NewCreateCdrParams(payload *CdrPayload) db.CreateCdrParams {
+func NewCreateCdrParams(dto *CdrDto) db.CreateCdrParams {
 	return db.CreateCdrParams{
-		Uid:              *payload.ID,
-		AuthorizationID:  util.SqlNullString(payload.AuthorizationID),
-		StartDateTime:    *payload.StartDateTime,
-		StopDateTime:     util.SqlNullTime(payload.StopDateTime),
-		AuthID:           *payload.AuthID,
-		AuthMethod:       *payload.AuthMethod,
-		MeterID:          util.SqlNullString(payload.MeterID),
-		Currency:         *payload.Currency,
-		TotalCost:        *payload.TotalCost,
-		TotalEnergy:      *payload.TotalEnergy,
-		TotalTime:        *payload.TotalTime,
-		TotalParkingTime: util.SqlNullFloat64(payload.TotalParkingTime),
-		Remark:           util.SqlNullString(payload.Remark),
-		LastUpdated:      *payload.LastUpdated,
+		Uid:              *dto.ID,
+		AuthorizationID:  util.SqlNullString(dto.AuthorizationID),
+		StartDateTime:    *dto.StartDateTime,
+		StopDateTime:     util.SqlNullTime(dto.StopDateTime),
+		AuthID:           *dto.AuthID,
+		AuthMethod:       *dto.AuthMethod,
+		MeterID:          util.SqlNullString(dto.MeterID),
+		Currency:         *dto.Currency,
+		TotalCost:        *dto.TotalCost,
+		TotalEnergy:      *dto.TotalEnergy,
+		TotalTime:        *dto.TotalTime,
+		TotalParkingTime: util.SqlNullFloat64(dto.TotalParkingTime),
+		Remark:           util.SqlNullString(dto.Remark),
+		LastUpdated:      *dto.LastUpdated,
 	}
 }
 
-func (r *CdrResolver) CreateCdrPayload(ctx context.Context, cdr db.Cdr) *CdrPayload {
-	response := NewCdrPayload(cdr)
+func (r *CdrResolver) CreateCdrDto(ctx context.Context, cdr db.Cdr) *CdrDto {
+	response := NewCdrDto(cdr)
 
 	if chargingPeriods, err := r.Repository.ListCdrChargingPeriods(ctx, cdr.ID); err == nil {
-		response.ChargingPeriods = r.ChargingPeriodResolver.CreateChargingPeriodListPayload(ctx, chargingPeriods)
+		response.ChargingPeriods = r.ChargingPeriodResolver.CreateChargingPeriodListDto(ctx, chargingPeriods)
 	}
 
 	if location, err := r.LocationResolver.Repository.GetLocation(ctx, cdr.LocationID); err == nil {
-		response.Location = r.LocationResolver.CreateLocationPayload(ctx, location)
+		response.Location = r.LocationResolver.CreateLocationDto(ctx, location)
 	}
 
 	if cdr.CalibrationID.Valid {
 		if calibration, err := r.CalibrationResolver.Repository.GetCalibration(ctx, cdr.CalibrationID.Int64); err == nil {
-			response.SignedData = r.CalibrationResolver.CreateCalibrationPayload(ctx, calibration)
+			response.SignedData = r.CalibrationResolver.CreateCalibrationDto(ctx, calibration)
 		}
 	}
 
 	if tariffs, err := r.TariffResolver.Repository.ListTariffsByCdr(ctx, util.SqlNullInt64(cdr.ID)); err == nil {
-		response.Tariffs = r.TariffResolver.CreateTariffListPayload(ctx, tariffs)
+		response.Tariffs = r.TariffResolver.CreateTariffListDto(ctx, tariffs)
 	}
 
 	return response
 }
 
-func (r *CdrResolver) CreateCdrListPayload(ctx context.Context, cdrs []db.Cdr) []render.Renderer {
+func (r *CdrResolver) CreateCdrListDto(ctx context.Context, cdrs []db.Cdr) []render.Renderer {
 	list := []render.Renderer{}
 	for _, cdr := range cdrs {
-		list = append(list, r.CreateCdrPayload(ctx, cdr))
+		list = append(list, r.CreateCdrDto(ctx, cdr))
 	}
 	return list
 }

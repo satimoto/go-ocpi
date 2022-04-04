@@ -8,7 +8,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type RestrictionPayload struct {
+type RestrictionDto struct {
 	StartTime   *string   `json:"start_time,omitempty"`
 	EndTime     *string   `json:"end_time,omitempty"`
 	StartDate   *string   `json:"start_date,omitempty"`
@@ -22,12 +22,12 @@ type RestrictionPayload struct {
 	DayOfWeek   []*string `json:"day_of_week,omitempty"`
 }
 
-func (r *RestrictionPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *RestrictionDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewRestrictionPayload(restriction db.Restriction) *RestrictionPayload {
-	return &RestrictionPayload{
+func NewRestrictionDto(restriction db.Restriction) *RestrictionDto {
+	return &RestrictionDto{
 		StartTime:   util.NilString(restriction.StartTime.String),
 		EndTime:     util.NilString(restriction.EndTime.String),
 		StartDate:   util.NilString(restriction.StartDate.String),
@@ -41,48 +41,48 @@ func NewRestrictionPayload(restriction db.Restriction) *RestrictionPayload {
 	}
 }
 
-func NewCreateRestrictionParams(payload *RestrictionPayload) db.CreateRestrictionParams {
+func NewCreateRestrictionParams(dto *RestrictionDto) db.CreateRestrictionParams {
 	return db.CreateRestrictionParams{
-		StartTime:   util.SqlNullString(payload.StartTime),
-		EndTime:     util.SqlNullString(payload.EndTime),
-		StartDate:   util.SqlNullString(payload.StartDate),
-		EndDate:     util.SqlNullString(payload.EndDate),
-		MinKwh:      util.SqlNullFloat64(payload.MinKwh),
-		MaxKwh:      util.SqlNullFloat64(payload.MaxKwh),
-		MinPower:    util.SqlNullFloat64(payload.MinPower),
-		MaxPower:    util.SqlNullFloat64(payload.MaxPower),
-		MinDuration: util.SqlNullInt32(payload.MinDuration),
-		MaxDuration: util.SqlNullInt32(payload.MaxDuration),
+		StartTime:   util.SqlNullString(dto.StartTime),
+		EndTime:     util.SqlNullString(dto.EndTime),
+		StartDate:   util.SqlNullString(dto.StartDate),
+		EndDate:     util.SqlNullString(dto.EndDate),
+		MinKwh:      util.SqlNullFloat64(dto.MinKwh),
+		MaxKwh:      util.SqlNullFloat64(dto.MaxKwh),
+		MinPower:    util.SqlNullFloat64(dto.MinPower),
+		MaxPower:    util.SqlNullFloat64(dto.MaxPower),
+		MinDuration: util.SqlNullInt32(dto.MinDuration),
+		MaxDuration: util.SqlNullInt32(dto.MaxDuration),
 	}
 }
 
-func NewUpdateRestrictionParams(id int64, payload *RestrictionPayload) db.UpdateRestrictionParams {
+func NewUpdateRestrictionParams(id int64, dto *RestrictionDto) db.UpdateRestrictionParams {
 	return db.UpdateRestrictionParams{
 		ID:          id,
-		StartTime:   util.SqlNullString(payload.StartTime),
-		EndTime:     util.SqlNullString(payload.EndTime),
-		StartDate:   util.SqlNullString(payload.StartDate),
-		EndDate:     util.SqlNullString(payload.EndDate),
-		MinKwh:      util.SqlNullFloat64(payload.MinKwh),
-		MaxKwh:      util.SqlNullFloat64(payload.MaxKwh),
-		MinPower:    util.SqlNullFloat64(payload.MinPower),
-		MaxPower:    util.SqlNullFloat64(payload.MaxPower),
-		MinDuration: util.SqlNullInt32(payload.MinDuration),
-		MaxDuration: util.SqlNullInt32(payload.MaxDuration),
+		StartTime:   util.SqlNullString(dto.StartTime),
+		EndTime:     util.SqlNullString(dto.EndTime),
+		StartDate:   util.SqlNullString(dto.StartDate),
+		EndDate:     util.SqlNullString(dto.EndDate),
+		MinKwh:      util.SqlNullFloat64(dto.MinKwh),
+		MaxKwh:      util.SqlNullFloat64(dto.MaxKwh),
+		MinPower:    util.SqlNullFloat64(dto.MinPower),
+		MaxPower:    util.SqlNullFloat64(dto.MaxPower),
+		MinDuration: util.SqlNullInt32(dto.MinDuration),
+		MaxDuration: util.SqlNullInt32(dto.MaxDuration),
 	}
 }
 
-func (r *RestrictionResolver) CreateRestrictionPayload(ctx context.Context, restriction db.Restriction) *RestrictionPayload {
-	response := NewRestrictionPayload(restriction)
+func (r *RestrictionResolver) CreateRestrictionDto(ctx context.Context, restriction db.Restriction) *RestrictionDto {
+	response := NewRestrictionDto(restriction)
 
 	if weekdays, err := r.Repository.ListRestrictionWeekdays(ctx, restriction.ID); err == nil && len(weekdays) > 0 {
-		response.DayOfWeek = r.CreateWeekdayListPayload(ctx, weekdays)
+		response.DayOfWeek = r.CreateWeekdayListDto(ctx, weekdays)
 	}
 
 	return response
 }
 
-func (r *RestrictionResolver) CreateWeekdayListPayload(ctx context.Context, weekdays []db.Weekday) []*string {
+func (r *RestrictionResolver) CreateWeekdayListDto(ctx context.Context, weekdays []db.Weekday) []*string {
 	list := []*string{}
 	for _, weekday := range weekdays {
 		list = append(list, &weekday.Text)

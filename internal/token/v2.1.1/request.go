@@ -15,18 +15,18 @@ func (r *TokenResolver) ListTokens(rw http.ResponseWriter, request *http.Request
 
 	tokens, err := r.Repository.ListTokens(ctx, db.ListTokensParams{
 		FilterDateFrom: middleware.GetDateFrom(ctx, ""),
-		FilterDateTo: middleware.GetDateTo(ctx, ""),
-		FilterLimit: middleware.GetLimit(ctx, math.MaxInt64),
-		FilterOffset: middleware.GetOffset(ctx, 0),
+		FilterDateTo:   middleware.GetDateTo(ctx, ""),
+		FilterLimit:    middleware.GetLimit(ctx, math.MaxInt64),
+		FilterOffset:   middleware.GetOffset(ctx, 0),
 	})
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	payload := r.CreateTokenListPayload(ctx, tokens)
+	dto := r.CreateTokenListDto(ctx, tokens)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
+	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 }
@@ -34,16 +34,16 @@ func (r *TokenResolver) ListTokens(rw http.ResponseWriter, request *http.Request
 func (r *TokenResolver) AuthorizeToken(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	token := ctx.Value("token").(db.Token)
-	locationReferencesPayload, err := r.UnmarshalLocationReferencesPayload(request.Body)
+	locationReferencesDto, err := r.UnmarshalLocationReferencesDto(request.Body)
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	tokenAuthorization := r.CreateTokenAuthorization(ctx, token, locationReferencesPayload)
-	payload := r.CreateAuthorizationInfoPayload(ctx, token, tokenAuthorization, locationReferencesPayload, nil)
+	tokenAuthorization := r.CreateTokenAuthorization(ctx, token, locationReferencesDto)
+	dto := r.CreateAuthorizationInfoDto(ctx, token, tokenAuthorization, locationReferencesDto, nil)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(payload)); err != nil {
+	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 }

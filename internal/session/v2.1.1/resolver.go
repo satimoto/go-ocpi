@@ -33,16 +33,16 @@ func NewResolver(repositoryService *db.RepositoryService) *SessionResolver {
 	}
 }
 
-func (r *SessionResolver) ReplaceSession(ctx context.Context, uid string, payload *SessionPayload) *db.Session {
-	if payload != nil {
+func (r *SessionResolver) ReplaceSession(ctx context.Context, uid string, dto *SessionDto) *db.Session {
+	if dto != nil {
 		session, err := r.Repository.GetSessionByUid(ctx, uid)
 		locationID := util.NilInt64(session.LocationID)
 
-		if payload.Location != nil {
-			if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *payload.Location.ID); err == nil {
+		if dto.Location != nil {
+			if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
 				locationID = &location.ID
 			} else {
-				location := r.LocationResolver.ReplaceLocation(ctx, *payload.Location.ID, payload.Location)
+				location := r.LocationResolver.ReplaceLocation(ctx, *dto.Location.ID, dto.Location)
 				locationID = &location.ID
 			}
 		}
@@ -51,56 +51,56 @@ func (r *SessionResolver) ReplaceSession(ctx context.Context, uid string, payloa
 			sessionParams := NewUpdateSessionByUidParams(session)
 			sessionParams.LocationID = *locationID
 
-			if payload.AuthID != nil {
-				sessionParams.AuthID = *payload.AuthID
+			if dto.AuthID != nil {
+				sessionParams.AuthID = *dto.AuthID
 			}
 
-			if payload.AuthMethod != nil {
-				sessionParams.AuthMethod = *payload.AuthMethod
+			if dto.AuthMethod != nil {
+				sessionParams.AuthMethod = *dto.AuthMethod
 			}
 
-			if payload.Currency != nil {
-				sessionParams.Currency = *payload.Currency
+			if dto.Currency != nil {
+				sessionParams.Currency = *dto.Currency
 			}
 
-			if payload.EndDatetime != nil {
-				sessionParams.EndDatetime = util.SqlNullTime(payload.EndDatetime)
+			if dto.EndDatetime != nil {
+				sessionParams.EndDatetime = util.SqlNullTime(dto.EndDatetime)
 			}
 
-			if payload.Kwh != nil {
-				sessionParams.Kwh = *payload.Kwh
+			if dto.Kwh != nil {
+				sessionParams.Kwh = *dto.Kwh
 			}
 
-			if payload.LastUpdated != nil {
-				sessionParams.LastUpdated = *payload.LastUpdated
+			if dto.LastUpdated != nil {
+				sessionParams.LastUpdated = *dto.LastUpdated
 			}
 
-			if payload.MeterID != nil {
-				sessionParams.MeterID = util.SqlNullString(payload.MeterID)
-			}
-			
-			if payload.Status != nil {
-				sessionParams.Status = *payload.Status
+			if dto.MeterID != nil {
+				sessionParams.MeterID = util.SqlNullString(dto.MeterID)
 			}
 
-			if payload.StartDatetime != nil {
-				sessionParams.StartDatetime = *payload.StartDatetime
+			if dto.Status != nil {
+				sessionParams.Status = *dto.Status
 			}
 
-			if payload.TotalCost != nil {
-				sessionParams.TotalCost = util.SqlNullFloat64(payload.TotalCost)
+			if dto.StartDatetime != nil {
+				sessionParams.StartDatetime = *dto.StartDatetime
+			}
+
+			if dto.TotalCost != nil {
+				sessionParams.TotalCost = util.SqlNullFloat64(dto.TotalCost)
 			}
 
 			session, err = r.Repository.UpdateSessionByUid(ctx, sessionParams)
 		} else {
-			sessionParams := NewCreateSessionParams(payload)
+			sessionParams := NewCreateSessionParams(dto)
 			sessionParams.LocationID = *locationID
 
 			session, err = r.Repository.CreateSession(ctx, sessionParams)
 		}
 
-		if payload.ChargingPeriods != nil {
-			r.replaceChargingPeriods(ctx, session.ID, payload)
+		if dto.ChargingPeriods != nil {
+			r.replaceChargingPeriods(ctx, session.ID, dto)
 		}
 
 		return &session
@@ -109,15 +109,15 @@ func (r *SessionResolver) ReplaceSession(ctx context.Context, uid string, payloa
 	return nil
 }
 
-func (r *SessionResolver) replaceChargingPeriods(ctx context.Context, sessionID int64, payload *SessionPayload) {
+func (r *SessionResolver) replaceChargingPeriods(ctx context.Context, sessionID int64, dto *SessionDto) {
 	r.Repository.DeleteSessionChargingPeriods(ctx, sessionID)
 
-	for _, chargingPeriodPayload := range payload.ChargingPeriods {
-		chargingPeriod := r.ChargingPeriodResolver.ReplaceChargingPeriod(ctx, chargingPeriodPayload)
+	for _, chargingPeriodDto := range dto.ChargingPeriods {
+		chargingPeriod := r.ChargingPeriodResolver.ReplaceChargingPeriod(ctx, chargingPeriodDto)
 
 		if chargingPeriod != nil {
 			r.Repository.SetSessionChargingPeriod(ctx, db.SetSessionChargingPeriodParams{
-				SessionID: sessionID,
+				SessionID:        sessionID,
 				ChargingPeriodID: chargingPeriod.ID,
 			})
 		}

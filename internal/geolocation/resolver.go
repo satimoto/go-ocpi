@@ -25,18 +25,18 @@ func NewResolver(repositoryService *db.RepositoryService) *GeoLocationResolver {
 	return &GeoLocationResolver{repo}
 }
 
-func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.NullInt64, payload *GeoLocationPayload) *geom.Point {
+func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.NullInt64, dto *GeoLocationDto) *geom.Point {
 	var geomPoint *geom.Point
 
-	if payload != nil {
+	if dto != nil {
 		var geoLocation db.GeoLocation
 		var err error
 
 		if !id.Valid {
-			geoLocationParams := NewCreateGeoLocationParams(payload)
+			geoLocationParams := NewCreateGeoLocationParams(dto)
 			geoLocation, err = r.Repository.CreateGeoLocation(ctx, geoLocationParams)
 		} else {
-			geoLocationParams := NewUpdateGeoLocationParams(id.Int64, payload)
+			geoLocationParams := NewUpdateGeoLocationParams(id.Int64, dto)
 			geoLocation, err = r.Repository.UpdateGeoLocation(ctx, geoLocationParams)
 		}
 

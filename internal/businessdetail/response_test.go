@@ -12,7 +12,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreateBusinessDetailPayload(t *testing.T) {
+func TestCreateBusinessDetailDto(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("Name only", func(t *testing.T) {
@@ -22,7 +22,7 @@ func TestCreateBusinessDetailPayload(t *testing.T) {
 		businessDetail := db.BusinessDetail{
 			Name: "Business Name",
 		}
-		response := businessDetailResolver.CreateBusinessDetailPayload(ctx, businessDetail)
+		response := businessDetailResolver.CreateBusinessDetailDto(ctx, businessDetail)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -38,7 +38,7 @@ func TestCreateBusinessDetailPayload(t *testing.T) {
 			Name:    "Business Name",
 			Website: sql.NullString{String: "https://business.com"},
 		}
-		response := businessDetailResolver.CreateBusinessDetailPayload(ctx, businessDetail)
+		response := businessDetailResolver.CreateBusinessDetailDto(ctx, businessDetail)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -64,7 +64,7 @@ func TestCreateBusinessDetailPayload(t *testing.T) {
 
 		mockRepository.SetGetImageMockData(dbMocks.ImageMockData{Image: image, Error: nil})
 
-		response := businessDetailResolver.CreateBusinessDetailPayload(ctx, businessDetail)
+		response := businessDetailResolver.CreateBusinessDetailDto(ctx, businessDetail)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{

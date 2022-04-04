@@ -5,12 +5,12 @@ import (
 	"io"
 )
 
-func (r *SessionResolver) UnmarshalPayload(body io.ReadCloser) (*SessionPayload, error) {
-	payload := SessionPayload{}
+func (r *SessionResolver) UnmarshalDto(body io.ReadCloser) (*SessionDto, error) {
+	dto := SessionDto{}
 
-	if err := json.NewDecoder(body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err
 	}
 
-	return &payload, nil
+	return &dto, nil
 }

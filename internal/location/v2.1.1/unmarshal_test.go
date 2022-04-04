@@ -10,7 +10,7 @@ import (
 
 func TestLocationUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		payload := location.LocationPayload{}
+		dto := location.LocationDto{}
 		response := []byte(`{
 			"id": null,
 			"type": null,
@@ -29,14 +29,14 @@ func TestLocationUnmarshal(t *testing.T) {
 			"last_updated": null
 		}`)
 
-		json.Unmarshal([]byte(`{}`), &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal([]byte(`{}`), &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, response)
 	})
 
 	t.Run("With Evse", func(t *testing.T) {
-		payload := location.LocationPayload{}
+		dto := location.LocationDto{}
 		request := []byte(`{
 			"id": "LOC1",
 			"type": "ON_STREET",
@@ -101,14 +101,14 @@ func TestLocationUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Directions, Facilities", func(t *testing.T) {
-		payload := location.LocationPayload{}
+		dto := location.LocationDto{}
 		request := []byte(`{
 			"id": "LOC2",
 			"type": "UNDERGROUND_GARAGE",
@@ -134,14 +134,14 @@ func TestLocationUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Coordinates, Related locations, Images", func(t *testing.T) {
-		payload := location.LocationPayload{}
+		dto := location.LocationDto{}
 		request := []byte(`{
 			"id": "LOC2",
 			"type": "PARKING_LOT",
@@ -183,8 +183,8 @@ func TestLocationUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

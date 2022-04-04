@@ -9,7 +9,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type ConnectorPayload struct {
+type ConnectorDto struct {
 	Id                 *string             `json:"id"`
 	Standard           *db.ConnectorType   `json:"standard"`
 	Format             *db.ConnectorFormat `json:"format"`
@@ -21,12 +21,12 @@ type ConnectorPayload struct {
 	LastUpdated        *time.Time          `json:"last_updated"`
 }
 
-func (r *ConnectorPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *ConnectorDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewConnectorPayload(connector db.Connector) *ConnectorPayload {
-	return &ConnectorPayload{
+func NewConnectorDto(connector db.Connector) *ConnectorDto {
+	return &ConnectorDto{
 		Id:                 &connector.Uid,
 		Standard:           &connector.Standard,
 		Format:             &connector.Format,
@@ -39,29 +39,29 @@ func NewConnectorPayload(connector db.Connector) *ConnectorPayload {
 	}
 }
 
-func NewCreateConnectorParams(evseID int64, payload *ConnectorPayload) db.CreateConnectorParams {
+func NewCreateConnectorParams(evseID int64, dto *ConnectorDto) db.CreateConnectorParams {
 	return db.CreateConnectorParams{
 		EvseID:             evseID,
-		Uid:                *payload.Id,
-		Standard:           *payload.Standard,
-		Format:             *payload.Format,
-		PowerType:          *payload.PowerType,
-		Voltage:            *payload.Voltage,
-		Amperage:           *payload.Amperage,
-		TariffID:           util.SqlNullString(payload.TariffID),
-		TermsAndConditions: util.SqlNullString(payload.TermsAndConditions),
-		LastUpdated:        *payload.LastUpdated,
+		Uid:                *dto.Id,
+		Standard:           *dto.Standard,
+		Format:             *dto.Format,
+		PowerType:          *dto.PowerType,
+		Voltage:            *dto.Voltage,
+		Amperage:           *dto.Amperage,
+		TariffID:           util.SqlNullString(dto.TariffID),
+		TermsAndConditions: util.SqlNullString(dto.TermsAndConditions),
+		LastUpdated:        *dto.LastUpdated,
 	}
 }
 
-func (r *ConnectorResolver) CreateConnectorPayload(ctx context.Context, connector db.Connector) *ConnectorPayload {
-	return NewConnectorPayload(connector)
+func (r *ConnectorResolver) CreateConnectorDto(ctx context.Context, connector db.Connector) *ConnectorDto {
+	return NewConnectorDto(connector)
 }
 
-func (r *ConnectorResolver) CreateConnectorListPayload(ctx context.Context, connectors []db.Connector) []*ConnectorPayload {
-	list := []*ConnectorPayload{}
+func (r *ConnectorResolver) CreateConnectorListDto(ctx context.Context, connectors []db.Connector) []*ConnectorDto {
+	list := []*ConnectorDto{}
 	for _, connector := range connectors {
-		list = append(list, r.CreateConnectorPayload(ctx, connector))
+		list = append(list, r.CreateConnectorDto(ctx, connector))
 	}
 	return list
 }

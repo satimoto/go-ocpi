@@ -62,8 +62,8 @@ func NewResolver(repositoryService *db.RepositoryService) *LocationResolver {
 	}
 }
 
-func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payload *LocationPayload) *db.Location {
-	if payload != nil {
+func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, dto *LocationDto) *db.Location {
+	if dto != nil {
 		location, err := r.Repository.GetLocationByUid(ctx, uid)
 		geoLocationID := util.SqlNullInt64(util.NilInt64(location.GeoLocationID))
 		energyMixID := util.NilInt64(location.EnergyMixID)
@@ -73,32 +73,32 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payl
 		suboperatorID := util.NilInt64(location.SuboperatorID)
 		geomPoint := &location.Geom
 
-		if payload.Coordinates != nil {
-			geomPoint = r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, payload.Coordinates)
+		if dto.Coordinates != nil {
+			geomPoint = r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, dto.Coordinates)
 		}
 
 		if !geoLocationID.Valid || geomPoint == nil {
 			return nil
 		}
 
-		if payload.EnergyMix != nil {
-			r.EnergyMixResolver.ReplaceEnergyMix(ctx, energyMixID, payload.EnergyMix)
+		if dto.EnergyMix != nil {
+			r.EnergyMixResolver.ReplaceEnergyMix(ctx, energyMixID, dto.EnergyMix)
 		}
 
-		if payload.OpeningTimes != nil {
-			r.OpeningTimeResolver.ReplaceOpeningTime(ctx, openingTimeID, payload.OpeningTimes)
+		if dto.OpeningTimes != nil {
+			r.OpeningTimeResolver.ReplaceOpeningTime(ctx, openingTimeID, dto.OpeningTimes)
 		}
 
-		if payload.Operator != nil {
-			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, operatorID, payload.Operator)
+		if dto.Operator != nil {
+			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, operatorID, dto.Operator)
 		}
 
-		if payload.Owner != nil {
-			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, ownerID, payload.Owner)
+		if dto.Owner != nil {
+			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, ownerID, dto.Owner)
 		}
 
-		if payload.Suboperator != nil {
-			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, suboperatorID, payload.Suboperator)
+		if dto.Suboperator != nil {
+			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, suboperatorID, dto.Suboperator)
 		}
 
 		if err == nil {
@@ -111,45 +111,45 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payl
 			locationParams.OwnerID = util.SqlNullInt64(ownerID)
 			locationParams.SuboperatorID = util.SqlNullInt64(suboperatorID)
 
-			if payload.Address != nil {
-				locationParams.Address = *payload.Address
+			if dto.Address != nil {
+				locationParams.Address = *dto.Address
 			}
 
-			if payload.City != nil {
-				locationParams.City = *payload.City
+			if dto.City != nil {
+				locationParams.City = *dto.City
 			}
 
-			if payload.ChargingWhenClosed != nil {
-				locationParams.ChargingWhenClosed = *payload.ChargingWhenClosed
+			if dto.ChargingWhenClosed != nil {
+				locationParams.ChargingWhenClosed = *dto.ChargingWhenClosed
 			}
 
-			if payload.Country != nil {
-				locationParams.Country = *payload.Country
+			if dto.Country != nil {
+				locationParams.Country = *dto.Country
 			}
 
-			if payload.LastUpdated != nil {
-				locationParams.LastUpdated = *payload.LastUpdated
+			if dto.LastUpdated != nil {
+				locationParams.LastUpdated = *dto.LastUpdated
 			}
 
-			if payload.PostalCode != nil {
-				locationParams.PostalCode = *payload.PostalCode
+			if dto.PostalCode != nil {
+				locationParams.PostalCode = *dto.PostalCode
 			}
 
-			if payload.Name != nil {
-				locationParams.Name = util.SqlNullString(payload.Name)
+			if dto.Name != nil {
+				locationParams.Name = util.SqlNullString(dto.Name)
 			}
 
-			if payload.TimeZone != nil {
-				locationParams.TimeZone = util.SqlNullString(payload.TimeZone)
+			if dto.TimeZone != nil {
+				locationParams.TimeZone = util.SqlNullString(dto.TimeZone)
 			}
 
-			if payload.Type != nil {
-				locationParams.Type = *payload.Type
+			if dto.Type != nil {
+				locationParams.Type = *dto.Type
 			}
 
 			location, err = r.Repository.UpdateLocationByUid(ctx, locationParams)
 		} else {
-			locationParams := NewCreateLocationParams(payload)
+			locationParams := NewCreateLocationParams(dto)
 			locationParams.Geom = *geomPoint
 			locationParams.GeoLocationID = geoLocationID.Int64
 			locationParams.EnergyMixID = util.SqlNullInt64(energyMixID)
@@ -161,24 +161,24 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payl
 			location, err = r.Repository.CreateLocation(ctx, locationParams)
 		}
 
-		if payload.Directions != nil {
-			r.replaceDirections(ctx, location.ID, payload)
+		if dto.Directions != nil {
+			r.replaceDirections(ctx, location.ID, dto)
 		}
 
-		if payload.Facilities != nil {
-			r.replaceFacilities(ctx, location.ID, payload)
+		if dto.Facilities != nil {
+			r.replaceFacilities(ctx, location.ID, dto)
 		}
 
-		if payload.Evses != nil {
-			r.replaceEvses(ctx, location.ID, payload)
+		if dto.Evses != nil {
+			r.replaceEvses(ctx, location.ID, dto)
 		}
 
-		if payload.Images != nil {
-			r.replaceImages(ctx, location.ID, payload)
+		if dto.Images != nil {
+			r.replaceImages(ctx, location.ID, dto)
 		}
 
-		if payload.RelatedLocations != nil {
-			r.replaceRelatedLocations(ctx, location.ID, payload)
+		if dto.RelatedLocations != nil {
+			r.replaceRelatedLocations(ctx, location.ID, dto)
 		}
 
 		return &location
@@ -187,11 +187,11 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, payl
 	return nil
 }
 
-func (r *LocationResolver) replaceDirections(ctx context.Context, locationID int64, payload *LocationPayload) {
+func (r *LocationResolver) replaceDirections(ctx context.Context, locationID int64, dto *LocationDto) {
 	r.Repository.DeleteLocationDirections(ctx, locationID)
 
-	for _, directionPayload := range payload.Directions {
-		displayTextParams := displaytext.NewCreateDisplayTextParams(directionPayload)
+	for _, directionDto := range dto.Directions {
+		displayTextParams := displaytext.NewCreateDisplayTextParams(directionDto)
 
 		if displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams); err == nil {
 			r.Repository.SetLocationDirection(ctx, db.SetLocationDirectionParams{
@@ -202,18 +202,18 @@ func (r *LocationResolver) replaceDirections(ctx context.Context, locationID int
 	}
 }
 
-func (r *LocationResolver) replaceEvses(ctx context.Context, locationID int64, payload *LocationPayload) {
-	r.EvseResolver.ReplaceEvses(ctx, locationID, payload.Evses)
+func (r *LocationResolver) replaceEvses(ctx context.Context, locationID int64, dto *LocationDto) {
+	r.EvseResolver.ReplaceEvses(ctx, locationID, dto.Evses)
 }
 
-func (r *LocationResolver) replaceFacilities(ctx context.Context, locationID int64, payload *LocationPayload) {
+func (r *LocationResolver) replaceFacilities(ctx context.Context, locationID int64, dto *LocationDto) {
 	r.Repository.UnsetLocationFacilities(ctx, locationID)
 
 	if facilities, err := r.Repository.ListFacilities(ctx); err == nil {
 		filteredFacilities := []*db.Facility{}
 
 		for _, facility := range facilities {
-			if util.StringsContainString(payload.Facilities, facility.Text) {
+			if util.StringsContainString(dto.Facilities, facility.Text) {
 				filteredFacilities = append(filteredFacilities, &facility)
 			}
 		}
@@ -227,11 +227,11 @@ func (r *LocationResolver) replaceFacilities(ctx context.Context, locationID int
 	}
 }
 
-func (r *LocationResolver) replaceImages(ctx context.Context, locationID int64, payload *LocationPayload) {
+func (r *LocationResolver) replaceImages(ctx context.Context, locationID int64, dto *LocationDto) {
 	r.Repository.DeleteLocationImages(ctx, locationID)
 
-	for _, imagePayload := range payload.Images {
-		imageParams := image.NewCreateImageParams(imagePayload)
+	for _, imageDto := range dto.Images {
+		imageParams := image.NewCreateImageParams(imageDto)
 
 		if image, err := r.ImageResolver.Repository.CreateImage(ctx, imageParams); err == nil {
 			r.Repository.SetLocationImage(ctx, db.SetLocationImageParams{
@@ -242,10 +242,10 @@ func (r *LocationResolver) replaceImages(ctx context.Context, locationID int64, 
 	}
 }
 
-func (r *LocationResolver) replaceRelatedLocations(ctx context.Context, locationID int64, payload *LocationPayload) {
+func (r *LocationResolver) replaceRelatedLocations(ctx context.Context, locationID int64, dto *LocationDto) {
 	r.Repository.DeleteRelatedLocations(ctx, locationID)
 
-	for _, relatedLocation := range payload.RelatedLocations {
+	for _, relatedLocation := range dto.RelatedLocations {
 		geoLocationParams := geolocation.NewCreateGeoLocationParams(relatedLocation)
 
 		if geoLocation, err := r.GeoLocationResolver.Repository.CreateGeoLocation(ctx, geoLocationParams); err == nil {

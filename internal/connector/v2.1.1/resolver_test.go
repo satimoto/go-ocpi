@@ -24,7 +24,7 @@ func TestReplaceConnector(t *testing.T) {
 		connectorFormatCABLE := db.ConnectorFormatCABLE
 		powerTypeAC3PHASE := db.PowerTypeAC3PHASE
 
-		payload := connector.ConnectorPayload{
+		dto := connector.ConnectorDto{
 			Id:          util.NilString("1"),
 			Standard:    &connectorTypeIEC62196T2,
 			Format:      &connectorFormatCABLE,
@@ -35,7 +35,7 @@ func TestReplaceConnector(t *testing.T) {
 			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z"),
 		}
 
-		connectorResolver.ReplaceConnector(ctx, 1, *payload.Id, &payload)
+		connectorResolver.ReplaceConnector(ctx, 1, *dto.Id, &dto)
 
 		params, err := mockRepository.GetCreateConnectorMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -73,11 +73,11 @@ func TestReplaceConnector(t *testing.T) {
 			},
 		})
 
-		payload := connector.ConnectorPayload{
+		dto := connector.ConnectorDto{
 			TariffID: util.NilString("12"),
 		}
 
-		connectorResolver.ReplaceConnector(ctx, 1, "1", &payload)
+		connectorResolver.ReplaceConnector(ctx, 1, "1", &dto)
 
 		params, _ := mockRepository.GetUpdateConnectorByUidMockData()
 		paramsJson, _ := json.Marshal(params)

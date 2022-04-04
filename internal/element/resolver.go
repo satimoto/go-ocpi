@@ -30,25 +30,24 @@ func NewResolver(repositoryService *db.RepositoryService) *ElementResolver {
 	}
 }
 
-func (r *ElementResolver) ReplaceElements(ctx context.Context, tariffID int64, payload []*ElementPayload) {
-	if payload != nil {
+func (r *ElementResolver) ReplaceElements(ctx context.Context, tariffID int64, dto []*ElementDto) {
+	if dto != nil {
 		r.Repository.DeleteElements(ctx, tariffID)
 		r.RestrictionResolver.Repository.DeleteRestrictions(ctx, tariffID)
 
-		for _, elementPayload := range payload {
-			elementParams := NewCreateElementParams(elementPayload)
+		for _, elementDto := range dto {
+			elementParams := NewCreateElementParams(elementDto)
 			elementParams.TariffID = tariffID
 
-			if elementPayload.Restrictions != nil {
+			if elementDto.Restrictions != nil {
 				restrictionID := util.NilInt64(nil)
-				r.RestrictionResolver.ReplaceRestriction(ctx, restrictionID, elementPayload.Restrictions)
+				r.RestrictionResolver.ReplaceRestriction(ctx, restrictionID, elementDto.Restrictions)
 				elementParams.RestrictionID = util.SqlNullInt64(restrictionID)
 			}
 
 			if element, err := r.Repository.CreateElement(ctx, elementParams); err == nil {
-				r.PriceComponentResolver.ReplacePriceComponents(ctx, element.ID, elementPayload.PriceComponents)
+				r.PriceComponentResolver.ReplacePriceComponents(ctx, element.ID, elementDto.PriceComponents)
 			}
 		}
 	}
 }
-

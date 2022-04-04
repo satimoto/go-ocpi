@@ -13,47 +13,47 @@ var (
 	version = "2.1.1"
 )
 
-type VersionDetailPayload struct {
-	Version   string             `json:"version"`
-	Endpoints []*EndpointPayload `json:"endpoints"`
+type VersionDetailDto struct {
+	Version   string         `json:"version"`
+	Endpoints []*EndpointDto `json:"endpoints"`
 }
 
-func (r *VersionDetailPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *VersionDetailDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-type EndpointPayload struct {
+type EndpointDto struct {
 	Identifier string `json:"identifier"`
 	Url        string `json:"url"`
 }
 
-func NewCreateVersionEndpointParams(versionID int64, payload *EndpointPayload) db.CreateVersionEndpointParams {
+func NewCreateVersionEndpointParams(versionID int64, dto *EndpointDto) db.CreateVersionEndpointParams {
 	return db.CreateVersionEndpointParams{
 		VersionID:  versionID,
-		Identifier: payload.Identifier,
-		Url:        payload.Url,
+		Identifier: dto.Identifier,
+		Url:        dto.Url,
 	}
 }
 
-func (r *VersionDetailResolver) CreateEndpointPayload(ctx context.Context, apiDomain string, identifier string) *EndpointPayload {
-	return &EndpointPayload{
+func (r *VersionDetailResolver) CreateEndpointDto(ctx context.Context, apiDomain string, identifier string) *EndpointDto {
+	return &EndpointDto{
 		Identifier: identifier,
 		Url:        fmt.Sprintf("%s/%s/%s", apiDomain, version, identifier),
 	}
 }
 
-func (r *VersionDetailResolver) CreateVersionDetailPayload(ctx context.Context) *VersionDetailPayload {
+func (r *VersionDetailResolver) CreateVersionDetailDto(ctx context.Context) *VersionDetailDto {
 	apiDomain := os.Getenv("API_DOMAIN")
 
-	var endpoints []*EndpointPayload
-	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "cdrs"))
-	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "credentials"))
-	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "locations"))
-	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "sessions"))
-	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "tariffs"))
-	endpoints = append(endpoints, r.CreateEndpointPayload(ctx, apiDomain, "tokens"))
+	var endpoints []*EndpointDto
+	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "cdrs"))
+	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "credentials"))
+	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "locations"))
+	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "sessions"))
+	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "tariffs"))
+	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "tokens"))
 
-	return &VersionDetailPayload{
+	return &VersionDetailDto{
 		Version:   version,
 		Endpoints: endpoints,
 	}

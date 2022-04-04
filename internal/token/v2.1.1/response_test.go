@@ -13,7 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreateTokenPayload(t *testing.T) {
+func TestCreateTokenDto(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("Empty", func(t *testing.T) {
@@ -23,7 +23,7 @@ func TestCreateTokenPayload(t *testing.T) {
 
 		loc := db.Token{}
 
-		response := tokenResolver.CreateTokenPayload(ctx, loc)
+		response := tokenResolver.CreateTokenDto(ctx, loc)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -43,17 +43,17 @@ func TestCreateTokenPayload(t *testing.T) {
 		tokenResolver := tokenMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 
 		tok := db.Token{
-			Uid:          "TOKEN00001",
-			Type:         db.TokenTypeRFID,
-			AuthID:       "DEBTCC30384929",
-			Issuer:       "Satimoto",
-			Allowed:      db.TokenAllowedTypeEXPIRED,
-			Valid:        false,
-			Whitelist:    db.TokenWhitelistTypeNEVER,
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			Uid:         "TOKEN00001",
+			Type:        db.TokenTypeRFID,
+			AuthID:      "DEBTCC30384929",
+			Issuer:      "Satimoto",
+			Allowed:     db.TokenAllowedTypeEXPIRED,
+			Valid:       false,
+			Whitelist:   db.TokenWhitelistTypeNEVER,
+			LastUpdated: *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := tokenResolver.CreateTokenPayload(ctx, tok)
+		response := tokenResolver.CreateTokenDto(ctx, tok)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -84,7 +84,7 @@ func TestCreateTokenPayload(t *testing.T) {
 			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := tokenResolver.CreateTokenPayload(ctx, tok)
+		response := tokenResolver.CreateTokenDto(ctx, tok)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -117,7 +117,7 @@ func TestCreateTokenPayload(t *testing.T) {
 			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
 		}
 
-		response := tokenResolver.CreateTokenPayload(ctx, tok)
+		response := tokenResolver.CreateTokenDto(ctx, tok)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{

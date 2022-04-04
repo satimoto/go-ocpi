@@ -11,20 +11,20 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type CredentialPayload struct {
-	Token          *string                               `json:"token"`
-	Url            *string                               `json:"url"`
-	BusinessDetail *businessdetail.BusinessDetailPayload `json:"business_details"`
-	PartyID        *string                               `json:"party_id"`
-	CountryCode    *string                               `json:"country_code"`
+type CredentialDto struct {
+	Token          *string                           `json:"token"`
+	Url            *string                           `json:"url"`
+	BusinessDetail *businessdetail.BusinessDetailDto `json:"business_details"`
+	PartyID        *string                           `json:"party_id"`
+	CountryCode    *string                           `json:"country_code"`
 }
 
-func (r *CredentialPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *CredentialDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewCredentialPayload(credential db.Credential) *CredentialPayload {
-	return &CredentialPayload{
+func NewCredentialDto(credential db.Credential) *CredentialDto {
+	return &CredentialDto{
 		Token:       util.NilString(credential.ServerToken.String),
 		Url:         &credential.Url,
 		PartyID:     &credential.PartyID,
@@ -44,13 +44,13 @@ func NewUpdateCredentialParams(credential db.Credential) db.UpdateCredentialPara
 	}
 }
 
-func (r *CredentialResolver) CreateCredentialPayload(ctx context.Context, credential db.Credential) *CredentialPayload {
+func (r *CredentialResolver) CreateCredentialDto(ctx context.Context, credential db.Credential) *CredentialDto {
 	apiDomain := os.Getenv("API_DOMAIN")
 	apiPartyID := os.Getenv("API_PARTY_ID")
 	apiCountryCode := os.Getenv("API_COUNTRY_CODE")
 	webDomain := os.Getenv("WEB_DOMAIN")
 
-	imagePayload := r.BusinessDetailResolver.ImageResolver.CreateImagePayload(ctx, db.Image{
+	imageDto := r.BusinessDetailResolver.ImageResolver.CreateImageDto(ctx, db.Image{
 		Url:       fmt.Sprintf("%s/logo.png", webDomain),
 		Thumbnail: util.SqlNullString(fmt.Sprintf("%s/logo-thumb.png", webDomain)),
 		Category:  db.ImageCategoryOPERATOR,
@@ -59,19 +59,19 @@ func (r *CredentialResolver) CreateCredentialPayload(ctx context.Context, creden
 		Height:    util.SqlNullInt32(512),
 	})
 
-	businessDetailPayload := r.BusinessDetailResolver.CreateBusinessDetailPayload(ctx, db.BusinessDetail{
+	businessDetailDto := r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, db.BusinessDetail{
 		Name:    "Satimoto",
 		Website: util.SqlNullString(webDomain),
 	})
-	businessDetailPayload.Logo = imagePayload
+	businessDetailDto.Logo = imageDto
 
-	credentialPayload := &CredentialPayload{
+	credentialDto := &CredentialDto{
 		Token:       util.NilString(credential.ServerToken.String),
 		Url:         &apiDomain,
 		PartyID:     &apiPartyID,
 		CountryCode: &apiCountryCode,
 	}
-	credentialPayload.BusinessDetail = businessDetailPayload
+	credentialDto.BusinessDetail = businessDetailDto
 
-	return credentialPayload
+	return credentialDto
 }

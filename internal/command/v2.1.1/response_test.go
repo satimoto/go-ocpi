@@ -18,7 +18,7 @@ var (
 	apiDomain = "http://localhost:9001"
 )
 
-func TestCreateCommandReservationPayload(t *testing.T) {
+func TestCreateCommandReservationDto(t *testing.T) {
 	ctx := context.Background()
 	os.Setenv("API_DOMAIN", apiDomain)
 	defer os.Unsetenv("API_DOMAIN")
@@ -35,7 +35,7 @@ func TestCreateCommandReservationPayload(t *testing.T) {
 			TokenID: 1,
 		}
 
-		response := commandResolver.CreateCommandReservationPayload(ctx, cr)
+		response := commandResolver.CreateCommandReservationDto(ctx, cr)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -83,7 +83,7 @@ func TestCreateCommandReservationPayload(t *testing.T) {
 			LocationID:    "LOC00001",
 		}
 
-		response := commandResolver.CreateCommandReservationPayload(ctx, cr)
+		response := commandResolver.CreateCommandReservationDto(ctx, cr)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -106,7 +106,7 @@ func TestCreateCommandReservationPayload(t *testing.T) {
 	})
 }
 
-func TestCreateCommandStartPayload(t *testing.T) {
+func TestCreateCommandStartDto(t *testing.T) {
 	ctx := context.Background()
 	os.Setenv("API_DOMAIN", apiDomain)
 	defer os.Unsetenv("API_DOMAIN")
@@ -123,7 +123,7 @@ func TestCreateCommandStartPayload(t *testing.T) {
 			TokenID: 1,
 		}
 
-		response := commandResolver.CreateCommandStartPayload(ctx, cr)
+		response := commandResolver.CreateCommandStartDto(ctx, cr)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -167,7 +167,7 @@ func TestCreateCommandStartPayload(t *testing.T) {
 			LocationID: "LOC00001",
 		}
 
-		response := commandResolver.CreateCommandStartPayload(ctx, cr)
+		response := commandResolver.CreateCommandStartDto(ctx, cr)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -188,7 +188,7 @@ func TestCreateCommandStartPayload(t *testing.T) {
 	})
 }
 
-func TestCreateCommandStopPayload(t *testing.T) {
+func TestCreateCommandStopDto(t *testing.T) {
 	ctx := context.Background()
 	os.Setenv("API_DOMAIN", apiDomain)
 	defer os.Unsetenv("API_DOMAIN")
@@ -200,7 +200,7 @@ func TestCreateCommandStopPayload(t *testing.T) {
 
 		cr := db.CommandStop{}
 
-		response := commandResolver.CreateCommandStopPayload(ctx, cr)
+		response := commandResolver.CreateCommandStopDto(ctx, cr)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -220,7 +220,7 @@ func TestCreateCommandStopPayload(t *testing.T) {
 			SessionID: "SESSION001",
 		}
 
-		response := commandResolver.CreateCommandStopPayload(ctx, cr)
+		response := commandResolver.CreateCommandStopDto(ctx, cr)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -230,7 +230,7 @@ func TestCreateCommandStopPayload(t *testing.T) {
 	})
 }
 
-func TestCreateCommandUnlockPayload(t *testing.T) {
+func TestCreateCommandUnlockDto(t *testing.T) {
 	ctx := context.Background()
 	os.Setenv("API_DOMAIN", apiDomain)
 	defer os.Unsetenv("API_DOMAIN")
@@ -242,7 +242,7 @@ func TestCreateCommandUnlockPayload(t *testing.T) {
 
 		cr := db.CommandUnlock{}
 
-		response := commandResolver.CreateCommandUnlockPayload(ctx, cr)
+		response := commandResolver.CreateCommandUnlockDto(ctx, cr)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{
@@ -266,7 +266,7 @@ func TestCreateCommandUnlockPayload(t *testing.T) {
 			ConnectorID: "CONN00001",
 		}
 
-		response := commandResolver.CreateCommandUnlockPayload(ctx, cr)
+		response := commandResolver.CreateCommandUnlockDto(ctx, cr)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`{

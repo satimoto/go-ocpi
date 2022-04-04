@@ -26,7 +26,7 @@ func TestReplaceLocation(t *testing.T) {
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 
-		payload := location.LocationPayload{
+		dto := location.LocationDto{
 			ID:         util.NilString("LOC1"),
 			Type:       &locationTypeONSTREET,
 			Name:       util.NilString("Gent Zuid"),
@@ -34,7 +34,7 @@ func TestReplaceLocation(t *testing.T) {
 			City:       util.NilString("Gent"),
 			PostalCode: util.NilString("9000"),
 			Country:    util.NilString("BEL"),
-			Coordinates: &geolocation.GeoLocationPayload{
+			Coordinates: &geolocation.GeoLocationDto{
 				Latitude:  "31.3434",
 				Longitude: "-62.6996",
 			},
@@ -42,7 +42,7 @@ func TestReplaceLocation(t *testing.T) {
 			LastUpdated:        util.ParseTime("2015-03-16T10:10:02Z"),
 		}
 
-		locationResolver.ReplaceLocation(ctx, *payload.ID, &payload)
+		locationResolver.ReplaceLocation(ctx, *dto.ID, &dto)
 
 		params, _ := mockRepository.GetCreateLocationMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -103,11 +103,11 @@ func TestReplaceLocation(t *testing.T) {
 
 		locationTypePARKINGGARAGE := db.LocationTypePARKINGGARAGE
 
-		payload := location.LocationPayload{
+		dto := location.LocationDto{
 			Type: &locationTypePARKINGGARAGE,
 		}
 
-		locationResolver.ReplaceLocation(ctx, "LOC1", &payload)
+		locationResolver.ReplaceLocation(ctx, "LOC1", &dto)
 
 		params, _ := mockRepository.GetUpdateLocationByUidMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -159,8 +159,8 @@ func TestReplaceLocation(t *testing.T) {
 
 		evseStatusRESERVED := db.EvseStatusRESERVED
 
-		evsesPayload := []*evse.EvsePayload{}
-		evsesPayload = append(evsesPayload, &evse.EvsePayload{
+		evsesDto := []*evse.EvseDto{}
+		evsesDto = append(evsesDto, &evse.EvseDto{
 			Uid:               util.NilString("3257"),
 			EvseID:            util.NilString("BE-BEC-E041503002"),
 			Status:            &evseStatusRESERVED,
@@ -169,11 +169,11 @@ func TestReplaceLocation(t *testing.T) {
 			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z"),
 		})
 
-		payload := location.LocationPayload{
-			Evses: evsesPayload,
+		dto := location.LocationDto{
+			Evses: evsesDto,
 		}
 
-		locationResolver.ReplaceLocation(ctx, "LOC1", &payload)
+		locationResolver.ReplaceLocation(ctx, "LOC1", &dto)
 
 		params, _ := mockRepository.GetUpdateLocationByUidMockData()
 		paramsJson, _ := json.Marshal(params)

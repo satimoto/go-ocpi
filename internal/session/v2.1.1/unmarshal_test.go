@@ -10,7 +10,7 @@ import (
 
 func TestSessionUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		payload := session.SessionPayload{}
+		dto := session.SessionDto{}
 		response := []byte(`{
 			"id": null,
 			"start_datetime": null,
@@ -24,14 +24,14 @@ func TestSessionUnmarshal(t *testing.T) {
 			"last_updated": null
 		}`)
 
-		json.Unmarshal([]byte(`{}`), &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal([]byte(`{}`), &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, response)
 	})
 
 	t.Run("Base data", func(t *testing.T) {
-		payload := session.SessionPayload{}
+		dto := session.SessionDto{}
 		request := []byte(`{
 			"id": "SESSION0001",
 			"start_datetime": "2015-06-29T22:39:09Z",
@@ -45,14 +45,14 @@ func TestSessionUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T22:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With charge points", func(t *testing.T) {
-		payload := session.SessionPayload{}
+		dto := session.SessionDto{}
 		request := []byte(`{
 			"id": "SESSION0001",
 			"start_datetime": "2015-06-29T22:39:09Z",
@@ -75,8 +75,8 @@ func TestSessionUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T22:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &payload)
-		responseJson, _ := json.Marshal(payload)
+		json.Unmarshal(request, &dto)
+		responseJson, _ := json.Marshal(dto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

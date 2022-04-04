@@ -12,29 +12,29 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type SessionPayload struct {
-	ID              *string                                 `json:"id"`
-	AuthorizationID *string                                 `json:"authorization_id,omitempty"`
-	StartDatetime   *time.Time                              `json:"start_datetime"`
-	EndDatetime     *time.Time                              `json:"end_datetime,omitempty"`
-	Kwh             *float64                                `json:"kwh"`
-	AuthID          *string                                 `json:"auth_id"`
-	AuthMethod      *db.AuthMethodType                      `json:"auth_method"`
-	Location        *location.LocationPayload               `json:"location"`
-	MeterID         *string                                 `json:"meter_id,omitempty"`
-	Currency        *string                                 `json:"currency"`
-	ChargingPeriods []*chargingperiod.ChargingPeriodPayload `json:"charging_periods"`
-	TotalCost       *float64                                `json:"total_cost,omitempty"`
-	Status          *db.SessionStatusType                   `json:"status"`
-	LastUpdated     *time.Time                              `json:"last_updated"`
+type SessionDto struct {
+	ID              *string                             `json:"id"`
+	AuthorizationID *string                             `json:"authorization_id,omitempty"`
+	StartDatetime   *time.Time                          `json:"start_datetime"`
+	EndDatetime     *time.Time                          `json:"end_datetime,omitempty"`
+	Kwh             *float64                            `json:"kwh"`
+	AuthID          *string                             `json:"auth_id"`
+	AuthMethod      *db.AuthMethodType                  `json:"auth_method"`
+	Location        *location.LocationDto               `json:"location"`
+	MeterID         *string                             `json:"meter_id,omitempty"`
+	Currency        *string                             `json:"currency"`
+	ChargingPeriods []*chargingperiod.ChargingPeriodDto `json:"charging_periods"`
+	TotalCost       *float64                            `json:"total_cost,omitempty"`
+	Status          *db.SessionStatusType               `json:"status"`
+	LastUpdated     *time.Time                          `json:"last_updated"`
 }
 
-func (r *SessionPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *SessionDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewSessionPayload(session db.Session) *SessionPayload {
-	return &SessionPayload{
+func NewSessionDto(session db.Session) *SessionDto {
+	return &SessionDto{
 		ID:              &session.Uid,
 		AuthorizationID: util.NilString(session.AuthorizationID.String),
 		StartDatetime:   &session.StartDatetime,
@@ -50,20 +50,20 @@ func NewSessionPayload(session db.Session) *SessionPayload {
 	}
 }
 
-func NewCreateSessionParams(payload *SessionPayload) db.CreateSessionParams {
+func NewCreateSessionParams(dto *SessionDto) db.CreateSessionParams {
 	return db.CreateSessionParams{
-		Uid:             *payload.ID,
-		AuthorizationID: util.SqlNullString(payload.AuthorizationID),
-		StartDatetime:   *payload.StartDatetime,
-		EndDatetime:     util.SqlNullTime(payload.EndDatetime),
-		Kwh:             *payload.Kwh,
-		AuthID:          *payload.AuthID,
-		AuthMethod:      *payload.AuthMethod,
-		MeterID:         util.SqlNullString(payload.MeterID),
-		Currency:        *payload.Currency,
-		TotalCost:       util.SqlNullFloat64(payload.TotalCost),
-		Status:          *payload.Status,
-		LastUpdated:     *payload.LastUpdated,
+		Uid:             *dto.ID,
+		AuthorizationID: util.SqlNullString(dto.AuthorizationID),
+		StartDatetime:   *dto.StartDatetime,
+		EndDatetime:     util.SqlNullTime(dto.EndDatetime),
+		Kwh:             *dto.Kwh,
+		AuthID:          *dto.AuthID,
+		AuthMethod:      *dto.AuthMethod,
+		MeterID:         util.SqlNullString(dto.MeterID),
+		Currency:        *dto.Currency,
+		TotalCost:       util.SqlNullFloat64(dto.TotalCost),
+		Status:          *dto.Status,
+		LastUpdated:     *dto.LastUpdated,
 	}
 }
 
@@ -85,24 +85,24 @@ func NewUpdateSessionByUidParams(session db.Session) db.UpdateSessionByUidParams
 	}
 }
 
-func (r *SessionResolver) CreateSessionPayload(ctx context.Context, session db.Session) *SessionPayload {
-	response := NewSessionPayload(session)
+func (r *SessionResolver) CreateSessionDto(ctx context.Context, session db.Session) *SessionDto {
+	response := NewSessionDto(session)
 
 	if chargingPeriods, err := r.Repository.ListSessionChargingPeriods(ctx, session.ID); err == nil {
-		response.ChargingPeriods = r.ChargingPeriodResolver.CreateChargingPeriodListPayload(ctx, chargingPeriods)
+		response.ChargingPeriods = r.ChargingPeriodResolver.CreateChargingPeriodListDto(ctx, chargingPeriods)
 	}
 
 	if location, err := r.LocationResolver.Repository.GetLocation(ctx, session.LocationID); err == nil {
-		response.Location = r.LocationResolver.CreateLocationPayload(ctx, location)
+		response.Location = r.LocationResolver.CreateLocationDto(ctx, location)
 	}
 
 	return response
 }
 
-func (r *SessionResolver) CreateSessionListPayload(ctx context.Context, sessions []db.Session) []render.Renderer {
+func (r *SessionResolver) CreateSessionListDto(ctx context.Context, sessions []db.Session) []render.Renderer {
 	list := []render.Renderer{}
 	for _, session := range sessions {
-		list = append(list, r.CreateSessionPayload(ctx, session))
+		list = append(list, r.CreateSessionDto(ctx, session))
 	}
 	return list
 }

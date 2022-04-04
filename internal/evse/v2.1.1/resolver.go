@@ -60,16 +60,16 @@ func NewResolver(repositoryService *db.RepositoryService) *EvseResolver {
 	}
 }
 
-func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid string, payload *EvsePayload) *db.Evse {
-	if payload != nil {
+func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid string, dto *EvseDto) *db.Evse {
+	if dto != nil {
 		evse, err := r.Repository.GetEvseByUid(ctx, uid)
 
 		if err == nil {
 			evseParams := NewUpdateEvseByUidParams(evse)
 
-			if payload.Coordinates != nil {
+			if dto.Coordinates != nil {
 				geoLocationID := util.SqlNullInt64(nil)
-				geomPoint := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, payload.Coordinates)
+				geomPoint := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, dto.Coordinates)
 
 				if geomPoint != nil {
 					evseParams.Geom = *geomPoint
@@ -77,33 +77,33 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 				}
 			}
 
-			if payload.EvseID != nil {
-				evseParams.EvseID = util.SqlNullString(payload.EvseID)
+			if dto.EvseID != nil {
+				evseParams.EvseID = util.SqlNullString(dto.EvseID)
 			}
 
-			if payload.FloorLevel != nil {
-				evseParams.FloorLevel = util.SqlNullString(payload.FloorLevel)
+			if dto.FloorLevel != nil {
+				evseParams.FloorLevel = util.SqlNullString(dto.FloorLevel)
 			}
 
-			if payload.LastUpdated != nil {
-				evseParams.LastUpdated = *payload.LastUpdated
+			if dto.LastUpdated != nil {
+				evseParams.LastUpdated = *dto.LastUpdated
 			}
 
-			if payload.PhysicalReference != nil {
-				evseParams.PhysicalReference = util.SqlNullString(payload.PhysicalReference)
+			if dto.PhysicalReference != nil {
+				evseParams.PhysicalReference = util.SqlNullString(dto.PhysicalReference)
 			}
 
-			if payload.Status != nil {
-				evseParams.Status = *payload.Status
+			if dto.Status != nil {
+				evseParams.Status = *dto.Status
 			}
 
 			evse, err = r.Repository.UpdateEvseByUid(ctx, evseParams)
 		} else {
-			evseParams := NewCreateEvseParams(locationID, payload)
+			evseParams := NewCreateEvseParams(locationID, dto)
 
-			if payload.Coordinates != nil {
+			if dto.Coordinates != nil {
 				geoLocationID := util.SqlNullInt64(evse.GeoLocationID)
-				geomPoint := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, payload.Coordinates)
+				geomPoint := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, dto.Coordinates)
 
 				if geomPoint != nil {
 					evseParams.Geom = *geomPoint
@@ -114,28 +114,28 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			evse, err = r.Repository.CreateEvse(ctx, evseParams)
 		}
 
-		if payload.Capabilities != nil {
-			r.replaceCapabilities(ctx, evse.ID, payload)
+		if dto.Capabilities != nil {
+			r.replaceCapabilities(ctx, evse.ID, dto)
 		}
 
-		if payload.Connectors != nil {
-			r.replaceConnectors(ctx, evse.ID, payload)
+		if dto.Connectors != nil {
+			r.replaceConnectors(ctx, evse.ID, dto)
 		}
 
-		if payload.Directions != nil {
-			r.replaceDirections(ctx, evse.ID, payload)
+		if dto.Directions != nil {
+			r.replaceDirections(ctx, evse.ID, dto)
 		}
 
-		if payload.Images != nil {
-			r.replaceImages(ctx, evse.ID, payload)
+		if dto.Images != nil {
+			r.replaceImages(ctx, evse.ID, dto)
 		}
 
-		if payload.ParkingRestrictions != nil {
-			r.replaceParkingRestrictions(ctx, evse.ID, payload)
+		if dto.ParkingRestrictions != nil {
+			r.replaceParkingRestrictions(ctx, evse.ID, dto)
 		}
 
-		if payload.StatusSchedule != nil {
-			r.replaceStatusSchedule(ctx, evse.ID, payload)
+		if dto.StatusSchedule != nil {
+			r.replaceStatusSchedule(ctx, evse.ID, dto)
 		}
 
 		return &evse
@@ -144,8 +144,8 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 	return nil
 }
 
-func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, payload []*EvsePayload) {
-	if payload != nil {
+func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, dto []*EvseDto) {
+	if dto != nil {
 		if evses, err := r.Repository.ListEvses(ctx, locationID); err == nil {
 			evseMap := make(map[string]db.Evse)
 
@@ -153,7 +153,7 @@ func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, paylo
 				evseMap[evse.Uid] = evse
 			}
 
-			for _, evse := range payload {
+			for _, evse := range dto {
 				if evse.Uid != nil {
 					r.ReplaceEvse(ctx, locationID, *evse.Uid, evse)
 					delete(evseMap, *evse.Uid)
@@ -170,14 +170,14 @@ func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, paylo
 	}
 }
 
-func (r *EvseResolver) replaceCapabilities(ctx context.Context, evseID int64, payload *EvsePayload) {
+func (r *EvseResolver) replaceCapabilities(ctx context.Context, evseID int64, dto *EvseDto) {
 	r.Repository.UnsetEvseCapabilities(ctx, evseID)
 
 	if capabilities, err := r.Repository.ListCapabilities(ctx); err == nil {
 		filteredCapabilities := []*db.Capability{}
 
 		for _, capability := range capabilities {
-			if util.StringsContainString(payload.Capabilities, capability.Text) {
+			if util.StringsContainString(dto.Capabilities, capability.Text) {
 				filteredCapabilities = append(filteredCapabilities, &capability)
 			}
 		}
@@ -191,15 +191,15 @@ func (r *EvseResolver) replaceCapabilities(ctx context.Context, evseID int64, pa
 	}
 }
 
-func (r *EvseResolver) replaceConnectors(ctx context.Context, evseID int64, payload *EvsePayload) {
-	r.ConnectorResolver.ReplaceConnectors(ctx, evseID, payload.Connectors)
+func (r *EvseResolver) replaceConnectors(ctx context.Context, evseID int64, dto *EvseDto) {
+	r.ConnectorResolver.ReplaceConnectors(ctx, evseID, dto.Connectors)
 }
 
-func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, payload *EvsePayload) {
+func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, dto *EvseDto) {
 	r.Repository.DeleteEvseDirections(ctx, evseID)
 
-	for _, directionPayload := range payload.Directions {
-		displayTextParams := displaytext.NewCreateDisplayTextParams(directionPayload)
+	for _, directionDto := range dto.Directions {
+		displayTextParams := displaytext.NewCreateDisplayTextParams(directionDto)
 
 		if displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams); err == nil {
 			r.Repository.SetEvseDirection(ctx, db.SetEvseDirectionParams{
@@ -210,11 +210,11 @@ func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, payl
 	}
 }
 
-func (r *EvseResolver) replaceImages(ctx context.Context, evseID int64, payload *EvsePayload) {
+func (r *EvseResolver) replaceImages(ctx context.Context, evseID int64, dto *EvseDto) {
 	r.Repository.DeleteEvseImages(ctx, evseID)
 
-	for _, imagePayload := range payload.Images {
-		imageParams := image.NewCreateImageParams(imagePayload)
+	for _, imageDto := range dto.Images {
+		imageParams := image.NewCreateImageParams(imageDto)
 
 		if image, err := r.ImageResolver.Repository.CreateImage(ctx, imageParams); err == nil {
 			r.Repository.SetEvseImage(ctx, db.SetEvseImageParams{
@@ -225,14 +225,14 @@ func (r *EvseResolver) replaceImages(ctx context.Context, evseID int64, payload 
 	}
 }
 
-func (r *EvseResolver) replaceParkingRestrictions(ctx context.Context, evseID int64, payload *EvsePayload) {
+func (r *EvseResolver) replaceParkingRestrictions(ctx context.Context, evseID int64, dto *EvseDto) {
 	r.Repository.UnsetEvseParkingRestrictions(ctx, evseID)
 
 	if parkingRestrictions, err := r.Repository.ListParkingRestrictions(ctx); err == nil {
 		filteredParkingRestrictions := []*db.ParkingRestriction{}
 
 		for _, parkingRestriction := range parkingRestrictions {
-			if util.StringsContainString(payload.ParkingRestrictions, parkingRestriction.Text) {
+			if util.StringsContainString(dto.ParkingRestrictions, parkingRestriction.Text) {
 				filteredParkingRestrictions = append(filteredParkingRestrictions, &parkingRestriction)
 			}
 		}
@@ -246,11 +246,11 @@ func (r *EvseResolver) replaceParkingRestrictions(ctx context.Context, evseID in
 	}
 }
 
-func (r *EvseResolver) replaceStatusSchedule(ctx context.Context, evseID int64, payload *EvsePayload) {
+func (r *EvseResolver) replaceStatusSchedule(ctx context.Context, evseID int64, dto *EvseDto) {
 	r.Repository.DeleteStatusSchedules(ctx, evseID)
 
-	for _, statusSchedulePayload := range payload.StatusSchedule {
-		statusScheduleParams := NewCreateStatusScheduleParams(evseID, statusSchedulePayload)
+	for _, statusScheduleDto := range dto.StatusSchedule {
+		statusScheduleParams := NewCreateStatusScheduleParams(evseID, statusScheduleDto)
 
 		r.Repository.CreateStatusSchedule(ctx, statusScheduleParams)
 	}

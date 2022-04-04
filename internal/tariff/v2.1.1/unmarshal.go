@@ -5,22 +5,22 @@ import (
 	"io"
 )
 
-func (r *TariffResolver) UnmarshalTariffPullPayload(body io.ReadCloser) (*TariffPullPayload, error) {
-	payload := TariffPullPayload{}
+func (r *TariffResolver) UnmarshalTariffPullDto(body io.ReadCloser) (*TariffPullDto, error) {
+	dto := TariffPullDto{}
 
-	if err := json.NewDecoder(body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err
 	}
 
-	return &payload, nil
+	return &dto, nil
 }
 
-func (r *TariffResolver) UnmarshalTariffPushPayload(body io.ReadCloser) (*TariffPushPayload, error) {
-	payload := TariffPushPayload{}
+func (r *TariffResolver) UnmarshalTariffPushDto(body io.ReadCloser) (*TariffPushDto, error) {
+	dto := TariffPushDto{}
 
-	if err := json.NewDecoder(body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err
 	}
 
-	return &payload, nil
+	return &dto, nil
 }

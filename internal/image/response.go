@@ -7,8 +7,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 )
 
-
-type ImagePayload struct {
+type ImageDto struct {
 	Url       string           `json:"url"`
 	Thumbnail *string          `json:"thumbnail,omitempty"`
 	Category  db.ImageCategory `json:"category"`
@@ -17,18 +16,18 @@ type ImagePayload struct {
 	Height    *int32           `json:"height,omitempty"`
 }
 
-func (r *ImagePayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *ImageDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func (r *ImageResolver) CreateImagePayload(ctx context.Context, image db.Image) *ImagePayload {
-	return NewImagePayload(image)
+func (r *ImageResolver) CreateImageDto(ctx context.Context, image db.Image) *ImageDto {
+	return NewImageDto(image)
 }
 
-func (r *ImageResolver) CreateImageListPayload(ctx context.Context, images []db.Image) []*ImagePayload {
-	list := []*ImagePayload{}
+func (r *ImageResolver) CreateImageListDto(ctx context.Context, images []db.Image) []*ImageDto {
+	list := []*ImageDto{}
 	for _, image := range images {
-		list = append(list, r.CreateImagePayload(ctx, image))
+		list = append(list, r.CreateImageDto(ctx, image))
 	}
 	return list
 }

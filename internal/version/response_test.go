@@ -11,18 +11,18 @@ import (
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
-func TestCreatePayload(t *testing.T) {
+func TestCreateDto(t *testing.T) {
 	ctx := context.Background()
 
 	os.Setenv("API_DOMAIN", "http://localhost:8080")
 	defer os.Unsetenv("API_DOMAIN")
 
-	t.Run("Create payload", func(t *testing.T) {
+	t.Run("Create dto", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
 		versionResolver := versionMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 
-		response := versionResolver.CreateVersionListPayload(ctx)
+		response := versionResolver.CreateVersionListDto(ctx)
 		responseJson, _ := json.Marshal(response)
 
 		mocks.CompareJson(t, responseJson, []byte(`[{

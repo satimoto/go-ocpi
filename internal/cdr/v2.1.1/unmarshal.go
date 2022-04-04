@@ -5,12 +5,12 @@ import (
 	"io"
 )
 
-func (r *CdrResolver) UnmarshalPayload(body io.ReadCloser) (*CdrPayload, error) {
-	payload := CdrPayload{}
+func (r *CdrResolver) UnmarshalDto(body io.ReadCloser) (*CdrDto, error) {
+	dto := CdrDto{}
 
-	if err := json.NewDecoder(body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err
 	}
 
-	return &payload, nil
+	return &dto, nil
 }

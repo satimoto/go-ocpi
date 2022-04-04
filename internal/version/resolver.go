@@ -45,14 +45,14 @@ func (r *VersionResolver) PickBestVersion(ctx context.Context, credentialID int6
 	return nil
 }
 
-func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int64, payload []*VersionPayload) []*db.Version {
+func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int64, dto []*VersionDto) []*db.Version {
 	versions := []*db.Version{}
 
-	if payload != nil {
+	if dto != nil {
 		r.Repository.DeleteVersions(ctx, credentialID)
 
-		for _, versionPayload := range payload {
-			versionParams := NewCreateVersionParams(credentialID, versionPayload)
+		for _, versionDto := range dto {
+			versionParams := NewCreateVersionParams(credentialID, versionDto)
 
 			if version, err := r.Repository.CreateVersion(ctx, versionParams); err == nil {
 				versions = append(versions, &version)

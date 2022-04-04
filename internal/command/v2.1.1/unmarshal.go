@@ -5,15 +5,15 @@ import (
 	"io"
 )
 
-func (r *CommandResolver) UnmarshalCommandResponsePayload(body io.ReadCloser) (*CommandResponsePayload, error) {
+func (r *CommandResolver) UnmarshalCommandResponseDto(body io.ReadCloser) (*CommandResponseDto, error) {
 	if body != nil {
-		payload := CommandResponsePayload{}
+		dto := CommandResponseDto{}
 
-		if err := json.NewDecoder(body).Decode(&payload); err != nil {
+		if err := json.NewDecoder(body).Decode(&dto); err != nil {
 			return nil, err
 		}
 
-		return &payload, nil
+		return &dto, nil
 	}
 
 	return nil, nil

@@ -24,7 +24,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseStatusRESERVED := db.EvseStatusRESERVED
 
-		payload := evse.EvsePayload{
+		dto := evse.EvseDto{
 			Uid:               util.NilString("3257"),
 			EvseID:            util.NilString("BE-BEC-E041503002"),
 			Status:            &evseStatusRESERVED,
@@ -33,7 +33,7 @@ func TestReplaceEvse(t *testing.T) {
 			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z"),
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, *payload.Uid, &payload)
+		evseResolver.ReplaceEvse(ctx, 1, *dto.Uid, &dto)
 
 		params, _ := mockRepository.GetCreateEvseMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -69,11 +69,11 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseStatusAVAILABLE := db.EvseStatusAVAILABLE
 
-		payload := evse.EvsePayload{
+		dto := evse.EvseDto{
 			Status: &evseStatusAVAILABLE,
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, "1", &payload)
+		evseResolver.ReplaceEvse(ctx, 1, "1", &dto)
 
 		params, _ := mockRepository.GetUpdateEvseByUidMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -120,17 +120,17 @@ func TestReplaceEvse(t *testing.T) {
 			},
 		})
 
-		connectorsPayload := []*connector.ConnectorPayload{}
-		connectorsPayload = append(connectorsPayload, &connector.ConnectorPayload{
+		connectorsDto := []*connector.ConnectorDto{}
+		connectorsDto = append(connectorsDto, &connector.ConnectorDto{
 			Id:       util.NilString("1"),
 			TariffID: util.NilString("12"),
 		})
 
-		payload := evse.EvsePayload{
-			Connectors: connectorsPayload,
+		dto := evse.EvseDto{
+			Connectors: connectorsDto,
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, "1", &payload)
+		evseResolver.ReplaceEvse(ctx, 1, "1", &dto)
 
 		params, _ := mockRepository.GetUpdateEvseByUidMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -181,15 +181,15 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseStatusAVAILABLE := db.EvseStatusAVAILABLE
 
-		payload := evse.EvsePayload{
+		dto := evse.EvseDto{
 			Status: &evseStatusAVAILABLE,
-			Coordinates: &geolocation.GeoLocationPayload{
+			Coordinates: &geolocation.GeoLocationDto{
 				Latitude:  "31.3434",
 				Longitude: "-62.6996",
 			},
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, "1", &payload)
+		evseResolver.ReplaceEvse(ctx, 1, "1", &dto)
 
 		params, _ := mockRepository.GetUpdateEvseByUidMockData()
 		paramsJson, _ := json.Marshal(params)

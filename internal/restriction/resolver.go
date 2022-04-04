@@ -27,34 +27,34 @@ func NewResolver(repositoryService *db.RepositoryService) *RestrictionResolver {
 	return &RestrictionResolver{repo}
 }
 
-func (r *RestrictionResolver) ReplaceRestriction(ctx context.Context, id *int64, payload *RestrictionPayload) {
-	if payload != nil {
+func (r *RestrictionResolver) ReplaceRestriction(ctx context.Context, id *int64, dto *RestrictionDto) {
+	if dto != nil {
 		if id == nil {
-			restrictionParams := NewCreateRestrictionParams(payload)
+			restrictionParams := NewCreateRestrictionParams(dto)
 
 			if restriction, err := r.Repository.CreateRestriction(ctx, restrictionParams); err == nil {
 				id = &restriction.ID
 			}
 		} else {
-			restrictionParams := NewUpdateRestrictionParams(*id, payload)
+			restrictionParams := NewUpdateRestrictionParams(*id, dto)
 
 			r.Repository.UpdateRestriction(ctx, restrictionParams)
 		}
 
-		if payload.DayOfWeek != nil {
-			r.replaceWeekdays(ctx, *id, payload)
+		if dto.DayOfWeek != nil {
+			r.replaceWeekdays(ctx, *id, dto)
 		}
 	}
 }
 
-func (r *RestrictionResolver) replaceWeekdays(ctx context.Context, restrictionID int64, payload *RestrictionPayload) {
+func (r *RestrictionResolver) replaceWeekdays(ctx context.Context, restrictionID int64, dto *RestrictionDto) {
 	r.Repository.UnsetRestrictionWeekdays(ctx, restrictionID)
 
 	if weekdays, err := r.Repository.ListWeekdays(ctx); err == nil {
 		filteredWeekdays := []*db.Weekday{}
 
 		for _, weekday := range weekdays {
-			if util.StringsContainString(payload.DayOfWeek, weekday.Text) {
+			if util.StringsContainString(dto.DayOfWeek, weekday.Text) {
 				filteredWeekdays = append(filteredWeekdays, &weekday)
 			}
 		}
