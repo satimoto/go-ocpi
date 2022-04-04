@@ -9,6 +9,7 @@ func (rs *RouterService) mountVersionDetails() *chi.Mux {
 	versionDetailResolver := versiondetail.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
 
+	router.Use(rs.CredentialContextByToken)
 	router.Get("/", versionDetailResolver.GetVersionDetail)
 
 	return router

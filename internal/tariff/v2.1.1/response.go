@@ -12,7 +12,19 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type TariffPayload struct {
+type TariffPullPayload struct {
+	ID            *string                           `json:"id"`
+	CountryCode   *string                           `json:"country_code"`
+	PartyID       *string                           `json:"party_id"`
+	Currency      *string                           `json:"currency"`
+	TariffAltText []*displaytext.DisplayTextPayload `json:"tariff_alt_text,omitempty"`
+	TariffAltUrl  *string                           `json:"tariff_alt_url,omitempty"`
+	Elements      []*element.ElementPayload         `json:"elements"`
+	EnergyMix     *energymix.EnergyMixPayload       `json:"energy_mix,omitempty"`
+	LastUpdated   *time.Time                        `json:"last_updated"`
+}
+
+type TariffPushPayload struct {
 	ID            *string                           `json:"id"`
 	Currency      *string                           `json:"currency"`
 	TariffAltText []*displaytext.DisplayTextPayload `json:"tariff_alt_text,omitempty"`
@@ -22,12 +34,12 @@ type TariffPayload struct {
 	LastUpdated   *time.Time                        `json:"last_updated"`
 }
 
-func (r *TariffPayload) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *TariffPushPayload) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewTariffPayload(tariff db.Tariff) *TariffPayload {
-	return &TariffPayload{
+func NewTariffPushPayload(tariff db.Tariff) *TariffPushPayload {
+	return &TariffPushPayload{
 		ID:           &tariff.Uid,
 		Currency:     &tariff.Currency,
 		TariffAltUrl: util.NilString(tariff.TariffAltUrl.String),
@@ -35,7 +47,7 @@ func NewTariffPayload(tariff db.Tariff) *TariffPayload {
 	}
 }
 
-func NewCreateTariffParams(payload *TariffPayload) db.CreateTariffParams {
+func NewCreateTariffParams(payload *TariffPushPayload) db.CreateTariffParams {
 	return db.CreateTariffParams{
 		Uid:          *payload.ID,
 		Currency:     *payload.Currency,
@@ -54,8 +66,8 @@ func NewUpdateTariffByUidParams(tariff db.Tariff) db.UpdateTariffByUidParams {
 	}
 }
 
-func (r *TariffResolver) CreateTariffPayload(ctx context.Context, tariff db.Tariff) *TariffPayload {
-	response := NewTariffPayload(tariff)
+func (r *TariffResolver) CreateTariffPushPayload(ctx context.Context, tariff db.Tariff) *TariffPushPayload {
+	response := NewTariffPushPayload(tariff)
 
 	if tariffAltTexts, err := r.Repository.ListTariffAltTexts(ctx, tariff.ID); err == nil {
 		response.TariffAltText = r.DisplayTextResolver.CreateDisplayTextListPayload(ctx, tariffAltTexts)
@@ -74,10 +86,10 @@ func (r *TariffResolver) CreateTariffPayload(ctx context.Context, tariff db.Tari
 	return response
 }
 
-func (r *TariffResolver) CreateTariffListPayload(ctx context.Context, tariffs []db.Tariff) []*TariffPayload {
-	list := []*TariffPayload{}
+func (r *TariffResolver) CreateTariffListPayload(ctx context.Context, tariffs []db.Tariff) []*TariffPushPayload {
+	list := []*TariffPushPayload{}
 	for _, tariff := range tariffs {
-		list = append(list, r.CreateTariffPayload(ctx, tariff))
+		list = append(list, r.CreateTariffPushPayload(ctx, tariff))
 	}
 	return list
 }

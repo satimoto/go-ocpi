@@ -8,17 +8,14 @@ import (
 func (rs *RouterService) mountSessions() *chi.Mux {
 	sessionResolver := session.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
+	router.Use(rs.CredentialContextByToken)
 
-	router.Route("/{country_code}/{party_id}", func(credentialRouter chi.Router) {
-		credentialRouter.Use(sessionResolver.CredentialResolver.CredentialContextByPartyAndCountry)
+	router.Route("/{country_code}/{party_id}/{session_id}", func(sessionRouter chi.Router) {
+		sessionRouter.Put("/", sessionResolver.UpdateSession)
 
-		credentialRouter.Route("/{session_id}", func(sessionRouter chi.Router) {
-			sessionRouter.Put("/", sessionResolver.UpdateSession)
-
-			sessionContextRouter := sessionRouter.With(sessionResolver.SessionContext)
-			sessionContextRouter.Get("/", sessionResolver.GetSession)
-			sessionContextRouter.Patch("/", sessionResolver.UpdateSession)
-		})
+		sessionContextRouter := sessionRouter.With(sessionResolver.SessionContext)
+		sessionContextRouter.Get("/", sessionResolver.GetSession)
+		sessionContextRouter.Patch("/", sessionResolver.UpdateSession)
 	})
 
 	return router

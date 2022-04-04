@@ -57,3 +57,31 @@ func CredentialContextByPartyAndCountry(r CredentialRepository, next http.Handle
 		render.Render(rw, request, ocpi.OCPIErrorUnknownResource(nil))
 	})
 }
+
+func GetCountryCode(request *http.Request) *string {
+	ctx := request.Context()
+	countryCode := chi.URLParam(request, "country_code")
+
+	if countryCode == "" {
+		if ctxCredential := ctx.Value("credential"); ctxCredential != nil {
+			credential := ctxCredential.(db.Credential)
+			return &credential.CountryCode
+		}
+	}
+
+	return &countryCode
+}
+
+func GetPartyID(request *http.Request) *string {
+	ctx := request.Context()
+	partyID := chi.URLParam(request, "party_id")
+
+	if partyID == "" {
+		if ctxCredential := ctx.Value("credential"); ctxCredential != nil {
+			credential := ctxCredential.(db.Credential)
+			return &credential.PartyID
+		}
+	}
+
+	return &partyID
+}

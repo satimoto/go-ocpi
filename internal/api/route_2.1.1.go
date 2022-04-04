@@ -7,7 +7,6 @@ import (
 func (rs *RouterService) mount211() *chi.Mux {
 	router := chi.NewRouter()
 
-	//router.Use(credential.CredentialContextByToken(versionResolver.Repository))
 	router.Mount("/", rs.mountVersionDetails())
 	router.Mount("/cdrs", rs.mountCdrs())
 	router.Mount("/commands", rs.mountCommands())

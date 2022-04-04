@@ -8,6 +8,7 @@ import (
 func (rs *RouterService) mountCdrs() *chi.Mux {
 	cdrResolver := cdr.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
+	router.Use(rs.CredentialContextByToken)
 
 	router.Route("/", func(credentialRouter chi.Router) {
 		credentialRouter.Post("/", cdrResolver.PostCdr)

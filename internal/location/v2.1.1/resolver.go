@@ -5,7 +5,6 @@ import (
 
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
-	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
@@ -41,7 +40,6 @@ type LocationRepository interface {
 type LocationResolver struct {
 	Repository LocationRepository
 	*businessdetail.BusinessDetailResolver
-	*credential.CredentialResolver
 	*displaytext.DisplayTextResolver
 	*energymix.EnergyMixResolver
 	*evse.EvseResolver
@@ -55,7 +53,6 @@ func NewResolver(repositoryService *db.RepositoryService) *LocationResolver {
 	return &LocationResolver{
 		Repository:             repo,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
-		CredentialResolver:     credential.NewResolver(repositoryService),
 		DisplayTextResolver:    displaytext.NewResolver(repositoryService),
 		EnergyMixResolver:      energymix.NewResolver(repositoryService),
 		EvseResolver:           evse.NewResolver(repositoryService),
