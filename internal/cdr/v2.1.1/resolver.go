@@ -40,14 +40,26 @@ func NewResolver(repositoryService *db.RepositoryService) *CdrResolver {
 
 func (r *CdrResolver) CreateCdr(ctx context.Context, dto *CdrDto) *db.Cdr {
 	if dto != nil {
+		var countryCode, partyID *string
+		var locationID int64
+
 		cdrParams := NewCreateCdrParams(dto)
 
 		if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
+			countryCode = &location.CountryCode
+			partyID = &location.PartyID
+			locationID = location.ID
 			cdrParams.LocationID = location.ID
 		} else {
 			location := r.LocationResolver.ReplaceLocation(ctx, *dto.Location.ID, dto.Location)
-			cdrParams.LocationID = location.ID
+			countryCode = &location.CountryCode
+			partyID = &location.PartyID
+			locationID = location.ID
 		}
+
+		cdrParams.CountryCode = util.SqlNullString(countryCode)
+		cdrParams.PartyID =  util.SqlNullString(partyID)
+		cdrParams.LocationID = locationID
 
 		if dto.SignedData != nil {
 			if calibration := r.CalibrationResolver.CreateCalibration(ctx, *&dto.SignedData); calibration != nil {
@@ -61,7 +73,7 @@ func (r *CdrResolver) CreateCdr(ctx context.Context, dto *CdrDto) *db.Cdr {
 			}
 
 			if dto.Tariffs != nil {
-				r.createTariffs(ctx, cdr.ID, dto)
+				r.replaceTariffs(ctx, countryCode, partyID, &cdr.ID, dto)
 			}
 
 			return &cdr
@@ -84,8 +96,8 @@ func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, dt
 	}
 }
 
-func (r *CdrResolver) createTariffs(ctx context.Context, cdrID int64, dto *CdrDto) {
+func (r *CdrResolver) replaceTariffs(ctx context.Context, countryCode *string, partyID *string, cdrID *int64, dto *CdrDto) {
 	for _, tariffDto := range dto.Tariffs {
-		r.TariffResolver.ReplaceTariff(ctx, &cdrID, *tariffDto.ID, tariffDto)
+		r.TariffResolver.ReplaceTariff(ctx, countryCode, partyID, *tariffDto.ID, cdrID, tariffDto)
 	}
 }

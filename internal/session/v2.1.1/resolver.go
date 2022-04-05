@@ -6,6 +6,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/tokenauthorization"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
@@ -22,6 +23,7 @@ type SessionResolver struct {
 	Repository SessionRepository
 	*chargingperiod.ChargingPeriodResolver
 	*location.LocationResolver
+	*tokenauthorization.TokenAuthorizationResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *SessionResolver {
@@ -30,10 +32,11 @@ func NewResolver(repositoryService *db.RepositoryService) *SessionResolver {
 		Repository:             repo,
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
 		LocationResolver:       location.NewResolver(repositoryService),
+		TokenAuthorizationResolver: tokenauthorization.NewResolver(repositoryService),
 	}
 }
 
-func (r *SessionResolver) ReplaceSession(ctx context.Context, uid string, dto *SessionDto) *db.Session {
+func (r *SessionResolver) ReplaceSession(ctx context.Context, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
 	if dto != nil {
 		session, err := r.Repository.GetSessionByUid(ctx, uid)
 		locationID := util.NilInt64(session.LocationID)
@@ -42,13 +45,15 @@ func (r *SessionResolver) ReplaceSession(ctx context.Context, uid string, dto *S
 			if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
 				locationID = &location.ID
 			} else {
-				location := r.LocationResolver.ReplaceLocation(ctx, *dto.Location.ID, dto.Location)
+				location := r.LocationResolver.ReplaceLocationWithIdentifiers(ctx, countryCode, partyID, *dto.Location.ID, dto.Location)
 				locationID = &location.ID
 			}
 		}
 
 		if err == nil {
 			sessionParams := NewUpdateSessionByUidParams(session)
+			sessionParams.CountryCode = util.SqlNullString(countryCode)
+			sessionParams.PartyID = util.SqlNullString(partyID)
 			sessionParams.LocationID = *locationID
 
 			if dto.AuthID != nil {
@@ -94,9 +99,15 @@ func (r *SessionResolver) ReplaceSession(ctx context.Context, uid string, dto *S
 			session, err = r.Repository.UpdateSessionByUid(ctx, sessionParams)
 		} else {
 			sessionParams := NewCreateSessionParams(dto)
+			sessionParams.CountryCode = util.SqlNullString(countryCode)
+			sessionParams.PartyID = util.SqlNullString(partyID)
 			sessionParams.LocationID = *locationID
 
 			session, err = r.Repository.CreateSession(ctx, sessionParams)
+		}
+
+		if dto.AuthorizationID != nil {
+			r.replaceTokenAuthorization(ctx, countryCode, partyID, dto)
 		}
 
 		if dto.ChargingPeriods != nil {
@@ -122,4 +133,9 @@ func (r *SessionResolver) replaceChargingPeriods(ctx context.Context, sessionID 
 			})
 		}
 	}
+}
+
+func (r *SessionResolver) replaceTokenAuthorization(ctx context.Context, countryCode *string, partyID *string, dto *SessionDto) {
+	tokenAuthorizationParams := tokenauthorization.NewUpdateTokenAuthorizationParams(*dto.AuthorizationID, countryCode, partyID)
+	r.TokenAuthorizationResolver.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, tokenAuthorizationParams)
 }

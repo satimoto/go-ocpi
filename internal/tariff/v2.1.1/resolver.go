@@ -39,7 +39,7 @@ func NewResolver(repositoryService *db.RepositoryService) *TariffResolver {
 	}
 }
 
-func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid string, dto *TariffPushDto) *db.Tariff {
+func (r *TariffResolver) ReplaceTariff(ctx context.Context, countryCode *string, partyID *string, uid string, cdrID *int64, dto *TariffPushDto) *db.Tariff {
 	if dto != nil {
 		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
 		energyMixID := util.NilInt64(tariff.EnergyMixID)
@@ -50,6 +50,8 @@ func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid st
 
 		if err == nil {
 			tariffParams := NewUpdateTariffByUidParams(tariff)
+			tariffParams.CountryCode = util.SqlNullString(countryCode)
+			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)
 
 			if dto.Currency != nil {
@@ -67,6 +69,8 @@ func (r *TariffResolver) ReplaceTariff(ctx context.Context, cdrID *int64, uid st
 			tariff, err = r.Repository.UpdateTariffByUid(ctx, tariffParams)
 		} else {
 			tariffParams := NewCreateTariffParams(dto)
+			tariffParams.CountryCode = util.SqlNullString(countryCode)
+			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.CdrID = util.SqlNullInt64(cdrID)
 			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)
 

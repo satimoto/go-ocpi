@@ -86,6 +86,8 @@ func NewCreateLocationParams(dto *LocationDto) db.CreateLocationParams {
 func NewUpdateLocationByUidParams(location db.Location) db.UpdateLocationByUidParams {
 	return db.UpdateLocationByUidParams{
 		Uid:                location.Uid,
+		CountryCode:        location.CountryCode,
+		PartyID:            location.PartyID,
 		Type:               location.Type,
 		Name:               location.Name,
 		Address:            location.Address,

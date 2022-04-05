@@ -33,6 +33,8 @@ func (r *TariffResolver) GetTariff(rw http.ResponseWriter, request *http.Request
 
 func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	countryCode := chi.URLParam(request, "country_code")
+	partyID := chi.URLParam(request, "party_id")
 	uid := chi.URLParam(request, "tariff_id")
 	dto, err := r.UnmarshalTariffPushDto(request.Body)
 
@@ -40,7 +42,7 @@ func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Requ
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	tariff := r.ReplaceTariff(ctx, nil, uid, dto)
+	tariff := r.ReplaceTariff(ctx, &countryCode, &partyID, uid, nil, dto)
 
 	if tariff == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))

@@ -8,6 +8,8 @@ import (
 type EvIdValidator interface {
 	ValueWithSeparator(separator string) string
 	Value() string
+	GetCountryCode() *string
+	GetPartyID() *string
 	IsValid() bool
 }
 
@@ -100,6 +102,24 @@ var p2 = [][]int{
 	{0, 2, 2, 1},
 	{2, 1, 1, 1},
 	{1, 1, 1, 0},
+}
+
+func (v *EvIdValidate) GetCountryCode() *string {
+	if len(v.evId) >= 5 {
+		countryCode := v.evId[:2]
+		return &countryCode
+	}
+
+	return nil
+}
+
+func (v *EvIdValidate) GetPartyID() *string {
+	if len(v.evId) >= 5 {
+		partyID := v.evId[2:5]
+		return &partyID
+	}
+
+	return nil
 }
 
 func (v *EvIdValidate) IsValid() bool {

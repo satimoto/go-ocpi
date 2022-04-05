@@ -95,7 +95,7 @@ func (r *CdrResolver) CreateCdrDto(ctx context.Context, cdr db.Cdr) *CdrDto {
 	}
 
 	if tariffs, err := r.TariffResolver.Repository.ListTariffsByCdr(ctx, util.SqlNullInt64(cdr.ID)); err == nil {
-		response.Tariffs = r.TariffResolver.CreateTariffListDto(ctx, tariffs)
+		response.Tariffs = r.TariffResolver.CreateTariffPushListDto(ctx, tariffs)
 	}
 
 	return response
