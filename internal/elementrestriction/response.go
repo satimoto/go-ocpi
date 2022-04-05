@@ -1,4 +1,4 @@
-package restriction
+package elementrestriction
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
-type RestrictionDto struct {
+type ElementRestrictionDto struct {
 	StartTime   *string   `json:"start_time,omitempty"`
 	EndTime     *string   `json:"end_time,omitempty"`
 	StartDate   *string   `json:"start_date,omitempty"`
@@ -22,27 +22,27 @@ type RestrictionDto struct {
 	DayOfWeek   []*string `json:"day_of_week,omitempty"`
 }
 
-func (r *RestrictionDto) Render(writer http.ResponseWriter, request *http.Request) error {
+func (r *ElementRestrictionDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
 }
 
-func NewRestrictionDto(restriction db.Restriction) *RestrictionDto {
-	return &RestrictionDto{
-		StartTime:   util.NilString(restriction.StartTime.String),
-		EndTime:     util.NilString(restriction.EndTime.String),
-		StartDate:   util.NilString(restriction.StartDate.String),
-		EndDate:     util.NilString(restriction.EndDate.String),
-		MinKwh:      util.NilFloat64(restriction.MinKwh.Float64),
-		MaxKwh:      util.NilFloat64(restriction.MaxKwh.Float64),
-		MinPower:    util.NilFloat64(restriction.MinPower.Float64),
-		MaxPower:    util.NilFloat64(restriction.MaxPower.Float64),
-		MinDuration: util.NilInt32(restriction.MinDuration.Int32),
-		MaxDuration: util.NilInt32(restriction.MaxDuration.Int32),
+func NewElementRestrictionDto(elementRestriction db.ElementRestriction) *ElementRestrictionDto {
+	return &ElementRestrictionDto{
+		StartTime:   util.NilString(elementRestriction.StartTime.String),
+		EndTime:     util.NilString(elementRestriction.EndTime.String),
+		StartDate:   util.NilString(elementRestriction.StartDate.String),
+		EndDate:     util.NilString(elementRestriction.EndDate.String),
+		MinKwh:      util.NilFloat64(elementRestriction.MinKwh.Float64),
+		MaxKwh:      util.NilFloat64(elementRestriction.MaxKwh.Float64),
+		MinPower:    util.NilFloat64(elementRestriction.MinPower.Float64),
+		MaxPower:    util.NilFloat64(elementRestriction.MaxPower.Float64),
+		MinDuration: util.NilInt32(elementRestriction.MinDuration.Int32),
+		MaxDuration: util.NilInt32(elementRestriction.MaxDuration.Int32),
 	}
 }
 
-func NewCreateRestrictionParams(dto *RestrictionDto) db.CreateRestrictionParams {
-	return db.CreateRestrictionParams{
+func NewCreateElementRestrictionParams(dto *ElementRestrictionDto) db.CreateElementRestrictionParams {
+	return db.CreateElementRestrictionParams{
 		StartTime:   util.SqlNullString(dto.StartTime),
 		EndTime:     util.SqlNullString(dto.EndTime),
 		StartDate:   util.SqlNullString(dto.StartDate),
@@ -56,8 +56,8 @@ func NewCreateRestrictionParams(dto *RestrictionDto) db.CreateRestrictionParams 
 	}
 }
 
-func NewUpdateRestrictionParams(id int64, dto *RestrictionDto) db.UpdateRestrictionParams {
-	return db.UpdateRestrictionParams{
+func NewUpdateElementRestrictionParams(id int64, dto *ElementRestrictionDto) db.UpdateElementRestrictionParams {
+	return db.UpdateElementRestrictionParams{
 		ID:          id,
 		StartTime:   util.SqlNullString(dto.StartTime),
 		EndTime:     util.SqlNullString(dto.EndTime),
@@ -72,20 +72,21 @@ func NewUpdateRestrictionParams(id int64, dto *RestrictionDto) db.UpdateRestrict
 	}
 }
 
-func (r *RestrictionResolver) CreateRestrictionDto(ctx context.Context, restriction db.Restriction) *RestrictionDto {
-	response := NewRestrictionDto(restriction)
+func (r *ElementRestrictionResolver) CreateElementRestrictionDto(ctx context.Context, elementRestriction db.ElementRestriction) *ElementRestrictionDto {
+	response := NewElementRestrictionDto(elementRestriction)
 
-	if weekdays, err := r.Repository.ListRestrictionWeekdays(ctx, restriction.ID); err == nil && len(weekdays) > 0 {
+	if weekdays, err := r.Repository.ListElementRestrictionWeekdays(ctx, elementRestriction.ID); err == nil && len(weekdays) > 0 {
 		response.DayOfWeek = r.CreateWeekdayListDto(ctx, weekdays)
 	}
 
 	return response
 }
 
-func (r *RestrictionResolver) CreateWeekdayListDto(ctx context.Context, weekdays []db.Weekday) []*string {
+func (r *ElementRestrictionResolver) CreateWeekdayListDto(ctx context.Context, weekdays []db.Weekday) []*string {
 	list := []*string{}
 	for _, weekday := range weekdays {
-		list = append(list, &weekday.Text)
+		text := weekday.Text
+		list = append(list, &text)
 	}
 	return list
 }
