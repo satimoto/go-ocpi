@@ -32,6 +32,7 @@ func NewResolver(repositoryService *db.RepositoryService) *ElementResolver {
 
 func (r *ElementResolver) ReplaceElements(ctx context.Context, tariffID int64, dto []*ElementDto) {
 	if dto != nil {
+		r.PriceComponentResolver.Repository.DeletePriceComponents(ctx, tariffID)
 		r.Repository.DeleteElements(ctx, tariffID)
 		r.ElementRestrictionResolver.Repository.DeleteElementRestrictions(ctx, tariffID)
 
@@ -46,7 +47,7 @@ func (r *ElementResolver) ReplaceElements(ctx context.Context, tariffID int64, d
 			}
 
 			if element, err := r.Repository.CreateElement(ctx, elementParams); err == nil {
-				r.PriceComponentResolver.ReplacePriceComponents(ctx, element.ID, elementDto.PriceComponents)
+				r.PriceComponentResolver.CreatePriceComponents(ctx, element.ID, elementDto.PriceComponents)
 			}
 		}
 	}

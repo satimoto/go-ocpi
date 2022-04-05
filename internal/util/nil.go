@@ -5,8 +5,19 @@ import (
 	"time"
 )
 
-func NilBool(b bool) *bool {
-	return &b
+func NilBool(i interface{}) *bool {
+	switch t := i.(type) {
+	case sql.NullBool:
+		if t.Valid {
+			return &t.Bool
+		}
+	case bool:
+		return &t
+	case *bool:
+		return t
+	}
+
+	return nil
 }
 
 func NilFloat64(i interface{}) *float64 {

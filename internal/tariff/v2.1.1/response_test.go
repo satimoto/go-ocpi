@@ -52,6 +52,12 @@ func TestCreateTariffPushDto(t *testing.T) {
 			Price:    2.5,
 			StepSize: 300,
 		})
+		priceComponents = append(priceComponents, db.PriceComponent{
+			Type:     db.TariffDimensionFLAT,
+			Price:    1.5,
+			StepSize: 1,
+			ExactPriceComponent: util.SqlNullBool(false),
+		})
 		mockRepository.SetListPriceComponentsMockData(dbMocks.PriceComponentsMockData{PriceComponents: priceComponents, Error: nil})
 
 		elements := []db.Element{}
@@ -81,6 +87,67 @@ func TestCreateTariffPushDto(t *testing.T) {
 					"type": "TIME",
 					"price": 2.5,
 					"step_size": 300
+				}, {
+					"type": "FLAT",
+					"price": 1.5,
+					"step_size": 1,
+					"exact_price_component": false
+				}]
+			}],
+			"last_updated": "2015-06-29T20:39:09Z"
+		}`))
+	})
+
+	t.Run("With element and rounding", func(t *testing.T) {
+		mockRepository := dbMocks.NewMockRepositoryService()
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
+
+		priceRound := db.PriceComponentRounding{
+			ID: 12,
+			Granularity: db.RoundingGranularityTENTH,
+			Rule: db.RoundingRuleROUNDDOWN,
+		}
+		mockRepository.SetGetPriceComponentRoundingMockData(dbMocks.PriceComponentRoundingMockData{PriceComponentRounding: priceRound, Error: nil})
+
+		priceComponents := []db.PriceComponent{}
+		priceComponents = append(priceComponents, db.PriceComponent{
+			Type:     db.TariffDimensionTIME,
+			Price:    2.5,
+			StepSize: 300,
+			PriceRoundingID: util.SqlNullInt64(priceRound.ID),
+			ExactPriceComponent: util.SqlNullBool(true),
+		})
+		mockRepository.SetListPriceComponentsMockData(dbMocks.PriceComponentsMockData{PriceComponents: priceComponents, Error: nil})
+
+		elements := []db.Element{}
+		elements = append(elements, db.Element{})
+		mockRepository.SetListElementsMockData(dbMocks.ElementsMockData{Elements: elements, Error: nil})
+
+		tar := db.Tariff{
+			Uid:          "TARIFF01",
+			Currency:     "EUR",
+			TariffAltUrl: sql.NullString{String: "https://ev-power.de/"},
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+		}
+
+		response := tariffResolver.CreateTariffPushDto(ctx, tar)
+		responseJson, _ := json.Marshal(response)
+
+		mocks.CompareJson(t, responseJson, []byte(`{
+			"id": "TARIFF01",
+			"currency": "EUR",
+			"tariff_alt_url": "https://ev-power.de/",
+			"elements": [{
+				"price_components": [{
+					"type": "TIME",
+					"price": 2.5,
+					"step_size": 300,
+					"price_round": {
+						"round_granularity": "TENTH",
+						"round_rule": "ROUND_DOWN"
+					},
+					"exact_price_component": true
 				}]
 			}],
 			"last_updated": "2015-06-29T20:39:09Z"
