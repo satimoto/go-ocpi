@@ -6,12 +6,12 @@ import (
 
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/pricecomponent"
-	"github.com/satimoto/go-ocpi-api/internal/restriction"
+	"github.com/satimoto/go-ocpi-api/internal/elementrestriction"
 )
 
 type ElementDto struct {
 	PriceComponents []*pricecomponent.PriceComponentDto `json:"price_components"`
-	Restrictions    *restriction.RestrictionDto         `json:"restrictions,omitempty"`
+	Restrictions    *elementrestriction.ElementRestrictionDto         `json:"restrictions,omitempty"`
 }
 
 func (r *ElementDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -33,9 +33,9 @@ func (r *ElementResolver) CreateElementDto(ctx context.Context, element db.Eleme
 		response.PriceComponents = r.PriceComponentResolver.CreatePriceComponentListDto(ctx, priceComponents)
 	}
 
-	if element.RestrictionID.Valid {
-		if restriction, err := r.RestrictionResolver.Repository.GetRestriction(ctx, element.RestrictionID.Int64); err == nil {
-			response.Restrictions = r.RestrictionResolver.CreateRestrictionDto(ctx, restriction)
+	if element.ElementRestrictionID.Valid {
+		if restriction, err := r.ElementRestrictionResolver.Repository.GetElementRestriction(ctx, element.ElementRestrictionID.Int64); err == nil {
+			response.Restrictions = r.ElementRestrictionResolver.CreateElementRestrictionDto(ctx, restriction)
 		}
 	}
 

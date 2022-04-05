@@ -124,7 +124,8 @@ func (r *EvseResolver) CreateEvseListDto(ctx context.Context, evses []db.Evse) [
 func (r *EvseResolver) CreateParkingRestrictionListDto(ctx context.Context, parkingRestrictions []db.ParkingRestriction) []*string {
 	list := []*string{}
 	for _, parkingRestriction := range parkingRestrictions {
-		list = append(list, &parkingRestriction.Text)
+		text := parkingRestriction.Text
+		list = append(list, &text)
 	}
 	return list
 }

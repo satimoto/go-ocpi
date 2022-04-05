@@ -9,29 +9,32 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/element"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
+	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 type TariffPullDto struct {
-	ID            *string                       `json:"id"`
-	CountryCode   *string                       `json:"country_code"`
-	PartyID       *string                       `json:"party_id"`
-	Currency      *string                       `json:"currency"`
-	TariffAltText []*displaytext.DisplayTextDto `json:"tariff_alt_text,omitempty"`
-	TariffAltUrl  *string                       `json:"tariff_alt_url,omitempty"`
-	Elements      []*element.ElementDto         `json:"elements"`
-	EnergyMix     *energymix.EnergyMixDto       `json:"energy_mix,omitempty"`
-	LastUpdated   *time.Time                    `json:"last_updated"`
+	ID            *string                                 `json:"id"`
+	CountryCode   *string                                 `json:"country_code"`
+	PartyID       *string                                 `json:"party_id"`
+	Currency      *string                                 `json:"currency"`
+	TariffAltText []*displaytext.DisplayTextDto           `json:"tariff_alt_text,omitempty"`
+	TariffAltUrl  *string                                 `json:"tariff_alt_url,omitempty"`
+	Elements      []*element.ElementDto                   `json:"elements"`
+	EnergyMix     *energymix.EnergyMixDto                 `json:"energy_mix,omitempty"`
+	Restriction   *tariffrestriction.TariffRestrictionDto `json:"restriction,omitempty"`
+	LastUpdated   *time.Time                              `json:"last_updated"`
 }
 
 type TariffPushDto struct {
-	ID            *string                       `json:"id"`
-	Currency      *string                       `json:"currency"`
-	TariffAltText []*displaytext.DisplayTextDto `json:"tariff_alt_text,omitempty"`
-	TariffAltUrl  *string                       `json:"tariff_alt_url,omitempty"`
-	Elements      []*element.ElementDto         `json:"elements"`
-	EnergyMix     *energymix.EnergyMixDto       `json:"energy_mix,omitempty"`
-	LastUpdated   *time.Time                    `json:"last_updated"`
+	ID            *string                                 `json:"id"`
+	Currency      *string                                 `json:"currency"`
+	TariffAltText []*displaytext.DisplayTextDto           `json:"tariff_alt_text,omitempty"`
+	TariffAltUrl  *string                                 `json:"tariff_alt_url,omitempty"`
+	Elements      []*element.ElementDto                   `json:"elements"`
+	EnergyMix     *energymix.EnergyMixDto                 `json:"energy_mix,omitempty"`
+	Restriction   *tariffrestriction.TariffRestrictionDto `json:"restriction,omitempty"`
+	LastUpdated   *time.Time                              `json:"last_updated"`
 }
 
 func (r *TariffPushDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -58,13 +61,14 @@ func NewCreateTariffParams(dto *TariffPushDto) db.CreateTariffParams {
 
 func NewUpdateTariffByUidParams(tariff db.Tariff) db.UpdateTariffByUidParams {
 	return db.UpdateTariffByUidParams{
-		Uid:          tariff.Uid,
-		CountryCode:  tariff.CountryCode,
-		PartyID:      tariff.PartyID,
-		Currency:     tariff.Currency,
-		TariffAltUrl: tariff.TariffAltUrl,
-		EnergyMixID:  tariff.EnergyMixID,
-		LastUpdated:  tariff.LastUpdated,
+		Uid:                 tariff.Uid,
+		CountryCode:         tariff.CountryCode,
+		PartyID:             tariff.PartyID,
+		Currency:            tariff.Currency,
+		TariffAltUrl:        tariff.TariffAltUrl,
+		EnergyMixID:         tariff.EnergyMixID,
+		TariffRestrictionID: tariff.TariffRestrictionID,
+		LastUpdated:         tariff.LastUpdated,
 	}
 }
 
@@ -82,6 +86,12 @@ func (r *TariffResolver) CreateTariffPushDto(ctx context.Context, tariff db.Tari
 	if tariff.EnergyMixID.Valid {
 		if energyMix, err := r.EnergyMixResolver.Repository.GetEnergyMix(ctx, tariff.EnergyMixID.Int64); err == nil {
 			response.EnergyMix = r.EnergyMixResolver.CreateEnergyMixDto(ctx, energyMix)
+		}
+	}
+
+	if tariff.TariffRestrictionID.Valid {
+		if tariffRestriction, err := r.TariffRestrictionResolver.Repository.GetTariffRestriction(ctx, tariff.TariffRestrictionID.Int64); err == nil {
+			response.Restriction = r.TariffRestrictionResolver.CreateTariffRestrictionDto(ctx, tariffRestriction)
 		}
 	}
 

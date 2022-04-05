@@ -110,15 +110,15 @@ func TestCreateTariffPushDto(t *testing.T) {
 		})
 		mockRepository.SetListPriceComponentsMockData(dbMocks.PriceComponentsMockData{PriceComponents: priceComponents2, Error: nil})
 
-		restriction2 := db.Restriction{
+		restriction2 := db.ElementRestriction{
 			MaxPower: sql.NullFloat64{Float64: 32},
 		}
-		mockRepository.SetGetRestrictionMockData(dbMocks.RestrictionMockData{Restriction: restriction2, Error: nil})
+		mockRepository.SetGetElementRestrictionMockData(dbMocks.ElementRestrictionMockData{ElementRestriction: restriction2, Error: nil})
 
 		elements := []db.Element{}
 		elements = append(elements, db.Element{})
 		elements = append(elements, db.Element{
-			RestrictionID: sql.NullInt64{Int64: 1, Valid: true},
+			ElementRestrictionID: sql.NullInt64{Int64: 1, Valid: true},
 		})
 		mockRepository.SetListElementsMockData(dbMocks.ElementsMockData{Elements: elements, Error: nil})
 
@@ -245,6 +245,88 @@ func TestCreateTariffPushDto(t *testing.T) {
 				}],
 				"supplier_name": "E.ON Energy Deutschland",
 				"energy_product_name": "E.ON DirektStrom eco"
+			},
+			"last_updated": "2015-06-29T20:39:09Z"
+		}`))
+	})
+
+	t.Run("With restriction", func(t *testing.T) {
+		mockRepository := dbMocks.NewMockRepositoryService()
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
+
+		restriction := db.TariffRestriction{
+			ID:        1,
+			StartTime: "13:30",
+			EndTime:   "15:30",
+		}
+		mockRepository.SetGetTariffRestrictionMockData(dbMocks.TariffRestrictionMockData{TariffRestriction: restriction, Error: nil})
+
+		tar := db.Tariff{
+			Uid:                 "TARIFF01",
+			Currency:            "EUR",
+			TariffAltUrl:        sql.NullString{String: "https://ev-power.de/"},
+			TariffRestrictionID: util.SqlNullInt64(restriction.ID),
+			LastUpdated:         *util.ParseTime("2015-06-29T20:39:09Z"),
+		}
+
+		response := tariffResolver.CreateTariffPushDto(ctx, tar)
+		responseJson, _ := json.Marshal(response)
+
+		mocks.CompareJson(t, responseJson, []byte(`{
+			"id": "TARIFF01",
+			"currency": "EUR",
+			"tariff_alt_url": "https://ev-power.de/",
+			"elements": [],
+			"restriction": {
+				"start_time": "13:30",
+				"end_time": "15:30"
+			},
+			"last_updated": "2015-06-29T20:39:09Z"
+		}`))
+	})
+
+	t.Run("With restriction", func(t *testing.T) {
+		mockRepository := dbMocks.NewMockRepositoryService()
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
+
+		restriction := db.TariffRestriction{
+			ID:         1,
+			StartTime:  "13:30",
+			EndTime:    "15:30",
+			StartTime2: util.SqlNullString("19:45"),
+			EndTime2:   util.SqlNullString("21:45"),
+		}
+		mockRepository.SetGetTariffRestrictionMockData(dbMocks.TariffRestrictionMockData{TariffRestriction: restriction, Error: nil})
+
+		weekdays := []db.Weekday{}
+		weekdays = append(weekdays, db.Weekday{Text: "Tuesday"})
+		weekdays = append(weekdays, db.Weekday{Text: "Wednesday"})
+		mockRepository.SetListTariffRestrictionWeekdaysMockData(dbMocks.WeekdaysMockData{Weekdays: weekdays, Error: nil})
+
+		tar := db.Tariff{
+			Uid:                 "TARIFF01",
+			Currency:            "EUR",
+			TariffAltUrl:        sql.NullString{String: "https://ev-power.de/"},
+			TariffRestrictionID: util.SqlNullInt64(restriction.ID),
+			LastUpdated:         *util.ParseTime("2015-06-29T20:39:09Z"),
+		}
+
+		response := tariffResolver.CreateTariffPushDto(ctx, tar)
+		responseJson, _ := json.Marshal(response)
+
+		mocks.CompareJson(t, responseJson, []byte(`{
+			"id": "TARIFF01",
+			"currency": "EUR",
+			"tariff_alt_url": "https://ev-power.de/",
+			"elements": [],
+			"restriction": {
+				"start_time": "13:30",
+				"end_time": "15:30",
+				"start_time_2": "19:45",
+				"end_time_2": "21:45",
+				"day_of_week": ["Tuesday", "Wednesday"]
 			},
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`))

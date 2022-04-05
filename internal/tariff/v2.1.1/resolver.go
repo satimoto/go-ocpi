@@ -8,6 +8,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/element"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
+	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
@@ -27,15 +28,17 @@ type TariffResolver struct {
 	*displaytext.DisplayTextResolver
 	*element.ElementResolver
 	*energymix.EnergyMixResolver
+	*tariffrestriction.TariffRestrictionResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *TariffResolver {
 	repo := TariffRepository(repositoryService)
 	return &TariffResolver{
-		Repository:          repo,
-		DisplayTextResolver: displaytext.NewResolver(repositoryService),
-		ElementResolver:     element.NewResolver(repositoryService),
-		EnergyMixResolver:   energymix.NewResolver(repositoryService),
+		Repository:                repo,
+		DisplayTextResolver:       displaytext.NewResolver(repositoryService),
+		ElementResolver:           element.NewResolver(repositoryService),
+		EnergyMixResolver:         energymix.NewResolver(repositoryService),
+		TariffRestrictionResolver: tariffrestriction.NewResolver(repositoryService),
 	}
 }
 
@@ -43,9 +46,14 @@ func (r *TariffResolver) ReplaceTariff(ctx context.Context, countryCode *string,
 	if dto != nil {
 		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
 		energyMixID := util.NilInt64(tariff.EnergyMixID)
+		tariffRestrictionID := util.NilInt64(tariff.TariffRestrictionID)
 
 		if dto.EnergyMix != nil {
 			r.EnergyMixResolver.ReplaceEnergyMix(ctx, energyMixID, dto.EnergyMix)
+		}
+
+		if dto.Restriction != nil {
+			r.TariffRestrictionResolver.ReplaceTariffRestriction(ctx, tariffRestrictionID, dto.Restriction)
 		}
 
 		if err == nil {
@@ -53,6 +61,7 @@ func (r *TariffResolver) ReplaceTariff(ctx context.Context, countryCode *string,
 			tariffParams.CountryCode = util.SqlNullString(countryCode)
 			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)
+			tariffParams.TariffRestrictionID = util.SqlNullInt64(tariffRestrictionID)
 
 			if dto.Currency != nil {
 				tariffParams.Currency = *dto.Currency
@@ -73,6 +82,7 @@ func (r *TariffResolver) ReplaceTariff(ctx context.Context, countryCode *string,
 			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.CdrID = util.SqlNullInt64(cdrID)
 			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)
+			tariffParams.TariffRestrictionID = util.SqlNullInt64(tariffRestrictionID)
 
 			tariff, err = r.Repository.CreateTariff(ctx, tariffParams)
 		}
