@@ -15,8 +15,8 @@ type CredentialDto struct {
 	Token          *string                           `json:"token"`
 	Url            *string                           `json:"url"`
 	BusinessDetail *businessdetail.BusinessDetailDto `json:"business_details"`
-	PartyID        *string                           `json:"party_id"`
 	CountryCode    *string                           `json:"country_code"`
+	PartyID        *string                           `json:"party_id"`
 }
 
 func (r *CredentialDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -38,8 +38,9 @@ func NewUpdateCredentialParams(credential db.Credential) db.UpdateCredentialPara
 		ClientToken: credential.ClientToken,
 		ServerToken: credential.ServerToken,
 		Url:         credential.Url,
-		PartyID:     credential.PartyID,
 		CountryCode: credential.CountryCode,
+		PartyID:     credential.PartyID,
+		IsHub:       credential.IsHub,
 		LastUpdated: credential.LastUpdated,
 	}
 }

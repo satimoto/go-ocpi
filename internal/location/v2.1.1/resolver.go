@@ -64,6 +64,16 @@ func NewResolver(repositoryService *db.RepositoryService) *LocationResolver {
 
 func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, dto *LocationDto) *db.Location {
 	if dto != nil {
+		countryCode, partyID := evse.GetEvsesIdentity(dto.Evses)
+
+		return r.ReplaceLocationWithIdentifiers(ctx, countryCode, partyID, uid, dto)
+	}
+
+	return nil
+}
+
+func (r *LocationResolver) ReplaceLocationWithIdentifiers(ctx context.Context, countryCode *string, partyID *string, uid string, dto *LocationDto) *db.Location {
+	if dto != nil {
 		location, err := r.Repository.GetLocationByUid(ctx, uid)
 		geoLocationID := util.SqlNullInt64(util.NilInt64(location.GeoLocationID))
 		energyMixID := util.NilInt64(location.EnergyMixID)
@@ -103,6 +113,8 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, dto 
 
 		if err == nil {
 			locationParams := NewUpdateLocationByUidParams(location)
+			locationParams.CountryCode = util.SqlNullString(countryCode)
+			locationParams.PartyID = util.SqlNullString(partyID)
 			locationParams.Geom = *geomPoint
 			locationParams.GeoLocationID = geoLocationID.Int64
 			locationParams.EnergyMixID = util.SqlNullInt64(energyMixID)
@@ -150,6 +162,8 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, dto 
 			location, err = r.Repository.UpdateLocationByUid(ctx, locationParams)
 		} else {
 			locationParams := NewCreateLocationParams(dto)
+			locationParams.CountryCode = util.SqlNullString(countryCode)
+			locationParams.PartyID = util.SqlNullString(partyID)
 			locationParams.Geom = *geomPoint
 			locationParams.GeoLocationID = geoLocationID.Int64
 			locationParams.EnergyMixID = util.SqlNullInt64(energyMixID)

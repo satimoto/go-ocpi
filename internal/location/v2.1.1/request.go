@@ -21,6 +21,8 @@ func (r *LocationResolver) GetLocation(rw http.ResponseWriter, request *http.Req
 
 func (r *LocationResolver) UpdateLocation(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	countryCode := chi.URLParam(request, "country_code")
+	partyID := chi.URLParam(request, "party_id")
 	uid := chi.URLParam(request, "location_id")
 	dto, err := r.UnmarshalDto(request.Body)
 
@@ -28,7 +30,7 @@ func (r *LocationResolver) UpdateLocation(rw http.ResponseWriter, request *http.
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	location := r.ReplaceLocation(ctx, uid, dto)
+	location := r.ReplaceLocationWithIdentifiers(ctx, &countryCode, &partyID, uid, dto)
 
 	if location == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))

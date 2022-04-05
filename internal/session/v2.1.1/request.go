@@ -21,6 +21,8 @@ func (r *SessionResolver) GetSession(rw http.ResponseWriter, request *http.Reque
 
 func (r *SessionResolver) UpdateSession(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	countryCode := chi.URLParam(request, "country_code")
+	partyID := chi.URLParam(request, "party_id")
 	uid := chi.URLParam(request, "session_id")
 	dto, err := r.UnmarshalDto(request.Body)
 
@@ -28,7 +30,7 @@ func (r *SessionResolver) UpdateSession(rw http.ResponseWriter, request *http.Re
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
 	}
 
-	session := r.ReplaceSession(ctx, uid, dto)
+	session := r.ReplaceSession(ctx, &countryCode, &partyID, uid, dto)
 
 	if session == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))

@@ -4,47 +4,30 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-ocpi-api/internal/tokenauthorization"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 type TokenRepository interface {
 	CreateToken(ctx context.Context, arg db.CreateTokenParams) (db.Token, error)
-	CreateTokenAuthorization(ctx context.Context, arg db.CreateTokenAuthorizationParams) (db.TokenAuthorization, error)
 	DeleteTokenByUid(ctx context.Context, uid string) error
 	GetToken(ctx context.Context, id int64) (db.Token, error)
 	GetTokenByUid(ctx context.Context, uid string) (db.Token, error)
 	ListTokens(ctx context.Context, arg db.ListTokensParams) ([]db.Token, error)
-	SetTokenAuthorizationConnector(ctx context.Context, arg db.SetTokenAuthorizationConnectorParams) error
-	SetTokenAuthorizationEvse(ctx context.Context, arg db.SetTokenAuthorizationEvseParams) error
 	UpdateTokenByUid(ctx context.Context, arg db.UpdateTokenByUidParams) (db.Token, error)
 }
 
 type TokenResolver struct {
 	Repository TokenRepository
+	*tokenauthorization.TokenAuthorizationResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *TokenResolver {
 	repo := TokenRepository(repositoryService)
 	return &TokenResolver{
-		Repository: repo,
+		Repository:                 repo,
+		TokenAuthorizationResolver: tokenauthorization.NewResolver(repositoryService),
 	}
-}
-
-func (r *TokenResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, dto *LocationReferencesDto) *db.TokenAuthorization {
-	tokenAuthorizationParams := NewCreateTokenAuthorizationParams(token.ID)
-
-	if dto != nil {
-		tokenAuthorizationParams.LocationID = util.SqlNullString(dto.LocationID)
-	}
-
-	if tokenAuthorization, err := r.Repository.CreateTokenAuthorization(ctx, tokenAuthorizationParams); err == nil {
-		r.createTokenAuthorizationEvses(ctx, tokenAuthorization.ID, dto)
-		r.createTokenAuthorizationConnectors(ctx, tokenAuthorization.ID, dto)
-
-		return &tokenAuthorization
-	}
-
-	return nil
 }
 
 func (r *TokenResolver) ReplaceToken(ctx context.Context, uid string, dto *TokenDto) *db.Token {
@@ -97,26 +80,4 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, uid string, dto *Token
 	}
 
 	return nil
-}
-
-func (r *TokenResolver) createTokenAuthorizationConnectors(ctx context.Context, tokenAuthorizationID int64, dto *LocationReferencesDto) {
-	if dto != nil {
-		for _, connectorId := range dto.ConnectorIds {
-			r.Repository.SetTokenAuthorizationConnector(ctx, db.SetTokenAuthorizationConnectorParams{
-				TokenAuthorizationID: tokenAuthorizationID,
-				ConnectorUid:         *connectorId,
-			})
-		}
-	}
-}
-
-func (r *TokenResolver) createTokenAuthorizationEvses(ctx context.Context, tokenAuthorizationID int64, dto *LocationReferencesDto) {
-	if dto != nil {
-		for _, evseUid := range dto.EvseUids {
-			r.Repository.SetTokenAuthorizationEvse(ctx, db.SetTokenAuthorizationEvseParams{
-				TokenAuthorizationID: tokenAuthorizationID,
-				EvseUid:              *evseUid,
-			})
-		}
-	}
 }

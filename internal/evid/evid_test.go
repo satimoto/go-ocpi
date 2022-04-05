@@ -40,7 +40,43 @@ func TestEvId(t *testing.T) {
 		runEvIdTest(t, "DE-8AC-C12E56L89", "DE-8AC-C12E56L89-4", true)
 	})
 
+	t.Run("Test BE-BEC-E041503002", func(t *testing.T) {
+		runEvIdTest(t, "BE-BEC-E04150300-2", "BE-BEC-E04150300-2", false)
+	})
+
+	t.Run("NL*LMS*E17093261", func(t *testing.T) {
+		runEvIdTest(t, "NL*LMS*E17093261", "NL-LMS-E17093261-K", true)
+	})
+
 	t.Run("Test DE*804*E1", func(t *testing.T) {
 		runEvIdTest(t, "DE*804*E1", "", false)
+	})
+
+	t.Run("Get NL*LMS*E17093261 identifiers", func(t *testing.T) {
+		evId := evid.NewEvid("NL*LMS*E17093261")
+		countryCode := evId.GetCountryCode()
+		partyID := evId.GetPartyID()
+
+		if *countryCode != "NL" {
+			t.Errorf("CountryCode error: %v, %v, %v", evId, countryCode,  "NL")
+		}
+
+		if *partyID != "LMS" {
+			t.Errorf("PartyID error: %v, %v, %v", evId, partyID,  "LMS")
+		}
+	})
+
+	t.Run("Get NL identifiers", func(t *testing.T) {
+		evId := evid.NewEvid("NL")
+		countryCode := evId.GetCountryCode()
+		partyID := evId.GetPartyID()
+
+		if countryCode != nil {
+			t.Errorf("CountryCode error: %v, %v, %v", evId, countryCode,  "NL")
+		}
+
+		if partyID != nil {
+			t.Errorf("PartyID error: %v, %v, %v", evId, partyID,  "LMS")
+		}
 	})
 }

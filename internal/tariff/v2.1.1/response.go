@@ -59,6 +59,8 @@ func NewCreateTariffParams(dto *TariffPushDto) db.CreateTariffParams {
 func NewUpdateTariffByUidParams(tariff db.Tariff) db.UpdateTariffByUidParams {
 	return db.UpdateTariffByUidParams{
 		Uid:          tariff.Uid,
+		CountryCode:  tariff.CountryCode,
+		PartyID:      tariff.PartyID,
 		Currency:     tariff.Currency,
 		TariffAltUrl: tariff.TariffAltUrl,
 		EnergyMixID:  tariff.EnergyMixID,
@@ -86,7 +88,7 @@ func (r *TariffResolver) CreateTariffPushDto(ctx context.Context, tariff db.Tari
 	return response
 }
 
-func (r *TariffResolver) CreateTariffListDto(ctx context.Context, tariffs []db.Tariff) []*TariffPushDto {
+func (r *TariffResolver) CreateTariffPushListDto(ctx context.Context, tariffs []db.Tariff) []*TariffPushDto {
 	list := []*TariffPushDto{}
 	for _, tariff := range tariffs {
 		list = append(list, r.CreateTariffPushDto(ctx, tariff))

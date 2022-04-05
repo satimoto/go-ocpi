@@ -59,12 +59,6 @@ func TestSessionRequest(t *testing.T) {
 		sessionRoutes := setupRoutes(sessionResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		cred := db.Credential{
-			CountryCode: "DE",
-			PartyID:     "ABC",
-		}
-		mockRepository.SetGetCredentialByPartyAndCountryCodeMockData(dbMocks.CredentialMockData{Credential: cred, Error: nil})
-
 		sess := db.Session{
 			Uid:           "SESSION0001",
 			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z"),
@@ -109,12 +103,6 @@ func TestSessionRequest(t *testing.T) {
 		sessionResolver := sessionMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
 		sessionRoutes := setupRoutes(sessionResolver)
 		responseRecorder := httptest.NewRecorder()
-
-		cred := db.Credential{
-			CountryCode: "DE",
-			PartyID:     "ABC",
-		}
-		mockRepository.SetGetCredentialByPartyAndCountryCodeMockData(dbMocks.CredentialMockData{Credential: cred, Error: nil})
 
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{
@@ -187,12 +175,6 @@ func TestSessionRequest(t *testing.T) {
 		sessionRoutes := setupRoutes(sessionResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		cred := db.Credential{
-			CountryCode: "DE",
-			PartyID:     "ABC",
-		}
-		mockRepository.SetGetCredentialByPartyAndCountryCodeMockData(dbMocks.CredentialMockData{Credential: cred, Error: nil})
-
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{
 			StartDateTime: *util.ParseTime("2015-06-29T22:39:09Z"),
@@ -241,6 +223,8 @@ func TestSessionRequest(t *testing.T) {
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "SESSION0001",
+			"countryCode": "DE",
+			"partyID": "ABC",
 			"authorizationID": {"String": "", "Valid": false},
 			"startDatetime": "2015-06-29T22:39:09Z",
 			"endDatetime": {"Time": "0001-01-01T00:00:00Z", "Valid": false},

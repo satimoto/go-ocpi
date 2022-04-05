@@ -42,13 +42,17 @@ func TestReplaceLocation(t *testing.T) {
 			LastUpdated:        util.ParseTime("2015-03-16T10:10:02Z"),
 		}
 
-		locationResolver.ReplaceLocation(ctx, *dto.ID, &dto)
+		countryCode := "DE"
+		partyID := "ABC"
+		locationResolver.ReplaceLocationWithIdentifiers(ctx, &countryCode, &partyID, *dto.ID, &dto)
 
 		params, _ := mockRepository.GetCreateLocationMockData()
 		paramsJson, _ := json.Marshal(params)
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "LOC1",
+			"countryCode": {"String": "DE", "Valid": true},
+			"partyID": {"String": "ABC", "Valid": true},
 			"type": "ON_STREET",
 			"name": {"String": "Gent Zuid", "Valid": true},
 			"address": "F.Rooseveltlaan 3A",
@@ -107,13 +111,17 @@ func TestReplaceLocation(t *testing.T) {
 			Type: &locationTypePARKINGGARAGE,
 		}
 
-		locationResolver.ReplaceLocation(ctx, "LOC1", &dto)
+		countryCode := "DE"
+		partyID := "ABC"
+		locationResolver.ReplaceLocationWithIdentifiers(ctx, &countryCode, &partyID, "LOC1", &dto)
 
 		params, _ := mockRepository.GetUpdateLocationByUidMockData()
 		paramsJson, _ := json.Marshal(params)
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "LOC1",
+			"countryCode": {"String": "DE", "Valid": true},
+			"partyID": {"String": "ABC", "Valid": true},
 			"type": "PARKING_GARAGE",
 			"name": {"String": "Gent Zuid", "Valid": true},
 			"address": "F.Rooseveltlaan 3A",
@@ -162,7 +170,7 @@ func TestReplaceLocation(t *testing.T) {
 		evsesDto := []*evse.EvseDto{}
 		evsesDto = append(evsesDto, &evse.EvseDto{
 			Uid:               util.NilString("3257"),
-			EvseID:            util.NilString("BE-BEC-E041503002"),
+			EvseID:            util.NilString("BE-BEC-E04150300-8"),
 			Status:            &evseStatusRESERVED,
 			PhysicalReference: util.NilString("2"),
 			FloorLevel:        util.NilString("-2"),
@@ -180,6 +188,8 @@ func TestReplaceLocation(t *testing.T) {
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "LOC1",
+			"countryCode": {"String": "BE", "Valid": true},
+			"partyID": {"String": "BEC", "Valid": true},
 			"type": "ON_STREET",
 			"name": {"String": "Gent Zuid", "Valid": true},
 			"address": "F.Rooseveltlaan 3A",
@@ -203,7 +213,7 @@ func TestReplaceLocation(t *testing.T) {
 
 		mocks.CompareJson(t, evseParamsJson, []byte(`{
 			"uid": "3257",
-			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
+			"evseID": {"String": "BE-BEC-E04150300-8", "Valid": true},
 			"locationID": 0,
 			"status": "RESERVED",
 			"geom": null,
