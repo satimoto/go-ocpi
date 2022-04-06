@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-func (r *CdrResolver) UnmarshalDto(body io.ReadCloser) (*CdrDto, error) {
+func (r *CdrResolver) UnmarshalPushDto(body io.ReadCloser) (*CdrDto, error) {
 	dto := CdrDto{}
 
 	if err := json.NewDecoder(body).Decode(&dto); err != nil {
@@ -13,4 +13,14 @@ func (r *CdrResolver) UnmarshalDto(body io.ReadCloser) (*CdrDto, error) {
 	}
 
 	return &dto, nil
+}
+
+func (r *CdrResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPICdrsDto, error) {
+	response := OCPICdrsDto{}
+
+	if err := json.NewDecoder(body).Decode(&response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
 }

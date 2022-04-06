@@ -10,6 +10,7 @@ import (
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
 	versionMocks "github.com/satimoto/go-ocpi-api/internal/version/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
@@ -23,13 +24,13 @@ func TestUnmarshalResponse(t *testing.T) {
 	t.Run("Success response", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
 
 		dto := versionResolver.CreateVersionListDto(ctx)
 		response := ocpi.OCPISuccess(dto)
 		responseJson, _ := json.Marshal(response)
 		readerCloser := io.NopCloser(strings.NewReader(string(responseJson)))
-		unmarshalReponse, _ := versionResolver.UnmarshalResponse(readerCloser)
+		unmarshalReponse, _ := versionResolver.UnmarshalPullDto(readerCloser)
 		versionDto := unmarshalReponse.Data
 		versionJson, _ := json.Marshal(versionDto)
 
@@ -42,12 +43,12 @@ func TestUnmarshalResponse(t *testing.T) {
 	t.Run("Error response", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolver(mockRepository, mocks.NewOCPIRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
 
 		response := ocpi.OCPIRegistrationError(nil)
 		responseJson, _ := json.Marshal(response)
 		readerCloser := io.NopCloser(strings.NewReader(string(responseJson)))
-		unmarshalReponse, _ := versionResolver.UnmarshalResponse(readerCloser)
+		unmarshalReponse, _ := versionResolver.UnmarshalPullDto(readerCloser)
 
 		if unmarshalReponse.StatusCode != ocpi.STATUS_CODE_REGISTRATION_ERROR {
 			t.Errorf("StatusCode mismatch: %v", unmarshalReponse.StatusCode)

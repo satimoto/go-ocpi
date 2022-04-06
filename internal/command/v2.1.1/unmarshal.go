@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-func (r *CommandResolver) UnmarshalCommandResponseDto(body io.ReadCloser) (*CommandResponseDto, error) {
+func (r *CommandResolver) UnmarshalPushDto(body io.ReadCloser) (*CommandResponseDto, error) {
 	if body != nil {
 		dto := CommandResponseDto{}
 
