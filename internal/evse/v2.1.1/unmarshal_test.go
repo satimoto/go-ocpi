@@ -11,7 +11,17 @@ import (
 func TestEvseUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		dto := evse.EvseDto{}
-		request := []byte(`{}`)
+		request := []byte(`{
+			"uid": null,
+			"status": null,
+			"status_schedule": null,
+			"capabilities": null,
+			"connectors": null,
+			"directions": null,
+			"parking_restrictions": null,
+			"images": null,
+			"last_updated": null
+		}`)
 
 		json.Unmarshal(request, &dto)
 		responseJson, _ := json.Marshal(dto)

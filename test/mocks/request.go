@@ -1,10 +1,6 @@
 package mocks
 
-import (
-	"net/http"
-
-	"github.com/satimoto/go-ocpi-api/internal/util"
-)
+import "net/http"
 
 type MockResponseData struct {
 	Response *http.Response
@@ -40,10 +36,4 @@ func (r *MockHTTPRequester) GetRequest() *http.Request {
 	data := r.requestData[0]
 	r.requestData = r.requestData[1:]
 	return data
-}
-
-func NewOCPIRequester(requester *MockHTTPRequester) *util.OCPIRequester {
-	return &util.OCPIRequester{
-		HTTPRequester: requester,
-	}
 }

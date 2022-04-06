@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-func (r *LocationResolver) UnmarshalDto(body io.ReadCloser) (*LocationDto, error) {
+func (r *LocationResolver) UnmarshalPushDto(body io.ReadCloser) (*LocationDto, error) {
 	dto := LocationDto{}
 
 	if err := json.NewDecoder(body).Decode(&dto); err != nil {
@@ -13,4 +13,14 @@ func (r *LocationResolver) UnmarshalDto(body io.ReadCloser) (*LocationDto, error
 	}
 
 	return &dto, nil
+}
+
+func (r *LocationResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPILocationsDto, error) {
+	response := OCPILocationsDto{}
+
+	if err := json.NewDecoder(body).Decode(&response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
 }

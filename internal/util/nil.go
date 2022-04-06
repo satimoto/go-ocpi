@@ -68,11 +68,19 @@ func NilInt64(i interface{}) *int64 {
 	return nil
 }
 
-func NilString(str string) *string {
-	if len(str) == 0 {
-		return nil
+func NilString(i interface{}) *string {
+	switch t := i.(type) {
+	case sql.NullString:
+		if t.Valid {
+			return &t.String
+		}
+	case string:
+		return &t
+	case *string:
+		return t
 	}
-	return &str
+
+	return nil
 }
 
 func NilTime(t time.Time) *time.Time {

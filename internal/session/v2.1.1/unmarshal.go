@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-func (r *SessionResolver) UnmarshalDto(body io.ReadCloser) (*SessionDto, error) {
+func (r *SessionResolver) UnmarshalPushDto(body io.ReadCloser) (*SessionDto, error) {
 	dto := SessionDto{}
 
 	if err := json.NewDecoder(body).Decode(&dto); err != nil {
@@ -13,4 +13,14 @@ func (r *SessionResolver) UnmarshalDto(body io.ReadCloser) (*SessionDto, error) 
 	}
 
 	return &dto, nil
+}
+
+func (r *SessionResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPISessionsDto, error) {
+	response := OCPISessionsDto{}
+
+	if err := json.NewDecoder(body).Decode(&response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
 }

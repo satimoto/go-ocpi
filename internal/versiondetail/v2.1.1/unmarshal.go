@@ -3,17 +3,9 @@ package versiondetail
 import (
 	"encoding/json"
 	"io"
-	"time"
 )
 
-type OCPIVersionDetailResponse struct {
-	Data          *VersionDetailDto `json:"data,omitempty"`
-	StatusCode    int16             `json:"status_code"`
-	StatusMessage string            `json:"status_message"`
-	Timestamp     time.Time         `json:"timestamp"`
-}
-
-func (r *VersionDetailResolver) UnmarshalDto(body io.ReadCloser) (*VersionDetailDto, error) {
+func (r *VersionDetailResolver) UnmarshalPushDto(body io.ReadCloser) (*VersionDetailDto, error) {
 	dto := VersionDetailDto{}
 
 	if err := json.NewDecoder(body).Decode(&dto); err != nil {
@@ -23,8 +15,8 @@ func (r *VersionDetailResolver) UnmarshalDto(body io.ReadCloser) (*VersionDetail
 	return &dto, nil
 }
 
-func (r *VersionDetailResolver) UnmarshalResponse(body io.ReadCloser) (*OCPIVersionDetailResponse, error) {
-	response := OCPIVersionDetailResponse{}
+func (r *VersionDetailResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPIVersionDetailDto, error) {
+	response := OCPIVersionDetailDto{}
 
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		return nil, err

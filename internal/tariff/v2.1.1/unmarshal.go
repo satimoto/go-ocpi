@@ -5,8 +5,8 @@ import (
 	"io"
 )
 
-func (r *TariffResolver) UnmarshalTariffPullDto(body io.ReadCloser) (*TariffPullDto, error) {
-	dto := TariffPullDto{}
+func (r *TariffResolver) UnmarshalPushDto(body io.ReadCloser) (*TariffDto, error) {
+	dto := TariffDto{}
 
 	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err
@@ -15,8 +15,8 @@ func (r *TariffResolver) UnmarshalTariffPullDto(body io.ReadCloser) (*TariffPull
 	return &dto, nil
 }
 
-func (r *TariffResolver) UnmarshalTariffPushDto(body io.ReadCloser) (*TariffPushDto, error) {
-	dto := TariffPushDto{}
+func (r *TariffResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPITariffsDto, error) {
+	dto := OCPITariffsDto{}
 
 	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err
