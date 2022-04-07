@@ -28,12 +28,14 @@ func (r *SessionResolver) UpdateSession(rw http.ResponseWriter, request *http.Re
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	session := r.ReplaceSessionByIdentifier(ctx, &countryCode, &partyID, uid, dto)
 
 	if session == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))
+		return
 	}
 
 	render.Render(rw, request, ocpi.OCPISuccess(nil))

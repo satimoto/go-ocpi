@@ -28,17 +28,25 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 
 	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	evse := r.ReplaceEvse(ctx, location.ID, uid, &dto)
 
-	err := r.Repository.UpdateLocationLastUpdated(ctx, db.UpdateLocationLastUpdatedParams{
-		ID:          location.ID,
-		LastUpdated: evse.LastUpdated,
-	})
-
-	if err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+	if evse != nil {
+		if dto.Capabilities != nil || dto.Status != nil {
+			r.updateLocationAvailability(ctx, evse.ID)
+		}
+	
+		err := r.Repository.UpdateLocationLastUpdated(ctx, db.UpdateLocationLastUpdatedParams{
+			ID:          location.ID,
+			LastUpdated: evse.LastUpdated,
+		})
+	
+		if err != nil {
+			render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+			return
+		}
 	}
 
 	render.Render(rw, request, ocpi.OCPISuccess(nil))

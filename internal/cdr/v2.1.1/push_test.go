@@ -219,7 +219,31 @@ func TestCdrRequest(t *testing.T) {
 					"longitude": "-126.104965"	
 				},
 				"related_locations": [],
-				"evses": [],
+				"evses": [{
+                    "uid": "9785",
+                    "status": "UNKNOWN",
+                    "capabilities": [
+                        "CHARGING_PROFILE_CAPABLE",
+                        "REMOTE_START_STOP_CAPABLE",
+                        "RFID_READER"
+                    ],
+                    "connectors": [{
+                        "id": "9785",
+                        "standard": "IEC_62196_T2",
+                        "format": "SOCKET",
+                        "power_type": "AC_3_PHASE",
+                        "voltage": 230,
+                        "amperage": 16,
+                        "last_updated": "2022-04-07T07:19:49Z",
+                        "max_power": 11040
+                    }],
+                    "last_updated": "2022-04-07T03:09:30Z",
+                    "physical_reference": "AL106",
+                    "evse_id": "NL*EVN*E30332*9785",
+                    "parking_restrictions": [
+                        "EV_ONLY"
+                    ]
+                }],
 				"directions": [{
 					"text": "Go Left",
 					"language": "en"

@@ -37,6 +37,7 @@ type EvseRepository interface {
 	UnsetEvseParkingRestrictions(ctx context.Context, evseID int64) error
 	UpdateEvseByUid(ctx context.Context, arg db.UpdateEvseByUidParams) (db.Evse, error)
 	UpdateEvseLastUpdated(ctx context.Context, arg db.UpdateEvseLastUpdatedParams) error
+	UpdateLocationAvailability(ctx context.Context, arg db.UpdateLocationAvailabilityParams) error
 	UpdateLocationLastUpdated(ctx context.Context, arg db.UpdateLocationLastUpdatedParams) error
 }
 
