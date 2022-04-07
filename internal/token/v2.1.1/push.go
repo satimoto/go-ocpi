@@ -22,12 +22,14 @@ func (r *TokenResolver) ListTokens(rw http.ResponseWriter, request *http.Request
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	dto := r.CreateTokenListDto(ctx, tokens)
 
 	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 }
 

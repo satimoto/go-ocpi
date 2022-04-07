@@ -40,12 +40,14 @@ func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Requ
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	tariff := r.ReplaceTariffByIdentifier(ctx, &countryCode, &partyID, uid, nil, dto)
 
 	if tariff == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))
+		return
 	}
 
 	render.Render(rw, request, ocpi.OCPISuccess(nil))

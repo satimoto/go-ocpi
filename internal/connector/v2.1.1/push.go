@@ -28,22 +28,26 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 
 	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	connector := r.ReplaceConnector(ctx, evse.ID, uid, &dto)
 
-	err := r.Repository.UpdateEvseLastUpdated(ctx, db.UpdateEvseLastUpdatedParams{
-		ID:          evse.ID,
-		LastUpdated: connector.LastUpdated,
-	})
-
-	err = r.Repository.UpdateLocationLastUpdated(ctx, db.UpdateLocationLastUpdatedParams{
-		ID:          evse.LocationID,
-		LastUpdated: connector.LastUpdated,
-	})
-
-	if err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+	if connector != nil {
+		err := r.Repository.UpdateEvseLastUpdated(ctx, db.UpdateEvseLastUpdatedParams{
+			ID:          evse.ID,
+			LastUpdated: connector.LastUpdated,
+		})
+	
+		err = r.Repository.UpdateLocationLastUpdated(ctx, db.UpdateLocationLastUpdatedParams{
+			ID:          evse.LocationID,
+			LastUpdated: connector.LastUpdated,
+		})
+	
+		if err != nil {
+			render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+			return
+		}	
 	}
 
 	render.Render(rw, request, ocpi.OCPISuccess(nil))

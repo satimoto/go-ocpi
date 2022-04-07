@@ -15,6 +15,7 @@ func (r *CommandResolver) PostCommandReservationResponse(rw http.ResponseWriter,
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	r.UpdateCommandReservation(ctx, command, dto)
@@ -31,6 +32,7 @@ func (r *CommandResolver) PostCommandStartResponse(rw http.ResponseWriter, reque
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	r.UpdateCommandStart(ctx, command, dto)
@@ -47,6 +49,7 @@ func (r *CommandResolver) PostCommandStopResponse(rw http.ResponseWriter, reques
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	r.UpdateCommandStop(ctx, command, dto)
@@ -63,6 +66,7 @@ func (r *CommandResolver) PostCommandUnlockResponse(rw http.ResponseWriter, requ
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	r.UpdateCommandUnlock(ctx, command, dto)

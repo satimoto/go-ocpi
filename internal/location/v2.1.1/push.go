@@ -28,12 +28,14 @@ func (r *LocationResolver) UpdateLocation(rw http.ResponseWriter, request *http.
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	location := r.ReplaceLocationByIdentifier(ctx, &countryCode, &partyID, uid, dto)
 
 	if location == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))
+		return
 	}
 
 	render.Render(rw, request, ocpi.OCPISuccess(nil))

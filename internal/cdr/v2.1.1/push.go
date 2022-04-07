@@ -26,12 +26,14 @@ func (r *CdrResolver) PostCdr(rw http.ResponseWriter, request *http.Request) {
 
 	if err != nil {
 		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		return
 	}
 
 	cdr := r.ReplaceCdr(ctx, dto)
 
 	if cdr == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))
+		return
 	}
 
 	location := fmt.Sprintf("%s/%s/%s/%s", os.Getenv("API_DOMAIN"), "2.1.1", "cdrs", cdr.Uid)

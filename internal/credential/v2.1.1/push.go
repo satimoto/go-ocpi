@@ -51,6 +51,7 @@ func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *h
 	if err == nil && len(cred.ClientToken.String) == 0 {
 		if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
 			render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+			return
 		}
 
 		c, err := r.ReplaceCredential(ctx, cred, &dto)
@@ -58,6 +59,7 @@ func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *h
 		if err != nil {
 			errResponse := err.(*ocpi.OCPIResponse)
 			render.Render(rw, request, errResponse)
+			return
 		}
 
 		credentialDto := r.CreateCredentialDto(ctx, *c)

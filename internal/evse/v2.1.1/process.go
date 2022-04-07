@@ -26,6 +26,11 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 				}
 			}
 
+			if dto.Capabilities != nil {
+				evseParams.IsRemoteCapable = util.StringsContainString(dto.Capabilities, "REMOTE_START_STOP_CAPABLE")
+				evseParams.IsRfidCapable = util.StringsContainString(dto.Capabilities, "RFID_READER")
+			}
+
 			if dto.EvseID != nil {
 				evseParams.EvseID = util.SqlNullString(dto.EvseID)
 			}
@@ -58,6 +63,11 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 					evseParams.Geom = *geomPoint
 					evseParams.GeoLocationID = geoLocationID
 				}
+			}
+
+			if dto.Capabilities != nil {
+				evseParams.IsRemoteCapable = util.StringsContainString(dto.Capabilities, "REMOTE_START_STOP_CAPABLE")
+				evseParams.IsRfidCapable = util.StringsContainString(dto.Capabilities, "RFID_READER")
 			}
 
 			evse, err = r.Repository.CreateEvse(ctx, evseParams)
@@ -116,6 +126,8 @@ func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, dto [
 				r.Repository.UpdateEvseByUid(ctx, evseParams)
 			}
 		}
+
+		r.updateLocationAvailability(ctx, locationID)
 	}
 }
 
@@ -202,5 +214,28 @@ func (r *EvseResolver) replaceStatusSchedule(ctx context.Context, evseID int64, 
 		statusScheduleParams := NewCreateStatusScheduleParams(evseID, statusScheduleDto)
 
 		r.Repository.CreateStatusSchedule(ctx, statusScheduleParams)
+	}
+}
+
+func (r *EvseResolver) updateLocationAvailability(ctx context.Context, locationID int64) {
+	updateLocationAvailabilityParams := NewUpdateLocationAvailabilityParams(locationID)
+
+	if evses, err := r.Repository.ListEvses(ctx, locationID); err == nil {
+		for _, evse := range evses {
+			updateLocationAvailabilityParams.TotalEvses++
+
+			if evse.Status == db.EvseStatusAVAILABLE {
+				updateLocationAvailabilityParams.AvailableEvses++
+			}
+
+			if evse.IsRemoteCapable {
+				updateLocationAvailabilityParams.IsRemoteCapable = true
+			}
+			if evse.IsRfidCapable {
+				updateLocationAvailabilityParams.IsRfidCapable = true
+			}
+		}
+
+		r.Repository.UpdateLocationAvailability(ctx, updateLocationAvailabilityParams)
 	}
 }

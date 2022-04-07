@@ -45,6 +45,8 @@ func TestReplaceEvse(t *testing.T) {
 			"status": "RESERVED",
 			"geom": null,
 			"geoLocationID": {"Int64": 0, "Valid": false},
+			"isRemoteCapable": false,
+			"isRfidCapable": false,
 			"physicalReference": {"String": "2", "Valid": true},
 			"floorLevel": {"String": "-2", "Valid": true},
 			"lastUpdated": "2015-03-16T10:10:02Z"
@@ -84,6 +86,8 @@ func TestReplaceEvse(t *testing.T) {
 			"status": "AVAILABLE",
 			"geom": null,
 			"geoLocationID": {"Int64": 0, "Valid": false},
+			"isRemoteCapable": false,
+			"isRfidCapable": false,
 			"physicalReference": {"String": "2", "Valid": true},
 			"floorLevel": {"String": "-2", "Valid": true},
 			"lastUpdated": "2015-03-16T10:10:02Z"
@@ -200,6 +204,8 @@ func TestReplaceEvse(t *testing.T) {
 			"status": "AVAILABLE",
 			"geom": {},
 			"geoLocationID": {"Int64": 1, "Valid": true},
+			"isRemoteCapable": false,
+			"isRfidCapable": false,
 			"physicalReference": {"String": "2", "Valid": true},
 			"floorLevel": {"String": "-2", "Valid": true},
 			"lastUpdated": "2015-03-16T10:10:02Z"
