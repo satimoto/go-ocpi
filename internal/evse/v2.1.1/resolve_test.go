@@ -43,7 +43,7 @@ func TestReplaceEvse(t *testing.T) {
 			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
 			"locationID": 1,
 			"status": "RESERVED",
-			"geom": null,
+			"geom": {"Geometry4326": {"type": ""}, "Valid": false},
 			"geoLocationID": {"Int64": 0, "Valid": false},
 			"isRemoteCapable": false,
 			"isRfidCapable": false,
@@ -84,7 +84,7 @@ func TestReplaceEvse(t *testing.T) {
 			"uid": "3257",
 			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
 			"status": "AVAILABLE",
-			"geom": null,
+			"geom": {"Geometry4326": {"type": ""}, "Valid": false},
 			"geoLocationID": {"Int64": 0, "Valid": false},
 			"isRemoteCapable": false,
 			"isRfidCapable": false,
@@ -143,8 +143,10 @@ func TestReplaceEvse(t *testing.T) {
 			"uid": "3257",
 			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
 			"status": "RESERVED",
-			"geom": null,
+			"geom": {"Geometry4326": {"type": ""}, "Valid": false},
 			"geoLocationID": {"Int64": 0, "Valid": false},
+			"isRemoteCapable": false,
+			"isRfidCapable": false,
 			"physicalReference": {"String": "2", "Valid": true},
 			"floorLevel": {"String": "-2", "Valid": true},
 			"lastUpdated": "2015-03-16T10:10:02Z"
@@ -202,7 +204,13 @@ func TestReplaceEvse(t *testing.T) {
 			"uid": "3257",
 			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
 			"status": "AVAILABLE",
-			"geom": {},
+			"geom": {
+				"Geometry4326": {
+					"type": "Point",
+					"coordinates": [31.3434, -62.6996]
+				}, 
+				"Valid": true
+			},
 			"geoLocationID": {"Int64": 1, "Valid": true},
 			"isRemoteCapable": false,
 			"isRfidCapable": false,

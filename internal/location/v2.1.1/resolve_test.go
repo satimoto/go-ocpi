@@ -7,6 +7,7 @@ import (
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/postgis"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
@@ -14,7 +15,6 @@ import (
 	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
-	"github.com/twpayne/go-geom"
 )
 
 func TestReplaceLocation(t *testing.T) {
@@ -60,7 +60,10 @@ func TestReplaceLocation(t *testing.T) {
 			"city": "Gent",
 			"postalCode": "9000",
 			"country": "BEL",
-			"geom": {},
+			"geom": {
+				"type": "Point",
+				"coordinates": [31.3434, -62.6996]
+			},
 			"geoLocationID": 1,
 			"availableEvses": 0,
 			"totalEvses": 0,
@@ -92,18 +95,21 @@ func TestReplaceLocation(t *testing.T) {
 		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
-		point, _ := util.NewGeomPoint("31.3434", "-62.6996")
+		point, _ := util.NewPoint("31.3434", "-62.6996")
 
 		mockRepository.SetGetLocationByUidMockData(dbMocks.LocationMockData{
 			Location: db.Location{
-				Uid:                "LOC1",
-				Type:               locationTypeONSTREET,
-				Name:               util.SqlNullString("Gent Zuid"),
-				Address:            "F.Rooseveltlaan 3A",
-				City:               "Gent",
-				PostalCode:         "9000",
-				Country:            "BEL",
-				Geom:               *geom.NewPointFlat(geom.XY, point),
+				Uid:        "LOC1",
+				Type:       locationTypeONSTREET,
+				Name:       util.SqlNullString("Gent Zuid"),
+				Address:    "F.Rooseveltlaan 3A",
+				City:       "Gent",
+				PostalCode: "9000",
+				Country:    "BEL",
+				Geom: postgis.Geometry4326{
+					Coordinates: point,
+					Type:        point.GeoJSONType(),
+				},
 				GeoLocationID:      1,
 				ChargingWhenClosed: true,
 				LastUpdated:        *util.ParseTime("2015-03-16T10:10:02Z"),
@@ -133,7 +139,10 @@ func TestReplaceLocation(t *testing.T) {
 			"city": "Gent",
 			"postalCode": "9000",
 			"country": "BEL",
-			"geom": {},
+			"geom": {
+				"type": "Point",
+				"coordinates": [31.3434, -62.6996]
+			},
 			"geoLocationID": 1,
 			"availableEvses": 0,
 			"totalEvses": 0,
@@ -156,18 +165,21 @@ func TestReplaceLocation(t *testing.T) {
 		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
-		point, _ := util.NewGeomPoint("31.3434", "-62.6996")
+		point, _ := util.NewPoint("31.3434", "-62.6996")
 
 		mockRepository.SetGetLocationByUidMockData(dbMocks.LocationMockData{
 			Location: db.Location{
-				Uid:                "LOC1",
-				Type:               locationTypeONSTREET,
-				Name:               util.SqlNullString("Gent Zuid"),
-				Address:            "F.Rooseveltlaan 3A",
-				City:               "Gent",
-				PostalCode:         "9000",
-				Country:            "BEL",
-				Geom:               *geom.NewPointFlat(geom.XY, point),
+				Uid:        "LOC1",
+				Type:       locationTypeONSTREET,
+				Name:       util.SqlNullString("Gent Zuid"),
+				Address:    "F.Rooseveltlaan 3A",
+				City:       "Gent",
+				PostalCode: "9000",
+				Country:    "BEL",
+				Geom: postgis.Geometry4326{
+					Coordinates: point,
+					Type:        point.GeoJSONType(),
+				},
 				GeoLocationID:      1,
 				ChargingWhenClosed: true,
 				LastUpdated:        *util.ParseTime("2015-03-16T10:10:02Z"),
@@ -205,7 +217,10 @@ func TestReplaceLocation(t *testing.T) {
 			"city": "Gent",
 			"postalCode": "9000",
 			"country": "BEL",
-			"geom": {},
+			"geom": {
+				"type": "Point",
+				"coordinates": [31.3434, -62.6996]
+			},
 			"geoLocationID": 1,
 			"availableEvses": 0,
 			"totalEvses": 0,
@@ -229,7 +244,7 @@ func TestReplaceLocation(t *testing.T) {
 			"evseID": {"String": "BE-BEC-E04150300-8", "Valid": true},
 			"locationID": 0,
 			"status": "RESERVED",
-			"geom": null,
+			"geom": {"Geometry4326": {"type": ""}, "Valid": false},
 			"geoLocationID": {"Int64": 0, "Valid": false},
 			"isRemoteCapable": false,
 			"isRfidCapable": false,
