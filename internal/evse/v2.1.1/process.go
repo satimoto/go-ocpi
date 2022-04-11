@@ -18,10 +18,10 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 
 			if dto.Coordinates != nil {
 				geoLocationID := util.SqlNullInt64(nil)
-				geomPoint := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, dto.Coordinates)
+				geometry := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, dto.Coordinates)
 
-				if geomPoint != nil {
-					evseParams.Geom = *geomPoint
+				if geometry != nil {
+					evseParams.Geom = util.SqlNullGeometry4326(geometry)
 					evseParams.GeoLocationID = geoLocationID
 				}
 			}
@@ -57,10 +57,10 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 
 			if dto.Coordinates != nil {
 				geoLocationID := util.SqlNullInt64(evse.GeoLocationID)
-				geomPoint := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, dto.Coordinates)
+				geometry := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, dto.Coordinates)
 
-				if geomPoint != nil {
-					evseParams.Geom = *geomPoint
+				if geometry != nil {
+					evseParams.Geom = util.SqlNullGeometry4326(geometry)
 					evseParams.GeoLocationID = geoLocationID
 				}
 			}

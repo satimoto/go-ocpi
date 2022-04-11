@@ -5,13 +5,11 @@ import (
 	"database/sql"
 
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/postgis"
 	"github.com/satimoto/go-ocpi-api/internal/util"
-	"github.com/twpayne/go-geom"
 )
 
-func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.NullInt64, dto *GeoLocationDto) *geom.Point {
-	var geomPoint *geom.Point
-
+func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.NullInt64, dto *GeoLocationDto) *postgis.Geometry4326 {
 	if dto != nil {
 		var geoLocation db.GeoLocation
 		var err error
@@ -27,11 +25,14 @@ func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.Nu
 		if err == nil {
 			id.Scan(geoLocation.ID)
 
-			if point, err := util.NewGeomPoint(geoLocation.Latitude, geoLocation.Longitude); err == nil {
-				geomPoint = geom.NewPointFlat(geom.XY, point)
+			if point, err := util.NewPoint(geoLocation.Latitude, geoLocation.Longitude); err == nil {
+				return &postgis.Geometry4326{
+					Coordinates: point,
+					Type: point.GeoJSONType(),
+				}
 			}
 		}
 	}
 
-	return geomPoint
+	return nil
 }
