@@ -1,4 +1,4 @@
-package api
+package rest
 
 import (
 	"github.com/go-chi/chi/v5"
@@ -6,7 +6,7 @@ import (
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 )
 
-func (rs *RouterService) mountTokens() *chi.Mux {
+func (rs *RestService) mountTokens() *chi.Mux {
 	tokenResolver := token.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
 	router.Use(rs.CredentialContextByToken)

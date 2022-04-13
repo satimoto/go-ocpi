@@ -1,10 +1,10 @@
-package api
+package rest
 
 import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (rs *RouterService) mount211() *chi.Mux {
+func (rs *RestService) mount211() *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Mount("/", rs.mountVersionDetails())

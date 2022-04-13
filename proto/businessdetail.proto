@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "proto/image.proto";
+
+package businessdetail;
+
+option go_package = "github.com/satimoto/go-ocpi-api/ocpirpc";
+
+message BusinessDetail {
+    int64 id = 1;
+    string name = 2;
+    string website = 3;
+    image.Image logo = 4;
+};
