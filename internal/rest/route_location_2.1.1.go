@@ -1,11 +1,11 @@
-package api
+package rest
 
 import (
 	"github.com/go-chi/chi/v5"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 )
 
-func (rs *RouterService) mountLocations() *chi.Mux {
+func (rs *RestService) mountLocations() *chi.Mux {
 	locationResolver := location.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
 	router.Use(rs.CredentialContextByToken)

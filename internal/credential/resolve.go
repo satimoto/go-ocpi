@@ -9,6 +9,7 @@ import (
 )
 
 type CredentialRepository interface {
+	CreateCredential(ctx context.Context, arg db.CreateCredentialParams) (db.Credential, error)
 	GetCredentialByPartyAndCountryCode(ctx context.Context, arg db.GetCredentialByPartyAndCountryCodeParams) (db.Credential, error)
 	GetCredentialByServerToken(ctx context.Context, serverToken sql.NullString) (db.Credential, error)
 	UpdateCredential(ctx context.Context, arg db.UpdateCredentialParams) (db.Credential, error)

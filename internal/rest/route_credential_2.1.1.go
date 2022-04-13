@@ -1,11 +1,11 @@
-package api
+package rest
 
 import (
 	"github.com/go-chi/chi/v5"
 	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
 )
 
-func (rs *RouterService) mountCredentials() *chi.Mux {
+func (rs *RestService) mountCredentials() *chi.Mux {
 	credentialResolver := credential.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
 

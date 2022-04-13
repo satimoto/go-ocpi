@@ -1,4 +1,4 @@
-package api
+package rest
 
 import (
 	"net/http"
@@ -6,10 +6,10 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/credential"
 )
 
-func (rs *RouterService) CredentialContextByToken(next http.Handler) http.Handler {
+func (rs *RestService) CredentialContextByToken(next http.Handler) http.Handler {
 	return credential.CredentialContextByToken(rs.RepositoryService, next)
 }
 
-func (rs *RouterService) CredentialContextByPartyAndCountry(next http.Handler) http.Handler {
+func (rs *RestService) CredentialContextByPartyAndCountry(next http.Handler) http.Handler {
 	return credential.CredentialContextByPartyAndCountry(rs.RepositoryService, next)
 }

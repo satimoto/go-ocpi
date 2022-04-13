@@ -6,17 +6,18 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
-	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-lambda-go/lambda"
-	chiproxy "github.com/awslabs/aws-lambda-go-api-proxy/chi"
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/satimoto/go-datastore/util"
-	"github.com/satimoto/go-ocpi-api/internal/api"
+	"github.com/satimoto/go-ocpi-api/internal/rest"
+	"github.com/satimoto/go-ocpi-api/internal/rpc"
 )
 
 var (
-	database  *sql.DB
-	chiLambda *chiproxy.ChiLambda
+	database *sql.DB
 
 	dbHost  = os.Getenv("DB_HOST")
 	dbName  = os.Getenv("DB_NAME")
@@ -32,22 +33,34 @@ func init() {
 
 	dataSourceName := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=%s", dbUser, dbPass, dbHost, dbName, sslMode)
 	d, err := sql.Open("postgres", dataSourceName)
-	
 	if err != nil {
 		log.Fatal(err)
 	}
-	
 	database = d
-	routerService := api.NewRouter(database)
-	chiLambda = chiproxy.New(routerService.Handler())
-}
-
-func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	return chiLambda.ProxyWithContext(ctx, req)
 }
 
 func main() {
 	defer database.Close()
 
-	lambda.Start(Handler)
+	log.Printf("Starting up OCPI server")
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	waitGroup := &sync.WaitGroup{}
+
+	restService := rest.NewRest(database)
+	restService.StartRest(ctx, waitGroup)
+
+	rpcService := rpc.NewRpc(database)
+	rpcService.StartRpc(ctx, waitGroup)
+
+	sigtermChan := make(chan os.Signal)
+	signal.Notify(sigtermChan, syscall.SIGINT, syscall.SIGTERM)
+
+	<-sigtermChan
+
+	log.Printf("Shutting down OCPI server")
+
+	cancelFunc()
+	waitGroup.Wait()
+
+	log.Printf("OCPI server shut down")
 }

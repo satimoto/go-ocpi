@@ -1,11 +1,11 @@
-package api
+package rest
 
 import (
 	"github.com/go-chi/chi/v5"
 	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"
 )
 
-func (rs *RouterService) mountSessions() *chi.Mux {
+func (rs *RestService) mountSessions() *chi.Mux {
 	sessionResolver := session.NewResolver(rs.RepositoryService)
 	router := chi.NewRouter()
 	router.Use(rs.CredentialContextByToken)
