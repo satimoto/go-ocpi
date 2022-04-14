@@ -3,7 +3,7 @@ package businessdetail
 import (
 	"context"
 
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-datastore/util"
 )
 
 func (r *BusinessDetailResolver) ReplaceBusinessDetail(ctx context.Context, id *int64, dto *BusinessDetailDto) {

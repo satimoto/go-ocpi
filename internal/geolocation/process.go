@@ -5,11 +5,11 @@ import (
 	"database/sql"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/postgis"
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-datastore/geom"
+	"github.com/satimoto/go-datastore/util"
 )
 
-func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.NullInt64, dto *GeoLocationDto) *postgis.Geometry4326 {
+func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.NullInt64, dto *GeoLocationDto) *geom.Geometry4326 {
 	if dto != nil {
 		var geoLocation db.GeoLocation
 		var err error
@@ -26,9 +26,9 @@ func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.Nu
 			id.Scan(geoLocation.ID)
 
 			if point, err := util.NewPoint(geoLocation.Latitude, geoLocation.Longitude); err == nil {
-				return &postgis.Geometry4326{
+				return &geom.Geometry4326{
 					Coordinates: point,
-					Type: point.GeoJSONType(),
+					Type:        point.GeoJSONType(),
 				}
 			}
 		}

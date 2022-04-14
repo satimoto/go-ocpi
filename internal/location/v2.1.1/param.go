@@ -2,7 +2,7 @@ package location
 
 import (
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-datastore/util"
 )
 
 func NewCreateLocationParams(dto *LocationDto) db.CreateLocationParams {

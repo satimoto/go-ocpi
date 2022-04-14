@@ -7,16 +7,16 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 type OCPISessionsDto struct {
-	Data          []*SessionDto  `json:"data,omitempty"`
-	StatusCode    int16          `json:"status_code"`
-	StatusMessage string         `json:"status_message"`
-	Timestamp     time.Time      `json:"timestamp"`
+	Data          []*SessionDto `json:"data,omitempty"`
+	StatusCode    int16         `json:"status_code"`
+	StatusMessage string        `json:"status_message"`
+	Timestamp     time.Time     `json:"timestamp"`
 }
 
 type SessionDto struct {

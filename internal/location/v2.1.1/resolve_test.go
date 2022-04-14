@@ -7,13 +7,13 @@ import (
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/postgis"
+	"github.com/satimoto/go-datastore/geom"
+	"github.com/satimoto/go-datastore/util"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	locationMocks "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1/mocks"
 	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
@@ -106,7 +106,7 @@ func TestReplaceLocation(t *testing.T) {
 				City:       "Gent",
 				PostalCode: "9000",
 				Country:    "BEL",
-				Geom: postgis.Geometry4326{
+				Geom: geom.Geometry4326{
 					Coordinates: point,
 					Type:        point.GeoJSONType(),
 				},
@@ -176,7 +176,7 @@ func TestReplaceLocation(t *testing.T) {
 				City:       "Gent",
 				PostalCode: "9000",
 				Country:    "BEL",
-				Geom: postgis.Geometry4326{
+				Geom: geom.Geometry4326{
 					Coordinates: point,
 					Type:        point.GeoJSONType(),
 				},

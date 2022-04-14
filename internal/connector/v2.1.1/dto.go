@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-datastore/util"
 )
 
 type ConnectorDto struct {

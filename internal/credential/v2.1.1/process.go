@@ -6,8 +6,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential db.Credential, dto *CredentialDto) (*db.Credential, error) {

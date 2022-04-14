@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-datastore/util"
 )
 
 func (r *TariffResolver) GetLastTariffByIdentity(ctx context.Context, countryCode string, partyID string) (db.Tariff, error) {

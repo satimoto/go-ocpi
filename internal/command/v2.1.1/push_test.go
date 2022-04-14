@@ -11,10 +11,10 @@ import (
 	"github.com/nsf/jsondiff"
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	command "github.com/satimoto/go-ocpi-api/internal/command/v2.1.1"
 	commandMocks "github.com/satimoto/go-ocpi-api/internal/command/v2.1.1/mocks"
 	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 

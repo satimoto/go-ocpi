@@ -7,11 +7,11 @@ import (
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 	evseMocks "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 

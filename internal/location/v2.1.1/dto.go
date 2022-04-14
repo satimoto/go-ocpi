@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
@@ -14,7 +15,6 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	"github.com/satimoto/go-ocpi-api/internal/image"
 	"github.com/satimoto/go-ocpi-api/internal/openingtime"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 type OCPILocationsDto struct {
