@@ -7,11 +7,11 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/calibration"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 type OCPICdrsDto struct {

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, countryCode *string, partyID *string, uid string, cdrID *int64, dto *TariffDto) *db.Tariff {

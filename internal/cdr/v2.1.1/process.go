@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 func (r *CdrResolver) ReplaceCdr(ctx context.Context, dto *CdrDto) *db.Cdr {

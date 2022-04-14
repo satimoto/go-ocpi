@@ -2,7 +2,7 @@ package evse
 
 import (
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-datastore/util"
 )
 
 func NewCreateEvseParams(locationID int64, dto *EvseDto) db.CreateEvseParams {

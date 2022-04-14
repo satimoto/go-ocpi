@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	"github.com/satimoto/go-ocpi-api/internal/image"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 func (r *EvseResolver) CreateCapabilityListDto(ctx context.Context, capabilities []db.Capability) []*string {

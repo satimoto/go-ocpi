@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-datastore/util"
 )
 
 func (r *TariffRestrictionResolver) ReplaceTariffByIdentifierRestriction(ctx context.Context, id *int64, dto *TariffRestrictionDto) {

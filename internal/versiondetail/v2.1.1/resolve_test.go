@@ -10,9 +10,9 @@ import (
 	"testing"
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
 	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 	versionDetailMocks "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )

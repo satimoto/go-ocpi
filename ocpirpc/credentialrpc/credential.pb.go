@@ -26,16 +26,15 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type CreateCredentialRequest struct {
-	Id                   int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ClientToken          string                  `protobuf:"bytes,2,opt,name=client_token,json=clientToken,proto3" json:"client_token,omitempty"`
-	Url                  string                  `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
-	BusinessDetail       *ocpirpc.BusinessDetail `protobuf:"bytes,4,opt,name=business_detail,json=businessDetail,proto3" json:"business_detail,omitempty"`
-	CountryCode          string                  `protobuf:"bytes,5,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	PartyId              string                  `protobuf:"bytes,6,opt,name=party_id,json=partyId,proto3" json:"party_id,omitempty"`
-	IsHub                bool                    `protobuf:"varint,7,opt,name=is_hub,json=isHub,proto3" json:"is_hub,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
+	ClientToken          string                               `protobuf:"bytes,1,opt,name=client_token,json=clientToken,proto3" json:"client_token,omitempty"`
+	Url                  string                               `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	BusinessDetail       *ocpirpc.CreateBusinessDetailRequest `protobuf:"bytes,3,opt,name=business_detail,json=businessDetail,proto3" json:"business_detail,omitempty"`
+	CountryCode          string                               `protobuf:"bytes,4,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	PartyId              string                               `protobuf:"bytes,5,opt,name=party_id,json=partyId,proto3" json:"party_id,omitempty"`
+	IsHub                bool                                 `protobuf:"varint,6,opt,name=is_hub,json=isHub,proto3" json:"is_hub,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                             `json:"-"`
+	XXX_unrecognized     []byte                               `json:"-"`
+	XXX_sizecache        int32                                `json:"-"`
 }
 
 func (m *CreateCredentialRequest) Reset()         { *m = CreateCredentialRequest{} }
@@ -63,13 +62,6 @@ func (m *CreateCredentialRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CreateCredentialRequest proto.InternalMessageInfo
 
-func (m *CreateCredentialRequest) GetId() int64 {
-	if m != nil {
-		return m.Id
-	}
-	return 0
-}
-
 func (m *CreateCredentialRequest) GetClientToken() string {
 	if m != nil {
 		return m.ClientToken
@@ -84,7 +76,7 @@ func (m *CreateCredentialRequest) GetUrl() string {
 	return ""
 }
 
-func (m *CreateCredentialRequest) GetBusinessDetail() *ocpirpc.BusinessDetail {
+func (m *CreateCredentialRequest) GetBusinessDetail() *ocpirpc.CreateBusinessDetailRequest {
 	if m != nil {
 		return m.BusinessDetail
 	}
@@ -112,87 +104,87 @@ func (m *CreateCredentialRequest) GetIsHub() bool {
 	return false
 }
 
-type CreateCredentialResponse struct {
-	Id                   int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ClientToken          string                  `protobuf:"bytes,2,opt,name=client_token,json=clientToken,proto3" json:"client_token,omitempty"`
-	Url                  string                  `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
-	BusinessDetail       *ocpirpc.BusinessDetail `protobuf:"bytes,4,opt,name=business_detail,json=businessDetail,proto3" json:"business_detail,omitempty"`
-	CountryCode          string                  `protobuf:"bytes,5,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	PartyId              string                  `protobuf:"bytes,6,opt,name=party_id,json=partyId,proto3" json:"party_id,omitempty"`
-	IsHub                bool                    `protobuf:"varint,7,opt,name=is_hub,json=isHub,proto3" json:"is_hub,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
+type CredentialResponse struct {
+	Id                   int64                           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ClientToken          string                          `protobuf:"bytes,2,opt,name=client_token,json=clientToken,proto3" json:"client_token,omitempty"`
+	Url                  string                          `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
+	BusinessDetail       *ocpirpc.BusinessDetailResponse `protobuf:"bytes,4,opt,name=business_detail,json=businessDetail,proto3" json:"business_detail,omitempty"`
+	CountryCode          string                          `protobuf:"bytes,5,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	PartyId              string                          `protobuf:"bytes,6,opt,name=party_id,json=partyId,proto3" json:"party_id,omitempty"`
+	IsHub                bool                            `protobuf:"varint,7,opt,name=is_hub,json=isHub,proto3" json:"is_hub,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
+	XXX_unrecognized     []byte                          `json:"-"`
+	XXX_sizecache        int32                           `json:"-"`
 }
 
-func (m *CreateCredentialResponse) Reset()         { *m = CreateCredentialResponse{} }
-func (m *CreateCredentialResponse) String() string { return proto.CompactTextString(m) }
-func (*CreateCredentialResponse) ProtoMessage()    {}
-func (*CreateCredentialResponse) Descriptor() ([]byte, []int) {
+func (m *CredentialResponse) Reset()         { *m = CredentialResponse{} }
+func (m *CredentialResponse) String() string { return proto.CompactTextString(m) }
+func (*CredentialResponse) ProtoMessage()    {}
+func (*CredentialResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_1dd6b9da2fa6db73, []int{1}
 }
 
-func (m *CreateCredentialResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateCredentialResponse.Unmarshal(m, b)
+func (m *CredentialResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CredentialResponse.Unmarshal(m, b)
 }
-func (m *CreateCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateCredentialResponse.Marshal(b, m, deterministic)
+func (m *CredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CredentialResponse.Marshal(b, m, deterministic)
 }
-func (m *CreateCredentialResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCredentialResponse.Merge(m, src)
+func (m *CredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CredentialResponse.Merge(m, src)
 }
-func (m *CreateCredentialResponse) XXX_Size() int {
-	return xxx_messageInfo_CreateCredentialResponse.Size(m)
+func (m *CredentialResponse) XXX_Size() int {
+	return xxx_messageInfo_CredentialResponse.Size(m)
 }
-func (m *CreateCredentialResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateCredentialResponse.DiscardUnknown(m)
+func (m *CredentialResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CredentialResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CreateCredentialResponse proto.InternalMessageInfo
+var xxx_messageInfo_CredentialResponse proto.InternalMessageInfo
 
-func (m *CreateCredentialResponse) GetId() int64 {
+func (m *CredentialResponse) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
 	return 0
 }
 
-func (m *CreateCredentialResponse) GetClientToken() string {
+func (m *CredentialResponse) GetClientToken() string {
 	if m != nil {
 		return m.ClientToken
 	}
 	return ""
 }
 
-func (m *CreateCredentialResponse) GetUrl() string {
+func (m *CredentialResponse) GetUrl() string {
 	if m != nil {
 		return m.Url
 	}
 	return ""
 }
 
-func (m *CreateCredentialResponse) GetBusinessDetail() *ocpirpc.BusinessDetail {
+func (m *CredentialResponse) GetBusinessDetail() *ocpirpc.BusinessDetailResponse {
 	if m != nil {
 		return m.BusinessDetail
 	}
 	return nil
 }
 
-func (m *CreateCredentialResponse) GetCountryCode() string {
+func (m *CredentialResponse) GetCountryCode() string {
 	if m != nil {
 		return m.CountryCode
 	}
 	return ""
 }
 
-func (m *CreateCredentialResponse) GetPartyId() string {
+func (m *CredentialResponse) GetPartyId() string {
 	if m != nil {
 		return m.PartyId
 	}
 	return ""
 }
 
-func (m *CreateCredentialResponse) GetIsHub() bool {
+func (m *CredentialResponse) GetIsHub() bool {
 	if m != nil {
 		return m.IsHub
 	}
@@ -201,34 +193,36 @@ func (m *CreateCredentialResponse) GetIsHub() bool {
 
 func init() {
 	proto.RegisterType((*CreateCredentialRequest)(nil), "crediential.CreateCredentialRequest")
-	proto.RegisterType((*CreateCredentialResponse)(nil), "crediential.CreateCredentialResponse")
+	proto.RegisterType((*CredentialResponse)(nil), "crediential.CredentialResponse")
 }
 
 func init() { proto.RegisterFile("proto/credential.proto", fileDescriptor_1dd6b9da2fa6db73) }
 
 var fileDescriptor_1dd6b9da2fa6db73 = []byte{
-	// 330 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x92, 0x4d, 0x4b, 0xfb, 0x40,
-	0x10, 0xc6, 0x49, 0xfb, 0xef, 0xcb, 0x7f, 0x2b, 0xb5, 0x2e, 0xa8, 0x6b, 0x0f, 0x12, 0x8b, 0x42,
-	0x2e, 0x4d, 0xa1, 0x22, 0xde, 0x5b, 0x41, 0xbd, 0x46, 0x4f, 0x5e, 0x42, 0xb2, 0x3b, 0xb4, 0x83,
-	0x6d, 0x76, 0xdd, 0x17, 0xa1, 0xdf, 0x5d, 0x41, 0xb2, 0xa9, 0x5a, 0x2b, 0xe2, 0x07, 0xf0, 0xb6,
-	0xcf, 0x6f, 0x86, 0x79, 0x76, 0x86, 0x87, 0x1c, 0x28, 0x2d, 0xad, 0x1c, 0x71, 0x0d, 0x02, 0x0a,
-	0x8b, 0xd9, 0x22, 0xf6, 0x80, 0x76, 0x4a, 0x82, 0x15, 0xea, 0xf7, 0xab, 0xa6, 0xdc, 0x19, 0x2c,
-	0xc0, 0x18, 0x01, 0x36, 0xc3, 0x75, 0xe3, 0xe0, 0x25, 0x20, 0x87, 0x53, 0x0d, 0x99, 0x85, 0xe9,
-	0xc7, 0x8c, 0x04, 0x9e, 0x1c, 0x18, 0x4b, 0xbb, 0xa4, 0x86, 0x82, 0x05, 0x61, 0x10, 0xd5, 0x93,
-	0x1a, 0x0a, 0x7a, 0x42, 0x76, 0xf8, 0xa2, 0x1c, 0x9a, 0x5a, 0xf9, 0x08, 0x05, 0xab, 0x85, 0x41,
-	0xf4, 0x3f, 0xe9, 0x54, 0xec, 0xbe, 0x44, 0xb4, 0x47, 0xea, 0x4e, 0x2f, 0x58, 0xdd, 0x57, 0xca,
-	0x27, 0xbd, 0x26, 0xbb, 0xef, 0xc6, 0x69, 0xe5, 0xcc, 0xfe, 0x85, 0x41, 0xd4, 0x19, 0x1f, 0xc7,
-	0x5b, 0x1f, 0x9a, 0xac, 0xe5, 0x95, 0x97, 0x49, 0x37, 0xff, 0xa2, 0xbd, 0xbb, 0x74, 0x85, 0xd5,
-	0xab, 0x94, 0x4b, 0x01, 0xac, 0xb1, 0x76, 0xaf, 0xd8, 0x54, 0x0a, 0xa0, 0x47, 0xa4, 0xad, 0x32,
-	0x6d, 0x57, 0x29, 0x0a, 0xd6, 0xf4, 0xe5, 0x96, 0xd7, 0xb7, 0x82, 0xee, 0x93, 0x26, 0x9a, 0x74,
-	0xee, 0x72, 0xd6, 0x0a, 0x83, 0xa8, 0x9d, 0x34, 0xd0, 0xdc, 0xb8, 0x7c, 0xf0, 0x1a, 0x10, 0xf6,
-	0x7d, 0x7d, 0xa3, 0x64, 0x61, 0xe0, 0x0f, 0xec, 0x3f, 0xb6, 0x64, 0xef, 0x73, 0xf1, 0x3b, 0xd0,
-	0xcf, 0xc8, 0x81, 0xa6, 0xa4, 0xb7, 0x7d, 0x13, 0x7a, 0x1a, 0x6f, 0x24, 0x2a, 0xfe, 0x21, 0x31,
-	0xfd, 0xb3, 0x5f, 0xba, 0xaa, 0xc3, 0x4e, 0x2e, 0x1f, 0x2e, 0x66, 0x68, 0xe7, 0x2e, 0x8f, 0xb9,
-	0x5c, 0x8e, 0x4c, 0x66, 0x71, 0x59, 0x06, 0x74, 0x26, 0x87, 0x92, 0x2b, 0x1c, 0x66, 0x0a, 0x47,
-	0xe5, 0x43, 0x2b, 0xbe, 0x91, 0x6c, 0xad, 0x78, 0xde, 0xf4, 0xa1, 0x3d, 0x7f, 0x0b, 0x00, 0x00,
-	0xff, 0xff, 0x77, 0x5a, 0x3d, 0xde, 0xf7, 0x02, 0x00, 0x00,
+	// 361 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x92, 0xc1, 0x4f, 0xc2, 0x30,
+	0x14, 0x87, 0xb3, 0x0d, 0x06, 0x16, 0x83, 0xd8, 0x44, 0x9d, 0x5c, 0x44, 0x62, 0x0c, 0x89, 0x61,
+	0x24, 0x18, 0xe3, 0x1d, 0x3c, 0xe8, 0xc9, 0x64, 0x72, 0xd1, 0xcb, 0xb2, 0xb5, 0x0d, 0xbc, 0x08,
+	0xeb, 0x6c, 0x3b, 0x13, 0xfe, 0x74, 0x4f, 0x9a, 0xb5, 0x53, 0xe6, 0x08, 0x7a, 0x6b, 0xbf, 0xbe,
+	0xf4, 0xbd, 0xf7, 0xe5, 0x87, 0x8e, 0x53, 0xc1, 0x15, 0x1f, 0x11, 0xc1, 0x28, 0x4b, 0x14, 0x44,
+	0x4b, 0x5f, 0x03, 0xdc, 0xca, 0x09, 0x18, 0xd4, 0xed, 0x9a, 0xa2, 0x38, 0x93, 0x90, 0x30, 0x29,
+	0x29, 0x53, 0x11, 0x14, 0x85, 0xfd, 0x0f, 0x0b, 0x9d, 0x4c, 0x05, 0x8b, 0x14, 0x9b, 0xfe, 0xfc,
+	0x11, 0xb0, 0xb7, 0x8c, 0x49, 0x85, 0xcf, 0xd1, 0x3e, 0x59, 0xe6, 0x9f, 0x84, 0x8a, 0xbf, 0xb2,
+	0xc4, 0xb3, 0x7a, 0xd6, 0x60, 0x2f, 0x68, 0x19, 0x36, 0xcb, 0x11, 0xee, 0x20, 0x27, 0x13, 0x4b,
+	0xcf, 0xd6, 0x2f, 0xf9, 0x11, 0xcf, 0xd0, 0xc1, 0x77, 0xa3, 0xd0, 0x74, 0xf2, 0x9c, 0x9e, 0x35,
+	0x68, 0x8d, 0xaf, 0xfc, 0xca, 0x00, 0xa6, 0xed, 0xa4, 0x80, 0x77, 0x1a, 0x16, 0xad, 0x83, 0x76,
+	0xfc, 0x0b, 0xeb, 0x51, 0x78, 0x96, 0x28, 0xb1, 0x0e, 0x09, 0xa7, 0xcc, 0xab, 0x15, 0xa3, 0x18,
+	0x36, 0xe5, 0x94, 0xe1, 0x53, 0xd4, 0x4c, 0x23, 0xa1, 0xd6, 0x21, 0x50, 0xaf, 0xae, 0x9f, 0x1b,
+	0xfa, 0xfe, 0x40, 0xf1, 0x11, 0x72, 0x41, 0x86, 0x8b, 0x2c, 0xf6, 0xdc, 0x9e, 0x35, 0x68, 0x06,
+	0x75, 0x90, 0xf7, 0x59, 0xdc, 0xff, 0xb4, 0x10, 0x2e, 0x6f, 0x2d, 0x53, 0x9e, 0x48, 0x86, 0xdb,
+	0xc8, 0x06, 0xaa, 0x97, 0x75, 0x02, 0x1b, 0xe8, 0x96, 0x06, 0x7b, 0xa7, 0x06, 0x67, 0xa3, 0xe1,
+	0x71, 0x5b, 0x43, 0x4d, 0x6b, 0xb8, 0xac, 0x6a, 0xa8, 0x0a, 0x30, 0x53, 0xfc, 0x6b, 0xa0, 0xfe,
+	0xb7, 0x01, 0x77, 0x97, 0x81, 0x46, 0xc9, 0xc0, 0x38, 0x41, 0x87, 0x1b, 0x01, 0x4f, 0x4c, 0xbc,
+	0x03, 0x61, 0xf8, 0x19, 0x75, 0xaa, 0x89, 0xc0, 0x17, 0x7e, 0x29, 0x50, 0xfe, 0x8e, 0xc0, 0x74,
+	0xcf, 0xaa, 0x55, 0x15, 0xb5, 0x93, 0xdb, 0x97, 0x9b, 0x39, 0xa8, 0x45, 0x16, 0xfb, 0x84, 0xaf,
+	0x46, 0x32, 0x52, 0xb0, 0xca, 0x93, 0x39, 0xe7, 0x43, 0x4e, 0x52, 0x18, 0x46, 0x29, 0x8c, 0xf2,
+	0x83, 0x48, 0x49, 0x29, 0xd2, 0x22, 0x25, 0xb1, 0xab, 0xd3, 0x7a, 0xfd, 0x15, 0x00, 0x00, 0xff,
+	0xff, 0xf3, 0x9c, 0x1b, 0xe5, 0xf0, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -243,7 +237,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type CredentialServiceClient interface {
-	CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CreateCredentialResponse, error)
+	CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CredentialResponse, error)
 }
 
 type credentialServiceClient struct {
@@ -254,8 +248,8 @@ func NewCredentialServiceClient(cc *grpc.ClientConn) CredentialServiceClient {
 	return &credentialServiceClient{cc}
 }
 
-func (c *credentialServiceClient) CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CreateCredentialResponse, error) {
-	out := new(CreateCredentialResponse)
+func (c *credentialServiceClient) CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CredentialResponse, error) {
+	out := new(CredentialResponse)
 	err := c.cc.Invoke(ctx, "/crediential.CredentialService/CreateCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -265,14 +259,14 @@ func (c *credentialServiceClient) CreateCredential(ctx context.Context, in *Crea
 
 // CredentialServiceServer is the server API for CredentialService service.
 type CredentialServiceServer interface {
-	CreateCredential(context.Context, *CreateCredentialRequest) (*CreateCredentialResponse, error)
+	CreateCredential(context.Context, *CreateCredentialRequest) (*CredentialResponse, error)
 }
 
 // UnimplementedCredentialServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedCredentialServiceServer struct {
 }
 
-func (*UnimplementedCredentialServiceServer) CreateCredential(ctx context.Context, req *CreateCredentialRequest) (*CreateCredentialResponse, error) {
+func (*UnimplementedCredentialServiceServer) CreateCredential(ctx context.Context, req *CreateCredentialRequest) (*CredentialResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCredential not implemented")
 }
 

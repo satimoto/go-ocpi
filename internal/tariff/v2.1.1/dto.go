@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/element"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
 	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 type OCPITariffsDto struct {

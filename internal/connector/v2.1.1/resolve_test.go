@@ -7,9 +7,9 @@ import (
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
 	connectorMocks "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 

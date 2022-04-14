@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/image"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid string, dto *EvseDto) *db.Evse {

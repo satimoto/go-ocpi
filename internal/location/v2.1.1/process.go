@@ -3,11 +3,11 @@ package location
 import (
 	"context"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	"github.com/satimoto/go-ocpi-api/internal/image"
-	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, dto *LocationDto) *db.Location {

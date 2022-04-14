@@ -5,14 +5,14 @@ import (
 	"errors"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/ocpirpc"
 	"github.com/satimoto/go-ocpi-api/ocpirpc/credentialrpc"
 )
 
-func (r *RpcCredentialResolver) CreateCredential(ctx context.Context, request *credentialrpc.CreateCredentialRequest) (*credentialrpc.CreateCredentialResponse, error) {
+func (r *RpcCredentialResolver) CreateCredential(ctx context.Context, request *credentialrpc.CreateCredentialRequest) (*credentialrpc.CredentialResponse, error) {
 	if request != nil {
-		params := NewCreateCredentialParams(*request)
+		params := credentialrpc.NewCreateCredentialParams(*request)
 
 		if request.BusinessDetail != nil {
 			b, err := r.createBusinessDetail(ctx, request.BusinessDetail)
@@ -30,15 +30,15 @@ func (r *RpcCredentialResolver) CreateCredential(ctx context.Context, request *c
 			return nil, err
 		}
 
-		return r.CreateCredentialIto(ctx, c), nil
+		return r.CreateCredentialResponse(ctx, c), nil
 	}
 
 	return nil, errors.New("Missing CreateCredentialRequest")
 }
 
-func (r *RpcCredentialResolver) createBusinessDetail(ctx context.Context, request *ocpirpc.BusinessDetail) (*db.BusinessDetail, error) {
+func (r *RpcCredentialResolver) createBusinessDetail(ctx context.Context, request *ocpirpc.CreateBusinessDetailRequest) (*db.BusinessDetail, error) {
 	if request != nil {
-		params := NewCreateBusinessDetailParams(*request)
+		params := ocpirpc.NewCreateBusinessDetailParams(*request)
 
 		if request.Logo != nil {
 			i, err := r.createImage(ctx, request.Logo)
@@ -58,9 +58,9 @@ func (r *RpcCredentialResolver) createBusinessDetail(ctx context.Context, reques
 	return nil, errors.New("Error creating business detail from RPC")
 }
 
-func (r *RpcCredentialResolver) createImage(ctx context.Context, request *ocpirpc.Image) (*db.Image, error) {
+func (r *RpcCredentialResolver) createImage(ctx context.Context, request *ocpirpc.CreateImageRequest) (*db.Image, error) {
 	if request != nil {
-		params := NewCreateImageParams(*request)
+		params := ocpirpc.NewCreateImageParams(*request)
 
 		if i, err := r.ImageResolver.Repository.CreateImage(ctx, params); err == nil {
 			return &i, nil
