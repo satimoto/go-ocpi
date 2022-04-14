@@ -70,7 +70,7 @@ func TestCreateCommandReservationDto(t *testing.T) {
 			Valid:        true,
 			Whitelist:    db.TokenWhitelistTypeALWAYS,
 			Language:     util.SqlNullString("en"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
 
@@ -78,7 +78,7 @@ func TestCreateCommandReservationDto(t *testing.T) {
 			ID:            1,
 			Status:        db.CommandResponseTypeREQUESTED,
 			TokenID:       1,
-			ExpiryDate:    *util.ParseTime("2015-06-29T20:39:09Z"),
+			ExpiryDate:    *util.ParseTime("2015-06-29T20:39:09Z", nil),
 			ReservationID: 2,
 			LocationID:    "LOC00001",
 		}
@@ -156,7 +156,7 @@ func TestCreateCommandStartDto(t *testing.T) {
 			Valid:        true,
 			Whitelist:    db.TokenWhitelistTypeALWAYS,
 			Language:     util.SqlNullString("en"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
 

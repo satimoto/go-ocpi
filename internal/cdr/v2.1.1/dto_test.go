@@ -52,15 +52,15 @@ func TestCreateCdrDto(t *testing.T) {
 		c := db.Cdr{
 			ID:            1,
 			Uid:           "CDR0001",
-			StartDateTime: *util.ParseTime("2015-06-29T21:39:09Z"),
-			StopDateTime:  util.SqlNullTime(util.ParseTime("2015-06-29T21:39:09Z")),
+			StartDateTime: *util.ParseTime("2015-06-29T21:39:09Z", nil),
+			StopDateTime:  util.SqlNullTime(util.ParseTime("2015-06-29T21:39:09Z", nil)),
 			AuthID:        "DE8ACC12E46L89",
 			AuthMethod:    db.AuthMethodTypeAUTHREQUEST,
 			Currency:      "EUR",
 			TotalCost:     4.0,
 			TotalEnergy:   15.342,
 			TotalTime:     1.973,
-			LastUpdated:   *util.ParseTime("2015-06-29T22:01:13Z"),
+			LastUpdated:   *util.ParseTime("2015-06-29T22:01:13Z", nil),
 		}
 
 		response := cdrResolver.CreateCdrDto(ctx, c)
@@ -90,7 +90,7 @@ func TestCreateCdrDto(t *testing.T) {
 
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{
-			StartDateTime: *util.ParseTime("2015-06-29T22:39:09Z"),
+			StartDateTime: *util.ParseTime("2015-06-29T22:39:09Z", nil),
 		})
 		mockRepository.SetListCdrChargingPeriodsMockData(dbMocks.ChargingPeriodsMockData{ChargingPeriods: chargingPeriods, Error: nil})
 
@@ -108,8 +108,8 @@ func TestCreateCdrDto(t *testing.T) {
 		sess := db.Cdr{
 			ID:               2,
 			Uid:              "CDR0002",
-			StartDateTime:    *util.ParseTime("2015-06-29T21:39:09Z"),
-			StopDateTime:     util.SqlNullTime(util.ParseTime("2015-06-29T21:39:09Z")),
+			StartDateTime:    *util.ParseTime("2015-06-29T21:39:09Z", nil),
+			StopDateTime:     util.SqlNullTime(util.ParseTime("2015-06-29T21:39:09Z", nil)),
 			AuthID:           "DE8ACC12E46L89",
 			AuthMethod:       db.AuthMethodTypeAUTHREQUEST,
 			Currency:         "EUR",
@@ -117,7 +117,7 @@ func TestCreateCdrDto(t *testing.T) {
 			TotalEnergy:      15.342,
 			TotalTime:        1.973,
 			TotalParkingTime: util.SqlNullFloat64(45),
-			LastUpdated:      *util.ParseTime("2015-06-29T22:01:13Z"),
+			LastUpdated:      *util.ParseTime("2015-06-29T22:01:13Z", nil),
 		}
 
 		response := cdrResolver.CreateCdrDto(ctx, sess)
@@ -176,8 +176,8 @@ func TestCreateCdrDto(t *testing.T) {
 		sess := db.Cdr{
 			ID:               2,
 			Uid:              "CDR0002",
-			StartDateTime:    *util.ParseTime("2015-06-29T21:39:09Z"),
-			StopDateTime:     util.SqlNullTime(util.ParseTime("2015-06-29T21:39:09Z")),
+			StartDateTime:    *util.ParseTime("2015-06-29T21:39:09Z", nil),
+			StopDateTime:     util.SqlNullTime(util.ParseTime("2015-06-29T21:39:09Z", nil)),
 			AuthID:           "DE8ACC12E46L89",
 			AuthMethod:       db.AuthMethodTypeAUTHREQUEST,
 			Currency:         "EUR",
@@ -186,7 +186,7 @@ func TestCreateCdrDto(t *testing.T) {
 			TotalEnergy:      15.342,
 			TotalTime:        1.973,
 			TotalParkingTime: util.SqlNullFloat64(45),
-			LastUpdated:      *util.ParseTime("2015-06-29T22:01:13Z"),
+			LastUpdated:      *util.ParseTime("2015-06-29T22:01:13Z", nil),
 		}
 
 		response := cdrResolver.CreateCdrDto(ctx, sess)

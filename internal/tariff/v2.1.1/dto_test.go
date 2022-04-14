@@ -69,7 +69,7 @@ func TestCreateTariffDto(t *testing.T) {
 			Uid:          "TARIFF01",
 			Currency:     "EUR",
 			TariffAltUrl: util.SqlNullString("https://ev-power.de/"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := tariffResolver.CreateTariffDto(ctx, tar)
@@ -129,7 +129,7 @@ func TestCreateTariffDto(t *testing.T) {
 			Uid:          "TARIFF01",
 			Currency:     "EUR",
 			TariffAltUrl: util.SqlNullString("https://ev-power.de/"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := tariffResolver.CreateTariffDto(ctx, tar)
@@ -194,7 +194,7 @@ func TestCreateTariffDto(t *testing.T) {
 			Uid:          "TARIFF01",
 			Currency:     "EUR",
 			TariffAltUrl: util.SqlNullString("https://ev-power.de/"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := tariffResolver.CreateTariffDto(ctx, tar)
@@ -275,7 +275,7 @@ func TestCreateTariffDto(t *testing.T) {
 			Currency:     "EUR",
 			TariffAltUrl: util.SqlNullString("https://ev-power.de/"),
 			EnergyMixID:  sql.NullInt64{Int64: 1, Valid: true},
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := tariffResolver.CreateTariffDto(ctx, tar)
@@ -335,7 +335,7 @@ func TestCreateTariffDto(t *testing.T) {
 			Currency:            "EUR",
 			TariffAltUrl:        util.SqlNullString("https://ev-power.de/"),
 			TariffRestrictionID: util.SqlNullInt64(restriction.ID),
-			LastUpdated:         *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:         *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := tariffResolver.CreateTariffDto(ctx, tar)
@@ -378,7 +378,7 @@ func TestCreateTariffDto(t *testing.T) {
 			Currency:            "EUR",
 			TariffAltUrl:        util.SqlNullString("https://ev-power.de/"),
 			TariffRestrictionID: util.SqlNullInt64(restriction.ID),
-			LastUpdated:         *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:         *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := tariffResolver.CreateTariffDto(ctx, tar)

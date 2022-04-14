@@ -41,17 +41,17 @@ func TestCreateEvseDto(t *testing.T) {
 
 		statusSchedules := []db.StatusSchedule{}
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
-			PeriodBegin: *util.ParseTime("2018-12-16T10:10:02Z"),
-			PeriodEnd:   util.SqlNullTime(*util.ParseTime("2018-12-16T10:30:02Z")),
+			PeriodBegin: *util.ParseTime("2018-12-16T10:10:02Z", nil),
+			PeriodEnd:   util.SqlNullTime(*util.ParseTime("2018-12-16T10:30:02Z", nil)),
 			Status:      db.EvseStatusBLOCKED,
 		})
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
-			PeriodBegin: *util.ParseTime("2018-12-16T10:30:02Z"),
-			PeriodEnd:   util.SqlNullTime(*util.ParseTime("2018-12-16T11:00:02Z")),
+			PeriodBegin: *util.ParseTime("2018-12-16T10:30:02Z", nil),
+			PeriodEnd:   util.SqlNullTime(*util.ParseTime("2018-12-16T11:00:02Z", nil)),
 			Status:      db.EvseStatusCHARGING,
 		})
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
-			PeriodBegin: *util.ParseTime("2018-12-16T11:00:02Z"),
+			PeriodBegin: *util.ParseTime("2018-12-16T11:00:02Z", nil),
 			Status:      db.EvseStatusAVAILABLE,
 		})
 		mockRepository.SetListStatusSchedulesMockData(dbMocks.StatusSchedulesMockData{StatusSchedules: statusSchedules, Error: nil})
@@ -62,7 +62,7 @@ func TestCreateEvseDto(t *testing.T) {
 			Status:            db.EvseStatusRESERVED,
 			PhysicalReference: util.SqlNullString("2"),
 			FloorLevel:        util.SqlNullString("-2"),
-			LastUpdated:       *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:       *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := evseResolver.CreateEvseDto(ctx, evse)
@@ -109,7 +109,7 @@ func TestCreateEvseDto(t *testing.T) {
 			Uid:         "3257",
 			EvseID:      util.SqlNullString("BE-BEC-E041503002"),
 			Status:      db.EvseStatusRESERVED,
-			LastUpdated: *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated: *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := evseResolver.CreateEvseDto(ctx, evse)
@@ -142,7 +142,7 @@ func TestCreateEvseDto(t *testing.T) {
 			Voltage:     220,
 			Amperage:    16,
 			TariffID:    util.SqlNullString("11"),
-			LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z"),
+			LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z", nil),
 		})
 		connectors = append(connectors, db.Connector{
 			Uid:         "2",
@@ -152,7 +152,7 @@ func TestCreateEvseDto(t *testing.T) {
 			Voltage:     110,
 			Amperage:    32,
 			TariffID:    util.SqlNullString("9"),
-			LastUpdated: *util.ParseTime("2015-03-18T08:12:01Z"),
+			LastUpdated: *util.ParseTime("2015-03-18T08:12:01Z", nil),
 		})
 		mockRepository.SetListConnectorsMockData(dbMocks.ConnectorsMockData{Connectors: connectors, Error: nil})
 
@@ -162,7 +162,7 @@ func TestCreateEvseDto(t *testing.T) {
 			Status:            db.EvseStatusAVAILABLE,
 			PhysicalReference: util.SqlNullString("1"),
 			FloorLevel:        util.SqlNullString("-1"),
-			LastUpdated:       *util.ParseTime("2015-06-28T08:12:01Z"),
+			LastUpdated:       *util.ParseTime("2015-06-28T08:12:01Z", nil),
 		}
 
 		response := evseResolver.CreateEvseDto(ctx, evse)
@@ -228,7 +228,7 @@ func TestCreateEvseDto(t *testing.T) {
 			Status:            db.EvseStatusAVAILABLE,
 			PhysicalReference: util.SqlNullString("1"),
 			FloorLevel:        util.SqlNullString("-1"),
-			LastUpdated:       *util.ParseTime("2015-06-28T08:12:01Z"),
+			LastUpdated:       *util.ParseTime("2015-06-28T08:12:01Z", nil),
 		}
 
 		response := evseResolver.CreateEvseDto(ctx, evse)

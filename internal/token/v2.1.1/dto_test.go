@@ -50,7 +50,7 @@ func TestCreateTokenDto(t *testing.T) {
 			Allowed:     db.TokenAllowedTypeEXPIRED,
 			Valid:       false,
 			Whitelist:   db.TokenWhitelistTypeNEVER,
-			LastUpdated: *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated: *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := tokenResolver.CreateTokenDto(ctx, tok)
@@ -81,7 +81,7 @@ func TestCreateTokenDto(t *testing.T) {
 			Allowed:      db.TokenAllowedTypeNOCREDIT,
 			Valid:        true,
 			Whitelist:    db.TokenWhitelistTypeALLOWEDOFFLINE,
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := tokenResolver.CreateTokenDto(ctx, tok)
@@ -114,7 +114,7 @@ func TestCreateTokenDto(t *testing.T) {
 			Valid:        true,
 			Whitelist:    db.TokenWhitelistTypeALWAYS,
 			Language:     util.SqlNullString("en"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := tokenResolver.CreateTokenDto(ctx, tok)

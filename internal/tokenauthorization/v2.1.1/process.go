@@ -27,10 +27,12 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 func (r *TokenAuthorizationResolver) createTokenAuthorizationConnectors(ctx context.Context, tokenAuthorizationID int64, dto *LocationReferencesDto) {
 	if dto != nil {
 		for _, connectorId := range dto.ConnectorIds {
-			r.Repository.SetTokenAuthorizationConnector(ctx, db.SetTokenAuthorizationConnectorParams{
-				TokenAuthorizationID: tokenAuthorizationID,
-				ConnectorUid:         *connectorId,
-			})
+			if connector, err := r.ConnectorResolver.Repository.GetConnectorByUid(ctx, db.GetConnectorByUidParams{Uid: *connectorId}); err == nil {
+				r.Repository.SetTokenAuthorizationConnector(ctx, db.SetTokenAuthorizationConnectorParams{
+					TokenAuthorizationID: tokenAuthorizationID,
+					ConnectorID:          connector.ID,
+				})
+			}
 		}
 	}
 }
@@ -38,10 +40,12 @@ func (r *TokenAuthorizationResolver) createTokenAuthorizationConnectors(ctx cont
 func (r *TokenAuthorizationResolver) createTokenAuthorizationEvses(ctx context.Context, tokenAuthorizationID int64, dto *LocationReferencesDto) {
 	if dto != nil {
 		for _, evseUid := range dto.EvseUids {
-			r.Repository.SetTokenAuthorizationEvse(ctx, db.SetTokenAuthorizationEvseParams{
-				TokenAuthorizationID: tokenAuthorizationID,
-				EvseUid:              *evseUid,
-			})
+			if evse, err := r.EvseResolver.Repository.GetEvseByUid(ctx, *evseUid); err == nil {
+				r.Repository.SetTokenAuthorizationEvse(ctx, db.SetTokenAuthorizationEvseParams{
+					TokenAuthorizationID: tokenAuthorizationID,
+					EvseID:               evse.ID,
+				})
+			}
 		}
 	}
 }

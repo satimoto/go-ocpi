@@ -62,13 +62,13 @@ func TestSessionRequest(t *testing.T) {
 
 		sess := db.Session{
 			Uid:           "SESSION0001",
-			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z"),
+			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z", nil),
 			Kwh:           0,
 			AuthID:        "DE8ACC12E46L89",
 			AuthMethod:    db.AuthMethodTypeAUTHREQUEST,
 			Currency:      "EUR",
 			Status:        db.SessionStatusTypePENDING,
-			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z"),
+			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z", nil),
 		}
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})
 
@@ -107,7 +107,7 @@ func TestSessionRequest(t *testing.T) {
 
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{
-			StartDateTime: *util.ParseTime("2015-06-29T22:39:09Z"),
+			StartDateTime: *util.ParseTime("2015-06-29T22:39:09Z", nil),
 		})
 		mockRepository.SetListSessionChargingPeriodsMockData(dbMocks.ChargingPeriodsMockData{ChargingPeriods: chargingPeriods, Error: nil})
 
@@ -124,13 +124,13 @@ func TestSessionRequest(t *testing.T) {
 
 		sess := db.Session{
 			Uid:           "SESSION0001",
-			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z"),
+			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z", nil),
 			Kwh:           15.342,
 			AuthID:        "DE8ACC12E46L89",
 			AuthMethod:    db.AuthMethodTypeAUTHREQUEST,
 			Currency:      "EUR",
 			Status:        db.SessionStatusTypeACTIVE,
-			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z"),
+			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z", nil),
 		}
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})
 
@@ -178,7 +178,7 @@ func TestSessionRequest(t *testing.T) {
 
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{
-			StartDateTime: *util.ParseTime("2015-06-29T22:39:09Z"),
+			StartDateTime: *util.ParseTime("2015-06-29T22:39:09Z", nil),
 		})
 		mockRepository.SetListSessionChargingPeriodsMockData(dbMocks.ChargingPeriodsMockData{ChargingPeriods: chargingPeriods, Error: nil})
 
@@ -195,14 +195,14 @@ func TestSessionRequest(t *testing.T) {
 
 		sess := db.Session{
 			Uid:           "SESSION0001",
-			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z"),
+			StartDatetime: *util.ParseTime("2015-06-29T22:39:09Z", nil),
 			Kwh:           15.342,
 			AuthID:        "DE8ACC12E46L89",
 			AuthMethod:    db.AuthMethodTypeAUTHREQUEST,
 			LocationID:    1,
 			Currency:      "EUR",
 			Status:        db.SessionStatusTypeACTIVE,
-			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z"),
+			LastUpdated:   *util.ParseTime("2015-06-29T22:39:09Z", nil),
 		}
 		// Push context
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})

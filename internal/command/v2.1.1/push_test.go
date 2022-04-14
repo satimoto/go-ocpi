@@ -99,7 +99,7 @@ func TestCommandReservationRequest(t *testing.T) {
 			ID:            1,
 			Status:        db.CommandResponseTypeREQUESTED,
 			TokenID:       1,
-			ExpiryDate:    *util.ParseTime("2015-06-29T20:39:09Z"),
+			ExpiryDate:    *util.ParseTime("2015-06-29T20:39:09Z", nil),
 			ReservationID: 2,
 			LocationID:    "LOC00001",
 		}

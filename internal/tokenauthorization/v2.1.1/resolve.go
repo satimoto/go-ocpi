@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
+	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
+	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 )
 
 type TokenAuthorizationRepository interface {
@@ -18,9 +20,15 @@ type TokenAuthorizationRepository interface {
 
 type TokenAuthorizationResolver struct {
 	Repository TokenAuthorizationRepository
+	*connector.ConnectorResolver
+	*evse.EvseResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *TokenAuthorizationResolver {
 	repo := TokenAuthorizationRepository(repositoryService)
-	return &TokenAuthorizationResolver{repo}
+	return &TokenAuthorizationResolver{
+		Repository:        repo,
+		ConnectorResolver: connector.NewResolver(repositoryService),
+		EvseResolver:      evse.NewResolver(repositoryService),
+	}
 }

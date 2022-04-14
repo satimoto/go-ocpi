@@ -5,7 +5,7 @@ import (
 
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
-	"github.com/satimoto/go-ocpi-api/internal/tokenauthorization"
+	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
 )
 
 func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
