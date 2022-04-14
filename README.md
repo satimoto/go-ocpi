@@ -13,12 +13,12 @@ protoc proto/credential.proto --go_out=plugins=grpc:$GOPATH/src
 
 ### Run
 ```bash
-go run ./cmd/ocpid
+go run ./cmd/ocpi
 ```
 
 ## Build
 
 ### Run
 ```bash
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-s -w' -o bin/main cmd/ocpid/main.go
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-s -w' -o bin/main cmd/ocpi/main.go
 ```

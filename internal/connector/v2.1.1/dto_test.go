@@ -27,7 +27,7 @@ func TestCreateConnectorDto(t *testing.T) {
 			Voltage:     220,
 			Amperage:    16,
 			TariffID:    util.SqlNullString("11"),
-			LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z"),
+			LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		response := connectorResolver.CreateConnectorDto(ctx, connector)
@@ -41,7 +41,7 @@ func TestCreateConnectorDto(t *testing.T) {
 			Voltage:     220,
 			Amperage:    16,
 			TariffID:    util.SqlNullString("11"),
-			LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z"),
+			LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		connectorResolver.Repository.CreateConnector(ctx, connectorParams)

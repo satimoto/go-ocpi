@@ -30,7 +30,7 @@ func TestReplaceEvse(t *testing.T) {
 			Status:            &evseStatusRESERVED,
 			PhysicalReference: util.NilString("2"),
 			FloorLevel:        util.NilString("-2"),
-			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z"),
+			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		evseResolver.ReplaceEvse(ctx, 1, *dto.Uid, &dto)
@@ -65,7 +65,7 @@ func TestReplaceEvse(t *testing.T) {
 				Status:            "RESERVED",
 				PhysicalReference: util.SqlNullString("2"),
 				FloorLevel:        util.SqlNullString("-2"),
-				LastUpdated:       *util.ParseTime("2015-03-16T10:10:02Z"),
+				LastUpdated:       *util.ParseTime("2015-03-16T10:10:02Z", nil),
 			},
 		})
 
@@ -106,7 +106,7 @@ func TestReplaceEvse(t *testing.T) {
 				Status:            "RESERVED",
 				PhysicalReference: util.SqlNullString("2"),
 				FloorLevel:        util.SqlNullString("-2"),
-				LastUpdated:       *util.ParseTime("2015-03-16T10:10:02Z"),
+				LastUpdated:       *util.ParseTime("2015-03-16T10:10:02Z", nil),
 			},
 		})
 
@@ -120,7 +120,7 @@ func TestReplaceEvse(t *testing.T) {
 				Voltage:     220,
 				Amperage:    16,
 				TariffID:    util.SqlNullString("11"),
-				LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z"),
+				LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z", nil),
 			},
 		})
 
@@ -181,7 +181,7 @@ func TestReplaceEvse(t *testing.T) {
 				Status:            "RESERVED",
 				PhysicalReference: util.SqlNullString("2"),
 				FloorLevel:        util.SqlNullString("-2"),
-				LastUpdated:       *util.ParseTime("2015-03-16T10:10:02Z"),
+				LastUpdated:       *util.ParseTime("2015-03-16T10:10:02Z", nil),
 			},
 		})
 
@@ -224,7 +224,9 @@ func TestReplaceEvse(t *testing.T) {
 
 		mocks.CompareJson(t, geolocationParamsJson, []byte(`{
 			"latitude": "31.3434",
+			"latitudeFloat": 31.3434,
 			"longitude": "-62.6996",
+			"longitudeFloat": -62.6996,
 			"name": {"String": "", "Valid": false}
 		}`))
 	})

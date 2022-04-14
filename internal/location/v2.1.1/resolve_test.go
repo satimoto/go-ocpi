@@ -40,7 +40,7 @@ func TestReplaceLocation(t *testing.T) {
 				Longitude: "-62.6996",
 			},
 			ChargingWhenClosed: util.NilBool(true),
-			LastUpdated:        util.ParseTime("2015-03-16T10:10:02Z"),
+			LastUpdated:        util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		countryCode := "DE"
@@ -95,7 +95,7 @@ func TestReplaceLocation(t *testing.T) {
 		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
-		point, _ := util.NewPoint("31.3434", "-62.6996")
+		point, _ := geom.NewPoint("31.3434", "-62.6996")
 
 		mockRepository.SetGetLocationByUidMockData(dbMocks.LocationMockData{
 			Location: db.Location{
@@ -112,7 +112,7 @@ func TestReplaceLocation(t *testing.T) {
 				},
 				GeoLocationID:      1,
 				ChargingWhenClosed: true,
-				LastUpdated:        *util.ParseTime("2015-03-16T10:10:02Z"),
+				LastUpdated:        *util.ParseTime("2015-03-16T10:10:02Z", nil),
 			},
 		})
 
@@ -165,7 +165,7 @@ func TestReplaceLocation(t *testing.T) {
 		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
-		point, _ := util.NewPoint("31.3434", "-62.6996")
+		point, _ := geom.NewPoint("31.3434", "-62.6996")
 
 		mockRepository.SetGetLocationByUidMockData(dbMocks.LocationMockData{
 			Location: db.Location{
@@ -182,7 +182,7 @@ func TestReplaceLocation(t *testing.T) {
 				},
 				GeoLocationID:      1,
 				ChargingWhenClosed: true,
-				LastUpdated:        *util.ParseTime("2015-03-16T10:10:02Z"),
+				LastUpdated:        *util.ParseTime("2015-03-16T10:10:02Z", nil),
 			},
 		})
 
@@ -195,7 +195,7 @@ func TestReplaceLocation(t *testing.T) {
 			Status:            &evseStatusRESERVED,
 			PhysicalReference: util.NilString("2"),
 			FloorLevel:        util.NilString("-2"),
-			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z"),
+			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z", nil),
 		})
 
 		dto := location.LocationDto{

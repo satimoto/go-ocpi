@@ -37,7 +37,7 @@ func TestCreateCredentialDto(t *testing.T) {
 			PartyID:          "BUS",
 			CountryCode:      "DE",
 			BusinessDetailID: 123,
-			LastUpdated:      *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:      *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 
 		response := credentialResolver.CreateCredentialDto(ctx, credential)

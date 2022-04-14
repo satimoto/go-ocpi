@@ -73,7 +73,7 @@ func TestTokenRequest(t *testing.T) {
 			Valid:        true,
 			Whitelist:    db.TokenWhitelistTypeALLOWED,
 			Language:     util.SqlNullString("en"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		})
 		mockRepository.SetListTokensMockData(dbMocks.TokensMockData{Tokens: tokens, Error: nil})
 
@@ -160,7 +160,7 @@ func TestTokenRequest(t *testing.T) {
 			Valid:        true,
 			Whitelist:    db.TokenWhitelistTypeALLOWED,
 			Language:     util.SqlNullString("en"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 		mockRepository.SetGetTokenByUidMockData(dbMocks.TokenMockData{Token: token, Error: nil})
 
@@ -198,7 +198,7 @@ func TestTokenRequest(t *testing.T) {
 			Valid:        true,
 			Whitelist:    db.TokenWhitelistTypeALLOWED,
 			Language:     util.SqlNullString("en"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 		mockRepository.SetGetTokenByUidMockData(dbMocks.TokenMockData{Token: token, Error: nil})
 
@@ -241,7 +241,7 @@ func TestTokenRequest(t *testing.T) {
 			Valid:        true,
 			Whitelist:    db.TokenWhitelistTypeALLOWED,
 			Language:     util.SqlNullString("en"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 		mockRepository.SetGetTokenByUidMockData(dbMocks.TokenMockData{Token: token, Error: nil})
 
@@ -285,7 +285,7 @@ func TestTokenRequest(t *testing.T) {
 			Valid:        true,
 			Whitelist:    db.TokenWhitelistTypeALLOWED,
 			Language:     util.SqlNullString("en"),
-			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z"),
+			LastUpdated:  *util.ParseTime("2015-06-29T20:39:09Z", nil),
 		}
 		mockRepository.SetGetTokenByUidMockData(dbMocks.TokenMockData{Token: token, Error: nil})
 

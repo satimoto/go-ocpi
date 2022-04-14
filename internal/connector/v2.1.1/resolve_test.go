@@ -32,7 +32,7 @@ func TestReplaceConnector(t *testing.T) {
 			Voltage:     util.NilInt32(220),
 			Amperage:    util.NilInt32(16),
 			TariffID:    util.NilString("11"),
-			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z"),
+			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		connectorResolver.ReplaceConnector(ctx, 1, *dto.Id, &dto)
@@ -69,7 +69,7 @@ func TestReplaceConnector(t *testing.T) {
 				Voltage:     220,
 				Amperage:    16,
 				TariffID:    util.SqlNullString("11"),
-				LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z"),
+				LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z", nil),
 			},
 		})
 

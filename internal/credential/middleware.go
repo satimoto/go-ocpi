@@ -9,10 +9,11 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-datastore/util"
 )
 
 func GetCredentialByToken(r CredentialRepository, ctx context.Context, request *http.Request) (db.Credential, error) {
-	if token := util.GetAuthenticationToken(request); token != "" {
+	if token := GetAuthenticationToken(request); token != "" {
 		return r.GetCredentialByServerToken(ctx, util.SqlNullString(token))
 	}
 

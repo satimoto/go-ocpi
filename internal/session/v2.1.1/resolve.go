@@ -6,7 +6,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/tokenauthorization"
+	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
 )
 

@@ -11,7 +11,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
 	github.com/nsf/jsondiff v0.0.0-20210926074059-1e845ec5d249
-	github.com/satimoto/go-datastore v0.1.2-0.20220414070654-d9f0502f02fa
+	github.com/satimoto/go-datastore v0.1.2-0.20220414182856-66e1cfcf96e4
 	github.com/satimoto/go-datastore-mocks v0.1.2-0.20220407144231-36533709d192
 	google.golang.org/grpc v1.27.0
 )
