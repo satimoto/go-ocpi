@@ -52,7 +52,7 @@ func TestCommandReservationRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("GET", "/", nil)
+		request, err := http.NewRequest(http.MethodGet, "/", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /' request failed!")
@@ -72,7 +72,7 @@ func TestCommandReservationRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/RESERVE_NOW/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/RESERVE_NOW/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
@@ -105,7 +105,7 @@ func TestCommandReservationRequest(t *testing.T) {
 		}
 		mockRepository.SetGetCommandReservationMockData(dbMocks.CommandReservationMockData{CommandReservation: cr, Error: nil})
 
-		request, err := http.NewRequest("POST", "/RESERVE_NOW/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/RESERVE_NOW/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
@@ -140,7 +140,7 @@ func TestCommandStartRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("GET", "/", nil)
+		request, err := http.NewRequest(http.MethodGet, "/", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /' request failed!")
@@ -160,7 +160,7 @@ func TestCommandStartRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/START_SESSION/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/START_SESSION/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
@@ -191,7 +191,7 @@ func TestCommandStartRequest(t *testing.T) {
 		}
 		mockRepository.SetGetCommandStartMockData(dbMocks.CommandStartMockData{CommandStart: cr, Error: nil})
 
-		request, err := http.NewRequest("POST", "/START_SESSION/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/START_SESSION/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
@@ -224,7 +224,7 @@ func TestCommandStopRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("GET", "/", nil)
+		request, err := http.NewRequest(http.MethodGet, "/", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /' request failed!")
@@ -244,7 +244,7 @@ func TestCommandStopRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/STOP_SESSION/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/STOP_SESSION/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
@@ -274,7 +274,7 @@ func TestCommandStopRequest(t *testing.T) {
 		}
 		mockRepository.SetGetCommandStopMockData(dbMocks.CommandStopMockData{CommandStop: cr, Error: nil})
 
-		request, err := http.NewRequest("POST", "/STOP_SESSION/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/STOP_SESSION/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
@@ -307,7 +307,7 @@ func TestCommandUnlockRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("GET", "/", nil)
+		request, err := http.NewRequest(http.MethodGet, "/", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /' request failed!")
@@ -327,7 +327,7 @@ func TestCommandUnlockRequest(t *testing.T) {
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/UNLOCK_CONNECTOR/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/UNLOCK_CONNECTOR/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 
@@ -359,7 +359,7 @@ func TestCommandUnlockRequest(t *testing.T) {
 		}
 		mockRepository.SetGetCommandUnlockMockData(dbMocks.CommandUnlockMockData{CommandUnlock: cr, Error: nil})
 
-		request, err := http.NewRequest("POST", "/UNLOCK_CONNECTOR/1", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/UNLOCK_CONNECTOR/1", bytes.NewReader([]byte(`{
 			"result": "ACCEPTED"
 		}`)))
 

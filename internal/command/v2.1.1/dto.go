@@ -12,6 +12,13 @@ import (
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 )
 
+type OCPICommandResponseDto struct {
+	Data          *CommandResponseDto `json:"data,omitempty"`
+	StatusCode    int16              `json:"status_code"`
+	StatusMessage string             `json:"status_message"`
+	Timestamp     time.Time          `json:"timestamp"`
+}
+
 type CommandReservationDto struct {
 	ResponseUrl   *string         `json:"response_url"`
 	Token         *token.TokenDto `json:"token"`

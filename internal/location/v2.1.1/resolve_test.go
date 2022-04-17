@@ -43,15 +43,22 @@ func TestReplaceLocation(t *testing.T) {
 			LastUpdated:        util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
+		cred := db.Credential{
+			ID: 1,
+			CountryCode: "FR",	
+			PartyID: "GER",
+		}
+
 		countryCode := "DE"
 		partyID := "ABC"
-		locationResolver.ReplaceLocationByIdentifier(ctx, &countryCode, &partyID, *dto.ID, &dto)
+		locationResolver.ReplaceLocationByIdentifier(ctx, cred, &countryCode, &partyID, *dto.ID, &dto)
 
 		params, _ := mockRepository.GetCreateLocationMockData()
 		paramsJson, _ := json.Marshal(params)
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "LOC1",
+			"credentialID": 1,
 			"countryCode": {"String": "DE", "Valid": true},
 			"partyID": {"String": "ABC", "Valid": true},
 			"type": "ON_STREET",
@@ -84,7 +91,9 @@ func TestReplaceLocation(t *testing.T) {
 
 		mocks.CompareJson(t, geolocationParamsJson, []byte(`{
 			"latitude": "31.3434",
+			"latitudeFloat": 31.3434,
 			"longitude": "-62.6996",
+			"longitudeFloat": -62.6996,
 			"name": {"String": "", "Valid": false}
 		}`))
 	})
@@ -122,9 +131,15 @@ func TestReplaceLocation(t *testing.T) {
 			Type: &locationTypePARKINGGARAGE,
 		}
 
+		cred := db.Credential{
+			ID: 1,
+			CountryCode: "FR",	
+			PartyID: "GER",
+		}
+
 		countryCode := "DE"
 		partyID := "ABC"
-		locationResolver.ReplaceLocationByIdentifier(ctx, &countryCode, &partyID, "LOC1", &dto)
+		locationResolver.ReplaceLocationByIdentifier(ctx, cred, &countryCode, &partyID, "LOC1", &dto)
 
 		params, _ := mockRepository.GetUpdateLocationByUidMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -202,7 +217,13 @@ func TestReplaceLocation(t *testing.T) {
 			Evses: evsesDto,
 		}
 
-		locationResolver.ReplaceLocation(ctx, "LOC1", &dto)
+		cred := db.Credential{
+			ID: 1,
+			CountryCode: "FR",	
+			PartyID: "GER",
+		}
+
+		locationResolver.ReplaceLocation(ctx, cred, "LOC1", &dto)
 
 		params, _ := mockRepository.GetUpdateLocationByUidMockData()
 		paramsJson, _ := json.Marshal(params)

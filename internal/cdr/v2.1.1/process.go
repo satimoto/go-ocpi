@@ -8,17 +8,17 @@ import (
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 )
 
-func (r *CdrResolver) ReplaceCdr(ctx context.Context, dto *CdrDto) *db.Cdr {
+func (r *CdrResolver) ReplaceCdr(ctx context.Context, credential db.Credential, dto *CdrDto) *db.Cdr {
 	if dto != nil {
 		countryCode, partyID := evse.GetEvsesIdentity(dto.Location.Evses)
 
-		return r.ReplaceCdrByIdentifier(ctx, countryCode, partyID, *dto.ID, dto)
+		return r.ReplaceCdrByIdentifier(ctx, credential, countryCode, partyID, *dto.ID, dto)
 	}
 
 	return nil
 }
 
-func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, countryCode *string, partyID *string, uid string, dto *CdrDto) *db.Cdr {
+func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *CdrDto) *db.Cdr {
 	if dto != nil {
 		cdr, err := r.Repository.GetCdrByUid(ctx, uid)
 
@@ -32,12 +32,13 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, countryCode *s
 				partyID = util.NilString(location.PartyID)
 				locationID = location.ID
 			} else {
-				location := r.LocationResolver.ReplaceLocation(ctx, *dto.Location.ID, dto.Location)
+				location := r.LocationResolver.ReplaceLocation(ctx, credential, *dto.Location.ID, dto.Location)
 				countryCode = util.NilString(location.CountryCode)
 				partyID = util.NilString(location.PartyID)
 				locationID = location.ID
 			}
 
+			cdrParams.CredentialID = credential.ID
 			cdrParams.CountryCode = util.SqlNullString(countryCode)
 			cdrParams.PartyID = util.SqlNullString(partyID)
 			cdrParams.LocationID = locationID
@@ -56,7 +57,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, countryCode *s
 				}
 
 				if dto.Tariffs != nil {
-					r.replaceTariffs(ctx, countryCode, partyID, &cdr.ID, dto)
+					r.replaceTariffs(ctx, credential, countryCode, partyID, &cdr.ID, dto)
 				}
 			}
 		}
@@ -67,9 +68,9 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, countryCode *s
 	return nil
 }
 
-func (r *CdrResolver) ReplaceCdrsByIdentifier(ctx context.Context, countryCode *string, partyID *string, dto []*CdrDto) {
+func (r *CdrResolver) ReplaceCdrsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, dto []*CdrDto) {
 	for _, cdrDto := range dto {
-		r.ReplaceCdrByIdentifier(ctx, countryCode, partyID, *cdrDto.ID, cdrDto)
+		r.ReplaceCdrByIdentifier(ctx, credential, countryCode, partyID, *cdrDto.ID, cdrDto)
 	}
 }
 
@@ -86,8 +87,8 @@ func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, dt
 	}
 }
 
-func (r *CdrResolver) replaceTariffs(ctx context.Context, countryCode *string, partyID *string, cdrID *int64, dto *CdrDto) {
+func (r *CdrResolver) replaceTariffs(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrID *int64, dto *CdrDto) {
 	for _, tariffDto := range dto.Tariffs {
-		r.TariffResolver.ReplaceTariffByIdentifier(ctx, countryCode, partyID, *tariffDto.ID, cdrID, tariffDto)
+		r.TariffResolver.ReplaceTariffByIdentifier(ctx, credential, countryCode, partyID, *tariffDto.ID, cdrID, tariffDto)
 	}
 }

@@ -20,7 +20,7 @@ type LocationRepository interface {
 	DeleteLocationImages(ctx context.Context, locationID int64) error
 	DeleteRelatedLocations(ctx context.Context, locationID int64) error
 	GetLocation(ctx context.Context, id int64) (db.Location, error)
-	GetLocationByIdentityOrderByLastUpdated(ctx context.Context, arg db.GetLocationByIdentityOrderByLastUpdatedParams) (db.Location, error)
+	GetLocationByLastUpdated(ctx context.Context, arg db.GetLocationByLastUpdatedParams) (db.Location, error)
 	GetLocationByUid(ctx context.Context, uid string) (db.Location, error)
 	ListEvses(ctx context.Context, locationID int64) ([]db.Evse, error)
 	ListFacilities(ctx context.Context) ([]db.Facility, error)

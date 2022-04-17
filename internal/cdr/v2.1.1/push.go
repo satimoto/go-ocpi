@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-ocpi-api/internal/credential"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
 )
 
@@ -22,6 +23,7 @@ func (r *CdrResolver) GetCdr(rw http.ResponseWriter, request *http.Request) {
 
 func (r *CdrResolver) PostCdr(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	cred := credential.GetCredential(ctx)
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
@@ -29,7 +31,7 @@ func (r *CdrResolver) PostCdr(rw http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	cdr := r.ReplaceCdr(ctx, dto)
+	cdr := r.ReplaceCdr(ctx, *cred, dto)
 
 	if cdr == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))

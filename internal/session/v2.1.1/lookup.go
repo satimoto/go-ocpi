@@ -4,14 +4,23 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
 )
 
-func (r *SessionResolver) GetLastSessionByIdentity(ctx context.Context, countryCode string, partyID string) (db.Session, error) {
-	params := db.GetSessionByIdentityOrderByLastUpdatedParams{
-		CountryCode: util.SqlNullString(countryCode),
-		PartyID:     util.SqlNullString(partyID),
+func (r *SessionResolver) GetLastSessionByIdentity(ctx context.Context, credentialID *int64, countryCode *string, partyID *string) (db.Session, error) {
+	params := db.GetSessionByLastUpdatedParams{
+		CredentalID: -1,
 	}
 
-	return r.Repository.GetSessionByIdentityOrderByLastUpdated(ctx, params)
+	if credentialID != nil {
+		params.CredentalID = *credentialID
+	}
+
+	if countryCode != nil {
+		params.CountryCode = *countryCode
+	}
+	if partyID != nil {
+		params.PartyID = *partyID
+	}
+
+	return r.Repository.GetSessionByLastUpdated(ctx, params)
 }

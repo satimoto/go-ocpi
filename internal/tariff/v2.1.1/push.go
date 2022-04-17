@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-ocpi-api/internal/credential"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
 )
 
@@ -33,6 +34,7 @@ func (r *TariffResolver) GetTariff(rw http.ResponseWriter, request *http.Request
 
 func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	cred := credential.GetCredential(ctx)
 	countryCode := chi.URLParam(request, "country_code")
 	partyID := chi.URLParam(request, "party_id")
 	uid := chi.URLParam(request, "tariff_id")
@@ -43,7 +45,7 @@ func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Requ
 		return
 	}
 
-	tariff := r.ReplaceTariffByIdentifier(ctx, &countryCode, &partyID, uid, nil, dto)
+	tariff := r.ReplaceTariffByIdentifier(ctx, *cred, &countryCode, &partyID, uid, nil, dto)
 
 	if tariff == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))

@@ -84,7 +84,7 @@ func (rs *RestService) handler() *chi.Mux {
 	router.Use(middleware.Timeout(30 * time.Second))
 
 	router.Use(cors.Handler(cors.Options{
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
 		AllowCredentials: true,
 		MaxAge:           300,

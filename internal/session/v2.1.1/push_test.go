@@ -2,6 +2,7 @@ package session_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -40,7 +41,7 @@ func TestSessionRequest(t *testing.T) {
 		sessionRoutes := setupRoutes(sessionResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("GET", "/DE/ABC", nil)
+		request, err := http.NewRequest(http.MethodGet, "/DE/ABC", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /{country_code}/{party_id}' request failed!")
@@ -72,7 +73,7 @@ func TestSessionRequest(t *testing.T) {
 		}
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})
 
-		request, err := http.NewRequest("GET", "/DE/ABC/SESSION0001", nil)
+		request, err := http.NewRequest(http.MethodGet, "/DE/ABC/SESSION0001", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /{country_code}/{party_id}/{session_id}' request failed!")
@@ -134,7 +135,7 @@ func TestSessionRequest(t *testing.T) {
 		}
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})
 
-		request, err := http.NewRequest("GET", "/DE/ABC/SESSION0001", nil)
+		request, err := http.NewRequest(http.MethodGet, "/DE/ABC/SESSION0001", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /{country_code}/{party_id}/{session_id}' request failed!")
@@ -209,7 +210,7 @@ func TestSessionRequest(t *testing.T) {
 		// Push replace
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})
 
-		request, err := http.NewRequest("PATCH", "/DE/ABC/SESSION0001", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPatch, "/DE/ABC/SESSION0001", bytes.NewReader([]byte(`{
 			"kwh": 16.1
 		}`)))
 
@@ -217,7 +218,9 @@ func TestSessionRequest(t *testing.T) {
 			t.Fatal("Creating 'PATCH /{country_code}/{party_id}/{session_id}' request failed!")
 		}
 
-		sessionRoutes.ServeHTTP(responseRecorder, request)
+		requestCtx := request.Context()
+		requestCtx = context.WithValue(requestCtx, "credential", &db.Credential{ID: 1, CountryCode: "FR", PartyID: "GER"})
+		sessionRoutes.ServeHTTP(responseRecorder, request.WithContext(requestCtx))
 
 		sessionParams, err := mockRepository.GetUpdateSessionByUidMockData()
 		paramsJson, _ := json.Marshal(sessionParams)

@@ -2,6 +2,7 @@ package cdr_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -50,7 +51,7 @@ func TestCdrRequest(t *testing.T) {
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("GET", "/", nil)
+		request, err := http.NewRequest(http.MethodGet, "/", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /' request failed!")
@@ -85,7 +86,7 @@ func TestCdrRequest(t *testing.T) {
 		}
 		mockRepository.SetGetCdrByUidMockData(dbMocks.CdrMockData{Cdr: c, Error: nil})
 
-		request, err := http.NewRequest("GET", "/CDR0001", nil)
+		request, err := http.NewRequest(http.MethodGet, "/CDR0001", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /{cdr_id}' request failed!")
@@ -154,7 +155,7 @@ func TestCdrRequest(t *testing.T) {
 		}
 		mockRepository.SetGetCdrByUidMockData(dbMocks.CdrMockData{Cdr: c, Error: nil})
 
-		request, err := http.NewRequest("GET", "/CDR0002", nil)
+		request, err := http.NewRequest(http.MethodGet, "/CDR0002", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /{cdr_id}' request failed!")
@@ -200,7 +201,7 @@ func TestCdrRequest(t *testing.T) {
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/", bytes.NewReader([]byte(`{
 			"id": "CDR0003",
 			"start_date_time": "2015-06-29T21:39:09Z",
 			"stop_date_time": "2015-06-29T21:39:09Z",
@@ -270,13 +271,16 @@ func TestCdrRequest(t *testing.T) {
 			t.Fatal("Creating 'POST /' request failed!")
 		}
 
-		cdrRoutes.ServeHTTP(responseRecorder, request)
+		requestCtx := request.Context()
+		requestCtx = context.WithValue(requestCtx, "credential", &db.Credential{ID: 1, CountryCode: "FR", PartyID: "GER"})
+		cdrRoutes.ServeHTTP(responseRecorder, request.WithContext(requestCtx))
 
 		cdrParams, err := mockRepository.GetCreateCdrMockData()
 		paramsJson, _ := json.Marshal(cdrParams)
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "CDR0003",
+			"credentialID": 1,
 			"countryCode": {"String": "", "Valid": false},
 			"partyID": {"String": "", "Valid": false},
 			"authorizationID": {"String": "", "Valid": false},
