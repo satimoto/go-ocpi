@@ -4,14 +4,23 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
 )
 
-func (r *CdrResolver) GetLastCdrByIdentity(ctx context.Context, countryCode string, partyID string) (db.Cdr, error) {
-	params := db.GetCdrByIdentityOrderByLastUpdatedParams{
-		CountryCode: util.SqlNullString(countryCode),
-		PartyID:     util.SqlNullString(partyID),
+func (r *CdrResolver) GetLastCdrByIdentity(ctx context.Context, credentialID *int64, countryCode *string, partyID *string) (db.Cdr, error) {
+	params := db.GetCdrByLastUpdatedParams{
+		CredentalID: -1,
 	}
 
-	return r.Repository.GetCdrByIdentityOrderByLastUpdated(ctx, params)
+	if credentialID != nil {
+		params.CredentalID = *credentialID
+	}
+
+	if countryCode != nil {
+		params.CountryCode = *countryCode
+	}
+	if partyID != nil {
+		params.PartyID = *partyID
+	}
+
+	return r.Repository.GetCdrByLastUpdated(ctx, params)
 }

@@ -16,6 +16,7 @@ func NewCreateImageParams(input CreateImageRequest) db.CreateImageParams {
 	return db.CreateImageParams{
 		Url:       input.Url,
 		Thumbnail: util.SqlNullString(input.Thumbnail),
+		Type:      input.Type,
 		Category:  db.ImageCategory(input.Category),
 		Width:     util.SqlNullInt32(input.Width),
 		Height:    util.SqlNullInt32(input.Height),

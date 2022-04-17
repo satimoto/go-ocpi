@@ -16,7 +16,7 @@ type TariffRepository interface {
 	CreateTariff(ctx context.Context, arg db.CreateTariffParams) (db.Tariff, error)
 	DeleteTariffAltTexts(ctx context.Context, tariffID int64) error
 	DeleteTariffByUid(ctx context.Context, uid string) error
-	GetTariffByIdentityOrderByLastUpdated(ctx context.Context, arg db.GetTariffByIdentityOrderByLastUpdatedParams) (db.Tariff, error)
+	GetTariffByLastUpdated(ctx context.Context, arg db.GetTariffByLastUpdatedParams) (db.Tariff, error)
 	GetTariffByUid(ctx context.Context, uid string) (db.Tariff, error)
 	ListTariffAltTexts(ctx context.Context, tariffID int64) ([]db.DisplayText, error)
 	ListTariffsByCdr(ctx context.Context, cdrID sql.NullInt64) ([]db.Tariff, error)

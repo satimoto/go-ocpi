@@ -13,7 +13,7 @@ import (
 type SessionRepository interface {
 	CreateSession(ctx context.Context, arg db.CreateSessionParams) (db.Session, error)
 	DeleteSessionChargingPeriods(ctx context.Context, sessionID int64) error
-	GetSessionByIdentityOrderByLastUpdated(ctx context.Context, arg db.GetSessionByIdentityOrderByLastUpdatedParams) (db.Session, error)
+	GetSessionByLastUpdated(ctx context.Context, arg db.GetSessionByLastUpdatedParams) (db.Session, error)
 	GetSessionByUid(ctx context.Context, uid string) (db.Session, error)
 	ListSessionChargingPeriods(ctx context.Context, sessionID int64) ([]db.ChargingPeriod, error)
 	SetSessionChargingPeriod(ctx context.Context, arg db.SetSessionChargingPeriodParams) error

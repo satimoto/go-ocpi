@@ -8,7 +8,7 @@ import (
 	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
 )
 
-func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
+func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
 	if dto != nil {
 		session, err := r.Repository.GetSessionByUid(ctx, uid)
 		locationID := util.NilInt64(session.LocationID)
@@ -17,7 +17,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, countr
 			if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
 				locationID = &location.ID
 			} else {
-				location := r.LocationResolver.ReplaceLocationByIdentifier(ctx, countryCode, partyID, *dto.Location.ID, dto.Location)
+				location := r.LocationResolver.ReplaceLocationByIdentifier(ctx, credential, countryCode, partyID, *dto.Location.ID, dto.Location)
 				locationID = &location.ID
 			}
 		}
@@ -71,6 +71,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, countr
 			session, err = r.Repository.UpdateSessionByUid(ctx, sessionParams)
 		} else {
 			sessionParams := NewCreateSessionParams(dto)
+			sessionParams.CredentialID = credential.ID
 			sessionParams.CountryCode = util.SqlNullString(countryCode)
 			sessionParams.PartyID = util.SqlNullString(partyID)
 			sessionParams.LocationID = *locationID
@@ -92,9 +93,9 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, countr
 	return nil
 }
 
-func (r *SessionResolver) ReplaceSessionsByIdentifier(ctx context.Context, countryCode *string, partyID *string, dto []*SessionDto) {
+func (r *SessionResolver) ReplaceSessionsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, dto []*SessionDto) {
 	for _, sessionDto := range dto {
-		r.ReplaceSessionByIdentifier(ctx, countryCode, partyID, *sessionDto.ID, sessionDto)
+		r.ReplaceSessionByIdentifier(ctx, credential, countryCode, partyID, *sessionDto.ID, sessionDto)
 	}
 }
 

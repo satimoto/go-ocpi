@@ -2,6 +2,7 @@ package versiondetail
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
@@ -27,7 +28,7 @@ func (r *VersionDetailResolver) ReplaceVersionEndpoints(ctx context.Context, ver
 }
 
 func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url string, header ocpi.OCPIRequestHeader, versionID int64) []*db.VersionEndpoint {
-	if response, err := r.OCPIRequester.Do("GET", url, header, nil); err == nil {
+	if response, err := r.OCPIRequester.Do(http.MethodGet, url, header, nil); err == nil {
 		ocpiResponse, err := r.UnmarshalPullDto(response.Body)
 		response.Body.Close()
 

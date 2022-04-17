@@ -4,14 +4,23 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
 )
 
-func (r *LocationResolver) GetLastLocationByIdentity(ctx context.Context, countryCode string, partyID string) (db.Location, error) {
-	params := db.GetLocationByIdentityOrderByLastUpdatedParams{
-		CountryCode: util.SqlNullString(countryCode),
-		PartyID:     util.SqlNullString(partyID),
+func (r *LocationResolver) GetLastLocationByIdentity(ctx context.Context, credentialID *int64, countryCode *string, partyID *string) (db.Location, error) {
+	params := db.GetLocationByLastUpdatedParams{
+		CredentalID: -1,
 	}
 
-	return r.Repository.GetLocationByIdentityOrderByLastUpdated(ctx, params)
+	if credentialID != nil {
+		params.CredentalID = *credentialID
+	}
+
+	if countryCode != nil {
+		params.CountryCode = *countryCode
+	}
+	if partyID != nil {
+		params.PartyID = *partyID
+	}
+
+	return r.Repository.GetLocationByLastUpdated(ctx, params)
 }

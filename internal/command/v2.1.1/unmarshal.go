@@ -18,3 +18,17 @@ func (r *CommandResolver) UnmarshalPushDto(body io.ReadCloser) (*CommandResponse
 
 	return nil, nil
 }
+
+func (r *CommandResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPICommandResponseDto, error) {
+	if body != nil {
+		dto := OCPICommandResponseDto{}
+
+		if err := json.NewDecoder(body).Decode(&dto); err != nil {
+			return nil, err
+		}
+
+		return &dto, nil
+	}
+
+	return nil, nil
+}

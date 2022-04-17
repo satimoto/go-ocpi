@@ -25,7 +25,7 @@ func CredentialContextByToken(r CredentialRepository, next http.Handler) http.Ha
 		ctx := request.Context()
 
 		if credential, err := GetCredentialByToken(r, ctx, request); err == nil {
-			ctx = context.WithValue(ctx, "credential", credential)
+			ctx = context.WithValue(ctx, "credential", &credential)
 			next.ServeHTTP(rw, request.WithContext(ctx))
 			return
 		}
@@ -48,7 +48,7 @@ func CredentialContextByPartyAndCountry(r CredentialRepository, next http.Handle
 			})
 
 			if err == nil {
-				ctx = context.WithValue(ctx, "credential", credential)
+				ctx = context.WithValue(ctx, "credential", &credential)
 				next.ServeHTTP(rw, request.WithContext(ctx))
 				return
 			}
@@ -58,13 +58,24 @@ func CredentialContextByPartyAndCountry(r CredentialRepository, next http.Handle
 	})
 }
 
+func GetCredential(ctx context.Context) *db.Credential {
+	credential := ctx.Value("credential")
+
+	if credential != nil {
+		return credential.(*db.Credential)
+	}
+
+	return nil
+}
+
+
 func GetCountryCode(request *http.Request) *string {
 	ctx := request.Context()
 	countryCode := chi.URLParam(request, "country_code")
 
 	if countryCode == "" {
 		if ctxCredential := ctx.Value("credential"); ctxCredential != nil {
-			credential := ctxCredential.(db.Credential)
+			credential := ctxCredential.(*db.Credential)
 			return &credential.CountryCode
 		}
 	}
@@ -78,7 +89,7 @@ func GetPartyID(request *http.Request) *string {
 
 	if partyID == "" {
 		if ctxCredential := ctx.Value("credential"); ctxCredential != nil {
-			credential := ctxCredential.(db.Credential)
+			credential := ctxCredential.(*db.Credential)
 			return &credential.PartyID
 		}
 	}

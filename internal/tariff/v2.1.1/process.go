@@ -8,7 +8,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 )
 
-func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, countryCode *string, partyID *string, uid string, cdrID *int64, dto *TariffDto) *db.Tariff {
+func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, dto *TariffDto) *db.Tariff {
 	if dto != nil {
 		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
 		energyMixID := util.NilInt64(tariff.EnergyMixID)
@@ -44,6 +44,7 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, countryC
 			tariff, err = r.Repository.UpdateTariffByUid(ctx, tariffParams)
 		} else {
 			tariffParams := NewCreateTariffParams(dto)
+			tariffParams.CredentialID = credential.ID
 			tariffParams.CountryCode = util.SqlNullString(countryCode)
 			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.CdrID = util.SqlNullInt64(cdrID)
@@ -67,9 +68,9 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, countryC
 	return nil
 }
 
-func (r *TariffResolver) ReplaceTariffsByIdentifier(ctx context.Context, countryCode *string, partyID *string, cdrID *int64, dto []*TariffDto) {
+func (r *TariffResolver) ReplaceTariffsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrID *int64, dto []*TariffDto) {
 	for _, tariffDto := range dto {
-		r.ReplaceTariffByIdentifier(ctx, countryCode, partyID, *tariffDto.ID, cdrID, tariffDto)
+		r.ReplaceTariffByIdentifier(ctx, credential, countryCode, partyID, *tariffDto.ID, cdrID, tariffDto)
 	}
 }
 

@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
+	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
+	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
 )
 
 type CommandRepository interface {
@@ -24,13 +26,17 @@ type CommandRepository interface {
 
 type CommandResolver struct {
 	Repository CommandRepository
+	*session.SessionResolver
 	*token.TokenResolver
+	*versiondetail.VersionDetailResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *CommandResolver {
 	repo := CommandRepository(repositoryService)
 	return &CommandResolver{
-		Repository:    repo,
-		TokenResolver: token.NewResolver(repositoryService),
+		Repository:            repo,
+		SessionResolver:       session.NewResolver(repositoryService),
+		TokenResolver:         token.NewResolver(repositoryService),
+		VersionDetailResolver: versiondetail.NewResolver(repositoryService),
 	}
 }

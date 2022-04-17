@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-ocpi-api/internal/credential"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
 )
 
@@ -21,6 +22,7 @@ func (r *LocationResolver) GetLocation(rw http.ResponseWriter, request *http.Req
 
 func (r *LocationResolver) UpdateLocation(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	cred := credential.GetCredential(ctx)
 	countryCode := chi.URLParam(request, "country_code")
 	partyID := chi.URLParam(request, "party_id")
 	uid := chi.URLParam(request, "location_id")
@@ -31,7 +33,7 @@ func (r *LocationResolver) UpdateLocation(rw http.ResponseWriter, request *http.
 		return
 	}
 
-	location := r.ReplaceLocationByIdentifier(ctx, &countryCode, &partyID, uid, dto)
+	location := r.ReplaceLocationByIdentifier(ctx, *cred, &countryCode, &partyID, uid, dto)
 
 	if location == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))

@@ -40,7 +40,7 @@ func TestTokenRequest(t *testing.T) {
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("GET", "/", nil)
+		request, err := http.NewRequest(http.MethodGet, "/", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /' request failed!")
@@ -77,7 +77,7 @@ func TestTokenRequest(t *testing.T) {
 		})
 		mockRepository.SetListTokensMockData(dbMocks.TokensMockData{Tokens: tokens, Error: nil})
 
-		request, err := http.NewRequest("GET", "/", nil)
+		request, err := http.NewRequest(http.MethodGet, "/", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /' request failed!")
@@ -109,7 +109,7 @@ func TestTokenRequest(t *testing.T) {
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("GET", "/TOKEN00001", nil)
+		request, err := http.NewRequest(http.MethodGet, "/TOKEN00001", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /{token_id}' request failed!")
@@ -129,7 +129,7 @@ func TestTokenRequest(t *testing.T) {
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
-		request, err := http.NewRequest("POST", "/TOKEN00002/authorize", nil)
+		request, err := http.NewRequest(http.MethodPost, "/TOKEN00002/authorize", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /{token_id}/authorize' request failed!")
@@ -164,7 +164,7 @@ func TestTokenRequest(t *testing.T) {
 		}
 		mockRepository.SetGetTokenByUidMockData(dbMocks.TokenMockData{Token: token, Error: nil})
 
-		request, err := http.NewRequest("POST", "/TOKEN00001/authorize", nil)
+		request, err := http.NewRequest(http.MethodPost, "/TOKEN00001/authorize", nil)
 
 		if err != nil {
 			t.Fatal("Creating 'GET /{token_id}/authorize' request failed!")
@@ -202,7 +202,7 @@ func TestTokenRequest(t *testing.T) {
 		}
 		mockRepository.SetGetTokenByUidMockData(dbMocks.TokenMockData{Token: token, Error: nil})
 
-		request, err := http.NewRequest("POST", "/TOKEN00001/authorize", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/TOKEN00001/authorize", bytes.NewReader([]byte(`{
 			"location_id": "LOC0000001"
 		}`)))
 		request.Header.Set("Content-Type", "application/json")
@@ -245,7 +245,7 @@ func TestTokenRequest(t *testing.T) {
 		}
 		mockRepository.SetGetTokenByUidMockData(dbMocks.TokenMockData{Token: token, Error: nil})
 
-		request, err := http.NewRequest("POST", "/TOKEN00001/authorize", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/TOKEN00001/authorize", bytes.NewReader([]byte(`{
 			"location_id": "LOC0000001"
 		}`)))
 		request.Header.Set("Content-Type", "application/json")
@@ -289,7 +289,7 @@ func TestTokenRequest(t *testing.T) {
 		}
 		mockRepository.SetGetTokenByUidMockData(dbMocks.TokenMockData{Token: token, Error: nil})
 
-		request, err := http.NewRequest("POST", "/TOKEN00001/authorize", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/TOKEN00001/authorize", bytes.NewReader([]byte(`{
 			"location_id": "LOC0000001",
 			"evse_uids": ["EVSE000001", "EVSE000002"],
 			"connector_ids": ["EVSE0000010001", "EVSE0000010002", "EVSE0000020001", "EVSE0000020002"]

@@ -14,7 +14,7 @@ import (
 type CdrRepository interface {
 	CreateCdr(ctx context.Context, arg db.CreateCdrParams) (db.Cdr, error)
 	DeleteCdrChargingPeriods(ctx context.Context, cdrID int64) error
-	GetCdrByIdentityOrderByLastUpdated(ctx context.Context, arg db.GetCdrByIdentityOrderByLastUpdatedParams) (db.Cdr, error)
+	GetCdrByLastUpdated(ctx context.Context, arg db.GetCdrByLastUpdatedParams) (db.Cdr, error)
 	GetCdrByUid(ctx context.Context, uid string) (db.Cdr, error)
 	ListCdrChargingPeriods(ctx context.Context, cdrID int64) ([]db.ChargingPeriod, error)
 	SetCdrChargingPeriod(ctx context.Context, arg db.SetCdrChargingPeriodParams) error

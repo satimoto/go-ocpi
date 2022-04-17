@@ -10,17 +10,17 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/image"
 )
 
-func (r *LocationResolver) ReplaceLocation(ctx context.Context, uid string, dto *LocationDto) *db.Location {
+func (r *LocationResolver) ReplaceLocation(ctx context.Context, credential db.Credential, uid string, dto *LocationDto) *db.Location {
 	if dto != nil {
 		countryCode, partyID := evse.GetEvsesIdentity(dto.Evses)
 
-		return r.ReplaceLocationByIdentifier(ctx, countryCode, partyID, uid, dto)
+		return r.ReplaceLocationByIdentifier(ctx, credential, countryCode, partyID, uid, dto)
 	}
 
 	return nil
 }
 
-func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, countryCode *string, partyID *string, uid string, dto *LocationDto) *db.Location {
+func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *LocationDto) *db.Location {
 	if dto != nil {
 		location, err := r.Repository.GetLocationByUid(ctx, uid)
 		geoLocationID := util.SqlNullInt64(util.NilInt64(location.GeoLocationID))
@@ -110,6 +110,7 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, coun
 			location, err = r.Repository.UpdateLocationByUid(ctx, locationParams)
 		} else {
 			locationParams := NewCreateLocationParams(dto)
+			locationParams.CredentialID = credential.ID
 			locationParams.CountryCode = util.SqlNullString(countryCode)
 			locationParams.PartyID = util.SqlNullString(partyID)
 			locationParams.Geom = *geomPoint
@@ -149,9 +150,9 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, coun
 	return nil
 }
 
-func (r *LocationResolver) ReplaceLocationsByIdentifier(ctx context.Context, countryCode *string, partyID *string, dto []*LocationDto) {
+func (r *LocationResolver) ReplaceLocationsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, dto []*LocationDto) {
 	for _, locationDto := range dto {
-		r.ReplaceLocationByIdentifier(ctx, countryCode, partyID, *locationDto.ID, locationDto)
+		r.ReplaceLocationByIdentifier(ctx, credential, countryCode, partyID, *locationDto.ID, locationDto)
 	}
 }
 

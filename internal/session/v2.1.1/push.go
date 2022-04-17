@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-ocpi-api/internal/credential"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
 )
 
@@ -21,6 +22,7 @@ func (r *SessionResolver) GetSession(rw http.ResponseWriter, request *http.Reque
 
 func (r *SessionResolver) UpdateSession(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	cred := credential.GetCredential(ctx)
 	countryCode := chi.URLParam(request, "country_code")
 	partyID := chi.URLParam(request, "party_id")
 	uid := chi.URLParam(request, "session_id")
@@ -31,7 +33,7 @@ func (r *SessionResolver) UpdateSession(rw http.ResponseWriter, request *http.Re
 		return
 	}
 
-	session := r.ReplaceSessionByIdentifier(ctx, &countryCode, &partyID, uid, dto)
+	session := r.ReplaceSessionByIdentifier(ctx, *cred, &countryCode, &partyID, uid, dto)
 
 	if session == nil {
 		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))
