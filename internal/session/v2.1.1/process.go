@@ -11,26 +11,9 @@ import (
 func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
 	if dto != nil {
 		session, err := r.Repository.GetSessionByUid(ctx, uid)
-		locationID := util.NilInt64(session.LocationID)
-
-		if dto.Location != nil {
-			if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
-				locationID = &location.ID
-			} else {
-				location := r.LocationResolver.ReplaceLocationByIdentifier(ctx, credential, countryCode, partyID, *dto.Location.ID, dto.Location)
-				locationID = &location.ID
-			}
-		}
 
 		if err == nil {
 			sessionParams := NewUpdateSessionByUidParams(session)
-			sessionParams.CountryCode = util.SqlNullString(countryCode)
-			sessionParams.PartyID = util.SqlNullString(partyID)
-			sessionParams.LocationID = *locationID
-
-			if dto.AuthID != nil {
-				sessionParams.AuthID = *dto.AuthID
-			}
 
 			if dto.AuthMethod != nil {
 				sessionParams.AuthMethod = *dto.AuthMethod
@@ -74,7 +57,34 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			sessionParams.CredentialID = credential.ID
 			sessionParams.CountryCode = util.SqlNullString(countryCode)
 			sessionParams.PartyID = util.SqlNullString(partyID)
-			sessionParams.LocationID = *locationID
+	
+			if dto.AuthID != nil {
+				if token, err := r.TokenResolver.Repository.GetTokenByAuthId(ctx, *dto.AuthID); err == nil {
+					sessionParams.TokenID = token.ID
+				}
+			}
+
+			if dto.Location != nil {
+				if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
+					sessionParams.LocationID = location.ID
+				}
+	
+				evseDto := dto.Location.Evses[0]
+	
+				if evse, err := r.LocationResolver.EvseResolver.Repository.GetEvseByUid(ctx, *evseDto.Uid); err == nil {
+					sessionParams.EvseID = evse.ID
+				}
+	
+				connectorDto := evseDto.Connectors[0]
+				connectorParams := db.GetConnectorByUidParams{
+					EvseID: sessionParams.EvseID,
+					Uid: *connectorDto.Id,
+				}
+	
+				if connector, err := r.LocationResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams); err == nil {
+					sessionParams.ConnectorID = connector.ID
+				}
+			}
 
 			session, err = r.Repository.CreateSession(ctx, sessionParams)
 		}

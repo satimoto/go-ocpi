@@ -25,15 +25,11 @@ func NewCreateSessionParams(dto *SessionDto) db.CreateSessionParams {
 func NewUpdateSessionByUidParams(session db.Session) db.UpdateSessionByUidParams {
 	return db.UpdateSessionByUidParams{
 		Uid:             session.Uid,
-		CountryCode:     session.CountryCode,
-		PartyID:         session.PartyID,
 		AuthorizationID: session.AuthorizationID,
 		StartDatetime:   session.StartDatetime,
 		EndDatetime:     session.EndDatetime,
 		Kwh:             session.Kwh,
-		AuthID:          session.AuthID,
 		AuthMethod:      session.AuthMethod,
-		LocationID:      session.LocationID,
 		MeterID:         session.MeterID,
 		Currency:        session.Currency,
 		TotalCost:       session.TotalCost,
