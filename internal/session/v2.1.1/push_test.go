@@ -227,15 +227,11 @@ func TestSessionRequest(t *testing.T) {
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "SESSION0001",
-			"countryCode":  {"String": "DE", "Valid": true},
-			"partyID": {"String": "ABC", "Valid": true},
 			"authorizationID": {"String": "", "Valid": false},
 			"startDatetime": "2015-06-29T22:39:09Z",
 			"endDatetime": {"Time": "0001-01-01T00:00:00Z", "Valid": false},
 			"kwh": 16.1,
-			"authID": "DE8ACC12E46L89",
 			"authMethod": "AUTH_REQUEST",
-			"locationID": 1,
 			"meterID": {"String": "", "Valid": false},
 			"currency": "EUR",
 			"totalCost": {"Float64": 0, "Valid": false},

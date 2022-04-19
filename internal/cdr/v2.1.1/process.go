@@ -23,25 +23,37 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 		cdr, err := r.Repository.GetCdrByUid(ctx, uid)
 
 		if err != nil {
-			var locationID int64
-
 			cdrParams := NewCreateCdrParams(dto)
-
-			if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
-				countryCode = util.NilString(location.CountryCode)
-				partyID = util.NilString(location.PartyID)
-				locationID = location.ID
-			} else {
-				location := r.LocationResolver.ReplaceLocation(ctx, credential, *dto.Location.ID, dto.Location)
-				countryCode = util.NilString(location.CountryCode)
-				partyID = util.NilString(location.PartyID)
-				locationID = location.ID
-			}
-
-			cdrParams.CredentialID = credential.ID
 			cdrParams.CountryCode = util.SqlNullString(countryCode)
 			cdrParams.PartyID = util.SqlNullString(partyID)
-			cdrParams.LocationID = locationID
+			cdrParams.CredentialID = credential.ID
+
+			if dto.AuthID != nil {
+				if token, err := r.TokenResolver.Repository.GetTokenByAuthId(ctx, *dto.AuthID); err == nil {
+					cdrParams.TokenID = token.ID
+				}
+			}
+			if dto.Location != nil {
+				if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
+					cdrParams.LocationID = location.ID
+				}
+	
+				evseDto := dto.Location.Evses[0]
+	
+				if evse, err := r.LocationResolver.EvseResolver.Repository.GetEvseByUid(ctx, *evseDto.Uid); err == nil {
+					cdrParams.EvseID = evse.ID
+				}
+	
+				connectorDto := evseDto.Connectors[0]
+				connectorParams := db.GetConnectorByUidParams{
+					EvseID: cdrParams.EvseID,
+					Uid: *connectorDto.Id,
+				}
+	
+				if connector, err := r.LocationResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams); err == nil {
+					cdrParams.ConnectorID = connector.ID
+				}
+			}
 
 			if dto.SignedData != nil {
 				if calibration := r.CalibrationResolver.CreateCalibration(ctx, *&dto.SignedData); calibration != nil {

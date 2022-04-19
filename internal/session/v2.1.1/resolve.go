@@ -6,6 +6,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
+	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
 )
@@ -24,6 +25,7 @@ type SessionResolver struct {
 	Repository SessionRepository
 	*chargingperiod.ChargingPeriodResolver
 	*location.LocationResolver
+	*token.TokenResolver
 	*tokenauthorization.TokenAuthorizationResolver
 	*versiondetail.VersionDetailResolver
 }
@@ -34,6 +36,7 @@ func NewResolver(repositoryService *db.RepositoryService) *SessionResolver {
 		Repository:                 repo,
 		ChargingPeriodResolver:     chargingperiod.NewResolver(repositoryService),
 		LocationResolver:           location.NewResolver(repositoryService),
+		TokenResolver:              token.NewResolver(repositoryService),
 		TokenAuthorizationResolver: tokenauthorization.NewResolver(repositoryService),
 		VersionDetailResolver:      versiondetail.NewResolver(repositoryService),
 	}

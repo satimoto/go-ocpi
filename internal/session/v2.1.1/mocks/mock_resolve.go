@@ -6,6 +6,7 @@ import (
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/internal/ocpi"
 	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"
+	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1/mocks"
 	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1/mocks"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1/mocks"
 )
@@ -17,6 +18,7 @@ func NewResolver(repositoryService *mocks.MockRepositoryService, requester *ocpi
 		Repository:                 repo,
 		ChargingPeriodResolver:     chargingperiod.NewResolver(repositoryService),
 		LocationResolver:           location.NewResolver(repositoryService, requester),
+		TokenResolver:              token.NewResolver(repositoryService, requester),
 		TokenAuthorizationResolver: tokenauthorization.NewResolver(repositoryService),
 		VersionDetailResolver:      versiondetail.NewResolver(repositoryService, requester),
 	}

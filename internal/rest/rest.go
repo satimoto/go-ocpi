@@ -10,10 +10,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/edjumacator/chi-prometheus"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
 )
@@ -82,6 +84,7 @@ func (rs *RestService) handler() *chi.Mux {
 	// Set middleware
 	router.Use(render.SetContentType(render.ContentTypeJSON), middleware.RedirectSlashes, middleware.Recoverer)
 	router.Use(middleware.Timeout(30 * time.Second))
+	router.Use(chiprometheus.NewMiddleware("ocpi"))
 
 	router.Use(cors.Handler(cors.Options{
 		AllowedMethods:   []string{http.MethodGet, http.MethodPost, "OPTIONS"},
@@ -92,6 +95,7 @@ func (rs *RestService) handler() *chi.Mux {
 
 	// Add routes
 	router.Mount("/", rs.mountVersions())
+	router.Mount("/metrics", promhttp.Handler())
 	router.Mount("/2.1.1", rs.mount211())
 
 	return router
