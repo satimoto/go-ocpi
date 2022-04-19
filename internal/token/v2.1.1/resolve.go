@@ -13,7 +13,7 @@ type TokenRepository interface {
 	GetToken(ctx context.Context, id int64) (db.Token, error)
 	GetTokenByAuthId(ctx context.Context, authID string) (db.Token, error)
 	GetTokenByUid(ctx context.Context, uid string) (db.Token, error)
-	GetTokenByUserId(ctx context.Context, id int64) (db.Token, error)
+	GetTokenByUserId(ctx context.Context, arg db.GetTokenByUserIdParams) (db.Token, error)
 	ListTokens(ctx context.Context, arg db.ListTokensParams) ([]db.Token, error)
 	UpdateTokenByUid(ctx context.Context, arg db.UpdateTokenByUidParams) (db.Token, error)
 }

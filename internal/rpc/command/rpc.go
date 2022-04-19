@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 
+	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/ocpirpc/commandrpc"
 )
@@ -12,7 +13,10 @@ import (
 func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *commandrpc.ReserveNowRequest) (*commandrpc.ReserveNowResponse, error) {
 	if input != nil {
 		expiryDate := util.ParseTime(input.ExpiryDate, nil)
-		token, err := r.TokenResolver.Repository.GetTokenByUserId(ctx, input.UserId)
+		token, err := r.TokenResolver.Repository.GetTokenByUserId(ctx, db.GetTokenByUserIdParams{
+			UserID: input.UserId,
+			Type:   db.TokenTypeOTHER,
+		})
 
 		if err != nil {
 			log.Printf("Error ReserveNow GetTokenByUserId: %v", err)
@@ -54,7 +58,10 @@ func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *commandrpc.R
 
 func (r *RpcCommandResolver) StartSession(ctx context.Context, input *commandrpc.StartSessionRequest) (*commandrpc.StartSessionResponse, error) {
 	if input != nil {
-		token, err := r.TokenResolver.Repository.GetTokenByUserId(ctx, input.UserId)
+		token, err := r.TokenResolver.Repository.GetTokenByUserId(ctx, db.GetTokenByUserIdParams{
+			UserID: input.UserId,
+			Type:   db.TokenTypeOTHER,
+		})
 
 		if err != nil {
 			log.Printf("Error StartSession GetTokenByUserId: %v", err)
