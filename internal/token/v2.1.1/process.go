@@ -2,10 +2,40 @@ package token
 
 import (
 	"context"
+	"crypto/rand"
+	"errors"
+	"fmt"
+	"os"
 
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-ocpi-api/internal/evid"
 )
+
+func (r *TokenResolver) GenerateAuthID(ctx context.Context) (string, error) {
+	countryCode := os.Getenv("COUNTRY_CODE")
+	partyId := os.Getenv("PARTY_ID")
+	authBytes := make([]byte, 4)
+	attempts := 0
+
+	for {
+		rand.Read(authBytes)
+		evId := evid.NewEvid(fmt.Sprintf("%s*%s*C%x", countryCode, partyId, authBytes))
+		evIdValue := evId.ValueWithSeparator("*")
+
+		if _, err := r.Repository.GetTokenByAuthId(ctx, evIdValue); err != nil {
+			return evIdValue, nil
+		}
+
+		attempts++
+
+		if attempts > 1000000 {
+			break
+		}
+	}
+
+	return "", errors.New("Error generating AuthID")
+}
 
 func (r *TokenResolver) ReplaceToken(ctx context.Context, uid string, dto *TokenDto) *db.Token {
 	if dto != nil {
