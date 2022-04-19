@@ -10,7 +10,9 @@ import (
 	"sync"
 
 	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-ocpi-api/internal/rpc/command"
 	"github.com/satimoto/go-ocpi-api/internal/rpc/credential"
+	"github.com/satimoto/go-ocpi-api/ocpirpc/commandrpc"
 	"github.com/satimoto/go-ocpi-api/ocpirpc/credentialrpc"
 	"google.golang.org/grpc"
 )
@@ -22,6 +24,7 @@ type Rpc interface {
 type RpcService struct {
 	*db.RepositoryService
 	*grpc.Server
+	*command.RpcCommandResolver
 	*credential.RpcCredentialResolver
 }
 
@@ -31,6 +34,7 @@ func NewRpc(d *sql.DB) Rpc {
 	return &RpcService{
 		RepositoryService:     repositoryService,
 		Server:                grpc.NewServer(),
+		RpcCommandResolver:    command.NewResolver(repositoryService),
 		RpcCredentialResolver: credential.NewResolver(repositoryService),
 	}
 }
@@ -44,9 +48,9 @@ func (rs *RpcService) StartRpc(ctx context.Context, waitGroup *sync.WaitGroup) {
 	go func() {
 		<-ctx.Done()
 		log.Printf("Shutting down Rpc service")
-	
+
 		rs.shutdown()
-	
+
 		log.Printf("Rpc service shut down")
 		waitGroup.Done()
 	}()
@@ -59,6 +63,7 @@ func (rs *RpcService) listenAndServe() {
 		log.Printf("Error creating network address: %v", err)
 	}
 
+	commandrpc.RegisterCommandServiceServer(rs.Server, rs.RpcCommandResolver)
 	credentialrpc.RegisterCredentialServiceServer(rs.Server, rs.RpcCredentialResolver)
 
 	err = rs.Server.Serve(listener)
