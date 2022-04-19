@@ -5,16 +5,16 @@ import (
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 )
 
-type RpcCredentialRepository interface{}
+type RpcTokenRepository interface{}
 
-type RpcCredentialResolver struct {
-	Repository RpcCredentialRepository
+type RpcTokenResolver struct {
+	Repository RpcTokenRepository
 	*token.TokenResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *RpcCredentialResolver {
-	repo := RpcCredentialRepository(repositoryService)
-	return &RpcCredentialResolver{
+func NewResolver(repositoryService *db.RepositoryService) *RpcTokenResolver {
+	repo := RpcTokenRepository(repositoryService)
+	return &RpcTokenResolver{
 		Repository:    repo,
 		TokenResolver: token.NewResolver(repositoryService),
 	}

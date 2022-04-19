@@ -10,7 +10,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/ocpirpc/tokenrpc"
 )
 
-func (r *RpcCredentialResolver) CreateToken(ctx context.Context, in *tokenrpc.CreateTokenRequest) (*tokenrpc.TokenResponse, error) {
+func (r *RpcTokenResolver) CreateToken(ctx context.Context, in *tokenrpc.CreateTokenRequest) (*tokenrpc.TokenResponse, error) {
 	if in != nil {
 		params := tokenrpc.NewCreateTokenParams(*in)
 		authID, err := r.TokenResolver.GenerateAuthID(ctx)
@@ -36,6 +36,8 @@ func (r *RpcCredentialResolver) CreateToken(ctx context.Context, in *tokenrpc.Cr
 		if err != nil {
 			return nil, err
 		}
+
+		// TODO: Push token to OCPI server
 
 		return tokenrpc.NewTokenResponse(t), nil
 	}

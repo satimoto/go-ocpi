@@ -12,8 +12,10 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/rpc/command"
 	"github.com/satimoto/go-ocpi-api/internal/rpc/credential"
+	"github.com/satimoto/go-ocpi-api/internal/rpc/token"
 	"github.com/satimoto/go-ocpi-api/ocpirpc/commandrpc"
 	"github.com/satimoto/go-ocpi-api/ocpirpc/credentialrpc"
+	"github.com/satimoto/go-ocpi-api/ocpirpc/tokenrpc"
 	"google.golang.org/grpc"
 )
 
@@ -26,6 +28,7 @@ type RpcService struct {
 	*grpc.Server
 	*command.RpcCommandResolver
 	*credential.RpcCredentialResolver
+	*token.RpcTokenResolver
 }
 
 func NewRpc(d *sql.DB) Rpc {
@@ -36,6 +39,7 @@ func NewRpc(d *sql.DB) Rpc {
 		Server:                grpc.NewServer(),
 		RpcCommandResolver:    command.NewResolver(repositoryService),
 		RpcCredentialResolver: credential.NewResolver(repositoryService),
+		RpcTokenResolver:      token.NewResolver(repositoryService),
 	}
 }
 
@@ -65,6 +69,7 @@ func (rs *RpcService) listenAndServe() {
 
 	commandrpc.RegisterCommandServiceServer(rs.Server, rs.RpcCommandResolver)
 	credentialrpc.RegisterCredentialServiceServer(rs.Server, rs.RpcCredentialResolver)
+	tokenrpc.RegisterTokenServiceServer(rs.Server, rs.RpcTokenResolver)
 
 	err = rs.Server.Serve(listener)
 
