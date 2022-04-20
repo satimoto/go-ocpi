@@ -37,9 +37,8 @@ func TestReplaceConnector(t *testing.T) {
 
 		connectorResolver.ReplaceConnector(ctx, 1, *dto.Id, &dto)
 
-		params, err := mockRepository.GetCreateConnectorMockData()
+		params, _ := mockRepository.GetCreateConnectorMockData()
 		paramsJson, _ := json.Marshal(params)
-		t.Log(params, err)
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "1",
@@ -49,6 +48,7 @@ func TestReplaceConnector(t *testing.T) {
 			"powerType": "AC_3_PHASE",
 			"voltage": 220,
 			"amperage": 16,
+			"wattage": 10560,
 			"tariffID": {"String": "11", "Valid": true},
 			"termsAndConditions": {"String": "", "Valid": false},
 			"lastUpdated": "2015-03-16T10:10:02Z"
@@ -90,6 +90,7 @@ func TestReplaceConnector(t *testing.T) {
 			"powerType": "AC_3_PHASE",
 			"voltage": 220,
 			"amperage": 16,
+			"wattage": 10560,
 			"tariffID": {"String": "12", "Valid": true},
 			"termsAndConditions": {"String": "", "Valid": false},
 			"lastUpdated": "2015-03-16T10:10:02Z"

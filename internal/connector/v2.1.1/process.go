@@ -4,7 +4,8 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	dbUtil "github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, uid string, dto *ConnectorDto) *db.Connector {
@@ -38,13 +39,14 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, 
 			}
 
 			if dto.TariffID != nil {
-				connectorParams.TariffID = util.SqlNullString(dto.TariffID)
+				connectorParams.TariffID = dbUtil.SqlNullString(dto.TariffID)
 			}
 
 			if dto.LastUpdated != nil {
 				connectorParams.LastUpdated = *dto.LastUpdated
 			}
 
+			connectorParams.Wattage = util.CalculateWattage(connectorParams.PowerType, connectorParams.Voltage, connectorParams.Amperage)
 			connector, err = r.Repository.UpdateConnectorByUid(ctx, connectorParams)
 		} else {
 			connectorParams := NewCreateConnectorParams(evseID, dto)
