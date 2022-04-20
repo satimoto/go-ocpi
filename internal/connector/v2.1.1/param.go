@@ -2,10 +2,13 @@ package connector
 
 import (
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	dtUtil "github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 
 func NewCreateConnectorParams(evseID int64, dto *ConnectorDto) db.CreateConnectorParams {
+	wattage := util.CalculateWattage(*dto.PowerType, *dto.Voltage, *dto.Amperage)
+
 	return db.CreateConnectorParams{
 		EvseID:             evseID,
 		Uid:                *dto.Id,
@@ -14,8 +17,9 @@ func NewCreateConnectorParams(evseID int64, dto *ConnectorDto) db.CreateConnecto
 		PowerType:          *dto.PowerType,
 		Voltage:            *dto.Voltage,
 		Amperage:           *dto.Amperage,
-		TariffID:           util.SqlNullString(dto.TariffID),
-		TermsAndConditions: util.SqlNullString(dto.TermsAndConditions),
+		Wattage:            wattage,
+		TariffID:           dtUtil.SqlNullString(dto.TariffID),
+		TermsAndConditions: dtUtil.SqlNullString(dto.TermsAndConditions),
 		LastUpdated:        *dto.LastUpdated,
 	}
 }
