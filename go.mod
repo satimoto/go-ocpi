@@ -15,7 +15,7 @@ require (
 	github.com/prometheus/client_golang v1.12.1
 	github.com/satimoto/go-datastore v0.1.2-0.20220420080134-3a37d35edd21
 	github.com/satimoto/go-datastore-mocks v0.1.2-0.20220419112641-eaedf96267ce
-	google.golang.org/grpc v1.31.0
+	google.golang.org/grpc v1.46.0
 )
 
 require (
