@@ -5,7 +5,8 @@ package token;
 option go_package = "github.com/satimoto/go-ocpi-api/ocpirpc/tokenrpc";
 
 service TokenService {
-    rpc CreateToken (CreateTokenRequest) returns (TokenResponse);
+    rpc CreateToken (CreateTokenRequest) returns (CreateTokenResponse);
+    rpc UpdateTokens (UpdateTokensRequest) returns (UpdateTokensResponse);
 };
 
 message CreateTokenRequest {
@@ -15,10 +16,24 @@ message CreateTokenRequest {
     string whitelist = 4;
 };
 
-message TokenResponse {
+message CreateTokenResponse {
     int64 id = 1;
     string type = 2;
     string auth_id = 3;
     string allowed = 4;
     string whitelist = 5;
+}
+
+message UpdateTokensRequest {
+    int64 user_id = 1;
+    string uid = 2;
+    string allowed = 3;
+    string whitelist = 4;
+};
+
+message UpdateTokensResponse {
+    int64 user_id = 1;
+    string uid = 2;
+    string allowed = 3;
+    string whitelist = 4;
 }

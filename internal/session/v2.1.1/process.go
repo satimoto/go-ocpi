@@ -59,7 +59,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			sessionParams.PartyID = util.SqlNullString(partyID)
 	
 			if dto.AuthID != nil {
-				if token, err := r.TokenResolver.Repository.GetTokenByAuthId(ctx, *dto.AuthID); err == nil {
+				if token, err := r.TokenResolver.Repository.GetTokenByAuthID(ctx, *dto.AuthID); err == nil {
 					sessionParams.TokenID = token.ID
 				}
 			}

@@ -13,7 +13,7 @@ import (
 func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *commandrpc.ReserveNowRequest) (*commandrpc.ReserveNowResponse, error) {
 	if input != nil {
 		expiryDate := util.ParseTime(input.ExpiryDate, nil)
-		token, err := r.TokenResolver.Repository.GetTokenByUserId(ctx, db.GetTokenByUserIdParams{
+		token, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, db.GetTokenByUserIDParams{
 			UserID: input.UserId,
 			Type:   db.TokenTypeOTHER,
 		})
@@ -58,7 +58,7 @@ func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *commandrpc.R
 
 func (r *RpcCommandResolver) StartSession(ctx context.Context, input *commandrpc.StartSessionRequest) (*commandrpc.StartSessionResponse, error) {
 	if input != nil {
-		token, err := r.TokenResolver.Repository.GetTokenByUserId(ctx, db.GetTokenByUserIdParams{
+		token, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, db.GetTokenByUserIDParams{
 			UserID: input.UserId,
 			Type:   db.TokenTypeOTHER,
 		})
