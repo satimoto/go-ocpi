@@ -24,6 +24,12 @@ func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *commandrpc.R
 			return nil, errors.New("Token not found")
 		}
 
+		if !token.Valid || token.Allowed != db.TokenAllowedTypeALLOWED {
+			log.Printf("Invalid token")
+			log.Printf("Valid=%v, Allowed=%v", token.Valid, token.Allowed)
+			return nil, errors.New("Token not found")
+		}
+
 		location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, input.LocationUid)
 
 		if err != nil {
@@ -66,6 +72,12 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *commandrpc
 		if err != nil {
 			log.Printf("Error StartSession GetTokenByUserId: %v", err)
 			log.Printf("%#v", input)
+			return nil, errors.New("Token not found")
+		}
+
+		if !token.Valid || token.Allowed != db.TokenAllowedTypeALLOWED {
+			log.Printf("Invalid token")
+			log.Printf("Valid=%v, Allowed=%v", token.Valid, token.Allowed)
 			return nil, errors.New("Token not found")
 		}
 
