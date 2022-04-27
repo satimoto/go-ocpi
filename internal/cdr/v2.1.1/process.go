@@ -29,7 +29,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			cdrParams.CredentialID = credential.ID
 
 			if dto.AuthID != nil {
-				if token, err := r.TokenResolver.Repository.GetTokenByAuthId(ctx, *dto.AuthID); err == nil {
+				if token, err := r.TokenResolver.Repository.GetTokenByAuthID(ctx, *dto.AuthID); err == nil {
 					cdrParams.TokenID = token.ID
 				}
 			}
