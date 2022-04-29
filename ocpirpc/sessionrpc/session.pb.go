@@ -24,97 +24,97 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type SessionStartedRequest struct {
+type SessionCreatedRequest struct {
 	SessionUid           string   `protobuf:"bytes,1,opt,name=session_uid,json=sessionUid,proto3" json:"session_uid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *SessionStartedRequest) Reset()         { *m = SessionStartedRequest{} }
-func (m *SessionStartedRequest) String() string { return proto.CompactTextString(m) }
-func (*SessionStartedRequest) ProtoMessage()    {}
-func (*SessionStartedRequest) Descriptor() ([]byte, []int) {
+func (m *SessionCreatedRequest) Reset()         { *m = SessionCreatedRequest{} }
+func (m *SessionCreatedRequest) String() string { return proto.CompactTextString(m) }
+func (*SessionCreatedRequest) ProtoMessage()    {}
+func (*SessionCreatedRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_63fb85bd90135e7b, []int{0}
 }
 
-func (m *SessionStartedRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SessionStartedRequest.Unmarshal(m, b)
+func (m *SessionCreatedRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SessionCreatedRequest.Unmarshal(m, b)
 }
-func (m *SessionStartedRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SessionStartedRequest.Marshal(b, m, deterministic)
+func (m *SessionCreatedRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SessionCreatedRequest.Marshal(b, m, deterministic)
 }
-func (m *SessionStartedRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SessionStartedRequest.Merge(m, src)
+func (m *SessionCreatedRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SessionCreatedRequest.Merge(m, src)
 }
-func (m *SessionStartedRequest) XXX_Size() int {
-	return xxx_messageInfo_SessionStartedRequest.Size(m)
+func (m *SessionCreatedRequest) XXX_Size() int {
+	return xxx_messageInfo_SessionCreatedRequest.Size(m)
 }
-func (m *SessionStartedRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_SessionStartedRequest.DiscardUnknown(m)
+func (m *SessionCreatedRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SessionCreatedRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SessionStartedRequest proto.InternalMessageInfo
+var xxx_messageInfo_SessionCreatedRequest proto.InternalMessageInfo
 
-func (m *SessionStartedRequest) GetSessionUid() string {
+func (m *SessionCreatedRequest) GetSessionUid() string {
 	if m != nil {
 		return m.SessionUid
 	}
 	return ""
 }
 
-type SessionStartedResponse struct {
+type SessionCreatedResponse struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *SessionStartedResponse) Reset()         { *m = SessionStartedResponse{} }
-func (m *SessionStartedResponse) String() string { return proto.CompactTextString(m) }
-func (*SessionStartedResponse) ProtoMessage()    {}
-func (*SessionStartedResponse) Descriptor() ([]byte, []int) {
+func (m *SessionCreatedResponse) Reset()         { *m = SessionCreatedResponse{} }
+func (m *SessionCreatedResponse) String() string { return proto.CompactTextString(m) }
+func (*SessionCreatedResponse) ProtoMessage()    {}
+func (*SessionCreatedResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_63fb85bd90135e7b, []int{1}
 }
 
-func (m *SessionStartedResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SessionStartedResponse.Unmarshal(m, b)
+func (m *SessionCreatedResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SessionCreatedResponse.Unmarshal(m, b)
 }
-func (m *SessionStartedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SessionStartedResponse.Marshal(b, m, deterministic)
+func (m *SessionCreatedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SessionCreatedResponse.Marshal(b, m, deterministic)
 }
-func (m *SessionStartedResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SessionStartedResponse.Merge(m, src)
+func (m *SessionCreatedResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SessionCreatedResponse.Merge(m, src)
 }
-func (m *SessionStartedResponse) XXX_Size() int {
-	return xxx_messageInfo_SessionStartedResponse.Size(m)
+func (m *SessionCreatedResponse) XXX_Size() int {
+	return xxx_messageInfo_SessionCreatedResponse.Size(m)
 }
-func (m *SessionStartedResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_SessionStartedResponse.DiscardUnknown(m)
+func (m *SessionCreatedResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_SessionCreatedResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SessionStartedResponse proto.InternalMessageInfo
+var xxx_messageInfo_SessionCreatedResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*SessionStartedRequest)(nil), "session.SessionStartedRequest")
-	proto.RegisterType((*SessionStartedResponse)(nil), "session.SessionStartedResponse")
+	proto.RegisterType((*SessionCreatedRequest)(nil), "session.SessionCreatedRequest")
+	proto.RegisterType((*SessionCreatedResponse)(nil), "session.SessionCreatedResponse")
 }
 
 func init() { proto.RegisterFile("proto/session.proto", fileDescriptor_63fb85bd90135e7b) }
 
 var fileDescriptor_63fb85bd90135e7b = []byte{
-	// 182 bytes of a gzipped FileDescriptorProto
+	// 183 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2e, 0x28, 0xca, 0x2f,
 	0xc9, 0xd7, 0x2f, 0x4e, 0x2d, 0x2e, 0xce, 0xcc, 0xcf, 0xd3, 0x03, 0xf3, 0x84, 0xd8, 0xa1, 0x5c,
-	0x25, 0x0b, 0x2e, 0xd1, 0x60, 0x08, 0x33, 0xb8, 0x24, 0xb1, 0xa8, 0x24, 0x35, 0x25, 0x28, 0xb5,
+	0x25, 0x0b, 0x2e, 0xd1, 0x60, 0x08, 0xd3, 0xb9, 0x28, 0x35, 0xb1, 0x24, 0x35, 0x25, 0x28, 0xb5,
 	0xb0, 0x34, 0xb5, 0xb8, 0x44, 0x48, 0x9e, 0x8b, 0x1b, 0xaa, 0x26, 0xbe, 0x34, 0x33, 0x45, 0x82,
 	0x51, 0x81, 0x51, 0x83, 0x33, 0x88, 0x0b, 0x2a, 0x14, 0x9a, 0x99, 0xa2, 0x24, 0xc1, 0x25, 0x86,
-	0xae, 0xb3, 0xb8, 0x20, 0x3f, 0xaf, 0x38, 0xd5, 0x28, 0x99, 0x8b, 0x0f, 0x26, 0x93, 0x5a, 0x54,
-	0x96, 0x99, 0x9c, 0x2a, 0x14, 0x88, 0x10, 0x81, 0xa8, 0x15, 0x92, 0xd3, 0x83, 0x39, 0x08, 0xab,
-	0xf5, 0x52, 0xf2, 0x38, 0xe5, 0x21, 0x96, 0x38, 0x99, 0x44, 0x19, 0xa5, 0x67, 0x96, 0x64, 0x94,
-	0x26, 0xe9, 0x25, 0xe7, 0xe7, 0xea, 0x17, 0x27, 0x96, 0x64, 0xe6, 0x82, 0xbc, 0x99, 0x9e, 0xaf,
-	0x9b, 0x9f, 0x5c, 0x90, 0xa9, 0x9b, 0x58, 0x90, 0xa9, 0x0f, 0x62, 0x14, 0x15, 0x24, 0xc3, 0xbc,
-	0x5e, 0x54, 0x90, 0x9c, 0xc4, 0x06, 0xf6, 0xbe, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x80, 0x66,
-	0xd9, 0xb6, 0x15, 0x01, 0x00, 0x00,
+	0xae, 0xb3, 0xb8, 0x20, 0x3f, 0xaf, 0x38, 0xd5, 0x28, 0x99, 0x8b, 0x0f, 0x2a, 0x13, 0x9c, 0x5a,
+	0x54, 0x96, 0x99, 0x9c, 0x2a, 0x14, 0x08, 0x17, 0x81, 0xaa, 0x15, 0x92, 0xd3, 0x83, 0x39, 0x08,
+	0xab, 0xf5, 0x52, 0xf2, 0x38, 0xe5, 0x21, 0x96, 0x38, 0x99, 0x44, 0x19, 0xa5, 0x67, 0x96, 0x64,
+	0x94, 0x26, 0xe9, 0x25, 0xe7, 0xe7, 0xea, 0x17, 0x27, 0x96, 0x64, 0xe6, 0x82, 0xbc, 0x99, 0x9e,
+	0xaf, 0x9b, 0x9f, 0x5c, 0x90, 0xa9, 0x9b, 0x58, 0x90, 0xa9, 0x0f, 0x62, 0x14, 0x15, 0x24, 0xc3,
+	0xbc, 0x5e, 0x54, 0x90, 0x9c, 0xc4, 0x06, 0xf6, 0xbe, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x94,
+	0x68, 0x25, 0xda, 0x15, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -129,7 +129,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SessionServiceClient interface {
-	SessionStarted(ctx context.Context, in *SessionStartedRequest, opts ...grpc.CallOption) (*SessionStartedResponse, error)
+	SessionCreated(ctx context.Context, in *SessionCreatedRequest, opts ...grpc.CallOption) (*SessionCreatedResponse, error)
 }
 
 type sessionServiceClient struct {
@@ -140,9 +140,9 @@ func NewSessionServiceClient(cc *grpc.ClientConn) SessionServiceClient {
 	return &sessionServiceClient{cc}
 }
 
-func (c *sessionServiceClient) SessionStarted(ctx context.Context, in *SessionStartedRequest, opts ...grpc.CallOption) (*SessionStartedResponse, error) {
-	out := new(SessionStartedResponse)
-	err := c.cc.Invoke(ctx, "/session.SessionService/SessionStarted", in, out, opts...)
+func (c *sessionServiceClient) SessionCreated(ctx context.Context, in *SessionCreatedRequest, opts ...grpc.CallOption) (*SessionCreatedResponse, error) {
+	out := new(SessionCreatedResponse)
+	err := c.cc.Invoke(ctx, "/session.SessionService/SessionCreated", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -151,35 +151,35 @@ func (c *sessionServiceClient) SessionStarted(ctx context.Context, in *SessionSt
 
 // SessionServiceServer is the server API for SessionService service.
 type SessionServiceServer interface {
-	SessionStarted(context.Context, *SessionStartedRequest) (*SessionStartedResponse, error)
+	SessionCreated(context.Context, *SessionCreatedRequest) (*SessionCreatedResponse, error)
 }
 
 // UnimplementedSessionServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedSessionServiceServer struct {
 }
 
-func (*UnimplementedSessionServiceServer) SessionStarted(ctx context.Context, req *SessionStartedRequest) (*SessionStartedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SessionStarted not implemented")
+func (*UnimplementedSessionServiceServer) SessionCreated(ctx context.Context, req *SessionCreatedRequest) (*SessionCreatedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SessionCreated not implemented")
 }
 
 func RegisterSessionServiceServer(s *grpc.Server, srv SessionServiceServer) {
 	s.RegisterService(&_SessionService_serviceDesc, srv)
 }
 
-func _SessionService_SessionStarted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SessionStartedRequest)
+func _SessionService_SessionCreated_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SessionCreatedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SessionServiceServer).SessionStarted(ctx, in)
+		return srv.(SessionServiceServer).SessionCreated(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/session.SessionService/SessionStarted",
+		FullMethod: "/session.SessionService/SessionCreated",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SessionServiceServer).SessionStarted(ctx, req.(*SessionStartedRequest))
+		return srv.(SessionServiceServer).SessionCreated(ctx, req.(*SessionCreatedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -189,8 +189,8 @@ var _SessionService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*SessionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SessionStarted",
-			Handler:    _SessionService_SessionStarted_Handler,
+			MethodName: "SessionCreated",
+			Handler:    _SessionService_SessionCreated_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
