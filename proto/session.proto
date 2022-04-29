@@ -5,11 +5,11 @@ package session;
 option go_package = "github.com/satimoto/go-ocpi-api/ocpirpc/sessionrpc";
 
 service SessionService {
-    rpc SessionStarted (SessionStartedRequest) returns (SessionStartedResponse);
+    rpc SessionCreated (SessionCreatedRequest) returns (SessionCreatedResponse);
 };
 
-message SessionStartedRequest {
+message SessionCreatedRequest {
     string session_uid = 1;
 };
 
-message SessionStartedResponse {};
+message SessionCreatedResponse {};

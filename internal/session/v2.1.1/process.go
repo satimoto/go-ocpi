@@ -61,6 +61,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			if dto.AuthID != nil {
 				if token, err := r.TokenResolver.Repository.GetTokenByAuthID(ctx, *dto.AuthID); err == nil {
 					sessionParams.TokenID = token.ID
+					sessionParams.UserID = token.UserID
 				}
 			}
 
@@ -96,6 +97,8 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 		if dto.ChargingPeriods != nil {
 			r.replaceChargingPeriods(ctx, session.ID, dto)
 		}
+
+		// TODO: Send SessionCreated RPC to LSP node
 
 		return &session
 	}

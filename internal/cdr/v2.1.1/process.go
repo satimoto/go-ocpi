@@ -72,6 +72,8 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 					r.replaceTariffs(ctx, credential, countryCode, partyID, &cdr.ID, dto)
 				}
 			}
+ 
+			// TODO: Send CdrCreated RPC to LSP node
 		}
 
 		return &cdr
