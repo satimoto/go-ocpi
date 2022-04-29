@@ -29,14 +29,8 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *tokenrpc.Cr
 		dto.VisualNumber = &authID
 		dto.Issuer = util.NilString(os.Getenv("ISSUER"))
 
-
 		if len(request.Allowed) > 0 {
 			tokenAllowed = db.TokenAllowedType(request.Allowed)
-		}
-
-
-		if len(request.Allowed) == 0 {
-			tokenAllowed =db.TokenAllowedTypeALLOWED
 		}
 
 		if len(request.Whitelist) == 0 {
