@@ -16,7 +16,7 @@ import (
 func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *tokenrpc.CreateTokenRequest) (*tokenrpc.CreateTokenResponse, error) {
 	if request != nil {
 		dto := NewCreateTokenDto(request)
-		tokenAllowed := db.TokenAllowedTypeALLOWED
+		tokenAllowed := db.TokenAllowedTypeNOCREDIT
 		authID, err := r.TokenResolver.GenerateAuthID(ctx)
 
 		if err != nil {
@@ -34,7 +34,7 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *tokenrpc.Cr
 		}
 
 		if len(request.Whitelist) == 0 {
-			dto.Whitelist = NilTokenWhitelistType(db.TokenWhitelistTypeALLOWED)
+			dto.Whitelist = NilTokenWhitelistType(db.TokenWhitelistTypeNEVER)
 		}
 
 		token := r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *dto.Uid, dto)
