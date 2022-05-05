@@ -3,6 +3,7 @@ package credential
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
@@ -16,22 +17,24 @@ func (r *RpcCredentialResolver) CreateCredential(ctx context.Context, request *o
 		params := ocpiCredential.NewCreateCredentialParams(*request)
 
 		if request.BusinessDetail != nil {
-			b, err := r.createBusinessDetail(ctx, request.BusinessDetail)
+			businessDetail, err := r.createBusinessDetail(ctx, request.BusinessDetail)
 
 			if err != nil {
 				return nil, err
 			}
 
-			params.BusinessDetailID = b.ID
+			params.BusinessDetailID = businessDetail.ID
 		}
 
-		c, err := r.CredentialResolver.Repository.CreateCredential(ctx, params)
+		credential, err := r.CredentialResolver.Repository.CreateCredential(ctx, params)
 
 		if err != nil {
-			return nil, err
+			util.LogOnError("OCPI002", "Error creating business detail", err)
+			log.Printf("OCPI002: Params=%#v", params)
+			return nil, errors.New("Error creating business detail")
 		}
 
-		return r.CreateCredentialResponse(ctx, c), nil
+		return r.CreateCredentialResponse(ctx, credential), nil
 	}
 
 	return nil, errors.New("Missing request")
@@ -50,18 +53,24 @@ func (r *RpcCredentialResolver) createBusinessDetail(ctx context.Context, reques
 		params := ocpi.NewCreateBusinessDetailParams(*request)
 
 		if request.Logo != nil {
-			i, err := r.createImage(ctx, request.Logo)
+			image, err := r.createImage(ctx, request.Logo)
 
 			if err != nil {
 				return nil, err
 			}
 
-			params.LogoID = util.SqlNullInt64(i.ID)
+			params.LogoID = util.SqlNullInt64(image.ID)
 		}
 
-		if b, err := r.BusinessDetailResolver.Repository.CreateBusinessDetail(ctx, params); err == nil {
-			return &b, nil
+		businessDetail, err := r.BusinessDetailResolver.Repository.CreateBusinessDetail(ctx, params)
+
+		if err != nil {
+			util.LogOnError("OCPI003", "Error creating business detail", err)
+			log.Printf("OCPI003: Params=%#v", params)
+			return nil, errors.New("Error creating business detail")
 		}
+
+		return &businessDetail, nil
 	}
 
 	return nil, errors.New("Error creating business detail from RPC")
@@ -70,10 +79,15 @@ func (r *RpcCredentialResolver) createBusinessDetail(ctx context.Context, reques
 func (r *RpcCredentialResolver) createImage(ctx context.Context, request *ocpirpc.CreateImageRequest) (*db.Image, error) {
 	if request != nil {
 		params := ocpi.NewCreateImageParams(*request)
+		image, err := r.ImageResolver.Repository.CreateImage(ctx, params)
 
-		if i, err := r.ImageResolver.Repository.CreateImage(ctx, params); err == nil {
-			return &i, nil
+		if err != nil {
+			util.LogOnError("OCPI004", "Error creating image", err)
+			log.Printf("OCPI004: Params=%#v", params)
+			return nil, errors.New("Error creating image")
 		}
+	
+		return &image, nil
 	}
 
 	return nil, errors.New("Error creating logo from RPC")
