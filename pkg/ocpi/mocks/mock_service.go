@@ -5,8 +5,13 @@ import (
 )
 
 type MockOcpiService struct {
-	stopSessionMockData  []*ocpirpc.StopSessionResponse
-	updateTokensMockData []*ocpirpc.UpdateTokensResponse
+	createCredentialMockData     []*ocpirpc.CreateCredentialResponse
+	registerCredentialMockData   []*ocpirpc.RegisterCredentialResponse
+	unregisterCredentialMockData []*ocpirpc.UnregisterCredentialResponse
+	startSessionMockData         []*ocpirpc.StartSessionResponse
+	stopSessionMockData          []*ocpirpc.StopSessionResponse
+	createTokenMockData          []*ocpirpc.CreateTokenResponse
+	updateTokensMockData         []*ocpirpc.UpdateTokensResponse
 }
 
 func NewService() *MockOcpiService {
