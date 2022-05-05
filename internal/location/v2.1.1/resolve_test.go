@@ -13,7 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	locationMocks "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1/mocks"
-	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
@@ -23,7 +23,7 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Create Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 
@@ -101,7 +101,7 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Update Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := geom.NewPoint("31.3434", "-62.6996")
@@ -177,7 +177,7 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Update Location with Evses", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := geom.NewPoint("31.3434", "-62.6996")

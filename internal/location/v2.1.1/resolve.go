@@ -11,6 +11,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	"github.com/satimoto/go-ocpi-api/internal/image"
 	"github.com/satimoto/go-ocpi-api/internal/openingtime"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
 )
 
@@ -40,6 +41,7 @@ type LocationRepository interface {
 
 type LocationResolver struct {
 	Repository LocationRepository
+	*transportation.OCPIRequester
 	*businessdetail.BusinessDetailResolver
 	*displaytext.DisplayTextResolver
 	*energymix.EnergyMixResolver
@@ -54,6 +56,7 @@ func NewResolver(repositoryService *db.RepositoryService) *LocationResolver {
 	repo := LocationRepository(repositoryService)
 	return &LocationResolver{
 		Repository:             repo,
+		OCPIRequester:          transportation.NewOCPIRequester(),
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		DisplayTextResolver:    displaytext.NewResolver(repositoryService),
 		EnergyMixResolver:      energymix.NewResolver(repositoryService),

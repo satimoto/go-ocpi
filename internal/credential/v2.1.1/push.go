@@ -9,7 +9,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/credential"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 func (r *CredentialResolver) DeleteCredential(rw http.ResponseWriter, request *http.Request) {
@@ -27,10 +27,10 @@ func (r *CredentialResolver) DeleteCredential(rw http.ResponseWriter, request *h
 	cred, err = r.Repository.UpdateCredential(ctx, db.UpdateCredentialParams{})
 
 	if err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 	}
 
-	render.Render(rw, request, ocpi.OCPISuccess(nil))
+	render.Render(rw, request, transportation.OCPISuccess(nil))
 }
 
 func (r *CredentialResolver) GetCredential(rw http.ResponseWriter, request *http.Request) {
@@ -38,8 +38,8 @@ func (r *CredentialResolver) GetCredential(rw http.ResponseWriter, request *http
 	cred := ctx.Value("credential").(db.Credential)
 	dto := r.CreateCredentialDto(ctx, cred)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OCPISuccess(dto)); err != nil {
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 	}
 }
 
@@ -50,20 +50,20 @@ func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *h
 
 	if err == nil && len(cred.ClientToken.String) == 0 {
 		if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
-			render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+			render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 			return
 		}
 
 		c, err := r.ReplaceCredential(ctx, cred, &dto)
 
 		if err != nil {
-			errResponse := err.(*ocpi.OCPIResponse)
+			errResponse := err.(*transportation.OCPIResponse)
 			render.Render(rw, request, errResponse)
 			return
 		}
 
 		credentialDto := r.CreateCredentialDto(ctx, *c)
-		render.Render(rw, request, ocpi.OCPISuccess(credentialDto))
+		render.Render(rw, request, transportation.OCPISuccess(credentialDto))
 		return
 	}
 

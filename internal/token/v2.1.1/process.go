@@ -14,9 +14,9 @@ import (
 
 	"github.com/satimoto/go-datastore/db"
 	dbUtil "github.com/satimoto/go-datastore/util"
-	"github.com/satimoto/go-ocpi-api/internal/evid"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-ocpi-api/pkg/evid"
 )
 
 func (r *TokenResolver) GenerateAuthID(ctx context.Context) (string, error) {
@@ -73,7 +73,7 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, dto *T
 				continue
 			}
 
-			header := ocpi.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+			header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
 			dtoBytes, err := json.Marshal(dto)
 
 			if err != nil {
@@ -94,7 +94,7 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, dto *T
 			defer response.Body.Close()
 			pullDto, err := r.UnmarshalPullDto(response.Body)
 
-			if err != nil || pullDto.StatusCode != ocpi.STATUS_CODE_OK {
+			if err != nil || pullDto.StatusCode != transportation.STATUS_CODE_OK {
 				log.Printf("Error PushToken UnmarshalPullDto: %v", err)
 				log.Printf("StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 			}

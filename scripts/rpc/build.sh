@@ -1,7 +1,7 @@
-protoc proto/businessdetail.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/image.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/credential.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/command.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/session.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/cdr.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/token.proto --go_out=plugins=grpc:$GOPATH/src
+protoc ocpirpc/businessdetail.proto --go_out=plugins=grpc:$GOPATH/src
+protoc ocpirpc/image.proto --go_out=plugins=grpc:$GOPATH/src
+protoc ocpirpc/credential.proto --go_out=plugins=grpc:$GOPATH/src
+protoc ocpirpc/command.proto --go_out=plugins=grpc:$GOPATH/src
+protoc ocpirpc/session.proto --go_out=plugins=grpc:$GOPATH/src
+protoc ocpirpc/cdr.proto --go_out=plugins=grpc:$GOPATH/src
+protoc ocpirpc/token.proto --go_out=plugins=grpc:$GOPATH/src

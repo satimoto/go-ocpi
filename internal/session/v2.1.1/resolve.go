@@ -8,6 +8,7 @@ import (
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
 )
 
@@ -23,6 +24,7 @@ type SessionRepository interface {
 
 type SessionResolver struct {
 	Repository SessionRepository
+	*transportation.OCPIRequester
 	*chargingperiod.ChargingPeriodResolver
 	*location.LocationResolver
 	*token.TokenResolver
@@ -34,6 +36,7 @@ func NewResolver(repositoryService *db.RepositoryService) *SessionResolver {
 	repo := SessionRepository(repositoryService)
 	return &SessionResolver{
 		Repository:                 repo,
+		OCPIRequester:              transportation.NewOCPIRequester(),
 		ChargingPeriodResolver:     chargingperiod.NewResolver(repositoryService),
 		LocationResolver:           location.NewResolver(repositoryService),
 		TokenResolver:              token.NewResolver(repositoryService),

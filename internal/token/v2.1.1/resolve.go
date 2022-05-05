@@ -6,6 +6,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/credential"
 	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
 )
 
@@ -23,6 +24,7 @@ type TokenRepository interface {
 
 type TokenResolver struct {
 	Repository TokenRepository
+	*transportation.OCPIRequester
 	*credential.CredentialResolver
 	*tokenauthorization.TokenAuthorizationResolver
 	*versiondetail.VersionDetailResolver
@@ -32,6 +34,7 @@ func NewResolver(repositoryService *db.RepositoryService) *TokenResolver {
 	repo := TokenRepository(repositoryService)
 	return &TokenResolver{
 		Repository:                 repo,
+		OCPIRequester:              transportation.NewOCPIRequester(),
 		CredentialResolver:         credential.NewResolver(repositoryService),
 		TokenAuthorizationResolver: tokenauthorization.NewResolver(repositoryService),
 		VersionDetailResolver:      versiondetail.NewResolver(repositoryService),

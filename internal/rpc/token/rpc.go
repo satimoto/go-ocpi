@@ -10,10 +10,11 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/ocpirpc/tokenrpc"
+	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	ocpiToken "github.com/satimoto/go-ocpi-api/pkg/ocpi/token"
 )
 
-func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *tokenrpc.CreateTokenRequest) (*tokenrpc.CreateTokenResponse, error) {
+func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.CreateTokenRequest) (*ocpirpc.CreateTokenResponse, error) {
 	if request != nil {
 		dto := NewCreateTokenDto(request)
 		tokenAllowed := db.TokenAllowedTypeNOCREDIT
@@ -37,21 +38,21 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *tokenrpc.Cr
 			dto.Whitelist = NilTokenWhitelistType(db.TokenWhitelistTypeNEVER)
 		}
 
-		token := r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *dto.Uid, dto)
+		t := r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *dto.Uid, dto)
 
-		if token == nil {
+		if t == nil {
 			log.Printf("Error CreateToken ReplaceToken: %v", err)
 			log.Printf("Dto=%#v", dto)
 			return nil, errors.New("Error creating token")
 		}
 
-		return tokenrpc.NewCreateTokenResponse(*token), nil
+		return ocpiToken.NewCreateTokenResponse(*t), nil
 	}
 
 	return nil, errors.New("Error creating token")
 }
 
-func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *tokenrpc.UpdateTokensRequest) (*tokenrpc.UpdateTokensResponse, error) {
+func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.UpdateTokensRequest) (*ocpirpc.UpdateTokensResponse, error) {
 	if request != nil {
 		tokens, err := r.TokenResolver.Repository.ListTokensByUserID(ctx, request.UserId)
 
@@ -64,7 +65,7 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *tokenrpc.U
 		for _, t := range tokens {
 			if len(request.Uid) == 0 || request.Uid == t.Uid {
 				dto := &token.TokenDto{
-					Uid: &request.Uid, 
+					Uid:         &request.Uid,
 					LastUpdated: util.NilTime(time.Now()),
 				}
 
@@ -82,7 +83,7 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *tokenrpc.U
 			}
 		}
 
-		return tokenrpc.NewUpdateTokensResponse(*request), nil
+		return ocpiToken.NewUpdateTokensResponse(*request), nil
 	}
 
 	return nil, errors.New("Error updating tokens")

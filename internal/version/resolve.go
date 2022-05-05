@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type VersionRepository interface {
@@ -16,7 +16,7 @@ type VersionRepository interface {
 
 type VersionResolver struct {
 	Repository VersionRepository
-	*ocpi.OCPIRequester
+	*transportation.OCPIRequester
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *VersionResolver {
@@ -24,6 +24,6 @@ func NewResolver(repositoryService *db.RepositoryService) *VersionResolver {
 
 	return &VersionResolver{
 		Repository:    repo,
-		OCPIRequester: ocpi.NewOCPIRequester(),
+		OCPIRequester: transportation.NewOCPIRequester(),
 	}
 }

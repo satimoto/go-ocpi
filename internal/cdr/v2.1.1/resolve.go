@@ -9,6 +9,7 @@ import (
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
 )
 
@@ -23,6 +24,7 @@ type CdrRepository interface {
 
 type CdrResolver struct {
 	Repository CdrRepository
+	*transportation.OCPIRequester
 	*calibration.CalibrationResolver
 	*chargingperiod.ChargingPeriodResolver
 	*location.LocationResolver
@@ -35,6 +37,7 @@ func NewResolver(repositoryService *db.RepositoryService) *CdrResolver {
 	repo := CdrRepository(repositoryService)
 	return &CdrResolver{
 		Repository:             repo,
+		OCPIRequester:          transportation.NewOCPIRequester(),
 		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
 		LocationResolver:       location.NewResolver(repositoryService),

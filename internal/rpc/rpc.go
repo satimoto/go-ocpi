@@ -13,9 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/rpc/command"
 	"github.com/satimoto/go-ocpi-api/internal/rpc/credential"
 	"github.com/satimoto/go-ocpi-api/internal/rpc/token"
-	"github.com/satimoto/go-ocpi-api/ocpirpc/commandrpc"
-	"github.com/satimoto/go-ocpi-api/ocpirpc/credentialrpc"
-	"github.com/satimoto/go-ocpi-api/ocpirpc/tokenrpc"
+	"github.com/satimoto/go-ocpi-api/ocpirpc"
 	"google.golang.org/grpc"
 )
 
@@ -67,9 +65,9 @@ func (rs *RpcService) listenAndServe() {
 		log.Printf("Error creating network address: %v", err)
 	}
 
-	commandrpc.RegisterCommandServiceServer(rs.Server, rs.RpcCommandResolver)
-	credentialrpc.RegisterCredentialServiceServer(rs.Server, rs.RpcCredentialResolver)
-	tokenrpc.RegisterTokenServiceServer(rs.Server, rs.RpcTokenResolver)
+	ocpirpc.RegisterCommandServiceServer(rs.Server, rs.RpcCommandResolver)
+	ocpirpc.RegisterCredentialServiceServer(rs.Server, rs.RpcCredentialResolver)
+	ocpirpc.RegisterTokenServiceServer(rs.Server, rs.RpcTokenResolver)
 
 	err = rs.Server.Serve(listener)
 

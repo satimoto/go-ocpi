@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-datastore/util"
 )
 
@@ -30,7 +30,7 @@ func CredentialContextByToken(r CredentialRepository, next http.Handler) http.Ha
 			return
 		}
 
-		render.Render(rw, request, ocpi.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
 	})
 }
 
@@ -54,7 +54,7 @@ func CredentialContextByPartyAndCountry(r CredentialRepository, next http.Handle
 			}
 		}
 
-		render.Render(rw, request, ocpi.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
 	})
 }
 

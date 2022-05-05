@@ -7,10 +7,10 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/ocpirpc/tokenrpc"
+	"github.com/satimoto/go-ocpi-api/ocpirpc"
 )
 
-func NewCreateTokenDto(input *tokenrpc.CreateTokenRequest) *token.TokenDto {
+func NewCreateTokenDto(input *ocpirpc.CreateTokenRequest) *token.TokenDto {
 	return &token.TokenDto{
 		Uid:         util.NilString(uuid.NewString()),
 		Type:        NilTokenType(input.Type),

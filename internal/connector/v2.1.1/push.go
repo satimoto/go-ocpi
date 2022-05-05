@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 func (r *ConnectorResolver) GetConnector(rw http.ResponseWriter, request *http.Request) {
@@ -15,8 +15,8 @@ func (r *ConnectorResolver) GetConnector(rw http.ResponseWriter, request *http.R
 	connector := ctx.Value("connector").(db.Connector)
 	dto := r.CreateConnectorDto(ctx, connector)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OCPISuccess(dto)); err != nil {
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 	}
 }
 
@@ -27,7 +27,7 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 	dto := ConnectorDto{}
 
 	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 		return
 	}
 
@@ -45,10 +45,10 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 		})
 	
 		if err != nil {
-			render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+			render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 			return
 		}	
 	}
 
-	render.Render(rw, request, ocpi.OCPISuccess(nil))
+	render.Render(rw, request, transportation.OCPISuccess(nil))
 }

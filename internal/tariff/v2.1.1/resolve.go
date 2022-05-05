@@ -9,6 +9,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/element"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
 	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
 )
 
@@ -26,6 +27,7 @@ type TariffRepository interface {
 
 type TariffResolver struct {
 	Repository TariffRepository
+	*transportation.OCPIRequester
 	*displaytext.DisplayTextResolver
 	*element.ElementResolver
 	*energymix.EnergyMixResolver
@@ -35,8 +37,10 @@ type TariffResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *TariffResolver {
 	repo := TariffRepository(repositoryService)
+	
 	return &TariffResolver{
 		Repository:                repo,
+		OCPIRequester:             transportation.NewOCPIRequester(),
 		DisplayTextResolver:       displaytext.NewResolver(repositoryService),
 		ElementResolver:           element.NewResolver(repositoryService),
 		EnergyMixResolver:         energymix.NewResolver(repositoryService),
