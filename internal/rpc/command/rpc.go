@@ -7,10 +7,11 @@ import (
 
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
-	"github.com/satimoto/go-ocpi-api/ocpirpc/commandrpc"
+	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	ocpiCommand "github.com/satimoto/go-ocpi-api/pkg/ocpi/command"
 )
 
-func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *commandrpc.ReserveNowRequest) (*commandrpc.ReserveNowResponse, error) {
+func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *ocpirpc.ReserveNowRequest) (*ocpirpc.ReserveNowResponse, error) {
 	if input != nil {
 		expiryDate := util.ParseTime(input.ExpiryDate, nil)
 		token, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, db.GetTokenByUserIDParams{
@@ -54,7 +55,7 @@ func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *commandrpc.R
 			return nil, errors.New("Error requesting reservation")
 		}
 
-		reserveNowResponse := commandrpc.NewCommandReservationResponse(*command)
+		reserveNowResponse := ocpiCommand.NewCommandReservationResponse(*command)
 
 		return reserveNowResponse, nil
 	}
@@ -62,7 +63,7 @@ func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *commandrpc.R
 	return nil, errors.New("Missing ReserveNowRequest")
 }
 
-func (r *RpcCommandResolver) StartSession(ctx context.Context, input *commandrpc.StartSessionRequest) (*commandrpc.StartSessionResponse, error) {
+func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.StartSessionRequest) (*ocpirpc.StartSessionResponse, error) {
 	if input != nil {
 		token, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, db.GetTokenByUserIDParams{
 			UserID: input.UserId,
@@ -105,7 +106,7 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *commandrpc
 			return nil, errors.New("Error starting session")
 		}
 
-		startResponse := commandrpc.NewCommandStartResponse(*command)
+		startResponse := ocpiCommand.NewCommandStartResponse(*command)
 
 		return startResponse, nil
 	}
@@ -113,7 +114,7 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *commandrpc
 	return nil, errors.New("Missing StartSessionRequest")
 }
 
-func (r *RpcCommandResolver) StopSession(ctx context.Context, input *commandrpc.StopSessionRequest) (*commandrpc.StopSessionResponse, error) {
+func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.StopSessionRequest) (*ocpirpc.StopSessionResponse, error) {
 	if input != nil {
 		session, err := r.SessionResolver.Repository.GetSessionByUid(ctx, input.SessionUid)
 
@@ -139,7 +140,7 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *commandrpc.
 			return nil, errors.New("Error stopping session")
 		}
 
-		stopResponse := commandrpc.NewCommandStopResponse(*command)
+		stopResponse := ocpiCommand.NewCommandStopResponse(*command)
 
 		return stopResponse, nil
 	}
@@ -147,7 +148,7 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *commandrpc.
 	return nil, errors.New("Missing StopSessionRequest")
 }
 
-func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *commandrpc.UnlockConnectorRequest) (*commandrpc.UnlockConnectorResponse, error) {
+func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *ocpirpc.UnlockConnectorRequest) (*ocpirpc.UnlockConnectorResponse, error) {
 	if input != nil {
 		location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, input.LocationUid)
 
@@ -173,7 +174,7 @@ func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *command
 			return nil, errors.New("Error unlocking connector")
 		}
 
-		unlockResponse := commandrpc.NewCommandUnlockResponse(*command)
+		unlockResponse := ocpiCommand.NewCommandUnlockResponse(*command)
 
 		return unlockResponse, nil
 	}

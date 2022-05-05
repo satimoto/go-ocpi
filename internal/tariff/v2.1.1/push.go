@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/credential"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 func (r *TariffResolver) DeleteTariff(rw http.ResponseWriter, request *http.Request) {
@@ -16,10 +16,10 @@ func (r *TariffResolver) DeleteTariff(rw http.ResponseWriter, request *http.Requ
 	err := r.Repository.DeleteTariffByUid(ctx, tariff.Uid)
 
 	if err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 	}
 
-	render.Render(rw, request, ocpi.OCPISuccess(nil))
+	render.Render(rw, request, transportation.OCPISuccess(nil))
 }
 
 func (r *TariffResolver) GetTariff(rw http.ResponseWriter, request *http.Request) {
@@ -27,8 +27,8 @@ func (r *TariffResolver) GetTariff(rw http.ResponseWriter, request *http.Request
 	tariff := ctx.Value("tariff").(db.Tariff)
 	dto := r.CreateTariffDto(ctx, tariff)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(dto)); err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OCPISuccess(dto)); err != nil {
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 	}
 }
 
@@ -41,16 +41,16 @@ func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Requ
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 		return
 	}
 
 	tariff := r.ReplaceTariffByIdentifier(ctx, *cred, &countryCode, &partyID, uid, nil, dto)
 
 	if tariff == nil {
-		render.Render(rw, request, ocpi.OCPIErrorMissingParameters(nil))
+		render.Render(rw, request, transportation.OCPIErrorMissingParameters(nil))
 		return
 	}
 
-	render.Render(rw, request, ocpi.OCPISuccess(nil))
+	render.Render(rw, request, transportation.OCPISuccess(nil))
 }

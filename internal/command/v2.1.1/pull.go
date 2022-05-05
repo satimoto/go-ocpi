@@ -11,14 +11,14 @@ import (
 	"time"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/util"
-	"github.com/satimoto/go-ocpi-api/ocpirpc/commandrpc"
+	ocpiCommand "github.com/satimoto/go-ocpi-api/pkg/ocpi/command"
 )
 
 func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credential, token db.Token, location db.Location, evseUid *string, expiryDate time.Time) (*db.CommandReservation, error) {
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "commands", credential.CountryCode, credential.PartyID)
-	
+
 	if err != nil {
 		log.Printf("Error ReserveNow GetVersionEndpointByIdentity: %v", err)
 		log.Printf("CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
@@ -33,7 +33,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 		return nil, errors.New("Error requesting reservation")
 	}
 
-	createCommandReservationParams := commandrpc.NewCreateCommandReservationParams(token, expiryDate, location, evseUid)
+	createCommandReservationParams := ocpiCommand.NewCreateCommandReservationParams(token, expiryDate, location, evseUid)
 	command, err := r.Repository.CreateCommandReservation(ctx, createCommandReservationParams)
 
 	if err != nil {
@@ -42,7 +42,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 		return nil, errors.New("Error requesting reservation")
 	}
 
-	header := ocpi.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+	header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
 	dto := NewCommandReservationDto(command)
 	dtoBytes, err := json.Marshal(dto)
 
@@ -64,7 +64,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	defer response.Body.Close()
 	pullDto, err := r.UnmarshalPullDto(response.Body)
 
-	if err != nil || pullDto.StatusCode != ocpi.STATUS_CODE_OK {
+	if err != nil || pullDto.StatusCode != transportation.STATUS_CODE_OK {
 		log.Printf("Error ReserveNow UnmarshalPullDto: %v", err)
 		log.Printf("StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return nil, errors.New("Error requesting reservation")
@@ -84,7 +84,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 
 func (r *CommandResolver) StartSession(ctx context.Context, credential db.Credential, token db.Token, location db.Location, evseUid *string) (*db.CommandStart, error) {
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "commands", credential.CountryCode, credential.PartyID)
-	
+
 	if err != nil {
 		log.Printf("Error StartSession GetVersionEndpointByIdentity: %v", err)
 		log.Printf("CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
@@ -99,7 +99,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		return nil, errors.New("Error starting session")
 	}
 
-	createCommandStartParams := commandrpc.NewCreateCommandStartParams(token, location, evseUid)
+	createCommandStartParams := ocpiCommand.NewCreateCommandStartParams(token, location, evseUid)
 	command, err := r.Repository.CreateCommandStart(ctx, createCommandStartParams)
 
 	if err != nil {
@@ -108,7 +108,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		return nil, errors.New("Error starting session")
 	}
 
-	header := ocpi.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+	header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
 	dto := NewCommandStartDto(command)
 	dtoBytes, err := json.Marshal(dto)
 
@@ -130,7 +130,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	defer response.Body.Close()
 	pullDto, err := r.UnmarshalPullDto(response.Body)
 
-	if err != nil || pullDto.StatusCode != ocpi.STATUS_CODE_OK {
+	if err != nil || pullDto.StatusCode != transportation.STATUS_CODE_OK {
 		log.Printf("Error StartSession UnmarshalPullDto: %v", err)
 		log.Printf("StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return nil, errors.New("Error starting session")
@@ -150,7 +150,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 
 func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credential, sessionID string) (*db.CommandStop, error) {
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "commands", credential.CountryCode, credential.PartyID)
-	
+
 	if err != nil {
 		log.Printf("Error StopSession GetVersionEndpointByIdentity: %v", err)
 		log.Printf("CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
@@ -165,7 +165,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 		return nil, errors.New("Error stopping session")
 	}
 
-	createCommandStopParams := commandrpc.NewCreateCommandStopParams(sessionID)
+	createCommandStopParams := ocpiCommand.NewCreateCommandStopParams(sessionID)
 	command, err := r.Repository.CreateCommandStop(ctx, createCommandStopParams)
 
 	if err != nil {
@@ -174,7 +174,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 		return nil, errors.New("Error stopping session")
 	}
 
-	header := ocpi.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+	header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
 	dto := NewCommandStopDto(command)
 	dtoBytes, err := json.Marshal(dto)
 
@@ -196,7 +196,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	defer response.Body.Close()
 	pullDto, err := r.UnmarshalPullDto(response.Body)
 
-	if err != nil || pullDto.StatusCode != ocpi.STATUS_CODE_OK {
+	if err != nil || pullDto.StatusCode != transportation.STATUS_CODE_OK {
 		log.Printf("Error StopSession UnmarshalPullDto: %v", err)
 		log.Printf("StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return nil, errors.New("Error stopping session")
@@ -216,7 +216,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 
 func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Credential, location db.Location, evseUid string, connectorID string) (*db.CommandUnlock, error) {
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "commands", credential.CountryCode, credential.PartyID)
-	
+
 	if err != nil {
 		log.Printf("Error UnlockConnector GetVersionEndpointByIdentity: %v", err)
 		log.Printf("CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
@@ -231,7 +231,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		return nil, errors.New("Error unlocking connector")
 	}
 
-	createCommandUnlockParams := commandrpc.NewCreateCommandUnlockParams(location, evseUid, connectorID)
+	createCommandUnlockParams := ocpiCommand.NewCreateCommandUnlockParams(location, evseUid, connectorID)
 	command, err := r.Repository.CreateCommandUnlock(ctx, createCommandUnlockParams)
 
 	if err != nil {
@@ -240,7 +240,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		return nil, errors.New("Error unlocking connector")
 	}
 
-	header := ocpi.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+	header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
 	dto := NewCommandUnlockDto(command)
 	dtoBytes, err := json.Marshal(dto)
 
@@ -262,7 +262,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 	defer response.Body.Close()
 	pullDto, err := r.UnmarshalPullDto(response.Body)
 
-	if err != nil || pullDto.StatusCode != ocpi.STATUS_CODE_OK {
+	if err != nil || pullDto.StatusCode != transportation.STATUS_CODE_OK {
 		log.Printf("Error UnlockConnector UnmarshalPullDto: %v", err)
 		log.Printf("StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return nil, errors.New("Error unlocking connector")

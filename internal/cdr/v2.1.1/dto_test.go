@@ -9,7 +9,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
 	cdrMocks "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1/mocks"
-	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
@@ -19,7 +19,7 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		sess := db.Cdr{
 			ID: 1,
@@ -47,7 +47,7 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("Simple", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		c := db.Cdr{
 			ID:            1,
@@ -86,7 +86,7 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("With charge periods", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{
@@ -153,7 +153,7 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("With charge periods", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		calibration := db.Calibration{
 			EncodingMethod: "Alfen Eichrecht",

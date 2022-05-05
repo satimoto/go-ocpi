@@ -12,7 +12,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/middleware"
-	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 	tokenMocks "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
@@ -36,7 +36,7 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Empty list tokens request", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -58,7 +58,7 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("List tokens request", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -105,7 +105,7 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -125,7 +125,7 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Invalid authorize", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -146,7 +146,7 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Authorize", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -184,7 +184,7 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Authorize with location references", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -227,7 +227,7 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Authorize with location references", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -271,7 +271,7 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Authorize with location and evid references", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 

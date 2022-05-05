@@ -10,7 +10,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
 	credentialMocks "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1/mocks"
-	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
@@ -29,7 +29,7 @@ func TestCreateCredentialDto(t *testing.T) {
 	t.Run("Create dto", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		credentialResolver := credentialMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		credential := db.Credential{
 			ClientToken:      util.SqlNullString("EF3ABC19-84AB-476D-A12D-17FA42FB3CE5"),

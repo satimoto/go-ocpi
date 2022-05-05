@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {
@@ -16,7 +16,7 @@ func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credenti
 
 	if versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "sessions", credential.CountryCode, credential.PartyID); err == nil {
 		if requestUrl, err := url.Parse(versionEndpoint.Url); err == nil {
-			header := ocpi.NewOCPIRequestHeader(&credential.ClientToken.String, countryCode, partyID)
+			header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, countryCode, partyID)
 			query := requestUrl.Query()
 
 			if location, err := r.GetLastSessionByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
@@ -30,10 +30,10 @@ func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credenti
 
 				if response, err := r.OCPIRequester.Do(http.MethodGet, requestUrl.String(), header, nil); err == nil {
 					dto, err := r.UnmarshalPullDto(response.Body)
-					limit = ocpi.GetXLimitHeader(response, limit)
+					limit = transportation.GetXLimitHeader(response, limit)
 					response.Body.Close()
 
-					if err == nil && dto.StatusCode == ocpi.STATUS_CODE_OK {
+					if err == nil && dto.StatusCode == transportation.STATUS_CODE_OK {
 						r.ReplaceSessionsByIdentifier(ctx, credential, countryCode, partyID, dto.Data)
 
 						if len(dto.Data) == limit {

@@ -8,7 +8,7 @@ import (
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
-	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	tokenMocks "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
@@ -19,7 +19,7 @@ func TestCreateTokenDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		loc := db.Token{}
 
@@ -40,7 +40,7 @@ func TestCreateTokenDto(t *testing.T) {
 	t.Run("Basic token", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		tok := db.Token{
 			Uid:         "TOKEN00001",
@@ -70,7 +70,7 @@ func TestCreateTokenDto(t *testing.T) {
 	t.Run("With visual number and language", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		tok := db.Token{
 			Uid:          "TOKEN00001",
@@ -102,7 +102,7 @@ func TestCreateTokenDto(t *testing.T) {
 	t.Run("With visual number and language", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		tok := db.Token{
 			Uid:          "TOKEN00001",

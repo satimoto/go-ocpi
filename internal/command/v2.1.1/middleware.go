@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 func (r *CommandResolver) CommandReservationContext(next http.Handler) http.Handler {
@@ -26,7 +26,7 @@ func (r *CommandResolver) CommandReservationContext(next http.Handler) http.Hand
 			}
 		}
 
-		render.Render(rw, request, ocpi.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
 	})
 }
 
@@ -46,7 +46,7 @@ func (r *CommandResolver) CommandStartContext(next http.Handler) http.Handler {
 			}
 		}
 
-		render.Render(rw, request, ocpi.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
 	})
 }
 
@@ -66,7 +66,7 @@ func (r *CommandResolver) CommandStopContext(next http.Handler) http.Handler {
 			}
 		}
 
-		render.Render(rw, request, ocpi.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
 	})
 }
 
@@ -86,6 +86,6 @@ func (r *CommandResolver) CommandUnlockContext(next http.Handler) http.Handler {
 			}
 		}
 
-		render.Render(rw, request, ocpi.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
 	})
 }

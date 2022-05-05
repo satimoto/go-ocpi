@@ -7,6 +7,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
 	sync "github.com/satimoto/go-ocpi-api/internal/sync/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/version"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
 )
@@ -22,6 +23,7 @@ type CredentialRepository interface {
 
 type CredentialResolver struct {
 	Repository CredentialRepository
+	*transportation.OCPIRequester
 	*businessdetail.BusinessDetailResolver
 	*sync.SyncResolver
 	*version.VersionResolver
@@ -30,8 +32,10 @@ type CredentialResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *CredentialResolver {
 	repo := CredentialRepository(repositoryService)
+
 	return &CredentialResolver{
 		Repository:             repo,
+		OCPIRequester:          transportation.NewOCPIRequester(),
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		SyncResolver:           sync.NewResolver(repositoryService),
 		VersionResolver:        version.NewResolver(repositoryService),

@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential db.Credential, dto *CredentialDto) (*db.Credential, error) {
@@ -33,7 +33,7 @@ func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential d
 			countryCode = *dto.CountryCode
 		}
 
-		header := ocpi.NewOCPIRequestHeader(&token, nil, nil)
+		header := transportation.NewOCPIRequestHeader(&token, nil, nil)
 
 		r.VersionResolver.PullVersions(ctx, url, header, credential.ID)
 		version := r.VersionResolver.GetBestVersion(ctx, credential.ID)
@@ -61,9 +61,9 @@ func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential d
 				return &cred, nil
 			}
 		} else {
-			return nil, ocpi.OCPIUnsupportedVersion(nil)
+			return nil, transportation.OCPIUnsupportedVersion(nil)
 		}
 	}
 
-	return nil, ocpi.OCPIRegistrationError(nil)
+	return nil, transportation.OCPIRegistrationError(nil)
 }

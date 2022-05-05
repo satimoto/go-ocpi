@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 func (r *CommandResolver) PostCommandReservationResponse(rw http.ResponseWriter, request *http.Request) {
@@ -14,14 +14,14 @@ func (r *CommandResolver) PostCommandReservationResponse(rw http.ResponseWriter,
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 		return
 	}
 
 	r.UpdateCommandReservation(ctx, command, dto)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(nil)); err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OCPISuccess(nil)); err != nil {
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 	}
 }
 
@@ -31,14 +31,14 @@ func (r *CommandResolver) PostCommandStartResponse(rw http.ResponseWriter, reque
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 		return
 	}
 
 	r.UpdateCommandStart(ctx, command, dto)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(nil)); err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OCPISuccess(nil)); err != nil {
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 	}
 }
 
@@ -48,14 +48,14 @@ func (r *CommandResolver) PostCommandStopResponse(rw http.ResponseWriter, reques
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 		return
 	}
 
 	r.UpdateCommandStop(ctx, command, dto)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(nil)); err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OCPISuccess(nil)); err != nil {
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 	}
 }
 
@@ -65,13 +65,13 @@ func (r *CommandResolver) PostCommandUnlockResponse(rw http.ResponseWriter, requ
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 		return
 	}
 
 	r.UpdateCommandUnlock(ctx, command, dto)
 
-	if err := render.Render(rw, request, ocpi.OCPISuccess(nil)); err != nil {
-		render.Render(rw, request, ocpi.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OCPISuccess(nil)); err != nil {
+		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
 	}
 }

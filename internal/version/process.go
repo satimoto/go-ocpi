@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int64, dto []*VersionDto) []*db.Version {
@@ -26,12 +26,12 @@ func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int6
 	return versions
 }
 
-func (r *VersionResolver) PullVersions(ctx context.Context, url string, header ocpi.OCPIRequestHeader, credentialID int64) []*db.Version {
+func (r *VersionResolver) PullVersions(ctx context.Context, url string, header transportation.OCPIRequestHeader, credentialID int64) []*db.Version {
 	if response, err := r.OCPIRequester.Do(http.MethodGet, url, header, nil); err == nil {
 		ocpiResponse, err := r.UnmarshalPullDto(response.Body)
 		response.Body.Close()
 
-		if err == nil && ocpiResponse.StatusCode == ocpi.STATUS_CODE_OK {
+		if err == nil && ocpiResponse.StatusCode == transportation.STATUS_CODE_OK {
 			return r.ReplaceVersions(ctx, credentialID, ocpiResponse.Data)
 		}
 	}

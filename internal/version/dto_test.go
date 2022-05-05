@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
-	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	versionMocks "github.com/satimoto/go-ocpi-api/internal/version/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
@@ -21,7 +21,7 @@ func TestCreateDto(t *testing.T) {
 	t.Run("Create dto", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
 
 		response := versionResolver.CreateVersionListDto(ctx)
 		responseJson, _ := json.Marshal(response)

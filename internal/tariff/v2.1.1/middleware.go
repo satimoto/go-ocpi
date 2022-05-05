@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 func (r *TariffResolver) TariffContext(next http.Handler) http.Handler {
@@ -23,6 +23,6 @@ func (r *TariffResolver) TariffContext(next http.Handler) http.Handler {
 			}
 		}
 
-		render.Render(rw, request, ocpi.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
 	})
 }
