@@ -28,7 +28,7 @@ func (s *MockOcpiService) RegisterCredential(ctx context.Context, in *ocpirpc.Re
 	return response, nil
 }
 
-func (s *MockOcpiService) UnunregisterCredential(ctx context.Context, in *ocpirpc.UnregisterCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.UnregisterCredentialResponse, error) {
+func (s *MockOcpiService) UnregisterCredential(ctx context.Context, in *ocpirpc.UnregisterCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.UnregisterCredentialResponse, error) {
 	if len(s.unregisterCredentialMockData) == 0 {
 		return &ocpirpc.UnregisterCredentialResponse{}, errors.New("NotFound")
 	}
@@ -46,6 +46,6 @@ func (s *MockOcpiService) SetRegisterCredentialMockData(mockData *ocpirpc.Regist
 	s.registerCredentialMockData = append(s.registerCredentialMockData, mockData)
 }
 
-func (s *MockOcpiService) SetUnunregisterCredentialMockData(mockData *ocpirpc.UnregisterCredentialResponse) {
+func (s *MockOcpiService) SetUnregisterCredentialMockData(mockData *ocpirpc.UnregisterCredentialResponse) {
 	s.unregisterCredentialMockData = append(s.unregisterCredentialMockData, mockData)
 }
