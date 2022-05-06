@@ -17,7 +17,7 @@ import (
 	"github.com/satimoto/go-datastore/util"
 	cdr "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1"
 	cdrMocks "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1/mocks"
-	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
@@ -47,7 +47,7 @@ func TestCdrRequest(t *testing.T) {
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -67,7 +67,7 @@ func TestCdrRequest(t *testing.T) {
 	t.Run("Get cdr 1", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -118,7 +118,7 @@ func TestCdrRequest(t *testing.T) {
 	t.Run("Get cdr 2", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -197,7 +197,7 @@ func TestCdrRequest(t *testing.T) {
 	t.Run("Post cdr", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -288,6 +288,7 @@ func TestCdrRequest(t *testing.T) {
 			"stopDateTime": {"Time": "2015-06-29T21:39:09Z", "Valid": true},
 			"authID": "DE8ACC12E46L89",
 			"authMethod": "AUTH_REQUEST",
+			"userID": 0,
 			"tokenID": 0,
 			"locationID": 0,
 			"evseID": 0,

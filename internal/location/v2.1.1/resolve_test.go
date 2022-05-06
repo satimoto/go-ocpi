@@ -23,7 +23,7 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Create Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 
@@ -44,9 +44,9 @@ func TestReplaceLocation(t *testing.T) {
 		}
 
 		cred := db.Credential{
-			ID: 1,
-			CountryCode: "FR",	
-			PartyID: "GER",
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
 		}
 
 		countryCode := "DE"
@@ -101,7 +101,7 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Update Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := geom.NewPoint("31.3434", "-62.6996")
@@ -132,9 +132,9 @@ func TestReplaceLocation(t *testing.T) {
 		}
 
 		cred := db.Credential{
-			ID: 1,
-			CountryCode: "FR",	
-			PartyID: "GER",
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
 		}
 
 		countryCode := "DE"
@@ -177,7 +177,7 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Update Location with Evses", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := geom.NewPoint("31.3434", "-62.6996")
@@ -218,9 +218,9 @@ func TestReplaceLocation(t *testing.T) {
 		}
 
 		cred := db.Credential{
-			ID: 1,
-			CountryCode: "FR",	
-			PartyID: "GER",
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
 		}
 
 		locationResolver.ReplaceLocation(ctx, cred, "LOC1", &dto)

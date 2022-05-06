@@ -22,11 +22,11 @@ type Rpc interface {
 }
 
 type RpcService struct {
-	*db.RepositoryService
-	*grpc.Server
-	*command.RpcCommandResolver
-	*credential.RpcCredentialResolver
-	*token.RpcTokenResolver
+	RepositoryService     *db.RepositoryService
+	Server                *grpc.Server
+	RpcCommandResolver    *command.RpcCommandResolver
+	RpcCredentialResolver *credential.RpcCredentialResolver
+	RpcTokenResolver      *token.RpcTokenResolver
 }
 
 func NewRpc(d *sql.DB) Rpc {

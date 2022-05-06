@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-chi/render"
 
-	//credential "github.com/satimoto/go-ocpi-api/internal/credential"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
@@ -13,7 +12,7 @@ func (r *VersionResolver) GetVersions(rw http.ResponseWriter, request *http.Requ
 	ctx := request.Context()
 	dto := r.CreateVersionListDto(ctx)
 
-	if err := render.Render(rw, request, transportation.OCPISuccess(dto)); err != nil {
-		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
+		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 }

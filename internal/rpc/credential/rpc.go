@@ -41,10 +41,56 @@ func (r *RpcCredentialResolver) CreateCredential(ctx context.Context, request *o
 }
 
 func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request *ocpirpc.RegisterCredentialRequest) (*ocpirpc.RegisterCredentialResponse, error) {
+	if request != nil {
+		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)
+
+		if err != nil {
+			util.LogOnError("OCPI005", "Error retrieving credential", err)
+			log.Printf("OCPI005: CredentialID=%v", request.Id)
+			return nil, errors.New("Error registering credential")
+		}
+
+		token := credential.ClientToken.String
+
+		if len(request.ClientToken) > 0 {
+			token = request.ClientToken
+		}
+
+		_, err = r.CredentialResolver.RegisterCredential(ctx, credential, token, credential.Url, credential.CountryCode, credential.PartyID)
+
+		if err != nil {
+			util.LogOnError("OCPI006", "Error registering credential", err)
+			log.Printf("OCPI006: CredentialID=%v, Token=%v", credential.ID, token)
+			return nil, errors.New("Error registering credential")
+		}
+
+		return &ocpirpc.RegisterCredentialResponse{Id: credential.ID}, nil
+	}
+
 	return nil, errors.New("Missing request")
 }
 
 func (r *RpcCredentialResolver) UnregisterCredential(ctx context.Context, request *ocpirpc.UnregisterCredentialRequest) (*ocpirpc.UnregisterCredentialResponse, error) {
+	if request != nil {
+		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)
+
+		if err != nil {
+			util.LogOnError("OCPI007", "Error retrieving credential", err)
+			log.Printf("OCPI007: CredentialID=%v", request.Id)
+			return nil, errors.New("Error unregistering credential")
+		}
+
+		_, err = r.CredentialResolver.UnregisterCredential(ctx, credential)
+
+		if err != nil {
+			util.LogOnError("OCPI008", "Error unregistering credential", err)
+			log.Printf("OCPI008: CredentialID=%v", credential.ID)
+			return nil, errors.New("Error unregistering credential")
+		}
+
+		return &ocpirpc.UnregisterCredentialResponse{Id: credential.ID}, nil
+	}
+
 	return nil, errors.New("Missing request")
 }
 
@@ -86,7 +132,7 @@ func (r *RpcCredentialResolver) createImage(ctx context.Context, request *ocpirp
 			log.Printf("OCPI004: Params=%#v", params)
 			return nil, errors.New("Error creating image")
 		}
-	
+
 		return &image, nil
 	}
 

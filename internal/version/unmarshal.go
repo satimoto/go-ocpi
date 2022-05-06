@@ -5,7 +5,6 @@ import (
 	"io"
 )
 
-
 func (r *VersionResolver) UnmarshalPushDto(body io.ReadCloser) (*VersionDto, error) {
 	dto := VersionDto{}
 
@@ -16,8 +15,8 @@ func (r *VersionResolver) UnmarshalPushDto(body io.ReadCloser) (*VersionDto, err
 	return &dto, nil
 }
 
-func (r *VersionResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPIVersionsDto, error) {
-	response := OCPIVersionsDto{}
+func (r *VersionResolver) UnmarshalPullDto(body io.ReadCloser) (*OcpiVersionsDto, error) {
+	response := OcpiVersionsDto{}
 
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		return nil, err

@@ -163,6 +163,7 @@ func TestReplaceEvse(t *testing.T) {
 			"powerType": "AC_3_PHASE",
 			"voltage": 220,
 			"amperage": 16,
+			"wattage": 10560,
 			"tariffID": {"String": "12", "Valid": true},
 			"termsAndConditions": {"String": "", "Valid": false},
 			"lastUpdated": "2015-03-16T10:10:02Z"

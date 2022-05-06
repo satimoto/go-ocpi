@@ -4,10 +4,9 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/credential"
 	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
 
 type TokenRepository interface {
@@ -17,26 +16,30 @@ type TokenRepository interface {
 	GetTokenByAuthID(ctx context.Context, authID string) (db.Token, error)
 	GetTokenByUid(ctx context.Context, uid string) (db.Token, error)
 	GetTokenByUserID(ctx context.Context, arg db.GetTokenByUserIDParams) (db.Token, error)
+	ListCredentials(ctx context.Context) ([]db.Credential, error)
 	ListTokens(ctx context.Context, arg db.ListTokensParams) ([]db.Token, error)
 	ListTokensByUserID(ctx context.Context, userID int64) ([]db.Token, error)
 	UpdateTokenByUid(ctx context.Context, arg db.UpdateTokenByUidParams) (db.Token, error)
 }
 
 type TokenResolver struct {
-	Repository TokenRepository
-	*transportation.OCPIRequester
-	*credential.CredentialResolver
-	*tokenauthorization.TokenAuthorizationResolver
-	*versiondetail.VersionDetailResolver
+	Repository                 TokenRepository
+	OcpiRequester              *transportation.OcpiRequester
+	TokenAuthorizationResolver *tokenauthorization.TokenAuthorizationResolver
+	VersionDetailResolver      *versiondetail.VersionDetailResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *TokenResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *TokenResolver {
 	repo := TokenRepository(repositoryService)
+
 	return &TokenResolver{
 		Repository:                 repo,
-		OCPIRequester:              transportation.NewOCPIRequester(),
-		CredentialResolver:         credential.NewResolver(repositoryService),
+		OcpiRequester:              ocpiRequester,
 		TokenAuthorizationResolver: tokenauthorization.NewResolver(repositoryService),
-		VersionDetailResolver:      versiondetail.NewResolver(repositoryService),
+		VersionDetailResolver:      versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

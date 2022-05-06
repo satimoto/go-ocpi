@@ -15,13 +15,14 @@ type ElementRepository interface {
 }
 
 type ElementResolver struct {
-	Repository ElementRepository
-	*elementrestriction.ElementRestrictionResolver
-	*pricecomponent.PriceComponentResolver
+	Repository                 ElementRepository
+	ElementRestrictionResolver *elementrestriction.ElementRestrictionResolver
+	PriceComponentResolver     *pricecomponent.PriceComponentResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *ElementResolver {
 	repo := ElementRepository(repositoryService)
+	
 	return &ElementResolver{
 		Repository:                 repo,
 		ElementRestrictionResolver: elementrestriction.NewResolver(repositoryService),

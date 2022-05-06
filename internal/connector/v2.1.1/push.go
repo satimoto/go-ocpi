@@ -15,8 +15,8 @@ func (r *ConnectorResolver) GetConnector(rw http.ResponseWriter, request *http.R
 	connector := ctx.Value("connector").(db.Connector)
 	dto := r.CreateConnectorDto(ctx, connector)
 
-	if err := render.Render(rw, request, transportation.OCPISuccess(dto)); err != nil {
-		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
+		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 }
 
@@ -27,7 +27,7 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 	dto := ConnectorDto{}
 
 	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
-		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 		return
 	}
 
@@ -38,17 +38,17 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 			ID:          evse.ID,
 			LastUpdated: connector.LastUpdated,
 		})
-	
+
 		err = r.Repository.UpdateLocationLastUpdated(ctx, db.UpdateLocationLastUpdatedParams{
 			ID:          evse.LocationID,
 			LastUpdated: connector.LastUpdated,
 		})
-	
+
 		if err != nil {
-			render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+			render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 			return
-		}	
+		}
 	}
 
-	render.Render(rw, request, transportation.OCPISuccess(nil))
+	render.Render(rw, request, transportation.OcpiSuccess(nil))
 }

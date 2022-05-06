@@ -12,7 +12,7 @@ var (
 	version = "2.1.1"
 )
 
-type OCPIVersionDetailDto struct {
+type OcpiVersionDetailDto struct {
 	Data          *VersionDetailDto `json:"data,omitempty"`
 	StatusCode    int16             `json:"status_code"`
 	StatusMessage string            `json:"status_message"`

@@ -23,6 +23,6 @@ func (r *SessionResolver) SessionContext(next http.Handler) http.Handler {
 			}
 		}
 
-		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OcpiErrorUnknownResource(nil))
 	})
 }

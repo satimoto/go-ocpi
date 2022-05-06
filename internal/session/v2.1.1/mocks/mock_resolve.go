@@ -8,19 +8,23 @@ import (
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1/mocks"
 	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1/mocks"
+	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/mocks"
 )
 
-func NewResolver(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OCPIRequester) *session.SessionResolver {
+func NewResolver(repositoryService *mocks.MockRepositoryService) *session.SessionResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *session.SessionResolver {
 	repo := session.SessionRepository(repositoryService)
 
 	return &session.SessionResolver{
 		Repository:                 repo,
-		OCPIRequester:              ocpiRequester,
+		OcpiRequester:              ocpiRequester,
 		ChargingPeriodResolver:     chargingperiod.NewResolver(repositoryService),
-		LocationResolver:           location.NewResolver(repositoryService, ocpiRequester),
-		TokenResolver:              token.NewResolver(repositoryService, ocpiRequester),
+		LocationResolver:           location.NewResolverWithServices(repositoryService, ocpiRequester),
+		TokenResolver:              token.NewResolverWithServices(repositoryService, ocpiRequester),
 		TokenAuthorizationResolver: tokenauthorization.NewResolver(repositoryService),
-		VersionDetailResolver:      versiondetail.NewResolver(repositoryService, ocpiRequester),
+		VersionDetailResolver:      versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

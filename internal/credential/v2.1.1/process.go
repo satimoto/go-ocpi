@@ -2,11 +2,8 @@ package credential
 
 import (
 	"context"
-	"time"
 
-	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
@@ -25,45 +22,16 @@ func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential d
 			url = *dto.Url
 		}
 
-		if dto.PartyID != nil {
-			partyID = *dto.PartyID
-		}
-
 		if dto.CountryCode != nil {
 			countryCode = *dto.CountryCode
 		}
 
-		header := transportation.NewOCPIRequestHeader(&token, nil, nil)
-
-		r.VersionResolver.PullVersions(ctx, url, header, credential.ID)
-		version := r.VersionResolver.GetBestVersion(ctx, credential.ID)
-
-		if version != nil {
-			r.VersionDetailResolver.PullVersionEndpoints(ctx, version.Url, header, version.ID)
-
-			params := db.UpdateCredentialParams{
-				ID:          credential.ID,
-				ClientToken: util.SqlNullString(token),
-				ServerToken: util.SqlNullString(uuid.NewString()),
-				Url:         url,
-				PartyID:     partyID,
-				CountryCode: countryCode,
-				LastUpdated: time.Now(),
-			}
-
-			if dto.BusinessDetail != nil {
-				r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, &credential.BusinessDetailID, dto.BusinessDetail)
-			}
-
-			if cred, err := r.Repository.UpdateCredential(ctx, params); err == nil {
-				go r.SyncResolver.SynchronizeCredential(ctx, cred)
-
-				return &cred, nil
-			}
-		} else {
-			return nil, transportation.OCPIUnsupportedVersion(nil)
+		if dto.PartyID != nil {
+			partyID = *dto.PartyID
 		}
+
+		return r.CredentialResolver.RegisterCredential(ctx, credential, token, url, countryCode, partyID)
 	}
 
-	return nil, transportation.OCPIRegistrationError(nil)
+	return nil, transportation.OcpiRegistrationError(nil)
 }

@@ -47,6 +47,12 @@ func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *ocpirpc.Rese
 			return nil, errors.New("Credential not found")
 		}
 
+		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
+			log.Printf("Error Credential not registered")
+			log.Printf("CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
+			return nil, errors.New("Error requesting reservation")
+		}
+
 		command, err := r.CommandResolver.ReserveNow(ctx, credential, token, location, &input.EvseUid, *expiryDate)
 
 		if err != nil {
@@ -98,6 +104,12 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 			return nil, errors.New("Credential not found")
 		}
 
+		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
+			log.Printf("Error Credential not registered")
+			log.Printf("CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
+			return nil, errors.New("Error requesting reservation")
+		}
+
 		command, err := r.CommandResolver.StartSession(ctx, credential, token, location, &input.EvseUid)
 
 		if err != nil {
@@ -130,6 +142,12 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 			log.Printf("Error StopSession GetCredential: %v", err)
 			log.Printf("%#v", input)
 			return nil, errors.New("Credential not found")
+		}
+
+		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
+			log.Printf("Error Credential not registered")
+			log.Printf("CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
+			return nil, errors.New("Error requesting reservation")
 		}
 
 		command, err := r.CommandResolver.StopSession(ctx, credential, input.SessionUid)
@@ -166,6 +184,12 @@ func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *ocpirpc
 			return nil, errors.New("Credential not found")
 		}
 
+		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
+			log.Printf("Error Credential not registered")
+			log.Printf("CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
+			return nil, errors.New("Error requesting reservation")
+		}
+		
 		command, err := r.CommandResolver.UnlockConnector(ctx, credential, location, input.EvseUid, input.ConnectorUid)
 
 		if err != nil {

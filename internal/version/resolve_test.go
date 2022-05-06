@@ -11,8 +11,8 @@ import (
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-datastore/util"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
-	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	versionMocks "github.com/satimoto/go-ocpi-api/internal/version/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
@@ -26,7 +26,7 @@ func TestPullVersions(t *testing.T) {
 	t.Run("Success request", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		bodyBytes := `{
 			"data": [{
@@ -46,7 +46,7 @@ func TestPullVersions(t *testing.T) {
 			},
 		})
 
-		header := ocpi.OCPIRequestHeader{
+		header := transportation.OcpiRequestHeader{
 			Authentication: util.NilString("F72FB7A3-BD45-4A9E-8972-D0452EA0F452"),
 			ToCountryCode:  util.NilString("DE"),
 			ToPartyId:      util.NilString("EXA"),

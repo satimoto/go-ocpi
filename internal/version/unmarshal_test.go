@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
-	"github.com/satimoto/go-ocpi-api/internal/ocpi"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	versionMocks "github.com/satimoto/go-ocpi-api/internal/version/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
@@ -24,10 +24,10 @@ func TestUnmarshalResponse(t *testing.T) {
 	t.Run("Success response", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		dto := versionResolver.CreateVersionListDto(ctx)
-		response := ocpi.OCPISuccess(dto)
+		response := transportation.OcpiSuccess(dto)
 		responseJson, _ := json.Marshal(response)
 		readerCloser := io.NopCloser(strings.NewReader(string(responseJson)))
 		unmarshalReponse, _ := versionResolver.UnmarshalPullDto(readerCloser)
@@ -43,14 +43,14 @@ func TestUnmarshalResponse(t *testing.T) {
 	t.Run("Error response", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
-		response := ocpi.OCPIRegistrationError(nil)
+		response := transportation.OcpiRegistrationError(nil)
 		responseJson, _ := json.Marshal(response)
 		readerCloser := io.NopCloser(strings.NewReader(string(responseJson)))
 		unmarshalReponse, _ := versionResolver.UnmarshalPullDto(readerCloser)
 
-		if unmarshalReponse.StatusCode != ocpi.STATUS_CODE_REGISTRATION_ERROR {
+		if unmarshalReponse.StatusCode != transportation.STATUS_CODE_REGISTRATION_ERROR {
 			t.Errorf("StatusCode mismatch: %v", unmarshalReponse.StatusCode)
 		}
 	})

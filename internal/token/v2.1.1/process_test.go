@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	tokenMocks "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
@@ -22,7 +22,7 @@ func TestTokenProcess(t *testing.T) {
 	t.Run("Generate AuthID", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		for i := 0; i < 1000; i++ {
 			authID, err := tokenResolver.GenerateAuthID(ctx)

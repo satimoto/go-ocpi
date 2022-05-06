@@ -24,5 +24,6 @@ type EnergyMixResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *EnergyMixResolver {
 	repo := EnergyMixRepository(repositoryService)
+	
 	return &EnergyMixResolver{repo}
 }

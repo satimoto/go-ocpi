@@ -10,7 +10,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
 	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
 
 type TariffRepository interface {
@@ -26,25 +26,29 @@ type TariffRepository interface {
 }
 
 type TariffResolver struct {
-	Repository TariffRepository
-	*transportation.OCPIRequester
-	*displaytext.DisplayTextResolver
-	*element.ElementResolver
-	*energymix.EnergyMixResolver
-	*tariffrestriction.TariffRestrictionResolver
-	*versiondetail.VersionDetailResolver
+	Repository                TariffRepository
+	OcpiRequester             *transportation.OcpiRequester
+	DisplayTextResolver       *displaytext.DisplayTextResolver
+	ElementResolver           *element.ElementResolver
+	EnergyMixResolver         *energymix.EnergyMixResolver
+	TariffRestrictionResolver *tariffrestriction.TariffRestrictionResolver
+	VersionDetailResolver     *versiondetail.VersionDetailResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *TariffResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *TariffResolver {
 	repo := TariffRepository(repositoryService)
-	
+
 	return &TariffResolver{
 		Repository:                repo,
-		OCPIRequester:             transportation.NewOCPIRequester(),
+		OcpiRequester:             ocpiRequester,
 		DisplayTextResolver:       displaytext.NewResolver(repositoryService),
 		ElementResolver:           element.NewResolver(repositoryService),
 		EnergyMixResolver:         energymix.NewResolver(repositoryService),
 		TariffRestrictionResolver: tariffrestriction.NewResolver(repositoryService),
-		VersionDetailResolver:     versiondetail.NewResolver(repositoryService),
+		VersionDetailResolver:     versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

@@ -5,14 +5,14 @@ import (
 	"strconv"
 )
 
-type OCPIRequestHeader struct {
+type OcpiRequestHeader struct {
 	Authentication *string
-	ToCountryCode *string
-	ToPartyId *string
+	ToCountryCode  *string
+	ToPartyId      *string
 }
 
-func NewOCPIRequestHeader(token *string, countryCode *string, partyID *string) OCPIRequestHeader {
-	return OCPIRequestHeader{
+func NewOcpiRequestHeader(token *string, countryCode *string, partyID *string) OcpiRequestHeader {
+	return OcpiRequestHeader{
 		Authentication: token,
 		ToCountryCode:  countryCode,
 		ToPartyId:      partyID,

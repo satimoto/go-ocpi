@@ -15,8 +15,8 @@ func (r *LocationResolver) UnmarshalPushDto(body io.ReadCloser) (*LocationDto, e
 	return &dto, nil
 }
 
-func (r *LocationResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPILocationsDto, error) {
-	response := OCPILocationsDto{}
+func (r *LocationResolver) UnmarshalPullDto(body io.ReadCloser) (*OcpiLocationsDto, error) {
+	response := OcpiLocationsDto{}
 
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		return nil, err

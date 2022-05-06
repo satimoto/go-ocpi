@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-type OCPIVersionsDto struct {
+type OcpiVersionsDto struct {
 	Data          []*VersionDto `json:"data,omitempty"`
 	StatusCode    int16         `json:"status_code"`
 	StatusMessage string        `json:"status_message"`

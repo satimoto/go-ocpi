@@ -27,8 +27,8 @@ func (r *VersionDetailResolver) ReplaceVersionEndpoints(ctx context.Context, ver
 	return endpoints
 }
 
-func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url string, header transportation.OCPIRequestHeader, versionID int64) []*db.VersionEndpoint {
-	if response, err := r.OCPIRequester.Do(http.MethodGet, url, header, nil); err == nil {
+func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url string, header transportation.OcpiRequestHeader, versionID int64) []*db.VersionEndpoint {
+	if response, err := r.OcpiRequester.Do(http.MethodGet, url, header, nil); err == nil {
 		ocpiResponse, err := r.UnmarshalPullDto(response.Body)
 		response.Body.Close()
 

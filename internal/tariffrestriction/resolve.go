@@ -23,5 +23,6 @@ type TariffRestrictionResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *TariffRestrictionResolver {
 	repo := TariffRestrictionRepository(repositoryService)
+	
 	return &TariffRestrictionResolver{repo}
 }

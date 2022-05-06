@@ -18,6 +18,7 @@ func (r *LocationResolver) GetLastLocationByIdentity(ctx context.Context, creden
 	if countryCode != nil {
 		params.CountryCode = *countryCode
 	}
+	
 	if partyID != nil {
 		params.PartyID = *partyID
 	}

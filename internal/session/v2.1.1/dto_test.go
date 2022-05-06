@@ -8,8 +8,8 @@ import (
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	sessionMocks "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
@@ -19,7 +19,7 @@ func TestCreateSessionDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		sess := db.Session{}
 
@@ -43,7 +43,7 @@ func TestCreateSessionDto(t *testing.T) {
 	t.Run("Simple", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		sess := db.Session{
 			Uid:           "SESSION0001",
@@ -76,7 +76,7 @@ func TestCreateSessionDto(t *testing.T) {
 	t.Run("With charge periods", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{

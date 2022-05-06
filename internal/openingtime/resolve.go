@@ -27,5 +27,6 @@ type OpeningTimeResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *OpeningTimeResolver {
 	repo := OpeningTimeRepository(repositoryService)
+	
 	return &OpeningTimeResolver{repo}
 }

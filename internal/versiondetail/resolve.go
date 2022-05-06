@@ -16,15 +16,19 @@ type VersionDetailRepository interface {
 }
 
 type VersionDetailResolver struct {
-	Repository VersionDetailRepository
-	*transportation.OCPIRequester
+	Repository    VersionDetailRepository
+	OcpiRequester *transportation.OcpiRequester
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *VersionDetailResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *VersionDetailResolver {
 	repo := VersionDetailRepository(repositoryService)
 
 	return &VersionDetailResolver{
 		Repository:    repo,
-		OCPIRequester: transportation.NewOCPIRequester(),
+		OcpiRequester: ocpiRequester,
 	}
 }
