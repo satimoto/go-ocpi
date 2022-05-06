@@ -15,8 +15,8 @@ func (r *SessionResolver) UnmarshalPushDto(body io.ReadCloser) (*SessionDto, err
 	return &dto, nil
 }
 
-func (r *SessionResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPISessionsDto, error) {
-	response := OCPISessionsDto{}
+func (r *SessionResolver) UnmarshalPullDto(body io.ReadCloser) (*OcpiSessionsDto, error) {
+	response := OcpiSessionsDto{}
 
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		return nil, err

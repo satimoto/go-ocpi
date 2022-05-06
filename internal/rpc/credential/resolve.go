@@ -11,13 +11,14 @@ type RpcCredentialRepository interface{}
 
 type RpcCredentialResolver struct {
 	Repository RpcCredentialRepository
-	*businessdetail.BusinessDetailResolver
-	*credential.CredentialResolver
-	*image.ImageResolver
+	BusinessDetailResolver *businessdetail.BusinessDetailResolver
+	CredentialResolver *credential.CredentialResolver
+	ImageResolver *image.ImageResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *RpcCredentialResolver {
 	repo := RpcCredentialRepository(repositoryService)
+
 	return &RpcCredentialResolver{
 		Repository:             repo,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),

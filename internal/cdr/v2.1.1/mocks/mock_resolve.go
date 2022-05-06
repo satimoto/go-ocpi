@@ -9,20 +9,24 @@ import (
 	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1/mocks"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1/mocks"
+	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/mocks"
 )
 
-func NewResolver(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OCPIRequester) *cdr.CdrResolver {
+func NewResolver(repositoryService *mocks.MockRepositoryService) *cdr.CdrResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *cdr.CdrResolver {
 	repo := cdr.CdrRepository(repositoryService)
 
 	return &cdr.CdrResolver{
 		Repository:             repo,
-		OCPIRequester:          ocpiRequester,
+		OcpiRequester:          ocpiRequester,
 		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
-		LocationResolver:       location.NewResolver(repositoryService, ocpiRequester),
-		TariffResolver:         tariff.NewResolver(repositoryService, ocpiRequester),
-		TokenResolver:          token.NewResolver(repositoryService, ocpiRequester),
-		VersionDetailResolver:  versiondetail.NewResolver(repositoryService, ocpiRequester),
+		LocationResolver:       location.NewResolverWithServices(repositoryService, ocpiRequester),
+		TariffResolver:         tariff.NewResolverWithServices(repositoryService, ocpiRequester),
+		TokenResolver:          token.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionDetailResolver:  versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

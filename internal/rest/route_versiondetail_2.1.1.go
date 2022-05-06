@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
 
 func (rs *RestService) mountVersionDetails() *chi.Mux {

@@ -16,5 +16,6 @@ type DisplayTextResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *DisplayTextResolver {
 	repo := DisplayTextRepository(repositoryService)
+	
 	return &DisplayTextResolver{repo}
 }

@@ -15,8 +15,8 @@ func (r *TariffResolver) UnmarshalPushDto(body io.ReadCloser) (*TariffDto, error
 	return &dto, nil
 }
 
-func (r *TariffResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPITariffsDto, error) {
-	dto := OCPITariffsDto{}
+func (r *TariffResolver) UnmarshalPullDto(body io.ReadCloser) (*OcpiTariffsDto, error) {
+	dto := OcpiTariffsDto{}
 
 	if err := json.NewDecoder(body).Decode(&dto); err != nil {
 		return nil, err

@@ -12,7 +12,7 @@ import (
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 )
 
-type OCPISessionsDto struct {
+type OcpiSessionsDto struct {
 	Data          []*SessionDto `json:"data,omitempty"`
 	StatusCode    int16         `json:"status_code"`
 	StatusMessage string        `json:"status_message"`

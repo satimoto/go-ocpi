@@ -1,16 +1,22 @@
-package credential
+package middleware
 
 import (
 	"context"
 	"database/sql"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
+
+type CredentialRepository interface {
+	GetCredentialByPartyAndCountryCode(ctx context.Context, arg db.GetCredentialByPartyAndCountryCodeParams) (db.Credential, error)
+	GetCredentialByServerToken(ctx context.Context, serverToken sql.NullString) (db.Credential, error)
+}
 
 func GetCredentialByToken(r CredentialRepository, ctx context.Context, request *http.Request) (db.Credential, error) {
 	if token := GetAuthenticationToken(request); token != "" {
@@ -30,7 +36,7 @@ func CredentialContextByToken(r CredentialRepository, next http.Handler) http.Ha
 			return
 		}
 
-		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OcpiErrorUnknownResource(nil))
 	})
 }
 
@@ -54,7 +60,7 @@ func CredentialContextByPartyAndCountry(r CredentialRepository, next http.Handle
 			}
 		}
 
-		render.Render(rw, request, transportation.OCPIErrorUnknownResource(nil))
+		render.Render(rw, request, transportation.OcpiErrorUnknownResource(nil))
 	})
 }
 
@@ -68,6 +74,14 @@ func GetCredential(ctx context.Context) *db.Credential {
 	return nil
 }
 
+func GetAuthenticationToken(r *http.Request) string {
+	authentication := r.Header.Get("Authentication")
+	if len(authentication) > 6 && strings.ToUpper(authentication[0:5]) == "TOKEN" {
+		return authentication[6:]
+	}
+
+	return ""
+}
 
 func GetCountryCode(request *http.Request) *string {
 	ctx := request.Context()

@@ -42,7 +42,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 		return nil, errors.New("Error requesting reservation")
 	}
 
-	header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 	dto := NewCommandReservationDto(command)
 	dtoBytes, err := json.Marshal(dto)
 
@@ -53,7 +53,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	}
 
 	util.AppendPath(requestUrl, "RESERVE_NOW")
-	response, err := r.OCPIRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
 
 	if err != nil {
 		log.Printf("Error ReserveNow Do: %v", err)
@@ -108,7 +108,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		return nil, errors.New("Error starting session")
 	}
 
-	header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 	dto := NewCommandStartDto(command)
 	dtoBytes, err := json.Marshal(dto)
 
@@ -119,7 +119,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	}
 
 	util.AppendPath(requestUrl, "START_SESSION")
-	response, err := r.OCPIRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
 
 	if err != nil {
 		log.Printf("Error StartSession Do: %v", err)
@@ -174,7 +174,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 		return nil, errors.New("Error stopping session")
 	}
 
-	header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 	dto := NewCommandStopDto(command)
 	dtoBytes, err := json.Marshal(dto)
 
@@ -185,7 +185,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	}
 
 	util.AppendPath(requestUrl, "STOP_SESSION")
-	response, err := r.OCPIRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
 
 	if err != nil {
 		log.Printf("Error StopSession Do: %v", err)
@@ -240,7 +240,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		return nil, errors.New("Error unlocking connector")
 	}
 
-	header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 	dto := NewCommandUnlockDto(command)
 	dtoBytes, err := json.Marshal(dto)
 
@@ -251,7 +251,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 	}
 
 	util.AppendPath(requestUrl, "UNLOCK_CONNECTOR")
-	response, err := r.OCPIRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
 
 	if err != nil {
 		log.Printf("Error UnlockConnector Do: %v", err)

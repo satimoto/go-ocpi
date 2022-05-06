@@ -14,6 +14,7 @@ type RpcTokenResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *RpcTokenResolver {
 	repo := RpcTokenRepository(repositoryService)
+	
 	return &RpcTokenResolver{
 		Repository:    repo,
 		TokenResolver: token.NewResolver(repositoryService),

@@ -16,12 +16,13 @@ type BusinessDetailRepository interface {
 }
 
 type BusinessDetailResolver struct {
-	Repository BusinessDetailRepository
-	*image.ImageResolver
+	Repository    BusinessDetailRepository
+	ImageResolver *image.ImageResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *BusinessDetailResolver {
 	repo := BusinessDetailRepository(repositoryService)
+	
 	return &BusinessDetailResolver{
 		Repository:    repo,
 		ImageResolver: image.NewResolver(repositoryService),

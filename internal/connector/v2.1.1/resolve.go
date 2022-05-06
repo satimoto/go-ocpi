@@ -23,5 +23,6 @@ type ConnectorResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *ConnectorResolver {
 	repo := ConnectorRepository(repositoryService)
+	
 	return &ConnectorResolver{repo}
 }

@@ -29,7 +29,7 @@ func TestCreateCredentialDto(t *testing.T) {
 	t.Run("Create dto", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		credential := db.Credential{
 			ClientToken:      util.SqlNullString("EF3ABC19-84AB-476D-A12D-17FA42FB3CE5"),

@@ -19,13 +19,14 @@ type TokenAuthorizationRepository interface {
 }
 
 type TokenAuthorizationResolver struct {
-	Repository TokenAuthorizationRepository
-	*connector.ConnectorResolver
-	*evse.EvseResolver
+	Repository        TokenAuthorizationRepository
+	ConnectorResolver *connector.ConnectorResolver
+	EvseResolver      *evse.EvseResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *TokenAuthorizationResolver {
 	repo := TokenAuthorizationRepository(repositoryService)
+	
 	return &TokenAuthorizationResolver{
 		Repository:        repo,
 		ConnectorResolver: connector.NewResolver(repositoryService),

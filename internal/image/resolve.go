@@ -17,5 +17,6 @@ type ImageResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *ImageResolver {
 	repo := ImageRepository(repositoryService)
+	
 	return &ImageResolver{repo}
 }

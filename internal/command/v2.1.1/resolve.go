@@ -7,7 +7,7 @@ import (
 	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
 
 type CommandRepository interface {
@@ -26,18 +26,23 @@ type CommandRepository interface {
 }
 
 type CommandResolver struct {
-	Repository CommandRepository
-	*transportation.OCPIRequester
-	*session.SessionResolver
-	*token.TokenResolver
-	*versiondetail.VersionDetailResolver
+	Repository            CommandRepository
+	OcpiRequester         *transportation.OcpiRequester
+	SessionResolver       *session.SessionResolver
+	TokenResolver         *token.TokenResolver
+	VersionDetailResolver *versiondetail.VersionDetailResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *CommandResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CommandResolver {
 	repo := CommandRepository(repositoryService)
+
 	return &CommandResolver{
 		Repository:            repo,
-		OCPIRequester:         transportation.NewOCPIRequester(),
+		OcpiRequester:         ocpiRequester,
 		SessionResolver:       session.NewResolver(repositoryService),
 		TokenResolver:         token.NewResolver(repositoryService),
 		VersionDetailResolver: versiondetail.NewResolver(repositoryService),

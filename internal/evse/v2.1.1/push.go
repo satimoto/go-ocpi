@@ -15,8 +15,8 @@ func (r *EvseResolver) GetEvse(rw http.ResponseWriter, request *http.Request) {
 	evse := ctx.Value("evse").(db.Evse)
 	dto := r.CreateEvseDto(ctx, evse)
 
-	if err := render.Render(rw, request, transportation.OCPISuccess(dto)); err != nil {
-		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
+		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 }
 
@@ -27,7 +27,7 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 	dto := EvseDto{}
 
 	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
-		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 		return
 	}
 
@@ -37,17 +37,17 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 		if dto.Capabilities != nil || dto.Status != nil {
 			r.updateLocationAvailability(ctx, evse.ID)
 		}
-	
+
 		err := r.Repository.UpdateLocationLastUpdated(ctx, db.UpdateLocationLastUpdatedParams{
 			ID:          location.ID,
 			LastUpdated: evse.LastUpdated,
 		})
-	
+
 		if err != nil {
-			render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+			render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 			return
 		}
 	}
 
-	render.Render(rw, request, transportation.OCPISuccess(nil))
+	render.Render(rw, request, transportation.OcpiSuccess(nil))
 }

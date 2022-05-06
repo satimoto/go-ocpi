@@ -10,7 +10,7 @@ import (
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
 	locationMocks "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1/mocks"
-	ocpiMocks "github.com/satimoto/go-ocpi-api/internal/ocpi/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
@@ -20,7 +20,7 @@ func TestCreateLocationDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		loc := db.Location{}
 
@@ -49,7 +49,7 @@ func TestCreateLocationDto(t *testing.T) {
 	t.Run("With Evse", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		statusSchedules := []db.StatusSchedule{}
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
@@ -196,7 +196,7 @@ func TestCreateLocationDto(t *testing.T) {
 	t.Run("With Directions, Facilities", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		directions := []db.DisplayText{}
 		directions = append(directions, db.DisplayText{
@@ -265,7 +265,7 @@ func TestCreateLocationDto(t *testing.T) {
 	t.Run("With Coordinates, Related locations, Images", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolver(mockRepository, ocpiMocks.NewOCPIRequester(mockHTTPRequester))
+		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		coordinates := db.GeoLocation{
 			Latitude:  "50.770774",

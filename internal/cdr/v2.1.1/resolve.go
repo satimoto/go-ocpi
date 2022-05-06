@@ -10,7 +10,7 @@ import (
 	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
 
 type CdrRepository interface {
@@ -23,21 +23,26 @@ type CdrRepository interface {
 }
 
 type CdrResolver struct {
-	Repository CdrRepository
-	*transportation.OCPIRequester
-	*calibration.CalibrationResolver
-	*chargingperiod.ChargingPeriodResolver
-	*location.LocationResolver
-	*tariff.TariffResolver
-	*token.TokenResolver
-	*versiondetail.VersionDetailResolver
+	Repository             CdrRepository
+	OcpiRequester          *transportation.OcpiRequester
+	CalibrationResolver    *calibration.CalibrationResolver
+	ChargingPeriodResolver *chargingperiod.ChargingPeriodResolver
+	LocationResolver       *location.LocationResolver
+	TariffResolver         *tariff.TariffResolver
+	TokenResolver          *token.TokenResolver
+	VersionDetailResolver  *versiondetail.VersionDetailResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *CdrResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CdrResolver {
 	repo := CdrRepository(repositoryService)
+
 	return &CdrResolver{
 		Repository:             repo,
-		OCPIRequester:          transportation.NewOCPIRequester(),
+		OcpiRequester:          ocpiRequester,
 		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
 		LocationResolver:       location.NewResolver(repositoryService),

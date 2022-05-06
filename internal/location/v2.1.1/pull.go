@@ -16,7 +16,7 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 
 	if versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "locations", credential.CountryCode, credential.PartyID); err == nil {
 		if requestUrl, err := url.Parse(versionEndpoint.Url); err == nil {
-			header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, countryCode, partyID)
+			header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, countryCode, partyID)
 			query := requestUrl.Query()
 
 			if location, err := r.GetLastLocationByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
@@ -28,7 +28,7 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 				query.Set("offset", fmt.Sprintf("%d", offset))
 				requestUrl.RawQuery = query.Encode()
 
-				if response, err := r.OCPIRequester.Do(http.MethodGet, requestUrl.String(), header, nil); err == nil {
+				if response, err := r.OcpiRequester.Do(http.MethodGet, requestUrl.String(), header, nil); err == nil {
 					dto, err := r.UnmarshalPullDto(response.Body)
 					limit = transportation.GetXLimitHeader(response, limit)
 					response.Body.Close()

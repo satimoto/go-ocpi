@@ -11,15 +11,19 @@ import (
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	openingtime "github.com/satimoto/go-ocpi-api/internal/openingtime/mocks"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/v2.1.1/mocks"
+	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/mocks"
 )
 
-func NewResolver(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OCPIRequester) *location.LocationResolver {
+func NewResolver(repositoryService *mocks.MockRepositoryService) *location.LocationResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *location.LocationResolver {
 	repo := location.LocationRepository(repositoryService)
 
 	return &location.LocationResolver{
 		Repository:             repo,
-		OCPIRequester:          ocpiRequester,
+		OcpiRequester:          ocpiRequester,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		EnergyMixResolver:      energymix.NewResolver(repositoryService),
 		EvseResolver:           evse.NewResolver(repositoryService),
@@ -27,6 +31,6 @@ func NewResolver(repositoryService *mocks.MockRepositoryService, ocpiRequester *
 		GeoLocationResolver:    geolocation.NewResolver(repositoryService),
 		ImageResolver:          image.NewResolver(repositoryService),
 		OpeningTimeResolver:    openingtime.NewResolver(repositoryService),
-		VersionDetailResolver:  versiondetail.NewResolver(repositoryService, ocpiRequester),
+		VersionDetailResolver:  versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

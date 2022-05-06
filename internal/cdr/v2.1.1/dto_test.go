@@ -19,7 +19,7 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		sess := db.Cdr{
 			ID: 1,
@@ -47,7 +47,7 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("Simple", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		c := db.Cdr{
 			ID:            1,
@@ -86,7 +86,7 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("With charge periods", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{
@@ -153,7 +153,7 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("With charge periods", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		calibration := db.Calibration{
 			EncodingMethod: "Alfen Eichrecht",

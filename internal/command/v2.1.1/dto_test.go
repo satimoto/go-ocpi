@@ -26,7 +26,7 @@ func TestCreateCommandReservationDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		tok := db.Token{}
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
@@ -58,7 +58,7 @@ func TestCreateCommandReservationDto(t *testing.T) {
 	t.Run("Command reservation", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		tok := db.Token{
 			Uid:          "TOKEN00001",
@@ -114,7 +114,7 @@ func TestCreateCommandStartDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		tok := db.Token{}
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
@@ -144,7 +144,7 @@ func TestCreateCommandStartDto(t *testing.T) {
 	t.Run("Command start", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		tok := db.Token{
 			Uid:          "TOKEN00001",
@@ -196,7 +196,7 @@ func TestCreateCommandStopDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		cr := db.CommandStop{}
 
@@ -212,7 +212,7 @@ func TestCreateCommandStopDto(t *testing.T) {
 	t.Run("Command stop", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		cr := db.CommandStop{
 			ID:        1,
@@ -238,7 +238,7 @@ func TestCreateCommandUnlockDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		cr := db.CommandUnlock{}
 
@@ -256,7 +256,7 @@ func TestCreateCommandUnlockDto(t *testing.T) {
 	t.Run("Command unlock", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		cr := db.CommandUnlock{
 			ID:          1,

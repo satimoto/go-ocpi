@@ -19,9 +19,9 @@ func (r *CommandResolver) UnmarshalPushDto(body io.ReadCloser) (*CommandResponse
 	return nil, nil
 }
 
-func (r *CommandResolver) UnmarshalPullDto(body io.ReadCloser) (*OCPICommandResponseDto, error) {
+func (r *CommandResolver) UnmarshalPullDto(body io.ReadCloser) (*OcpiCommandResponseDto, error) {
 	if body != nil {
-		dto := OCPICommandResponseDto{}
+		dto := OcpiCommandResponseDto{}
 
 		if err := json.NewDecoder(body).Decode(&dto); err != nil {
 			return nil, err

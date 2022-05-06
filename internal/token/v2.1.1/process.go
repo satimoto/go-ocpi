@@ -44,8 +44,8 @@ func (r *TokenResolver) GenerateAuthID(ctx context.Context) (string, error) {
 	return "", errors.New("Error generating AuthID")
 }
 
-func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, dto *TokenDto) {
-	credentials, err := r.CredentialResolver.Repository.ListCredentials(ctx)
+func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid string, dto *TokenDto) {
+	credentials, err := r.Repository.ListCredentials(ctx)
 
 	if err != nil {
 		log.Printf("Error PushToken ListCredentials: %v", err)
@@ -73,7 +73,7 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, dto *T
 				continue
 			}
 
-			header := transportation.NewOCPIRequestHeader(&credential.ClientToken.String, nil, nil)
+			header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 			dtoBytes, err := json.Marshal(dto)
 
 			if err != nil {
@@ -82,8 +82,8 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, dto *T
 				continue
 			}
 
-			util.AppendPath(requestUrl, fmt.Sprintf("%s/%s/%s", countryCode, partyID, *dto.Uid))
-			response, err := r.OCPIRequester.Do(httpMethod, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+			util.AppendPath(requestUrl, fmt.Sprintf("%s/%s/%s", countryCode, partyID, uid))
+			response, err := r.OcpiRequester.Do(httpMethod, requestUrl.String(), header, bytes.NewReader(dtoBytes))
 
 			if err != nil {
 				log.Printf("Error PushToken Do: %v", err)
@@ -92,7 +92,7 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, dto *T
 			}
 
 			defer response.Body.Close()
-			pullDto, err := r.UnmarshalPullDto(response.Body)
+			pullDto, err := transportation.UnmarshalResponseDto(response.Body)
 
 			if err != nil || pullDto.StatusCode != transportation.STATUS_CODE_OK {
 				log.Printf("Error PushToken UnmarshalPullDto: %v", err)
@@ -144,7 +144,7 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAll
 
 			token, err = r.Repository.UpdateTokenByUid(ctx, tokenParams)
 
-			r.PushToken(ctx, http.MethodPatch, dto)
+			r.PushToken(ctx, http.MethodPatch, token.Uid, dto)
 		} else {
 			tokenParams := NewCreateTokenParams(dto)
 			tokenParams.Allowed = tokenAllowed
@@ -152,7 +152,7 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAll
 
 			token, err = r.Repository.CreateToken(ctx, tokenParams)
 
-			r.PushToken(ctx, http.MethodPut, dto)
+			r.PushToken(ctx, http.MethodPut, token.Uid, dto)
 		}
 
 		return &token

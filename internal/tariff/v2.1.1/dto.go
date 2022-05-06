@@ -13,7 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
 )
 
-type OCPITariffsDto struct {
+type OcpiTariffsDto struct {
 	Data          []*TariffDto `json:"data,omitempty"`
 	StatusCode    int16        `json:"status_code"`
 	StatusMessage string       `json:"status_message"`

@@ -3,13 +3,13 @@ package credential
 import (
 	"net/http"
 
-	"github.com/satimoto/go-ocpi-api/internal/credential"
+	"github.com/satimoto/go-ocpi-api/internal/middleware"
 )
 
 func (r *CredentialResolver) CredentialContextByToken(next http.Handler) http.Handler {
-	return credential.CredentialContextByToken(r.Repository, next)
+	return middleware.CredentialContextByToken(r.Repository, next)
 }
 
 func (r *CredentialResolver) CredentialContextByPartyAndCountry(next http.Handler) http.Handler {
-	return credential.CredentialContextByPartyAndCountry(r.Repository, next)
+	return middleware.CredentialContextByPartyAndCountry(r.Repository, next)
 }

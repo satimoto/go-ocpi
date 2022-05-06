@@ -12,7 +12,7 @@ func (r *VersionDetailResolver) GetVersionDetail(rw http.ResponseWriter, request
 	ctx := request.Context()
 	dto := r.CreateVersionDetailDto(ctx)
 
-	if err := render.Render(rw, request, transportation.OCPISuccess(dto)); err != nil {
-		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
+		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 }

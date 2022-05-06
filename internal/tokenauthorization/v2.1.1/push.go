@@ -14,14 +14,14 @@ func (r *TokenAuthorizationResolver) AuthorizeToken(rw http.ResponseWriter, requ
 	locationReferencesDto, err := r.UnmarshalLocationReferencesDto(request.Body)
 
 	if err != nil {
-		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 		return
 	}
 
 	tokenAuthorization := r.CreateTokenAuthorization(ctx, token, locationReferencesDto)
 	dto := r.CreateAuthorizationInfoDto(ctx, token, tokenAuthorization, locationReferencesDto, nil)
 
-	if err := render.Render(rw, request, transportation.OCPISuccess(dto)); err != nil {
-		render.Render(rw, request, transportation.OCPIServerError(nil, err.Error()))
+	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
+		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 }

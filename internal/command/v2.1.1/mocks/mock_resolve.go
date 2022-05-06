@@ -7,12 +7,16 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
-func NewResolver(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OCPIRequester) *command.CommandResolver {
+func NewResolver(repositoryService *mocks.MockRepositoryService) *command.CommandResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *command.CommandResolver {
 	repo := command.CommandRepository(repositoryService)
 
 	return &command.CommandResolver{
 		Repository:    repo,
-		OCPIRequester: ocpiRequester,
-		TokenResolver: token.NewResolver(repositoryService, ocpiRequester),
+		OcpiRequester: ocpiRequester,
+		TokenResolver: token.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

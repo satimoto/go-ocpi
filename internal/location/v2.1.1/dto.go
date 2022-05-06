@@ -17,7 +17,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/openingtime"
 )
 
-type OCPILocationsDto struct {
+type OcpiLocationsDto struct {
 	Data          []*LocationDto `json:"data,omitempty"`
 	StatusCode    int16          `json:"status_code"`
 	StatusMessage string         `json:"status_message"`

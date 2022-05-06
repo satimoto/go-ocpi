@@ -19,5 +19,6 @@ type CalibrationResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *CalibrationResolver {
 	repo := CalibrationRepository(repositoryService)
+	
 	return &CalibrationResolver{repo}
 }

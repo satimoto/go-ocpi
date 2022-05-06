@@ -9,8 +9,8 @@ import (
 	dbMocks "github.com/satimoto/go-datastore-mocks/db"
 	"github.com/satimoto/go-datastore/db"
 	"github.com/satimoto/go-datastore/util"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	tariffMocks "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )
 
@@ -20,7 +20,7 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		loc := db.Tariff{}
 
@@ -38,7 +38,7 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With alt text and element", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		tariffAltTexts := []db.DisplayText{}
 		tariffAltTexts = append(tariffAltTexts, db.DisplayText{
@@ -102,7 +102,7 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With element and rounding", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		priceRound := db.PriceComponentRounding{
 			ID:          12,
@@ -158,7 +158,7 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With multiple elements", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		// 1
 		priceComponents1 := []db.PriceComponent{}
@@ -227,7 +227,7 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With energy mix", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		energySources := []db.EnergySource{}
 		energySources = append(energySources, db.EnergySource{
@@ -321,7 +321,7 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With restriction", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		restriction := db.TariffRestriction{
 			ID:        1,
@@ -357,7 +357,7 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With restriction", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolver(mockRepository, transportationMocks.NewOCPIRequester(mockHTTPRequester))
+		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		restriction := db.TariffRestriction{
 			ID:         1,

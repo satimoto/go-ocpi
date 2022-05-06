@@ -19,5 +19,6 @@ type GeoLocationResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *GeoLocationResolver {
 	repo := GeoLocationRepository(repositoryService)
+	
 	return &GeoLocationResolver{repo}
 }

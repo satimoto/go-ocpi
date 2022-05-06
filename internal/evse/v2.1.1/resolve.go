@@ -42,15 +42,16 @@ type EvseRepository interface {
 }
 
 type EvseResolver struct {
-	Repository EvseRepository
-	*connector.ConnectorResolver
-	*displaytext.DisplayTextResolver
-	*geolocation.GeoLocationResolver
-	*image.ImageResolver
+	Repository          EvseRepository
+	ConnectorResolver   *connector.ConnectorResolver
+	DisplayTextResolver *displaytext.DisplayTextResolver
+	GeoLocationResolver *geolocation.GeoLocationResolver
+	ImageResolver       *image.ImageResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *EvseResolver {
 	repo := EvseRepository(repositoryService)
+	
 	return &EvseResolver{
 		Repository:          repo,
 		ConnectorResolver:   connector.NewResolver(repositoryService),

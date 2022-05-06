@@ -21,5 +21,6 @@ type PriceComponentResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *PriceComponentResolver {
 	repo := PriceComponentRepository(repositoryService)
+	
 	return &PriceComponentResolver{repo}
 }
