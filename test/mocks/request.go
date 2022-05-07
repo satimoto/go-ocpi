@@ -1,6 +1,10 @@
 package mocks
 
-import "net/http"
+import (
+	"io"
+	"net/http"
+	"strings"
+)
 
 type MockResponseData struct {
 	Response *http.Response
@@ -21,11 +25,23 @@ func (r *MockHTTPRequester) Do(req *http.Request) (*http.Response, error) {
 
 	data := r.responseData[0]
 	r.responseData = r.responseData[1:]
-	return data.Response, nil
+	return data.Response, data.Error
 }
 
 func (r *MockHTTPRequester) SetResponse(data MockResponseData) {
 	r.responseData = append(r.responseData, data)
+}
+
+func (r *MockHTTPRequester) SetResponseWithBytes(statusCode int, bodyBytes string, err error) {
+	readerCloser := io.NopCloser(strings.NewReader(bodyBytes))
+
+	r.SetResponse(MockResponseData{
+		Response: &http.Response{
+			StatusCode: statusCode,
+			Body:       readerCloser,
+		},
+		Error: err,
+	})
 }
 
 func (r *MockHTTPRequester) GetRequest() *http.Request {
