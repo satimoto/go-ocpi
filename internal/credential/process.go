@@ -51,13 +51,19 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 }
 
 func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credential db.Credential) (*db.Credential, error) {
+	if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
+		log.Printf("OCPI010: Error credential not registered")
+		log.Printf("OCPI010: CredentialID=%v, ClientToken=%v", credential.ID, credential.ClientToken)
+		return nil, errors.New("Error credential not registered")
+	}
+
 	if credential.ServerToken.Valid {
 		versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "credentials", credential.CountryCode, credential.PartyID)
 
 		if err != nil {
-			util.LogOnError("OCPI010", "Error retreiving version endpoint", err)
-			log.Printf("OCPI010: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
-			return nil, errors.New("Error unregistering credential")
+			util.LogOnError("OCPI011", "Error retreiving version endpoint", err)
+			log.Printf("OCPI011: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
+			return nil, errors.New("Error retreiving version endpoint")
 		}
 
 		updateCredentialParams := NewUpdateCredentialParams(credential)
@@ -66,33 +72,33 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		cred, err := r.Repository.UpdateCredential(ctx, updateCredentialParams)
 
 		if err != nil {
-			util.LogOnError("OCPI011", "Error updating credential", err)
-			log.Printf("OCPI011: Params=%#v", updateCredentialParams)
-			return nil, errors.New("Error unregistering credential")
+			util.LogOnError("OCPI012", "Error updating credential", err)
+			log.Printf("OCPI012: Params=%#v", updateCredentialParams)
+			return nil, errors.New("Error updating credential")
 		}
 
 		header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 		response, err := r.OcpiRequester.Do(http.MethodDelete, versionEndpoint.Url, header, nil)
 
 		if err != nil {
-			util.LogOnError("OCPI012", "Error sending delete request", err)
-			log.Printf("OCPI012: Url=%v", versionEndpoint.Url)
-			return nil, errors.New("Error unregistering credential")
+			util.LogOnError("OCPI013", "Error sending delete request", err)
+			log.Printf("OCPI013: Url=%v", versionEndpoint.Url)
+			return nil, errors.New("Error sending delete request")
 		}
 
 		defer response.Body.Close()
 		responseDto, err := transportation.UnmarshalResponseDto(response.Body)
 
 		if err != nil {
-			util.LogOnError("OCPI013", "Error unmarshalling response", err)
-			util.LogHttpResponse("OCPI013", versionEndpoint.Url, response, true)
-			return nil, errors.New("Error unregistering credential")
+			util.LogOnError("OCPI014", "Error unmarshalling response", err)
+			util.LogHttpResponse("OCPI014", versionEndpoint.Url, response, true)
+			return nil, errors.New("Error unmarshalling response")
 		}
 
 		if responseDto.StatusCode != transportation.STATUS_CODE_OK {
-			log.Printf("OCPI014: Error in delete request response")
-			log.Printf("OCPI014: Response=%#v", responseDto)
-			return nil, errors.New("Error unregistering credential")
+			log.Printf("OCPI015: Error in delete response")
+			log.Printf("OCPI015: Response=%#v", responseDto)
+			return nil, errors.New("Error in delete response")
 		}
 
 		return &cred, nil

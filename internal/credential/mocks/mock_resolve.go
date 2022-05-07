@@ -19,6 +19,7 @@ func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocp
 
 	return &credential.CredentialResolver{
 		Repository:             repo,
+		OcpiRequester:          ocpiRequester,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		SyncResolver:           sync.NewResolverWithServices(repositoryService, ocpiRequester),
 		VersionResolver:        version.NewResolverWithServices(repositoryService, ocpiRequester),
