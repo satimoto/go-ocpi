@@ -61,9 +61,9 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "credentials", credential.CountryCode, credential.PartyID)
 
 		if err != nil {
-			util.LogOnError("OCPI011", "Error retreiving version endpoint", err)
+			util.LogOnError("OCPI011", "Error retrieving version endpoint", err)
 			log.Printf("OCPI011: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
-			return nil, errors.New("Error retreiving version endpoint")
+			return nil, errors.New("Error retrieving version endpoint")
 		}
 
 		updateCredentialParams := NewUpdateCredentialParams(credential)
