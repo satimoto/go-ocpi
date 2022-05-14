@@ -177,8 +177,8 @@ func TestUnregisterCredential(t *testing.T) {
 
 		_, err := credentialResolver.UnregisterCredential(ctx, credential)
 
-		if err == nil || err.Error() != "Error retreiving version endpoint" {
-			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error retreiving version endpoint")
+		if err == nil || err.Error() != "Error retrieving version endpoint" {
+			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error retrieving version endpoint")
 		}
 	})
 
