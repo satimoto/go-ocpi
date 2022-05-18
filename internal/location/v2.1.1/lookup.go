@@ -3,7 +3,7 @@ package location
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 func (r *LocationResolver) GetLastLocationByIdentity(ctx context.Context, credentialID *int64, countryCode *string, partyID *string) (db.Location, error) {
@@ -18,7 +18,7 @@ func (r *LocationResolver) GetLastLocationByIdentity(ctx context.Context, creden
 	if countryCode != nil {
 		params.CountryCode = *countryCode
 	}
-	
+
 	if partyID != nil {
 		params.PartyID = *partyID
 	}

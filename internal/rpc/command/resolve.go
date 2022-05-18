@@ -1,7 +1,7 @@
 package command
 
 import (
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	command "github.com/satimoto/go-ocpi-api/internal/command/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/credential"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"

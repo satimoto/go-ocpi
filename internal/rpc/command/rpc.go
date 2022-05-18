@@ -5,8 +5,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/ocpirpc"
 	ocpiCommand "github.com/satimoto/go-ocpi-api/pkg/ocpi/command"
 )
@@ -189,7 +189,7 @@ func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *ocpirpc
 			log.Printf("CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
 			return nil, errors.New("Error requesting reservation")
 		}
-		
+
 		command, err := r.CommandResolver.UnlockConnector(ctx, credential, location, input.EvseUid, input.ConnectorUid)
 
 		if err != nil {

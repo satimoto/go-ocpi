@@ -1,6 +1,6 @@
 package util
 
-import "github.com/satimoto/go-datastore/db"
+import "github.com/satimoto/go-datastore/pkg/db"
 
 func CalculateWattage(powerType db.PowerType, voltage int32, amperage int32) int32 {
 	if powerType == db.PowerTypeAC3PHASE {

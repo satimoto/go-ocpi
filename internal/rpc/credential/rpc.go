@@ -5,8 +5,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/ocpirpc"
 	"github.com/satimoto/go-ocpi-api/pkg/ocpi"
 	ocpiCredential "github.com/satimoto/go-ocpi-api/pkg/ocpi/credential"

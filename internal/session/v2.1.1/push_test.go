@@ -10,9 +10,9 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/nsf/jsondiff"
-	dbMocks "github.com/satimoto/go-datastore-mocks/db"
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
+	"github.com/satimoto/go-datastore/pkg/util"
 	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"
 	sessionMocks "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"

@@ -1,6 +1,6 @@
 package openingtime
 
-import "github.com/satimoto/go-datastore/db"
+import "github.com/satimoto/go-datastore/pkg/db"
 
 func NewCreateExceptionalPeriodParams(id int64, periodType db.PeriodType, dto *ExceptionalPeriodDto) db.CreateExceptionalPeriodParams {
 	return db.CreateExceptionalPeriodParams{

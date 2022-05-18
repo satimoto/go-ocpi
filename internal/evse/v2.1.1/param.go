@@ -1,8 +1,8 @@
 package evse
 
 import (
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 )
 
 func NewCreateEvseParams(locationID int64, dto *EvseDto) db.CreateEvseParams {

@@ -3,7 +3,7 @@ package tariffrestriction
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type TariffRestrictionRepository interface {
@@ -23,6 +23,6 @@ type TariffRestrictionResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *TariffRestrictionResolver {
 	repo := TariffRestrictionRepository(repositoryService)
-	
+
 	return &TariffRestrictionResolver{repo}
 }

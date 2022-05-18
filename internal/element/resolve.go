@@ -3,7 +3,7 @@ package element
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/internal/elementrestriction"
 	"github.com/satimoto/go-ocpi-api/internal/pricecomponent"
 )
@@ -22,7 +22,7 @@ type ElementResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *ElementResolver {
 	repo := ElementRepository(repositoryService)
-	
+
 	return &ElementResolver{
 		Repository:                 repo,
 		ElementRestrictionResolver: elementrestriction.NewResolver(repositoryService),

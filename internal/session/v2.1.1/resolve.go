@@ -3,7 +3,7 @@ package session
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
@@ -17,6 +17,7 @@ type SessionRepository interface {
 	DeleteSessionChargingPeriods(ctx context.Context, sessionID int64) error
 	GetSessionByLastUpdated(ctx context.Context, arg db.GetSessionByLastUpdatedParams) (db.Session, error)
 	GetSessionByUid(ctx context.Context, uid string) (db.Session, error)
+	GetUserBySessionID(ctx context.Context, id int64) (db.User, error)
 	ListSessionChargingPeriods(ctx context.Context, sessionID int64) ([]db.ChargingPeriod, error)
 	SetSessionChargingPeriod(ctx context.Context, arg db.SetSessionChargingPeriodParams) error
 	UpdateSessionByUid(ctx context.Context, arg db.UpdateSessionByUidParams) (db.Session, error)

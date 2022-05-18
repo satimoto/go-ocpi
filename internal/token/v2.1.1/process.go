@@ -12,8 +12,8 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/satimoto/go-datastore/db"
-	dbUtil "github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 	"github.com/satimoto/go-ocpi-api/pkg/evid"

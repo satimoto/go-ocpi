@@ -1,8 +1,8 @@
 package tariff
 
 import (
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 )
 
 func NewCreateTariffParams(dto *TariffDto) db.CreateTariffParams {

@@ -3,7 +3,7 @@ package token
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/versiondetail"

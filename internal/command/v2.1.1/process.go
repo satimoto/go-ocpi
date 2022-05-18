@@ -3,7 +3,7 @@ package command
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 var API_VERSION = "2.1.1"

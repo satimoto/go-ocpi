@@ -3,7 +3,7 @@ package calibration
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type CalibrationRepository interface {
@@ -19,6 +19,6 @@ type CalibrationResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *CalibrationResolver {
 	repo := CalibrationRepository(repositoryService)
-	
+
 	return &CalibrationResolver{repo}
 }

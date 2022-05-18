@@ -1,8 +1,8 @@
 package connector
 
 import (
-	"github.com/satimoto/go-datastore/db"
-	dtUtil "github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	dtUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 )
 

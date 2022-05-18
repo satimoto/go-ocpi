@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/util"
 )
 
 func Paginate(next http.Handler) http.Handler {

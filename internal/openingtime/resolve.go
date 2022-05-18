@@ -3,7 +3,7 @@ package openingtime
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type OpeningTimeRepository interface {
@@ -27,6 +27,6 @@ type OpeningTimeResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *OpeningTimeResolver {
 	repo := OpeningTimeRepository(repositoryService)
-	
+
 	return &OpeningTimeResolver{repo}
 }

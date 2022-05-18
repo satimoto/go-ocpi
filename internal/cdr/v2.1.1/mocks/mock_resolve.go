@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	mocks "github.com/satimoto/go-datastore-mocks/db"
+	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	calibration "github.com/satimoto/go-ocpi-api/internal/calibration/mocks"
 	cdr "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1"
 	chargingperiod "github.com/satimoto/go-ocpi-api/internal/chargingperiod/mocks"

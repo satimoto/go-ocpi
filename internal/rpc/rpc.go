@@ -9,7 +9,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/internal/rpc/command"
 	"github.com/satimoto/go-ocpi-api/internal/rpc/credential"
 	"github.com/satimoto/go-ocpi-api/internal/rpc/token"

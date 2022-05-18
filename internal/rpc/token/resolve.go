@@ -1,7 +1,7 @@
 package token
 
 import (
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 )
 
@@ -14,7 +14,7 @@ type RpcTokenResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *RpcTokenResolver {
 	repo := RpcTokenRepository(repositoryService)
-	
+
 	return &RpcTokenResolver{
 		Repository:    repo,
 		TokenResolver: token.NewResolver(repositoryService),

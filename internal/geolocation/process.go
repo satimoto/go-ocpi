@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/geom"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/geom"
 )
 
 func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.NullInt64, dto *GeoLocationDto) *geom.Geometry4326 {

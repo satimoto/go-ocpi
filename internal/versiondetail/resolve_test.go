@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	dbMocks "github.com/satimoto/go-datastore-mocks/db"
-	"github.com/satimoto/go-datastore/util"
+	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	versionDetailMocks "github.com/satimoto/go-ocpi-api/internal/versiondetail/mocks"

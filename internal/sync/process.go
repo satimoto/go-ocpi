@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 )
 
 func (r *SyncResolver) SynchronizeCredential(ctx context.Context, credential db.Credential) {

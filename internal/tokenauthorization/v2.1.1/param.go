@@ -2,8 +2,8 @@ package tokenauthorization
 
 import (
 	"github.com/google/uuid"
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 )
 
 func NewCreateTokenAuthorizationParams(tokenID int64) db.CreateTokenAuthorizationParams {

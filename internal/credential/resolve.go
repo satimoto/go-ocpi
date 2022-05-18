@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
 	"github.com/satimoto/go-ocpi-api/internal/sync"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"

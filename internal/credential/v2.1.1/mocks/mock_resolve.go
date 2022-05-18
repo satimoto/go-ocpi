@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	mocks "github.com/satimoto/go-datastore-mocks/db"
+	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	businessdetail "github.com/satimoto/go-ocpi-api/internal/businessdetail/mocks"
 	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"

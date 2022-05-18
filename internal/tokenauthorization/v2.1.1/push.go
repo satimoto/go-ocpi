@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 

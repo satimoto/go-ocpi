@@ -3,7 +3,7 @@ package energymix
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type EnergyMixRepository interface {
@@ -24,6 +24,6 @@ type EnergyMixResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *EnergyMixResolver {
 	repo := EnergyMixRepository(repositoryService)
-	
+
 	return &EnergyMixResolver{repo}
 }

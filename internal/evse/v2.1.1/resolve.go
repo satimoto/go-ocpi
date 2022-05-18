@@ -3,7 +3,7 @@ package evse
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
@@ -51,7 +51,7 @@ type EvseResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *EvseResolver {
 	repo := EvseRepository(repositoryService)
-	
+
 	return &EvseResolver{
 		Repository:          repo,
 		ConnectorResolver:   connector.NewResolver(repositoryService),

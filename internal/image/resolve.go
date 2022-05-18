@@ -3,7 +3,7 @@ package image
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type ImageRepository interface {
@@ -17,6 +17,6 @@ type ImageResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *ImageResolver {
 	repo := ImageRepository(repositoryService)
-	
+
 	return &ImageResolver{repo}
 }
