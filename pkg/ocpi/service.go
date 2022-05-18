@@ -2,11 +2,11 @@ package ocpi
 
 import (
 	"context"
-	"os"
 
 	"github.com/satimoto/go-datastore/util"
 	"github.com/satimoto/go-ocpi-api/ocpirpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Ocpi interface {
@@ -28,8 +28,8 @@ type OcpiService struct {
 	tokenClient      *ocpirpc.TokenServiceClient
 }
 
-func NewService() Ocpi {
-	clientConn, err := grpc.Dial(os.Getenv("OCPI_RPC_ADDRESS"), grpc.WithInsecure())
+func NewService(address string) Ocpi {
+	clientConn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	util.PanicOnError("OCPI001", "Error connecting to OCPI RPC address", err)
 
 	return &OcpiService{
