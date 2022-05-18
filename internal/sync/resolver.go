@@ -1,7 +1,7 @@
 package sync
 
 import (
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	sync2_1_1 "github.com/satimoto/go-ocpi-api/internal/sync/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/version"

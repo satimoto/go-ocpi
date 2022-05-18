@@ -3,7 +3,7 @@ package sync
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 func (r *SyncResolver) SynchronizeCredential(ctx context.Context, credential db.Credential) {

@@ -4,14 +4,14 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-ocpi-api/internal/pricecomponent"
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/internal/elementrestriction"
+	"github.com/satimoto/go-ocpi-api/internal/pricecomponent"
 )
 
 type ElementDto struct {
-	PriceComponents []*pricecomponent.PriceComponentDto `json:"price_components"`
-	Restrictions    *elementrestriction.ElementRestrictionDto         `json:"restrictions,omitempty"`
+	PriceComponents []*pricecomponent.PriceComponentDto       `json:"price_components"`
+	Restrictions    *elementrestriction.ElementRestrictionDto `json:"restrictions,omitempty"`
 }
 
 func (r *ElementDto) Render(writer http.ResponseWriter, request *http.Request) error {

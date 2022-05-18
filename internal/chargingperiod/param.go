@@ -1,6 +1,6 @@
 package chargingperiod
 
-import "github.com/satimoto/go-datastore/db"
+import "github.com/satimoto/go-datastore/pkg/db"
 
 func NewCreateChargingPeriodDimensionParams(id int64, dto *ChargingPeriodDimensionDto) db.CreateChargingPeriodDimensionParams {
 	return db.CreateChargingPeriodDimensionParams{

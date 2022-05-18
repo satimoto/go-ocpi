@@ -16,7 +16,7 @@ func (s *OcpiService) UpdateTokens(ctx context.Context, in *ocpirpc.UpdateTokens
 }
 
 func (s *OcpiService) getTokenClient() ocpirpc.TokenServiceClient {
-	if s.commandClient == nil {
+	if s.tokenClient == nil {
 		client := ocpirpc.NewTokenServiceClient(s.clientConn)
 		s.tokenClient = &client
 	}

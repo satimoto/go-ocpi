@@ -3,8 +3,8 @@ package session
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
 )
 
@@ -57,7 +57,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			sessionParams.CredentialID = credential.ID
 			sessionParams.CountryCode = util.SqlNullString(countryCode)
 			sessionParams.PartyID = util.SqlNullString(partyID)
-	
+
 			if dto.AuthID != nil {
 				if token, err := r.TokenResolver.Repository.GetTokenByAuthID(ctx, *dto.AuthID); err == nil {
 					sessionParams.TokenID = token.ID
@@ -69,19 +69,19 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 				if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
 					sessionParams.LocationID = location.ID
 				}
-	
+
 				evseDto := dto.Location.Evses[0]
-	
+
 				if evse, err := r.LocationResolver.EvseResolver.Repository.GetEvseByUid(ctx, *evseDto.Uid); err == nil {
 					sessionParams.EvseID = evse.ID
 				}
-	
+
 				connectorDto := evseDto.Connectors[0]
 				connectorParams := db.GetConnectorByUidParams{
 					EvseID: sessionParams.EvseID,
-					Uid: *connectorDto.Id,
+					Uid:    *connectorDto.Id,
 				}
-	
+
 				if connector, err := r.LocationResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams); err == nil {
 					sessionParams.ConnectorID = connector.ID
 				}

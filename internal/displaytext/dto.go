@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type DisplayTextDto struct {

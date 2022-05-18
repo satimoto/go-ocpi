@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	dbMocks "github.com/satimoto/go-datastore-mocks/db"
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
+	"github.com/satimoto/go-datastore/pkg/util"
 	evseMocks "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"
 )

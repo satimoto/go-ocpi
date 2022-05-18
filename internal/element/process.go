@@ -3,7 +3,7 @@ package element
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/util"
 )
 
 func (r *ElementResolver) ReplaceElements(ctx context.Context, tariffID int64, dto []*ElementDto) {

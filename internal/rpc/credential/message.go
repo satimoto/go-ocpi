@@ -3,7 +3,7 @@ package credential
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/ocpirpc"
 	"github.com/satimoto/go-ocpi-api/pkg/ocpi"
 	ocpiCredential "github.com/satimoto/go-ocpi-api/pkg/ocpi/credential"

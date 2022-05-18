@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	dbMocks "github.com/satimoto/go-datastore-mocks/db"
+	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
 	versionMocks "github.com/satimoto/go-ocpi-api/internal/version/mocks"
 	"github.com/satimoto/go-ocpi-api/test/mocks"

@@ -3,7 +3,7 @@ package geolocation
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type GeoLocationRepository interface {
@@ -19,6 +19,6 @@ type GeoLocationResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *GeoLocationResolver {
 	repo := GeoLocationRepository(repositoryService)
-	
+
 	return &GeoLocationResolver{repo}
 }

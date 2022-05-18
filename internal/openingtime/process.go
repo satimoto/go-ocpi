@@ -3,7 +3,7 @@ package openingtime
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 func (r *OpeningTimeResolver) ReplaceOpeningTime(ctx context.Context, id *int64, dto *OpeningTimeDto) {

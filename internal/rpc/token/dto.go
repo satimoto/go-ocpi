@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/ocpirpc"
 )

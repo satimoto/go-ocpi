@@ -3,8 +3,8 @@ package cdr
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 )
 
@@ -38,19 +38,19 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 				if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
 					cdrParams.LocationID = location.ID
 				}
-	
+
 				evseDto := dto.Location.Evses[0]
-	
+
 				if evse, err := r.LocationResolver.EvseResolver.Repository.GetEvseByUid(ctx, *evseDto.Uid); err == nil {
 					cdrParams.EvseID = evse.ID
 				}
-	
+
 				connectorDto := evseDto.Connectors[0]
 				connectorParams := db.GetConnectorByUidParams{
 					EvseID: cdrParams.EvseID,
-					Uid: *connectorDto.Id,
+					Uid:    *connectorDto.Id,
 				}
-	
+
 				if connector, err := r.LocationResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams); err == nil {
 					cdrParams.ConnectorID = connector.ID
 				}
@@ -73,7 +73,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 					r.replaceTariffs(ctx, credential, countryCode, partyID, &cdr.ID, dto)
 				}
 			}
- 
+
 			// TODO: Send CdrCreated RPC to LSP node
 		}
 

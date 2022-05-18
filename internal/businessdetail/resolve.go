@@ -3,7 +3,7 @@ package businessdetail
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/internal/image"
 )
 
@@ -22,7 +22,7 @@ type BusinessDetailResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *BusinessDetailResolver {
 	repo := BusinessDetailRepository(repositoryService)
-	
+
 	return &BusinessDetailResolver{
 		Repository:    repo,
 		ImageResolver: image.NewResolver(repositoryService),

@@ -3,7 +3,7 @@ package tariff
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 func (r *TariffResolver) GetLastTariffByIdentity(ctx context.Context, credentialID *int64, countryCode *string, partyID *string) (db.Tariff, error) {

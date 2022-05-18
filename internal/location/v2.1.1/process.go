@@ -2,8 +2,9 @@ package location
 
 import (
 	"context"
-	"github.com/satimoto/go-datastore/db"
-	"github.com/satimoto/go-datastore/util"
+
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"

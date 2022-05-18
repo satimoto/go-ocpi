@@ -3,7 +3,7 @@ package pricecomponent
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type PriceComponentRepository interface {
@@ -21,6 +21,6 @@ type PriceComponentResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *PriceComponentResolver {
 	repo := PriceComponentRepository(repositoryService)
-	
+
 	return &PriceComponentResolver{repo}
 }

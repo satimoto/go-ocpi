@@ -3,7 +3,7 @@ package tokenauthorization
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 )
@@ -26,7 +26,7 @@ type TokenAuthorizationResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *TokenAuthorizationResolver {
 	repo := TokenAuthorizationRepository(repositoryService)
-	
+
 	return &TokenAuthorizationResolver{
 		Repository:        repo,
 		ConnectorResolver: connector.NewResolver(repositoryService),

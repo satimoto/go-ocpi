@@ -3,19 +3,23 @@ package ocpi
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/util"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/ocpirpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Ocpi interface {
+	CdrCreated(ctx context.Context, in *ocpirpc.CdrCreatedRequest, opts ...grpc.CallOption) (*ocpirpc.CdrCreatedResponse, error)
+
 	CreateCredential(ctx context.Context, in *ocpirpc.CreateCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.CreateCredentialResponse, error)
 	RegisterCredential(ctx context.Context, in *ocpirpc.RegisterCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.RegisterCredentialResponse, error)
 	UnregisterCredential(ctx context.Context, in *ocpirpc.UnregisterCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.UnregisterCredentialResponse, error)
-	
+
 	StartSession(ctx context.Context, in *ocpirpc.StartSessionRequest, opts ...grpc.CallOption) (*ocpirpc.StartSessionResponse, error)
 	StopSession(ctx context.Context, in *ocpirpc.StopSessionRequest, opts ...grpc.CallOption) (*ocpirpc.StopSessionResponse, error)
+
+	SessionCreated(ctx context.Context, in *ocpirpc.SessionCreatedRequest, opts ...grpc.CallOption) (*ocpirpc.SessionCreatedResponse, error)
 
 	CreateToken(ctx context.Context, in *ocpirpc.CreateTokenRequest, opts ...grpc.CallOption) (*ocpirpc.CreateTokenResponse, error)
 	UpdateTokens(ctx context.Context, in *ocpirpc.UpdateTokensRequest, opts ...grpc.CallOption) (*ocpirpc.UpdateTokensResponse, error)
@@ -24,7 +28,9 @@ type Ocpi interface {
 type OcpiService struct {
 	clientConn       *grpc.ClientConn
 	commandClient    *ocpirpc.CommandServiceClient
+	cdrClient        *ocpirpc.CdrServiceClient
 	credentialClient *ocpirpc.CredentialServiceClient
+	sessionClient    *ocpirpc.SessionServiceClient
 	tokenClient      *ocpirpc.TokenServiceClient
 }
 

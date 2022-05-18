@@ -3,7 +3,7 @@ package command
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"

@@ -3,7 +3,7 @@ package displaytext
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type DisplayTextRepository interface {
@@ -16,6 +16,6 @@ type DisplayTextResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *DisplayTextResolver {
 	repo := DisplayTextRepository(repositoryService)
-	
+
 	return &DisplayTextResolver{repo}
 }

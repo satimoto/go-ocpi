@@ -1,7 +1,7 @@
 package sync
 
 import (
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 	cdr "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"

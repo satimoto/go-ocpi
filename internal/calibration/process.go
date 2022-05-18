@@ -3,7 +3,7 @@ package calibration
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 func (r *CalibrationResolver) CreateCalibration(ctx context.Context, dto *CalibrationDto) *db.Calibration {

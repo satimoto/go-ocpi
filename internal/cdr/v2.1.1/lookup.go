@@ -3,7 +3,7 @@ package cdr
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 func (r *CdrResolver) GetLastCdrByIdentity(ctx context.Context, credentialID *int64, countryCode *string, partyID *string) (db.Cdr, error) {

@@ -3,7 +3,7 @@ package connector
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type ConnectorRepository interface {
@@ -23,6 +23,6 @@ type ConnectorResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *ConnectorResolver {
 	repo := ConnectorRepository(repositoryService)
-	
+
 	return &ConnectorResolver{repo}
 }

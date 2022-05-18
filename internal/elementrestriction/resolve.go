@@ -3,7 +3,7 @@ package elementrestriction
 import (
 	"context"
 
-	"github.com/satimoto/go-datastore/db"
+	"github.com/satimoto/go-datastore/pkg/db"
 )
 
 type ElementRestrictionRepository interface {
@@ -23,6 +23,6 @@ type ElementRestrictionResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService) *ElementRestrictionResolver {
 	repo := ElementRestrictionRepository(repositoryService)
-	
+
 	return &ElementRestrictionResolver{repo}
 }
