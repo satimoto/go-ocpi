@@ -51,7 +51,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 					Uid:    *connectorDto.Id,
 				}
 
-				if connector, err := r.LocationResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams); err == nil {
+				if connector, err := r.LocationResolver.EvseResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams); err == nil {
 					cdrParams.ConnectorID = connector.ID
 				}
 			}

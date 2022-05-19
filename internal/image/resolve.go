@@ -1,22 +1,16 @@
 package image
 
 import (
-	"context"
-
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/image"
 )
 
-type ImageRepository interface {
-	CreateImage(ctx context.Context, arg db.CreateImageParams) (db.Image, error)
-	GetImage(ctx context.Context, id int64) (db.Image, error)
-}
-
 type ImageResolver struct {
-	Repository ImageRepository
+	Repository image.ImageRepository
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *ImageResolver {
-	repo := ImageRepository(repositoryService)
-
-	return &ImageResolver{repo}
+	return &ImageResolver{
+		Repository: image.NewRepository(repositoryService),
+	}
 }
