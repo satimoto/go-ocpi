@@ -40,16 +40,16 @@ type LocationRepository interface {
 }
 
 type LocationResolver struct {
-	Repository LocationRepository
-	*transportation.OcpiRequester
-	*businessdetail.BusinessDetailResolver
-	*displaytext.DisplayTextResolver
-	*energymix.EnergyMixResolver
-	*evse.EvseResolver
-	*geolocation.GeoLocationResolver
-	*image.ImageResolver
-	*openingtime.OpeningTimeResolver
-	*versiondetail.VersionDetailResolver
+	Repository             LocationRepository
+	OcpiRequester          *transportation.OcpiRequester
+	BusinessDetailResolver *businessdetail.BusinessDetailResolver
+	DisplayTextResolver    *displaytext.DisplayTextResolver
+	EnergyMixResolver      *energymix.EnergyMixResolver
+	EvseResolver           *evse.EvseResolver
+	GeoLocationResolver    *geolocation.GeoLocationResolver
+	ImageResolver          *image.ImageResolver
+	OpeningTimeResolver    *openingtime.OpeningTimeResolver
+	VersionDetailResolver  *versiondetail.VersionDetailResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *LocationResolver {

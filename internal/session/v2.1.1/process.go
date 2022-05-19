@@ -82,7 +82,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 					Uid:    *connectorDto.Id,
 				}
 
-				if connector, err := r.LocationResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams); err == nil {
+				if connector, err := r.LocationResolver.EvseResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams); err == nil {
 					sessionParams.ConnectorID = connector.ID
 				}
 			}
