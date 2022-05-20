@@ -1,10 +1,8 @@
 package tariff
 
 import (
-	"context"
-	"database/sql"
-
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/tariff"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/element"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
@@ -13,20 +11,8 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
 
-type TariffRepository interface {
-	CreateTariff(ctx context.Context, arg db.CreateTariffParams) (db.Tariff, error)
-	DeleteTariffAltTexts(ctx context.Context, tariffID int64) error
-	DeleteTariffByUid(ctx context.Context, uid string) error
-	GetTariffByLastUpdated(ctx context.Context, arg db.GetTariffByLastUpdatedParams) (db.Tariff, error)
-	GetTariffByUid(ctx context.Context, uid string) (db.Tariff, error)
-	ListTariffAltTexts(ctx context.Context, tariffID int64) ([]db.DisplayText, error)
-	ListTariffsByCdr(ctx context.Context, cdrID sql.NullInt64) ([]db.Tariff, error)
-	SetTariffAltText(ctx context.Context, arg db.SetTariffAltTextParams) error
-	UpdateTariffByUid(ctx context.Context, arg db.UpdateTariffByUidParams) (db.Tariff, error)
-}
-
 type TariffResolver struct {
-	Repository                TariffRepository
+	Repository                tariff.TariffRepository
 	OcpiRequester             *transportation.OcpiRequester
 	DisplayTextResolver       *displaytext.DisplayTextResolver
 	ElementResolver           *element.ElementResolver
@@ -40,10 +26,8 @@ func NewResolver(repositoryService *db.RepositoryService) *TariffResolver {
 }
 
 func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *TariffResolver {
-	repo := TariffRepository(repositoryService)
-
 	return &TariffResolver{
-		Repository:                repo,
+		Repository:                tariff.NewRepository(repositoryService),
 		OcpiRequester:             ocpiRequester,
 		DisplayTextResolver:       displaytext.NewResolver(repositoryService),
 		ElementResolver:           element.NewResolver(repositoryService),
