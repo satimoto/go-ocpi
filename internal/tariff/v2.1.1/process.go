@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 )
@@ -23,7 +24,7 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 		}
 
 		if err == nil {
-			tariffParams := NewUpdateTariffByUidParams(tariff)
+			tariffParams := param.NewUpdateTariffByUidParams(tariff)
 			tariffParams.CountryCode = util.SqlNullString(countryCode)
 			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)

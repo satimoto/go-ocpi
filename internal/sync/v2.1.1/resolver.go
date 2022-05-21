@@ -9,10 +9,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
-type SyncRepository interface{}
-
 type SyncResolver struct {
-	Repository       SyncRepository
 	CdrResolver      *cdr.CdrResolver
 	LocationResolver *location.LocationResolver
 	SessionResolver  *session.SessionResolver
@@ -24,10 +21,7 @@ func NewResolver(repositoryService *db.RepositoryService) *SyncResolver {
 }
 
 func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *SyncResolver {
-	repo := SyncRepository(repositoryService)
-
 	return &SyncResolver{
-		Repository:       repo,
 		CdrResolver:      cdr.NewResolverWithServices(repositoryService, ocpiRequester),
 		LocationResolver: location.NewResolverWithServices(repositoryService, ocpiRequester),
 		SessionResolver:  session.NewResolverWithServices(repositoryService, ocpiRequester),

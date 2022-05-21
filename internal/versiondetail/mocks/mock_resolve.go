@@ -2,6 +2,7 @@ package mocks
 
 import (
 	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
+	versiondetailMocks "github.com/satimoto/go-datastore/pkg/versiondetail/mocks"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
@@ -11,10 +12,8 @@ func NewResolver(repositoryService *mocks.MockRepositoryService) *versiondetail.
 }
 
 func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *versiondetail.VersionDetailResolver {
-	repo := versiondetail.VersionDetailRepository(repositoryService)
-
 	return &versiondetail.VersionDetailResolver{
-		Repository:    repo,
+		Repository:    versiondetailMocks.NewRepository(repositoryService),
 		OcpiRequester: ocpiRequester,
 	}
 }

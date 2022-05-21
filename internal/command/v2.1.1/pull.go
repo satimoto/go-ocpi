@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 	ocpiCommand "github.com/satimoto/go-ocpi-api/pkg/ocpi/command"
@@ -71,7 +72,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	}
 
 	if pullDto.Data.Result != nil && *pullDto.Data.Result != db.CommandResponseTypeACCEPTED {
-		updateCommandReservationParams := NewUpdateCommandReservationParams(command)
+		updateCommandReservationParams := param.NewUpdateCommandReservationParams(command)
 		updateCommandReservationParams.Status = *pullDto.Data.Result
 
 		if command, err = r.Repository.UpdateCommandReservation(ctx, updateCommandReservationParams); err == nil {
@@ -137,7 +138,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	}
 
 	if pullDto.Data.Result != nil && *pullDto.Data.Result != db.CommandResponseTypeACCEPTED {
-		updateCommandStartParams := NewUpdateCommandStartParams(command)
+		updateCommandStartParams := param.NewUpdateCommandStartParams(command)
 		updateCommandStartParams.Status = *pullDto.Data.Result
 
 		if command, err = r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err == nil {
@@ -203,7 +204,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	}
 
 	if pullDto.Data.Result != nil && *pullDto.Data.Result != db.CommandResponseTypeACCEPTED {
-		updateCommandStopParams := NewUpdateCommandStopParams(command)
+		updateCommandStopParams := param.NewUpdateCommandStopParams(command)
 		updateCommandStopParams.Status = *pullDto.Data.Result
 
 		if command, err = r.Repository.UpdateCommandStop(ctx, updateCommandStopParams); err == nil {
@@ -269,7 +270,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 	}
 
 	if pullDto.Data.Result != nil && *pullDto.Data.Result != db.CommandResponseTypeACCEPTED {
-		updateCommandUnlockParams := NewUpdateCommandUnlockParams(command)
+		updateCommandUnlockParams := param.NewUpdateCommandUnlockParams(command)
 		updateCommandUnlockParams.Status = *pullDto.Data.Result
 
 		if command, err = r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams); err == nil {

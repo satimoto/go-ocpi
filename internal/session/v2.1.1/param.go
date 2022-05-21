@@ -21,19 +21,3 @@ func NewCreateSessionParams(dto *SessionDto) db.CreateSessionParams {
 		LastUpdated:     *dto.LastUpdated,
 	}
 }
-
-func NewUpdateSessionByUidParams(session db.Session) db.UpdateSessionByUidParams {
-	return db.UpdateSessionByUidParams{
-		Uid:             session.Uid,
-		AuthorizationID: session.AuthorizationID,
-		StartDatetime:   session.StartDatetime,
-		EndDatetime:     session.EndDatetime,
-		Kwh:             session.Kwh,
-		AuthMethod:      session.AuthMethod,
-		MeterID:         session.MeterID,
-		Currency:        session.Currency,
-		TotalCost:       session.TotalCost,
-		Status:          session.Status,
-		LastUpdated:     session.LastUpdated,
-	}
-}

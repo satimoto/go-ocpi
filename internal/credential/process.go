@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
@@ -23,7 +24,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 		if version != nil {
 			r.VersionDetailResolver.PullVersionEndpoints(ctx, version.Url, header, version.ID)
 
-			updateCredentialParams := NewUpdateCredentialParams(credential)
+			updateCredentialParams := param.NewUpdateCredentialParams(credential)
 			updateCredentialParams.ClientToken = util.SqlNullString(token)
 			updateCredentialParams.ServerToken = util.SqlNullString(uuid.NewString())
 			updateCredentialParams.Url = url
@@ -66,7 +67,7 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 			return nil, errors.New("Error retrieving version endpoint")
 		}
 
-		updateCredentialParams := NewUpdateCredentialParams(credential)
+		updateCredentialParams := param.NewUpdateCredentialParams(credential)
 		updateCredentialParams.ServerToken = util.SqlNullString(nil)
 
 		cred, err := r.Repository.UpdateCredential(ctx, updateCredentialParams)

@@ -7,20 +7,14 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/image"
 )
 
-type RpcCredentialRepository interface{}
-
 type RpcCredentialResolver struct {
-	Repository             RpcCredentialRepository
 	BusinessDetailResolver *businessdetail.BusinessDetailResolver
 	CredentialResolver     *credential.CredentialResolver
 	ImageResolver          *image.ImageResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *RpcCredentialResolver {
-	repo := RpcCredentialRepository(repositoryService)
-
 	return &RpcCredentialResolver{
-		Repository:             repo,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		CredentialResolver:     credential.NewResolver(repositoryService),
 		ImageResolver:          image.NewResolver(repositoryService),

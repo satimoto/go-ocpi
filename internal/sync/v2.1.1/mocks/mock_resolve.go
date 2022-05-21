@@ -15,10 +15,7 @@ func NewResolver(repositoryService *mocks.MockRepositoryService) *sync.SyncResol
 }
 
 func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *sync.SyncResolver {
-	repo := sync.SyncRepository(repositoryService)
-
 	return &sync.SyncResolver{
-		Repository:       repo,
 		CdrResolver:      cdr.NewResolverWithServices(repositoryService, ocpiRequester),
 		LocationResolver: location.NewResolverWithServices(repositoryService, ocpiRequester),
 		SessionResolver:  session.NewResolverWithServices(repositoryService, ocpiRequester),

@@ -1,9 +1,7 @@
 package credential
 
 import (
-	"context"
-	"database/sql"
-
+	"github.com/satimoto/go-datastore/pkg/credential"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
 	"github.com/satimoto/go-ocpi-api/internal/sync"
@@ -12,17 +10,8 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
 
-type CredentialRepository interface {
-	CreateCredential(ctx context.Context, arg db.CreateCredentialParams) (db.Credential, error)
-	GetCredential(ctx context.Context, id int64) (db.Credential, error)
-	GetCredentialByPartyAndCountryCode(ctx context.Context, arg db.GetCredentialByPartyAndCountryCodeParams) (db.Credential, error)
-	GetCredentialByServerToken(ctx context.Context, serverToken sql.NullString) (db.Credential, error)
-	ListCredentials(ctx context.Context) ([]db.Credential, error)
-	UpdateCredential(ctx context.Context, arg db.UpdateCredentialParams) (db.Credential, error)
-}
-
 type CredentialResolver struct {
-	Repository             CredentialRepository
+	Repository             credential.CredentialRepository
 	OcpiRequester          *transportation.OcpiRequester
 	BusinessDetailResolver *businessdetail.BusinessDetailResolver
 	SyncResolver           *sync.SyncResolver
@@ -35,10 +24,8 @@ func NewResolver(repositoryService *db.RepositoryService) *CredentialResolver {
 }
 
 func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CredentialResolver {
-	repo := CredentialRepository(repositoryService)
-
 	return &CredentialResolver{
-		Repository:             repo,
+		Repository:             credential.NewRepository(repositoryService),
 		OcpiRequester:          ocpiRequester,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		SyncResolver:           sync.NewResolver(repositoryService),
