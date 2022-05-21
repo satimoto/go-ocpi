@@ -1,9 +1,8 @@
 package cdr
 
 import (
-	"context"
-
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/cdr"
 	"github.com/satimoto/go-ocpi-api/internal/calibration"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
@@ -13,17 +12,8 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
 
-type CdrRepository interface {
-	CreateCdr(ctx context.Context, arg db.CreateCdrParams) (db.Cdr, error)
-	DeleteCdrChargingPeriods(ctx context.Context, cdrID int64) error
-	GetCdrByLastUpdated(ctx context.Context, arg db.GetCdrByLastUpdatedParams) (db.Cdr, error)
-	GetCdrByUid(ctx context.Context, uid string) (db.Cdr, error)
-	ListCdrChargingPeriods(ctx context.Context, cdrID int64) ([]db.ChargingPeriod, error)
-	SetCdrChargingPeriod(ctx context.Context, arg db.SetCdrChargingPeriodParams) error
-}
-
 type CdrResolver struct {
-	Repository             CdrRepository
+	Repository             cdr.CdrRepository
 	OcpiRequester          *transportation.OcpiRequester
 	CalibrationResolver    *calibration.CalibrationResolver
 	ChargingPeriodResolver *chargingperiod.ChargingPeriodResolver
@@ -38,10 +28,8 @@ func NewResolver(repositoryService *db.RepositoryService) *CdrResolver {
 }
 
 func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CdrResolver {
-	repo := CdrRepository(repositoryService)
-
 	return &CdrResolver{
-		Repository:             repo,
+		Repository:             cdr.NewRepository(repositoryService),
 		OcpiRequester:          ocpiRequester,
 		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),

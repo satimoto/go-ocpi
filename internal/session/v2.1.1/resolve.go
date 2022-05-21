@@ -1,9 +1,8 @@
 package session
 
 import (
-	"context"
-
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/session"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
@@ -12,19 +11,8 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
 )
 
-type SessionRepository interface {
-	CreateSession(ctx context.Context, arg db.CreateSessionParams) (db.Session, error)
-	DeleteSessionChargingPeriods(ctx context.Context, sessionID int64) error
-	GetSessionByLastUpdated(ctx context.Context, arg db.GetSessionByLastUpdatedParams) (db.Session, error)
-	GetSessionByUid(ctx context.Context, uid string) (db.Session, error)
-	GetUserBySessionID(ctx context.Context, id int64) (db.User, error)
-	ListSessionChargingPeriods(ctx context.Context, sessionID int64) ([]db.ChargingPeriod, error)
-	SetSessionChargingPeriod(ctx context.Context, arg db.SetSessionChargingPeriodParams) error
-	UpdateSessionByUid(ctx context.Context, arg db.UpdateSessionByUidParams) (db.Session, error)
-}
-
 type SessionResolver struct {
-	Repository                 SessionRepository
+	Repository                 session.SessionRepository
 	OcpiRequester              *transportation.OcpiRequester
 	ChargingPeriodResolver     *chargingperiod.ChargingPeriodResolver
 	LocationResolver           *location.LocationResolver
@@ -38,10 +26,8 @@ func NewResolver(repositoryService *db.RepositoryService) *SessionResolver {
 }
 
 func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *SessionResolver {
-	repo := SessionRepository(repositoryService)
-
 	return &SessionResolver{
-		Repository:                 repo,
+		Repository:                 session.NewRepository(repositoryService),
 		OcpiRequester:              ocpiRequester,
 		ChargingPeriodResolver:     chargingperiod.NewResolver(repositoryService),
 		LocationResolver:           location.NewResolverWithServices(repositoryService, ocpiRequester),
