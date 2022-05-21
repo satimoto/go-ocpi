@@ -13,6 +13,7 @@ import (
 	"os"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/util"
@@ -107,7 +108,7 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAll
 		token, err := r.Repository.GetTokenByUid(ctx, uid)
 
 		if err == nil {
-			tokenParams := NewUpdateTokenByUidParams(token)
+			tokenParams := param.NewUpdateTokenByUidParams(token)
 			tokenParams.Allowed = tokenAllowed
 
 			if dto.AuthID != nil {

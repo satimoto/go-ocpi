@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/image"
@@ -14,7 +15,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 		evse, err := r.Repository.GetEvseByUid(ctx, uid)
 
 		if err == nil {
-			evseParams := NewUpdateEvseByUidParams(evse)
+			evseParams := param.NewUpdateEvseByUidParams(evse)
 
 			if dto.Coordinates != nil {
 				geoLocationID := util.SqlNullInt64(nil)
@@ -218,7 +219,7 @@ func (r *EvseResolver) replaceStatusSchedule(ctx context.Context, evseID int64, 
 }
 
 func (r *EvseResolver) updateLocationAvailability(ctx context.Context, locationID int64) {
-	updateLocationAvailabilityParams := NewUpdateLocationAvailabilityParams(locationID)
+	updateLocationAvailabilityParams := param.NewUpdateLocationAvailabilityParams(locationID)
 
 	if evses, err := r.Repository.ListEvses(ctx, locationID); err == nil {
 		for _, evse := range evses {

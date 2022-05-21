@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
@@ -61,7 +62,7 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 		}
 
 		if err == nil {
-			locationParams := NewUpdateLocationByUidParams(location)
+			locationParams := param.NewUpdateLocationByUidParams(location)
 			locationParams.CountryCode = util.SqlNullString(countryCode)
 			locationParams.PartyID = util.SqlNullString(partyID)
 			locationParams.Geom = *geomPoint

@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
 func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, dto *LocationReferencesDto) *db.TokenAuthorization {
-	tokenAuthorizationParams := NewCreateTokenAuthorizationParams(token.ID)
+	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
 
 	if dto != nil {
 		tokenAuthorizationParams.LocationID = util.SqlNullString(dto.LocationID)

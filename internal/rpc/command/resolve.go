@@ -10,10 +10,7 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
-type RpcCommandRepository interface{}
-
 type RpcCommandResolver struct {
-	Repository         RpcCommandRepository
 	CommandResolver    *command.CommandResolver
 	CredentialResolver *credential.CredentialResolver
 	LocationResolver   *location.LocationResolver
@@ -26,10 +23,7 @@ func NewResolver(repositoryService *db.RepositoryService) *RpcCommandResolver {
 }
 
 func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *RpcCommandResolver {
-	repo := RpcCommandRepository(repositoryService)
-
 	return &RpcCommandResolver{
-		Repository:         repo,
 		CommandResolver:    command.NewResolverWithServices(repositoryService, ocpiRequester),
 		CredentialResolver: credential.NewResolverWithServices(repositoryService, ocpiRequester),
 		LocationResolver:   location.NewResolverWithServices(repositoryService, ocpiRequester),

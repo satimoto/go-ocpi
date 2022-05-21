@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/credential"
 	"github.com/satimoto/go-ocpi-api/internal/middleware"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
@@ -21,7 +21,7 @@ func (r *CredentialResolver) DeleteCredential(rw http.ResponseWriter, request *h
 		http.Error(rw, http.StatusText(405), 405)
 	}
 
-	updateCredentialParams := credential.NewUpdateCredentialParams(cred)
+	updateCredentialParams := param.NewUpdateCredentialParams(cred)
 	updateCredentialParams.ClientToken = util.SqlNullString(nil)
 	updateCredentialParams.LastUpdated = time.Now()
 

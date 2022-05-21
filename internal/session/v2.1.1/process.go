@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
-	tokenauthorization "github.com/satimoto/go-ocpi-api/internal/tokenauthorization/v2.1.1"
 )
 
 func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
@@ -13,7 +13,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 		session, err := r.Repository.GetSessionByUid(ctx, uid)
 
 		if err == nil {
-			sessionParams := NewUpdateSessionByUidParams(session)
+			sessionParams := param.NewUpdateSessionByUidParams(session)
 
 			if dto.AuthMethod != nil {
 				sessionParams.AuthMethod = *dto.AuthMethod
@@ -128,6 +128,6 @@ func (r *SessionResolver) replaceChargingPeriods(ctx context.Context, sessionID 
 }
 
 func (r *SessionResolver) replaceTokenAuthorization(ctx context.Context, countryCode *string, partyID *string, dto *SessionDto) {
-	tokenAuthorizationParams := tokenauthorization.NewUpdateTokenAuthorizationParams(*dto.AuthorizationID, countryCode, partyID)
+	tokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(*dto.AuthorizationID, countryCode, partyID)
 	r.TokenAuthorizationResolver.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, tokenAuthorizationParams)
 }
