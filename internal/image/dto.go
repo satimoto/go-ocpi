@@ -38,8 +38,10 @@ func (r *ImageResolver) CreateImageDto(ctx context.Context, image db.Image) *Ima
 
 func (r *ImageResolver) CreateImageListDto(ctx context.Context, images []db.Image) []*ImageDto {
 	list := []*ImageDto{}
+	
 	for _, image := range images {
 		list = append(list, r.CreateImageDto(ctx, image))
 	}
+
 	return list
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/render"
 
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
@@ -13,6 +14,9 @@ func (r *VersionResolver) GetVersions(rw http.ResponseWriter, request *http.Requ
 	dto := r.CreateVersionListDto(ctx)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
+		util.LogOnError("OCPI215", "Error rendering response", err)
+		util.LogHttpRequest("OCPI215", request.URL.String(), request, true)
+
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 }

@@ -45,8 +45,10 @@ func (r *ConnectorResolver) CreateConnectorDto(ctx context.Context, connector db
 
 func (r *ConnectorResolver) CreateConnectorListDto(ctx context.Context, connectors []db.Connector) []*ConnectorDto {
 	list := []*ConnectorDto{}
+	
 	for _, connector := range connectors {
 		list = append(list, r.CreateConnectorDto(ctx, connector))
 	}
+
 	return list
 }

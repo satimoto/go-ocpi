@@ -42,14 +42,16 @@ func (r *TokenResolver) GenerateAuthID(ctx context.Context) (string, error) {
 		}
 	}
 
-	return "", errors.New("Error generating AuthID")
+	log.Print("OCPI194", "Error generating AuthID")
+	log.Printf("OCPI194: CountryCode=%v, PartyID=%v", countryCode, partyId)
+	return "", errors.New("error generating AuthID")
 }
 
 func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid string, dto *TokenDto) {
 	credentials, err := r.Repository.ListCredentials(ctx)
 
 	if err != nil {
-		log.Printf("Error PushToken ListCredentials: %v", err)
+		dbUtil.LogOnError("OCPI195", "Error listing credentials", err)
 		return
 	}
 
@@ -61,16 +63,16 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 			versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "tokens", credential.CountryCode, credential.PartyID)
 
 			if err != nil {
-				log.Printf("Error PushToken GetVersionEndpointByIdentity: %v", err)
-				log.Printf("CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
+				dbUtil.LogOnError("OCPI196", "Error retrieving verion endpoint", err)
+				log.Printf("OCPI196: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
 				continue
 			}
 
 			requestUrl, err := url.Parse(versionEndpoint.Url)
 
 			if err != nil {
-				log.Printf("Error PushToken Parse: %v", err)
-				log.Printf("Url=%v", versionEndpoint.Url)
+				dbUtil.LogOnError("OCPI197", "Error parsing url", err)
+				log.Printf("OCPI197: Url=%v", versionEndpoint.Url)
 				continue
 			}
 
@@ -78,8 +80,8 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 			dtoBytes, err := json.Marshal(dto)
 
 			if err != nil {
-				log.Printf("Error PushToken Marshal: %v", err)
-				log.Printf("Dto=%#v", dto)
+				dbUtil.LogOnError("OCPI198", "Error marshalling dto", err)
+				log.Printf("OCPI198: Dto=%#v", dto)
 				continue
 			}
 
@@ -87,17 +89,23 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 			response, err := r.OcpiRequester.Do(httpMethod, requestUrl.String(), header, bytes.NewReader(dtoBytes))
 
 			if err != nil {
-				log.Printf("Error PushToken Do: %v", err)
-				log.Printf("Url=%v, Method=%s", requestUrl.String(), httpMethod)
+				dbUtil.LogOnError("OCPI199", "Error making request", err)
+				log.Printf("OCPI199: Method=%v, Url=%v, Header=%#v", httpMethod, requestUrl.String(), header)
 				continue
 			}
 
-			defer response.Body.Close()
 			pullDto, err := transportation.UnmarshalResponseDto(response.Body)
+			defer response.Body.Close()
 
-			if err != nil || pullDto.StatusCode != transportation.STATUS_CODE_OK {
-				log.Printf("Error PushToken UnmarshalPullDto: %v", err)
-				log.Printf("StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
+			if err != nil {
+				dbUtil.LogOnError("OCPI200", "Error unmarshalling response", err)
+				dbUtil.LogHttpResponse("OCPI200", requestUrl.String(), response, true)
+				break
+			}
+
+			if pullDto.StatusCode != transportation.STATUS_CODE_OK {
+				dbUtil.LogHttpResponse("OCPI201", requestUrl.String(), response, true)
+				log.Printf("OCPI201: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 			}
 		}
 	}
@@ -143,8 +151,15 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAll
 				tokenParams.Whitelist = *dto.Whitelist
 			}
 
-			token, err = r.Repository.UpdateTokenByUid(ctx, tokenParams)
+			updatedToken, err := r.Repository.UpdateTokenByUid(ctx, tokenParams)
 
+			if err != nil {
+				dbUtil.LogOnError("OCPI202", "Error updating token", err)
+				log.Printf("OCPI202: Params=%#v", tokenParams)
+				return nil
+			}
+
+			token = updatedToken
 			r.PushToken(ctx, http.MethodPatch, token.Uid, dto)
 		} else {
 			tokenParams := NewCreateTokenParams(dto)
@@ -152,6 +167,12 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAll
 			tokenParams.UserID = userId
 
 			token, err = r.Repository.CreateToken(ctx, tokenParams)
+
+			if err != nil {
+				dbUtil.LogOnError("OCPI203", "Error creating token", err)
+				log.Printf("OCPI203: Params=%#v", tokenParams)
+				return nil
+			}
 
 			r.PushToken(ctx, http.MethodPut, token.Uid, dto)
 		}

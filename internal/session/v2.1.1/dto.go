@@ -2,6 +2,7 @@ package session
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -60,11 +61,21 @@ func NewSessionDto(session db.Session) *SessionDto {
 func (r *SessionResolver) CreateSessionDto(ctx context.Context, session db.Session) *SessionDto {
 	response := NewSessionDto(session)
 
-	if chargingPeriods, err := r.Repository.ListSessionChargingPeriods(ctx, session.ID); err == nil {
+	chargingPeriods, err := r.Repository.ListSessionChargingPeriods(ctx, session.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI254", "Error listing session charging periods", err)
+		log.Printf("OCPI254: SessionID=%v", session.ID)
+	} else {
 		response.ChargingPeriods = r.ChargingPeriodResolver.CreateChargingPeriodListDto(ctx, chargingPeriods)
 	}
 
-	if location, err := r.LocationResolver.Repository.GetLocation(ctx, session.LocationID); err == nil {
+	location, err := r.LocationResolver.Repository.GetLocation(ctx, session.LocationID)
+
+	if err != nil {
+		util.LogOnError("OCPI255", "Error listing session charging periods", err)
+		log.Printf("OCPI255: LocationID=%v", session.LocationID)
+	} else {
 		response.Location = r.LocationResolver.CreateLocationDto(ctx, location)
 	}
 
@@ -73,8 +84,10 @@ func (r *SessionResolver) CreateSessionDto(ctx context.Context, session db.Sessi
 
 func (r *SessionResolver) CreateSessionListDto(ctx context.Context, sessions []db.Session) []render.Renderer {
 	list := []render.Renderer{}
+	
 	for _, session := range sessions {
 		list = append(list, r.CreateSessionDto(ctx, session))
 	}
+
 	return list
 }

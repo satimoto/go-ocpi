@@ -201,6 +201,13 @@ func TestCdrRequest(t *testing.T) {
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
+		mockRepository.SetGetTokenByAuthIDMockData(dbMocks.TokenMockData{
+			Token: db.Token{
+				ID:     1,
+				AuthID: "DE8ACC12E46L89",
+			},
+		})
+
 		request, err := http.NewRequest(http.MethodPost, "/", bytes.NewReader([]byte(`{
 			"id": "CDR0003",
 			"start_date_time": "2015-06-29T21:39:09Z",
@@ -272,10 +279,14 @@ func TestCdrRequest(t *testing.T) {
 		}
 
 		requestCtx := request.Context()
-		requestCtx = context.WithValue(requestCtx, "credential", &db.Credential{ID: 1, CountryCode: "FR", PartyID: "GER"})
+		requestCtx = context.WithValue(requestCtx, "credential", &db.Credential{
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
+		})
 		cdrRoutes.ServeHTTP(responseRecorder, request.WithContext(requestCtx))
 
-		cdrParams, err := mockRepository.GetCreateCdrMockData()
+		cdrParams, _ := mockRepository.GetCreateCdrMockData()
 		paramsJson, _ := json.Marshal(cdrParams)
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
@@ -289,7 +300,7 @@ func TestCdrRequest(t *testing.T) {
 			"authID": "DE8ACC12E46L89",
 			"authMethod": "AUTH_REQUEST",
 			"userID": 0,
-			"tokenID": 0,
+			"tokenID": 1,
 			"locationID": 0,
 			"evseID": 0,
 			"connectorID": 0,

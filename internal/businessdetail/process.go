@@ -2,6 +2,7 @@ package businessdetail
 
 import (
 	"context"
+	"log"
 
 	"github.com/satimoto/go-datastore/pkg/util"
 )
@@ -13,10 +14,16 @@ func (r *BusinessDetailResolver) ReplaceBusinessDetail(ctx context.Context, id *
 		if id == nil {
 			businessDetailParams := NewCreateBusinessDetailParams(dto)
 			businessDetailParams.LogoID = util.SqlNullInt64(logoID)
+			
+			businessDetail, err := r.Repository.CreateBusinessDetail(ctx, businessDetailParams)
 
-			if businessDetail, err := r.Repository.CreateBusinessDetail(ctx, businessDetailParams); err == nil {
-				id = &businessDetail.ID
+			if err != nil {
+				util.LogOnError("OCPI016", "Error creating business detail", err)
+				log.Printf("OCPI016: Params=%#v", businessDetailParams)
+				return
 			}
+
+			id = &businessDetail.ID
 		} else {
 			businessDetailParams := NewUpdateBusinessDetailParams(*id, dto)
 			businessDetailParams.LogoID = util.SqlNullInt64(logoID)

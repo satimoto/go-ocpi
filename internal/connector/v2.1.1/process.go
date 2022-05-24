@@ -2,6 +2,7 @@ package connector
 
 import (
 	"context"
+	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
@@ -47,11 +48,24 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, 
 			}
 
 			connectorParams.Wattage = util.CalculateWattage(connectorParams.PowerType, connectorParams.Voltage, connectorParams.Amperage)
-			connector, err = r.Repository.UpdateConnectorByUid(ctx, connectorParams)
+			updatedConnector, err := r.Repository.UpdateConnectorByUid(ctx, connectorParams)
+
+			if err != nil {
+				dbUtil.LogOnError("OCPI079", "Error updating connector", err)
+				log.Printf("OCPI079: Params=%v", connectorParams)
+				return nil
+			}
+
+			connector = updatedConnector
 		} else {
 			connectorParams := NewCreateConnectorParams(evseID, dto)
-
 			connector, err = r.Repository.CreateConnector(ctx, connectorParams)
+
+			if err != nil {
+				dbUtil.LogOnError("OCPI080", "Error creating connector", err)
+				log.Printf("OCPI080: Params=%v", connectorParams)
+				return nil
+			}
 		}
 
 		return &connector
@@ -61,11 +75,9 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, 
 }
 
 func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evseID int64, dto []*ConnectorDto) {
-	if dto != nil {
-		for _, connector := range dto {
-			if connector.Id != nil {
-				r.ReplaceConnector(ctx, evseID, *connector.Id, connector)
-			}
+	for _, connector := range dto {
+		if connector.Id != nil {
+			r.ReplaceConnector(ctx, evseID, *connector.Id, connector)
 		}
 	}
 }

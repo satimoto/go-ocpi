@@ -2,10 +2,13 @@ package session
 
 import (
 	"context"
+	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
+	"github.com/satimoto/go-ocpi-api/pkg/ocpi"
+	ocpiSession "github.com/satimoto/go-ocpi-api/pkg/ocpi/session"
 )
 
 func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
@@ -51,7 +54,15 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 				sessionParams.TotalCost = util.SqlNullFloat64(dto.TotalCost)
 			}
 
-			session, err = r.Repository.UpdateSessionByUid(ctx, sessionParams)
+			updatedSession, err := r.Repository.UpdateSessionByUid(ctx, sessionParams)
+
+			if err != nil {
+				util.LogOnError("OCPI161", "Error updating session", err)
+				log.Printf("OCPI161: Params=%#v", sessionParams)
+				return nil
+			}
+
+			session = updatedSession
 		} else {
 			sessionParams := NewCreateSessionParams(dto)
 			sessionParams.CredentialID = credential.ID
@@ -59,20 +70,35 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			sessionParams.PartyID = util.SqlNullString(partyID)
 
 			if dto.AuthID != nil {
-				if token, err := r.TokenResolver.Repository.GetTokenByAuthID(ctx, *dto.AuthID); err == nil {
-					sessionParams.TokenID = token.ID
-					sessionParams.UserID = token.UserID
+				token, err := r.TokenResolver.Repository.GetTokenByAuthID(ctx, *dto.AuthID)
+
+				if err != nil {
+					util.LogOnError("OCPI162", "Error retrieving token", err)
+					log.Printf("OCPI162: AuthID=%v", *dto.AuthID)
+					return nil
 				}
+
+				sessionParams.TokenID = token.ID
+				sessionParams.UserID = token.UserID
 			}
 
 			if dto.Location != nil {
-				if location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID); err == nil {
+				location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID)
+
+				if err != nil {
+					util.LogOnError("OCPI163", "Error retrieving location", err)
+					log.Printf("OCPI163: Uid=%v", *dto.Location.ID)
+				} else {
 					sessionParams.LocationID = location.ID
 				}
 
 				evseDto := dto.Location.Evses[0]
+				evse, err := r.LocationResolver.EvseResolver.Repository.GetEvseByUid(ctx, *evseDto.Uid)
 
-				if evse, err := r.LocationResolver.EvseResolver.Repository.GetEvseByUid(ctx, *evseDto.Uid); err == nil {
+				if err != nil {
+					util.LogOnError("OCPI164", "Error retrieving evse", err)
+					log.Printf("OCPI164: Uid=%v", *evseDto.Uid)
+				} else {
 					sessionParams.EvseID = evse.ID
 				}
 
@@ -81,13 +107,23 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 					EvseID: sessionParams.EvseID,
 					Uid:    *connectorDto.Id,
 				}
+				connector, err := r.LocationResolver.EvseResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams)
 
-				if connector, err := r.LocationResolver.EvseResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams); err == nil {
+				if err != nil {
+					util.LogOnError("OCPI165", "Error retrieving connector", err)
+					log.Printf("OCPI165: Params=%#v", connectorParams)
+				} else {
 					sessionParams.ConnectorID = connector.ID
 				}
 			}
 
 			session, err = r.Repository.CreateSession(ctx, sessionParams)
+
+			if err != nil {
+				util.LogOnError("OCPI166", "Error creating session", err)
+				log.Printf("OCPI166: Params=%#v", sessionParams)
+				return nil
+			}
 		}
 
 		if dto.AuthorizationID != nil {
@@ -98,7 +134,23 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			r.replaceChargingPeriods(ctx, session.ID, dto)
 		}
 
-		// TODO: Send SessionCreated RPC to LSP node
+		node, err := r.NodeRepository.GetNodeByUserID(ctx, session.UserID)
+
+		if err != nil {
+			util.LogOnError("OCPI167", "Error retrieving node", err)
+			log.Printf("OCPI167: UserID=%v", session.UserID)
+			return &session
+		}
+
+		// TODO: Handle failed RPC call more robustly
+		ocpiService := ocpi.NewService(node.LspAddr)
+		sessionCreatedRequest := ocpiSession.NewSessionCreatedRequest(session)
+		sessionCreatedResponse, err := ocpiService.SessionCreated(ctx, sessionCreatedRequest)
+
+		if err != nil {
+			util.LogOnError("OCPI168", "Error calling RPC service", err)
+			log.Printf("OCPI168: Request=%#v, Response=%#v", sessionCreatedRequest, sessionCreatedResponse)
+		}
 
 		return &session
 	}
@@ -119,10 +171,16 @@ func (r *SessionResolver) replaceChargingPeriods(ctx context.Context, sessionID 
 		chargingPeriod := r.ChargingPeriodResolver.ReplaceChargingPeriod(ctx, chargingPeriodDto)
 
 		if chargingPeriod != nil {
-			r.Repository.SetSessionChargingPeriod(ctx, db.SetSessionChargingPeriodParams{
+			setSessionChargingPeriodParams := db.SetSessionChargingPeriodParams{
 				SessionID:        sessionID,
 				ChargingPeriodID: chargingPeriod.ID,
-			})
+			}
+			err := r.Repository.SetSessionChargingPeriod(ctx, setSessionChargingPeriodParams)
+
+			if err != nil {
+				util.LogOnError("OCPI169", "Error setting session charging period", err)
+				log.Printf("OCPI169: Params=%#v", setSessionChargingPeriodParams)
+			}
 		}
 	}
 }

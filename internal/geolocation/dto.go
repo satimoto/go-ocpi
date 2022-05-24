@@ -32,8 +32,10 @@ func (r *GeoLocationResolver) CreateGeoLocationDto(ctx context.Context, geoLocat
 
 func (r *GeoLocationResolver) CreateGeoLocationListDto(ctx context.Context, geoLocations []db.GeoLocation) []*GeoLocationDto {
 	list := []*GeoLocationDto{}
+	
 	for _, geoLocation := range geoLocations {
 		list = append(list, r.CreateGeoLocationDto(ctx, geoLocation))
 	}
+
 	return list
 }

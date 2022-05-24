@@ -2,10 +2,12 @@ package openingtime
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 )
 
 type ExceptionalPeriodDto struct {
@@ -30,9 +32,11 @@ func (r *OpeningTimeResolver) CreateExceptionalPeriodDto(ctx context.Context, ex
 
 func (r *OpeningTimeResolver) CreateExceptionalPeriodListDto(ctx context.Context, exceptionalPeriods []db.ExceptionalPeriod) []*ExceptionalPeriodDto {
 	list := []*ExceptionalPeriodDto{}
+
 	for _, exceptionalPeriod := range exceptionalPeriods {
 		list = append(list, r.CreateExceptionalPeriodDto(ctx, exceptionalPeriod))
 	}
+
 	return list
 }
 
@@ -56,15 +60,30 @@ func NewOpeningTimeDto(openingTime db.OpeningTime) *OpeningTimeDto {
 func (r *OpeningTimeResolver) CreateOpeningTimeDto(ctx context.Context, openingTime db.OpeningTime) *OpeningTimeDto {
 	response := NewOpeningTimeDto(openingTime)
 
-	if regularHours, err := r.Repository.ListRegularHours(ctx, openingTime.ID); err == nil {
+	regularHours, err := r.Repository.ListRegularHours(ctx, openingTime.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI249", "Error listing regular hours", err)
+		log.Printf("OCPI249: OpeningTimeID=%v", openingTime.ID)
+	} else {
 		response.RegularHours = r.CreateRegularHourListDto(ctx, regularHours)
 	}
 
-	if exceptionalOpenings, err := r.Repository.ListExceptionalOpeningPeriods(ctx, openingTime.ID); err == nil {
+	exceptionalOpenings, err := r.Repository.ListExceptionalOpeningPeriods(ctx, openingTime.ID)
+	
+	if err != nil {
+		util.LogOnError("OCPI250", "Error listing exceptional opening periods", err)
+		log.Printf("OCPI250: OpeningTimeID=%v", openingTime.ID)
+	} else {
 		response.ExceptionalOpenings = r.CreateExceptionalPeriodListDto(ctx, exceptionalOpenings)
 	}
 
-	if exceptionalClosings, err := r.Repository.ListExceptionalClosingPeriods(ctx, openingTime.ID); err == nil {
+	exceptionalClosings, err := r.Repository.ListExceptionalClosingPeriods(ctx, openingTime.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI251", "Error listing exceptional closing periods", err)
+		log.Printf("OCPI251: OpeningTimeID=%v", openingTime.ID)
+	} else {
 		response.ExceptionalClosings = r.CreateExceptionalPeriodListDto(ctx, exceptionalClosings)
 	}
 
@@ -95,8 +114,10 @@ func (r *OpeningTimeResolver) CreateRegularHourDto(ctx context.Context, regularH
 
 func (r *OpeningTimeResolver) CreateRegularHourListDto(ctx context.Context, regularHours []db.RegularHour) []*RegularHourDto {
 	list := []*RegularHourDto{}
+	
 	for _, regularHour := range regularHours {
 		list = append(list, r.CreateRegularHourDto(ctx, regularHour))
 	}
+
 	return list
 }

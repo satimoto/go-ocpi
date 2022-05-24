@@ -3,6 +3,7 @@ package command
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -47,10 +48,16 @@ func NewCommandReservationDto(command db.CommandReservation) *CommandReservation
 func (r *CommandResolver) CreateCommandReservationDto(ctx context.Context, command db.CommandReservation) *CommandReservationDto {
 	response := NewCommandReservationDto(command)
 
-	if token, err := r.TokenResolver.Repository.GetToken(ctx, command.TokenID); err == nil {
-		response.Token = r.TokenResolver.CreateTokenDto(ctx, token)
+	token, err := r.TokenResolver.Repository.GetToken(ctx, command.TokenID)
+
+	if err != nil {
+		util.LogOnError("OCPI224", "Error retrieving token", err)
+		log.Printf("OCPI224: TokenID=%v", command.TokenID)
+		return response
 	}
 
+	response.Token = r.TokenResolver.CreateTokenDto(ctx, token)
+	
 	return response
 }
 
@@ -88,9 +95,15 @@ func NewCommandStartDto(command db.CommandStart) *CommandStartDto {
 func (r *CommandResolver) CreateCommandStartDto(ctx context.Context, command db.CommandStart) *CommandStartDto {
 	response := NewCommandStartDto(command)
 
-	if token, err := r.TokenResolver.Repository.GetToken(ctx, command.TokenID); err == nil {
-		response.Token = r.TokenResolver.CreateTokenDto(ctx, token)
+	token, err := r.TokenResolver.Repository.GetToken(ctx, command.TokenID)
+
+	if err != nil {
+		util.LogOnError("OCPI225", "Error retrieving token", err)
+		log.Printf("OCPI225: TokenID=%v", command.TokenID)
+		return response
 	}
+
+	response.Token = r.TokenResolver.CreateTokenDto(ctx, token)
 
 	return response
 }

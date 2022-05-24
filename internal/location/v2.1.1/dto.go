@@ -2,6 +2,7 @@ package location
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -69,66 +70,123 @@ func NewLocationDto(location db.Location) *LocationDto {
 
 func (r *LocationResolver) CreateFacilityListDto(ctx context.Context, facilities []db.Facility) []*string {
 	list := []*string{}
+
 	for i := 0; i < len(facilities); i++ {
 		list = append(list, &facilities[i].Text)
 	}
+
 	return list
 }
 
 func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Location) *LocationDto {
 	response := NewLocationDto(location)
 
-	if geoLocation, err := r.GeoLocationResolver.Repository.GetGeoLocation(ctx, location.GeoLocationID); err == nil {
+	geoLocation, err := r.GeoLocationResolver.Repository.GetGeoLocation(ctx, location.GeoLocationID)
+
+	if err != nil {
+		util.LogOnError("OCPI238", "Error retrieving geolocation", err)
+		log.Printf("OCPI238: GeoLocationID=%v", location.GeoLocationID)
+	} else {
 		response.Coordinates = r.GeoLocationResolver.CreateGeoLocationDto(ctx, geoLocation)
 	}
 
-	if relatedLocations, err := r.Repository.ListRelatedLocations(ctx, location.ID); err == nil {
+	relatedLocations, err := r.Repository.ListRelatedLocations(ctx, location.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI239", "Error listing related locations", err)
+		log.Printf("OCPI239: LocationID=%v", location.ID)
+	} else {
 		response.RelatedLocations = r.GeoLocationResolver.CreateGeoLocationListDto(ctx, relatedLocations)
 	}
 
-	if evses, err := r.Repository.ListEvses(ctx, location.ID); err == nil {
+	evses, err := r.Repository.ListEvses(ctx, location.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI240", "Error listing evses", err)
+		log.Printf("OCPI240: LocationID=%v", location.ID)
+	} else {
 		response.Evses = r.EvseResolver.CreateEvseListDto(ctx, evses)
 	}
 
-	if directions, err := r.Repository.ListLocationDirections(ctx, location.ID); err == nil {
+	directions, err := r.Repository.ListLocationDirections(ctx, location.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI241", "Error listing location directions", err)
+		log.Printf("OCPI241: LocationID=%v", location.ID)
+	} else {
 		response.Directions = r.DisplayTextResolver.CreateDisplayTextListDto(ctx, directions)
 	}
 
-	if facilities, err := r.Repository.ListLocationFacilities(ctx, location.ID); err == nil {
+	facilities, err := r.Repository.ListLocationFacilities(ctx, location.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI242", "Error listing location facilities", err)
+		log.Printf("OCPI242: LocationID=%v", location.ID)
+	} else {
 		response.Facilities = r.CreateFacilityListDto(ctx, facilities)
 	}
 
 	if location.EnergyMixID.Valid {
-		if energyMix, err := r.EnergyMixResolver.Repository.GetEnergyMix(ctx, location.EnergyMixID.Int64); err == nil {
+		energyMix, err := r.EnergyMixResolver.Repository.GetEnergyMix(ctx, location.EnergyMixID.Int64)
+
+		if err != nil {
+			util.LogOnError("OCPI243", "Error retrieving energy mix", err)
+			log.Printf("OCPI243: EnergyMixID=%#v", location.EnergyMixID)
+		} else {	
 			response.EnergyMix = r.EnergyMixResolver.CreateEnergyMixDto(ctx, energyMix)
 		}
 	}
 
 	if location.OperatorID.Valid {
-		if operator, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.OperatorID.Int64); err == nil {
+		operator, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.OperatorID.Int64)
+
+		if err != nil {
+			util.LogOnError("OCPI244", "Error retrieving operator business detail", err)
+			log.Printf("OCPI244: OperatorID=%#v", location.OperatorID)
+		} else {	
 			response.Operator = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, operator)
 		}
 	}
 
 	if location.SuboperatorID.Valid {
-		if suboperator, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.SuboperatorID.Int64); err == nil {
+		suboperator, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.SuboperatorID.Int64)
+
+		if err != nil {
+			util.LogOnError("OCPI245", "Error retrieving suboperator business detail", err)
+			log.Printf("OCPI245: SuboperatorID=%#v", location.SuboperatorID)
+		} else {	
 			response.Suboperator = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, suboperator)
 		}
 	}
 
 	if location.OwnerID.Valid {
-		if owner, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.OwnerID.Int64); err == nil {
+		owner, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.OwnerID.Int64)
+		
+		if err != nil {
+			util.LogOnError("OCPI246", "Error retrieving owner business detail", err)
+			log.Printf("OCPI246: OwnerID=%#v", location.OwnerID)
+		} else {	
 			response.Owner = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, owner)
 		}
 	}
 
 	if location.OpeningTimeID.Valid {
-		if openingTime, err := r.OpeningTimeResolver.Repository.GetOpeningTime(ctx, location.OpeningTimeID.Int64); err == nil {
+		openingTime, err := r.OpeningTimeResolver.Repository.GetOpeningTime(ctx, location.OpeningTimeID.Int64)
+
+		if err != nil {
+			util.LogOnError("OCPI247", "Error retrieving opening time", err)
+			log.Printf("OCPI247: OpeningTimeID=%#v", location.OpeningTimeID)
+		} else {	
 			response.OpeningTimes = r.OpeningTimeResolver.CreateOpeningTimeDto(ctx, openingTime)
 		}
 	}
 
-	if images, err := r.Repository.ListLocationImages(ctx, location.ID); err == nil {
+	images, err := r.Repository.ListLocationImages(ctx, location.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI248", "Error listing location images", err)
+		log.Printf("OCPI248: LocationID=%v", location.ID)
+	} else {
 		response.Images = r.ImageResolver.CreateImageListDto(ctx, images)
 	}
 
@@ -137,8 +195,10 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 
 func (r *LocationResolver) CreateLocationListDto(ctx context.Context, locations []db.Location) []render.Renderer {
 	list := []render.Renderer{}
+	
 	for _, location := range locations {
 		list = append(list, r.CreateLocationDto(ctx, location))
 	}
+
 	return list
 }

@@ -31,7 +31,7 @@ func (r *RpcCredentialResolver) CreateCredential(ctx context.Context, request *o
 		if err != nil {
 			util.LogOnError("OCPI002", "Error creating business detail", err)
 			log.Printf("OCPI002: Params=%#v", params)
-			return nil, errors.New("Error creating business detail")
+			return nil, errors.New("error creating business detail")
 		}
 
 		return r.CreateCredentialResponse(ctx, credential), nil
@@ -47,7 +47,7 @@ func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request 
 		if err != nil {
 			util.LogOnError("OCPI005", "Error retrieving credential", err)
 			log.Printf("OCPI005: CredentialID=%v", request.Id)
-			return nil, errors.New("Error registering credential")
+			return nil, errors.New("error registering credential")
 		}
 
 		token := credential.ClientToken.String
@@ -61,7 +61,7 @@ func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request 
 		if err != nil {
 			util.LogOnError("OCPI006", "Error registering credential", err)
 			log.Printf("OCPI006: CredentialID=%v, Token=%v", credential.ID, token)
-			return nil, errors.New("Error registering credential")
+			return nil, errors.New("error registering credential")
 		}
 
 		return &ocpirpc.RegisterCredentialResponse{Id: credential.ID}, nil
@@ -77,7 +77,7 @@ func (r *RpcCredentialResolver) UnregisterCredential(ctx context.Context, reques
 		if err != nil {
 			util.LogOnError("OCPI007", "Error retrieving credential", err)
 			log.Printf("OCPI007: CredentialID=%v", request.Id)
-			return nil, errors.New("Error unregistering credential")
+			return nil, errors.New("error unregistering credential")
 		}
 
 		_, err = r.CredentialResolver.UnregisterCredential(ctx, credential)
@@ -85,7 +85,7 @@ func (r *RpcCredentialResolver) UnregisterCredential(ctx context.Context, reques
 		if err != nil {
 			util.LogOnError("OCPI008", "Error unregistering credential", err)
 			log.Printf("OCPI008: CredentialID=%v", credential.ID)
-			return nil, errors.New("Error unregistering credential")
+			return nil, errors.New("error unregistering credential")
 		}
 
 		return &ocpirpc.UnregisterCredentialResponse{Id: credential.ID}, nil
@@ -113,13 +113,13 @@ func (r *RpcCredentialResolver) createBusinessDetail(ctx context.Context, reques
 		if err != nil {
 			util.LogOnError("OCPI003", "Error creating business detail", err)
 			log.Printf("OCPI003: Params=%#v", params)
-			return nil, errors.New("Error creating business detail")
+			return nil, errors.New("error creating business detail")
 		}
 
 		return &businessDetail, nil
 	}
 
-	return nil, errors.New("Error creating business detail from RPC")
+	return nil, errors.New("error creating business detail from RPC")
 }
 
 func (r *RpcCredentialResolver) createImage(ctx context.Context, request *ocpirpc.CreateImageRequest) (*db.Image, error) {
@@ -130,11 +130,11 @@ func (r *RpcCredentialResolver) createImage(ctx context.Context, request *ocpirp
 		if err != nil {
 			util.LogOnError("OCPI004", "Error creating image", err)
 			log.Printf("OCPI004: Params=%#v", params)
-			return nil, errors.New("Error creating image")
+			return nil, errors.New("error creating image")
 		}
 
 		return &image, nil
 	}
 
-	return nil, errors.New("Error creating logo from RPC")
+	return nil, errors.New("error creating logo from RPC")
 }

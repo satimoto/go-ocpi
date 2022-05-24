@@ -2,6 +2,7 @@ package calibration
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
@@ -32,9 +33,15 @@ func NewCalibrationDto(calibration db.Calibration) *CalibrationDto {
 func (r *CalibrationResolver) CreateCalibrationDto(ctx context.Context, calibration db.Calibration) *CalibrationDto {
 	response := NewCalibrationDto(calibration)
 
-	if calibrationValues, err := r.Repository.ListCalibrationValues(ctx, calibration.ID); err == nil {
-		response.SignedValues = r.CreateCalibrationValueListDto(ctx, calibrationValues)
+	calibrationValues, err := r.Repository.ListCalibrationValues(ctx, calibration.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI222", "Error retrieving image", err)
+		log.Printf("OCPI222: CalibrationID=%v", calibration.ID)
+		return response
 	}
+
+	response.SignedValues = r.CreateCalibrationValueListDto(ctx, calibrationValues)
 
 	return response
 }
@@ -63,8 +70,10 @@ func (r *CalibrationResolver) CreateCalibrationValueDto(ctx context.Context, cal
 
 func (r *CalibrationResolver) CreateCalibrationValueListDto(ctx context.Context, calibrationValues []db.CalibrationValue) []*CalibrationValueDto {
 	list := []*CalibrationValueDto{}
+
 	for _, calibrationValue := range calibrationValues {
 		list = append(list, r.CreateCalibrationValueDto(ctx, calibrationValue))
 	}
+
 	return list
 }

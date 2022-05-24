@@ -2,6 +2,7 @@ package cdr
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -68,21 +69,41 @@ func NewCdrDto(cdr db.Cdr) *CdrDto {
 func (r *CdrResolver) CreateCdrDto(ctx context.Context, cdr db.Cdr) *CdrDto {
 	response := NewCdrDto(cdr)
 
-	if chargingPeriods, err := r.Repository.ListCdrChargingPeriods(ctx, cdr.ID); err == nil {
+	chargingPeriods, err := r.Repository.ListCdrChargingPeriods(ctx, cdr.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI223", "Error listing cdr charging periods", err)
+		log.Printf("OCPI223: CdrID=%v", cdr.ID)
+	} else {
 		response.ChargingPeriods = r.ChargingPeriodResolver.CreateChargingPeriodListDto(ctx, chargingPeriods)
 	}
 
-	if location, err := r.LocationResolver.Repository.GetLocation(ctx, cdr.LocationID); err == nil {
+	location, err := r.LocationResolver.Repository.GetLocation(ctx, cdr.LocationID)
+
+	if err != nil {
+		util.LogOnError("OCPI224", "Error retrieving cdr location", err)
+		log.Printf("OCPI224: LocationID=%v", cdr.LocationID)
+	} else {
 		response.Location = r.LocationResolver.CreateLocationDto(ctx, location)
 	}
 
 	if cdr.CalibrationID.Valid {
-		if calibration, err := r.CalibrationResolver.Repository.GetCalibration(ctx, cdr.CalibrationID.Int64); err == nil {
+		calibration, err := r.CalibrationResolver.Repository.GetCalibration(ctx, cdr.CalibrationID.Int64)
+
+		if err != nil {
+			util.LogOnError("OCPI225", "Error retrieving cdr calibration", err)
+			log.Printf("OCPI225: CalibrationID=%v", cdr.CalibrationID)
+		} else {
 			response.SignedData = r.CalibrationResolver.CreateCalibrationDto(ctx, calibration)
 		}
 	}
 
-	if tariffs, err := r.TariffResolver.Repository.ListTariffsByCdr(ctx, util.SqlNullInt64(cdr.ID)); err == nil {
+	tariffs, err := r.TariffResolver.Repository.ListTariffsByCdr(ctx, util.SqlNullInt64(cdr.ID))
+
+	if err != nil {
+		util.LogOnError("OCPI226", "Error listing cdr tariffs", err)
+		log.Printf("OCPI226: CdrID=%v", cdr.ID)
+	} else {
 		response.Tariffs = r.TariffResolver.CreateTariffPushListDto(ctx, tariffs)
 	}
 
@@ -91,8 +112,10 @@ func (r *CdrResolver) CreateCdrDto(ctx context.Context, cdr db.Cdr) *CdrDto {
 
 func (r *CdrResolver) CreateCdrListDto(ctx context.Context, cdrs []db.Cdr) []render.Renderer {
 	list := []render.Renderer{}
+	
 	for _, cdr := range cdrs {
 		list = append(list, r.CreateCdrDto(ctx, cdr))
 	}
+
 	return list
 }

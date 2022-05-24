@@ -2,6 +2,7 @@ package element
 
 import (
 	"context"
+	"log"
 
 	"github.com/satimoto/go-datastore/pkg/util"
 )
@@ -22,9 +23,15 @@ func (r *ElementResolver) ReplaceElements(ctx context.Context, tariffID int64, d
 				elementParams.ElementRestrictionID = util.SqlNullInt64(restrictionID)
 			}
 
-			if element, err := r.Repository.CreateElement(ctx, elementParams); err == nil {
-				r.PriceComponentResolver.CreatePriceComponents(ctx, element.ID, elementDto.PriceComponents)
+			element, err := r.Repository.CreateElement(ctx, elementParams)
+
+			if err != nil {
+				util.LogOnError("OCPI091", "Error creating element", err)
+				log.Printf("OCPI091: Params=%#v", elementParams)
+				continue
 			}
+	
+			r.PriceComponentResolver.CreatePriceComponents(ctx, element.ID, elementDto.PriceComponents)
 		}
 	}
 }

@@ -2,6 +2,7 @@ package businessdetail
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
@@ -30,9 +31,15 @@ func (r *BusinessDetailResolver) CreateBusinessDetailDto(ctx context.Context, bu
 	response := NewBusinessDetailDto(businessDetail)
 
 	if businessDetail.LogoID.Valid {
-		if image, err := r.ImageResolver.Repository.GetImage(ctx, businessDetail.LogoID.Int64); err == nil {
-			response.Logo = r.ImageResolver.CreateImageDto(ctx, image)
+		image, err := r.ImageResolver.Repository.GetImage(ctx, businessDetail.LogoID.Int64)
+		
+		if err != nil {
+			util.LogOnError("OCPI221", "Error retrieving image", err)
+			log.Printf("OCPI222: LogoID=%#v", businessDetail.LogoID)
+			return response
 		}
+		
+		response.Logo = r.ImageResolver.CreateImageDto(ctx, image)
 	}
 
 	return response

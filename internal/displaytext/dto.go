@@ -29,8 +29,10 @@ func (r *DisplayTextResolver) CreateDisplayTextDto(ctx context.Context, displayT
 
 func (r *DisplayTextResolver) CreateDisplayTextListDto(ctx context.Context, displayTexts []db.DisplayText) []*DisplayTextDto {
 	list := []*DisplayTextDto{}
+
 	for _, displayText := range displayTexts {
 		list = append(list, r.CreateDisplayTextDto(ctx, displayText))
 	}
+	
 	return list
 }

@@ -2,9 +2,11 @@ package versiondetail
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
@@ -16,26 +18,44 @@ func (r *VersionDetailResolver) ReplaceVersionEndpoints(ctx context.Context, ver
 
 		for _, endpointDto := range dto.Endpoints {
 			endpointParams := NewCreateVersionEndpointParams(versionID, endpointDto)
+			endpoint, err := r.Repository.CreateVersionEndpoint(ctx, endpointParams)
 
-			if endpoint, err := r.Repository.CreateVersionEndpoint(ctx, endpointParams); err == nil {
-				endpoints = append(endpoints, &endpoint)
+			if err != nil {
+				util.LogOnError("OCPI216", "Error creating version endpoint", err)
+				log.Printf("OCPI216: Params=%#v", endpointParams)
+				continue
 			}
-		}
 
+			endpoints = append(endpoints, &endpoint)
+		}
 	}
 
 	return endpoints
 }
 
 func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url string, header transportation.OcpiRequestHeader, versionID int64) []*db.VersionEndpoint {
-	if response, err := r.OcpiRequester.Do(http.MethodGet, url, header, nil); err == nil {
-		ocpiResponse, err := r.UnmarshalPullDto(response.Body)
-		response.Body.Close()
+	response, err := r.OcpiRequester.Do(http.MethodGet, url, header, nil)
 
-		if err == nil && ocpiResponse.StatusCode == transportation.STATUS_CODE_OK {
-			return r.ReplaceVersionEndpoints(ctx, versionID, ocpiResponse.Data)
-		}
+	if err != nil {
+		util.LogOnError("OCPI217", "Error making request", err)
+		log.Printf("OCPI217: Method=%v, Url=%v, Header=%#v", http.MethodGet, url, header)
+		return []*db.VersionEndpoint{}
 	}
 
-	return []*db.VersionEndpoint{}
+	ocpiResponse, err := r.UnmarshalPullDto(response.Body)
+	defer response.Body.Close()
+
+	if err != nil {
+		util.LogOnError("OCPI218", "Error unmarshalling response", err)
+		util.LogHttpResponse("OCPI218", url, response, true)
+		return []*db.VersionEndpoint{}
+	}
+
+	if ocpiResponse.StatusCode != transportation.STATUS_CODE_OK {
+		util.LogOnError("OCPI219", "Error response failure", err)
+		util.LogHttpResponse("OCPI219", url, response, true)
+		return []*db.VersionEndpoint{}
+	}
+
+	return r.ReplaceVersionEndpoints(ctx, versionID, ocpiResponse.Data)
 }
