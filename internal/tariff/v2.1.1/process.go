@@ -2,6 +2,7 @@ package tariff
 
 import (
 	"context"
+	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
@@ -42,7 +43,15 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 				tariffParams.TariffAltUrl = util.SqlNullString(dto.TariffAltUrl)
 			}
 
-			tariff, err = r.Repository.UpdateTariffByUid(ctx, tariffParams)
+			updatedTariff, err := r.Repository.UpdateTariffByUid(ctx, tariffParams)
+
+			if err != nil {
+				util.LogOnError("OCPI178", "Error updating tariff", err)
+				log.Printf("OCPI178: Params=%#v", tariffParams)
+				return nil
+			}
+
+			tariff = updatedTariff
 		} else {
 			tariffParams := NewCreateTariffParams(dto)
 			tariffParams.CredentialID = credential.ID
@@ -53,6 +62,12 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 			tariffParams.TariffRestrictionID = util.SqlNullInt64(tariffRestrictionID)
 
 			tariff, err = r.Repository.CreateTariff(ctx, tariffParams)
+
+			if err != nil {
+				util.LogOnError("OCPI179", "Error creating tariff", err)
+				log.Printf("OCPI179: Params=%#v", tariffParams)
+				return nil
+			}
 		}
 
 		if dto.TariffAltText != nil {
@@ -80,12 +95,22 @@ func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int6
 
 	for _, displayTextDto := range dto.TariffAltText {
 		displayTextParams := displaytext.NewCreateDisplayTextParams(displayTextDto)
+		displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams)
+		
+		if err != nil {
+			util.LogOnError("OCPI180", "Error creating display text", err)
+			log.Printf("OCPI180: Params=%#v", displayTextParams)
+		}
 
-		if displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams); err == nil {
-			r.Repository.SetTariffAltText(ctx, db.SetTariffAltTextParams{
-				TariffID:      tariffID,
-				DisplayTextID: displayText.ID,
-			})
+		setTariffAltTextParams := db.SetTariffAltTextParams{
+			TariffID:      tariffID,
+			DisplayTextID: displayText.ID,
+		}
+		err = r.Repository.SetTariffAltText(ctx, setTariffAltTextParams)
+
+		if err != nil {
+			util.LogOnError("OCPI181", "Error setting tariff alt text", err)
+			log.Printf("OCPI181: Params=%#v", setTariffAltTextParams)
 		}
 	}
 }

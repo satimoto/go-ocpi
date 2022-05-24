@@ -14,51 +14,52 @@ import (
 func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *ocpirpc.ReserveNowRequest) (*ocpirpc.ReserveNowResponse, error) {
 	if input != nil {
 		expiryDate := util.ParseTime(input.ExpiryDate, nil)
-		token, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, db.GetTokenByUserIDParams{
+		getTokenByUserIDParams := db.GetTokenByUserIDParams{
 			UserID: input.UserId,
 			Type:   db.TokenTypeOTHER,
-		})
+		}
+		token, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, getTokenByUserIDParams)
 
 		if err != nil {
-			log.Printf("Error ReserveNow GetTokenByUserId: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Token not found")
+			util.LogOnError("OCPI140", "Error retrieving token", err)
+			log.Printf("OCPI140: Params=%#v", getTokenByUserIDParams)
+			return nil, errors.New("token not found")
 		}
 
 		if !token.Valid || token.Allowed != db.TokenAllowedTypeALLOWED {
-			log.Printf("Invalid token")
-			log.Printf("Valid=%v, Allowed=%v", token.Valid, token.Allowed)
-			return nil, errors.New("Token not found")
+			util.LogOnError("OCPI141", "Error invalid token", err)
+			log.Printf("OCPI141: Token=%#v", token)
+			return nil, errors.New("token not found")
 		}
 
 		location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, input.LocationUid)
 
 		if err != nil {
-			log.Printf("Error ReserveNow GetLocationByUid: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Location not found")
+			util.LogOnError("OCPI142", "Error retrieving location", err)
+			log.Printf("OCPI142: LocationUid=%v", input.LocationUid)
+			return nil, errors.New("location not found")
 		}
 
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, location.CredentialID)
 
 		if err != nil {
-			log.Printf("Error ReserveNow GetCredential: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Credential not found")
+			util.LogOnError("OCPI143", "Error retrieving credential", err)
+			log.Printf("OCPI143: CredentialID=%v", location.CredentialID)
+			return nil, errors.New("credential not found")
 		}
 
 		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
-			log.Printf("Error Credential not registered")
-			log.Printf("CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
-			return nil, errors.New("Error requesting reservation")
+			util.LogOnError("OCPI144", "Error invalid credential", err)
+			log.Printf("OCPI144: CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
+			return nil, errors.New("error requesting reservation")
 		}
 
 		command, err := r.CommandResolver.ReserveNow(ctx, credential, token, location, &input.EvseUid, *expiryDate)
 
 		if err != nil {
-			log.Printf("Error ReserveNow ReserveNow: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Error requesting reservation")
+			util.LogOnError("OCPI145", "Error requesting reservation", err)
+			log.Printf("OCPI145: Input=%#v", input)
+			return nil, errors.New("error requesting reservation")
 		}
 
 		reserveNowResponse := ocpiCommand.NewCommandReservationResponse(*command)
@@ -66,56 +67,57 @@ func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *ocpirpc.Rese
 		return reserveNowResponse, nil
 	}
 
-	return nil, errors.New("Missing ReserveNowRequest")
+	return nil, errors.New("missing request")
 }
 
 func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.StartSessionRequest) (*ocpirpc.StartSessionResponse, error) {
 	if input != nil {
-		token, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, db.GetTokenByUserIDParams{
+		getTokenByUserIDParams := db.GetTokenByUserIDParams{
 			UserID: input.UserId,
 			Type:   db.TokenTypeOTHER,
-		})
+		}
+		token, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, getTokenByUserIDParams)
 
 		if err != nil {
-			log.Printf("Error StartSession GetTokenByUserId: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Token not found")
+			util.LogOnError("OCPI146", "Error retrieving token", err)
+			log.Printf("OCPI146: Params=%#v", getTokenByUserIDParams)
+			return nil, errors.New("token not found")
 		}
 
 		if !token.Valid || token.Allowed != db.TokenAllowedTypeALLOWED {
-			log.Printf("Invalid token")
-			log.Printf("Valid=%v, Allowed=%v", token.Valid, token.Allowed)
-			return nil, errors.New("Token not found")
+			util.LogOnError("OCPI147", "Error invalid token", err)
+			log.Printf("OCPI147: Token=%#v", token)
+			return nil, errors.New("token not found")
 		}
 
 		location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, input.LocationUid)
 
 		if err != nil {
-			log.Printf("Error StartSession GetLocationByUid: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Location not found")
+			util.LogOnError("OCPI148", "Error retrieving location", err)
+			log.Printf("OCPI148: LocationUid=%v", input.LocationUid)
+			return nil, errors.New("location not found")
 		}
 
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, location.CredentialID)
 
 		if err != nil {
-			log.Printf("Error StartSession GetCredential: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Credential not found")
+			util.LogOnError("OCPI149", "Error retrieving credential", err)
+			log.Printf("OCPI149: CredentialID=%v", location.CredentialID)
+			return nil, errors.New("credential not found")
 		}
 
 		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
-			log.Printf("Error Credential not registered")
-			log.Printf("CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
-			return nil, errors.New("Error requesting reservation")
+			util.LogOnError("OCPI150", "Error invalid credential", err)
+			log.Printf("OCPI150: CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
+			return nil, errors.New("error requesting reservation")
 		}
 
 		command, err := r.CommandResolver.StartSession(ctx, credential, token, location, &input.EvseUid)
 
 		if err != nil {
-			log.Printf("Error StartSession StartSession: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Error starting session")
+			util.LogOnError("OCPI151", "Error requesting start", err)
+			log.Printf("OCPI151: Input=%#v", input)
+			return nil, errors.New("error starting session")
 		}
 
 		startResponse := ocpiCommand.NewCommandStartResponse(*command)
@@ -123,7 +125,7 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 		return startResponse, nil
 	}
 
-	return nil, errors.New("Missing StartSessionRequest")
+	return nil, errors.New("missing request")
 }
 
 func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.StopSessionRequest) (*ocpirpc.StopSessionResponse, error) {
@@ -131,31 +133,31 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 		session, err := r.SessionResolver.Repository.GetSessionByUid(ctx, input.SessionUid)
 
 		if err != nil {
-			log.Printf("Error StopSession GetSessionByUid: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Token not found")
+			util.LogOnError("OCPI153", "Error retrieving session", err)
+			log.Printf("OCPI153: SessionUid=%v", input.SessionUid)
+			return nil, errors.New("session not found")
 		}
 
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, session.CredentialID)
 
 		if err != nil {
-			log.Printf("Error StopSession GetCredential: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Credential not found")
+			util.LogOnError("OCPI154", "Error retrieving credential", err)
+			log.Printf("OCPI154: CredentialID=%v", session.CredentialID)
+			return nil, errors.New("credential not found")
 		}
 
 		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
-			log.Printf("Error Credential not registered")
-			log.Printf("CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
-			return nil, errors.New("Error requesting reservation")
+			util.LogOnError("OCPI155", "Error invalid credential", err)
+			log.Printf("OCPI155: CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
+			return nil, errors.New("error requesting reservation")
 		}
 
 		command, err := r.CommandResolver.StopSession(ctx, credential, input.SessionUid)
 
 		if err != nil {
-			log.Printf("Error StopSession StopSession: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Error stopping session")
+			util.LogOnError("OCPI156", "Error requesting stop", err)
+			log.Printf("OCPI156: Input=%#v", input)
+			return nil, errors.New("error stopping session")
 		}
 
 		stopResponse := ocpiCommand.NewCommandStopResponse(*command)
@@ -163,7 +165,7 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 		return stopResponse, nil
 	}
 
-	return nil, errors.New("Missing StopSessionRequest")
+	return nil, errors.New("missing request")
 }
 
 func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *ocpirpc.UnlockConnectorRequest) (*ocpirpc.UnlockConnectorResponse, error) {
@@ -171,31 +173,31 @@ func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *ocpirpc
 		location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, input.LocationUid)
 
 		if err != nil {
-			log.Printf("Error UnlockConnector GetLocationByUid: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Location not found")
+			util.LogOnError("OCPI157", "Error retrieving session", err)
+			log.Printf("OCPI57: LocationUid=%v", input.LocationUid)
+			return nil, errors.New("location not found")
 		}
 
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, location.CredentialID)
 
 		if err != nil {
-			log.Printf("Error UnlockConnector GetCredential: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Credential not found")
+			util.LogOnError("OCPI158", "Error retrieving credential", err)
+			log.Printf("OCPI158: CredentialID=%v", location.CredentialID)
+			return nil, errors.New("credential not found")
 		}
 
 		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
-			log.Printf("Error Credential not registered")
-			log.Printf("CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
-			return nil, errors.New("Error requesting reservation")
+			util.LogOnError("OCPI159", "Error invalid credential", err)
+			log.Printf("OCPI159: CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
+			return nil, errors.New("error requesting reservation")
 		}
 
 		command, err := r.CommandResolver.UnlockConnector(ctx, credential, location, input.EvseUid, input.ConnectorUid)
 
 		if err != nil {
-			log.Printf("Error UnlockConnector UnlockConnector: %v", err)
-			log.Printf("%#v", input)
-			return nil, errors.New("Error unlocking connector")
+			util.LogOnError("OCPI160", "Error requesting unlock", err)
+			log.Printf("OCPI160: Input=%#v", input)
+			return nil, errors.New("error unlocking connector")
 		}
 
 		unlockResponse := ocpiCommand.NewCommandUnlockResponse(*command)
@@ -203,5 +205,5 @@ func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *ocpirpc
 		return unlockResponse, nil
 	}
 
-	return nil, errors.New("Missing StopSessionRequest")
+	return nil, errors.New("missing request")
 }

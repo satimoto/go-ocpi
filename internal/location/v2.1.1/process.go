@@ -2,6 +2,7 @@ package location
 
 import (
 	"context"
+	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
@@ -109,7 +110,15 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 				locationParams.Type = *dto.Type
 			}
 
-			location, err = r.Repository.UpdateLocationByUid(ctx, locationParams)
+			updatedLocation, err := r.Repository.UpdateLocationByUid(ctx, locationParams)
+
+			if err != nil {
+				util.LogOnError("OCPI117", "Error updating location", err)
+				log.Printf("OCPI117: Params=%#v", locationParams)
+				return nil
+			}
+
+			location = updatedLocation
 		} else {
 			locationParams := NewCreateLocationParams(dto)
 			locationParams.CredentialID = credential.ID
@@ -124,6 +133,12 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			locationParams.SuboperatorID = util.SqlNullInt64(suboperatorID)
 
 			location, err = r.Repository.CreateLocation(ctx, locationParams)
+
+			if err != nil {
+				util.LogOnError("OCPI118", "Error creating location", err)
+				log.Printf("OCPI118: Params=%#v", locationParams)
+				return nil
+			}
 		}
 
 		if dto.Directions != nil {
@@ -165,10 +180,16 @@ func (r *LocationResolver) replaceDirections(ctx context.Context, locationID int
 		displayTextParams := displaytext.NewCreateDisplayTextParams(directionDto)
 
 		if displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams); err == nil {
-			r.Repository.SetLocationDirection(ctx, db.SetLocationDirectionParams{
+			setLocationDirectionParams := db.SetLocationDirectionParams{
 				LocationID:    locationID,
 				DisplayTextID: displayText.ID,
-			})
+			}
+			err := r.Repository.SetLocationDirection(ctx, setLocationDirectionParams)
+
+			if err != nil {
+				util.LogOnError("OCPI119", "Error setting location direction", err)
+				log.Printf("OCPI119: Params=%#v", setLocationDirectionParams)
+			}
 		}
 	}
 }
@@ -190,10 +211,16 @@ func (r *LocationResolver) replaceFacilities(ctx context.Context, locationID int
 		}
 
 		for _, facility := range filteredFacilities {
-			r.Repository.SetLocationFacility(ctx, db.SetLocationFacilityParams{
+			setLocationFacilityParams := db.SetLocationFacilityParams{
 				LocationID: locationID,
 				FacilityID: facility.ID,
-			})
+			}
+			err := r.Repository.SetLocationFacility(ctx, setLocationFacilityParams)
+
+			if err != nil {
+				util.LogOnError("OCPI120", "Error setting location facility", err)
+				log.Printf("OCPI120: Params=%#v", setLocationFacilityParams)
+			}
 		}
 	}
 }
@@ -203,13 +230,25 @@ func (r *LocationResolver) replaceImages(ctx context.Context, locationID int64, 
 
 	for _, imageDto := range dto.Images {
 		imageParams := image.NewCreateImageParams(imageDto)
+		image, err := r.ImageResolver.Repository.CreateImage(ctx, imageParams)
 
-		if image, err := r.ImageResolver.Repository.CreateImage(ctx, imageParams); err == nil {
-			r.Repository.SetLocationImage(ctx, db.SetLocationImageParams{
-				LocationID: locationID,
-				ImageID:    image.ID,
-			})
+		if err != nil {
+			util.LogOnError("OCPI121", "Error creating image", err)
+			log.Printf("OCPI121: Params=%#v", imageParams)
+			continue
 		}
+
+		setLocationImageParams := db.SetLocationImageParams{
+			LocationID: locationID,
+			ImageID:    image.ID,
+		}
+		err = r.Repository.SetLocationImage(ctx, setLocationImageParams)
+
+		if err != nil {
+			util.LogOnError("OCPI122", "Error setting location image", err)
+			log.Printf("OCPI122: Params=%#v", setLocationImageParams)
+		}
+
 	}
 }
 
@@ -218,12 +257,23 @@ func (r *LocationResolver) replaceRelatedLocations(ctx context.Context, location
 
 	for _, relatedLocation := range dto.RelatedLocations {
 		geoLocationParams := geolocation.NewCreateGeoLocationParams(relatedLocation)
+		geoLocation, err := r.GeoLocationResolver.Repository.CreateGeoLocation(ctx, geoLocationParams)
 
-		if geoLocation, err := r.GeoLocationResolver.Repository.CreateGeoLocation(ctx, geoLocationParams); err == nil {
-			r.Repository.SetRelatedLocation(ctx, db.SetRelatedLocationParams{
-				LocationID:    locationID,
-				GeoLocationID: geoLocation.ID,
-			})
+		if err != nil {
+			util.LogOnError("OCPI123", "Error creating geolocation", err)
+			log.Printf("OCPI123: Params=%#v", geoLocationParams)
+			continue
+		}
+
+		setRelatedLocationParams := db.SetRelatedLocationParams{
+			LocationID:    locationID,
+			GeoLocationID: geoLocation.ID,
+		}
+		r.Repository.SetRelatedLocation(ctx, setRelatedLocationParams)
+
+		if err != nil {
+			util.LogOnError("OCPI124", "Error setting relation location", err)
+			log.Printf("OCPI124: Params=%#v", setRelatedLocationParams)
 		}
 	}
 }

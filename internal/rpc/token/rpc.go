@@ -23,7 +23,7 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 		if err != nil {
 			log.Printf("Error CreateToken GenerateAuthID: %v", err)
 			log.Printf("Request=%#v", request)
-			return nil, errors.New("Error creating token")
+			return nil, errors.New("error creating token")
 		}
 
 		dto.AuthID = &authID
@@ -43,13 +43,13 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 		if t == nil {
 			log.Printf("Error CreateToken ReplaceToken: %v", err)
 			log.Printf("Dto=%#v", dto)
-			return nil, errors.New("Error creating token")
+			return nil, errors.New("error creating token")
 		}
 
 		return ocpiToken.NewCreateTokenResponse(*t), nil
 	}
 
-	return nil, errors.New("Error creating token")
+	return nil, errors.New("error creating token")
 }
 
 func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.UpdateTokensRequest) (*ocpirpc.UpdateTokensResponse, error) {
@@ -59,7 +59,7 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.Up
 		if err != nil {
 			log.Printf("Error UpdateTokens ListTokensByUserID: %v", err)
 			log.Printf("Request=%#v", request)
-			return nil, errors.New("Error updating tokens")
+			return nil, errors.New("error updating tokens")
 		}
 
 		for _, t := range tokens {
@@ -86,5 +86,5 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.Up
 		return ocpiToken.NewUpdateTokensResponse(*request), nil
 	}
 
-	return nil, errors.New("Error updating tokens")
+	return nil, errors.New("error updating tokens")
 }

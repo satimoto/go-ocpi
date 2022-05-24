@@ -2,6 +2,7 @@ package evse
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -15,9 +16,11 @@ import (
 
 func (r *EvseResolver) CreateCapabilityListDto(ctx context.Context, capabilities []db.Capability) []*string {
 	list := []*string{}
+
 	for i := 0; i < len(capabilities); i++ {
 		list = append(list, &capabilities[i].Text)
 	}
+
 	return list
 }
 
@@ -55,33 +58,68 @@ func NewEvseDto(evse db.Evse) *EvseDto {
 func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto {
 	response := NewEvseDto(evse)
 
-	if statusSchedules, err := r.Repository.ListStatusSchedules(ctx, evse.ID); err == nil {
+	statusSchedules, err := r.Repository.ListStatusSchedules(ctx, evse.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI231", "Error listing status schedules", err)
+		log.Printf("OCPI231: EvseID=%v", evse.ID)
+	} else {
 		response.StatusSchedule = r.CreateStatusScheduleListDto(ctx, statusSchedules)
 	}
 
-	if capabilities, err := r.Repository.ListEvseCapabilities(ctx, evse.ID); err == nil {
+	capabilities, err := r.Repository.ListEvseCapabilities(ctx, evse.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI232", "Error listing evse capabilities", err)
+		log.Printf("OCPI232: EvseID=%v", evse.ID)
+	} else {
 		response.Capabilities = r.CreateCapabilityListDto(ctx, capabilities)
 	}
 
-	if connectors, err := r.Repository.ListConnectors(ctx, evse.ID); err == nil {
+	connectors, err := r.Repository.ListConnectors(ctx, evse.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI233", "Error listing connectors", err)
+		log.Printf("OCPI233: EvseID=%v", evse.ID)
+	} else {
 		response.Connectors = r.ConnectorResolver.CreateConnectorListDto(ctx, connectors)
 	}
 
 	if evse.GeoLocationID.Valid {
-		if geoLocation, err := r.Repository.GetGeoLocation(ctx, evse.GeoLocationID.Int64); err == nil {
+		geoLocation, err := r.Repository.GetGeoLocation(ctx, evse.GeoLocationID.Int64)
+
+		if err != nil {
+			util.LogOnError("OCPI234", "Error listing connectors", err)
+			log.Printf("OCPI234: GeoLocationID=%#v", evse.GeoLocationID)
+		} else {
 			response.Coordinates = r.GeoLocationResolver.CreateGeoLocationDto(ctx, geoLocation)
 		}
 	}
 
-	if directions, err := r.Repository.ListEvseDirections(ctx, evse.ID); err == nil {
+	directions, err := r.Repository.ListEvseDirections(ctx, evse.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI235", "Error listing evse directions", err)
+		log.Printf("OCPI235: EvseID=%v", evse.ID)
+	} else {
 		response.Directions = r.DisplayTextResolver.CreateDisplayTextListDto(ctx, directions)
 	}
 
-	if parkingRestrictions, err := r.Repository.ListEvseParkingRestrictions(ctx, evse.ID); err == nil {
+	parkingRestrictions, err := r.Repository.ListEvseParkingRestrictions(ctx, evse.ID)
+	
+	if err != nil {
+		util.LogOnError("OCPI236", "Error listing evse parking restrictions", err)
+		log.Printf("OCPI236: EvseID=%v", evse.ID)
+	} else {
 		response.ParkingRestrictions = r.CreateParkingRestrictionListDto(ctx, parkingRestrictions)
 	}
 
-	if images, err := r.Repository.ListEvseImages(ctx, evse.ID); err == nil {
+	images, err := r.Repository.ListEvseImages(ctx, evse.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI237", "Error listing evse images", err)
+		log.Printf("OCPI237: EvseID=%v", evse.ID)
+	} else {
 		response.Images = r.ImageResolver.CreateImageListDto(ctx, images)
 	}
 
@@ -90,18 +128,22 @@ func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto
 
 func (r *EvseResolver) CreateEvseListDto(ctx context.Context, evses []db.Evse) []*EvseDto {
 	list := []*EvseDto{}
+
 	for _, evse := range evses {
 		list = append(list, r.CreateEvseDto(ctx, evse))
 	}
+
 	return list
 }
 
 func (r *EvseResolver) CreateParkingRestrictionListDto(ctx context.Context, parkingRestrictions []db.ParkingRestriction) []*string {
 	list := []*string{}
+
 	for _, parkingRestriction := range parkingRestrictions {
 		text := parkingRestriction.Text
 		list = append(list, &text)
 	}
+
 	return list
 }
 
@@ -115,6 +157,7 @@ func (r *StatusScheduleDto) Render(writer http.ResponseWriter, request *http.Req
 	if r.PeriodEnd.IsZero() {
 		r.PeriodEnd = nil
 	}
+
 	return nil
 }
 
@@ -132,8 +175,10 @@ func (r *EvseResolver) CreateStatusScheduleDto(ctx context.Context, statusSchedu
 
 func (r *EvseResolver) CreateStatusScheduleListDto(ctx context.Context, statusSchedules []db.StatusSchedule) []*StatusScheduleDto {
 	list := []*StatusScheduleDto{}
+
 	for _, statusSchedule := range statusSchedules {
 		list = append(list, r.CreateStatusScheduleDto(ctx, statusSchedule))
 	}
+
 	return list
 }

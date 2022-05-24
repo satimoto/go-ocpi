@@ -1,11 +1,13 @@
 package tariff
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/middleware"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
@@ -16,6 +18,9 @@ func (r *TariffResolver) DeleteTariff(rw http.ResponseWriter, request *http.Requ
 	err := r.Repository.DeleteTariffByUid(ctx, tariff.Uid)
 
 	if err != nil {
+		util.LogOnError("OCPI187", "Error deleting tariff", err)
+		util.LogHttpRequest("OCPI187", request.URL.String(), request, true)
+
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 
@@ -28,6 +33,9 @@ func (r *TariffResolver) GetTariff(rw http.ResponseWriter, request *http.Request
 	dto := r.CreateTariffDto(ctx, tariff)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
+		util.LogOnError("OCPI188", "Error rendering response", err)
+		util.LogHttpRequest("OCPI188", request.URL.String(), request, true)
+
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 }
@@ -41,6 +49,9 @@ func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Requ
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
+		util.LogOnError("OCPI189", "Error unmarshalling request", err)
+		util.LogHttpRequest("OCPI189", request.URL.String(), request, true)
+
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 		return
 	}
@@ -48,6 +59,9 @@ func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Requ
 	tariff := r.ReplaceTariffByIdentifier(ctx, *cred, &countryCode, &partyID, uid, nil, dto)
 
 	if tariff == nil {
+		log.Print("OCPI190", "Error replacing cdr")
+		util.LogHttpRequest("OCPI190", request.URL.String(), request, true)
+
 		render.Render(rw, request, transportation.OcpiErrorMissingParameters(nil))
 		return
 	}

@@ -1,8 +1,9 @@
 package mocks
 
 import (
-	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	cdrMocks "github.com/satimoto/go-datastore/pkg/cdr/mocks"
+	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
+	node "github.com/satimoto/go-datastore/pkg/node/mocks"
 	calibration "github.com/satimoto/go-ocpi-api/internal/calibration/mocks"
 	cdr "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1"
 	chargingperiod "github.com/satimoto/go-ocpi-api/internal/chargingperiod/mocks"
@@ -24,6 +25,7 @@ func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocp
 		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
 		LocationResolver:       location.NewResolverWithServices(repositoryService, ocpiRequester),
+		NodeRepository:         node.NewRepository(repositoryService),
 		TariffResolver:         tariff.NewResolverWithServices(repositoryService, ocpiRequester),
 		TokenResolver:          token.NewResolverWithServices(repositoryService, ocpiRequester),
 		VersionDetailResolver:  versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),

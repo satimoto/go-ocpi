@@ -46,8 +46,10 @@ func (r *TokenResolver) CreateTokenDto(ctx context.Context, token db.Token) *Tok
 
 func (r *TokenResolver) CreateTokenListDto(ctx context.Context, tokens []db.Token) []render.Renderer {
 	list := []render.Renderer{}
+	
 	for _, token := range tokens {
 		list = append(list, r.CreateTokenDto(ctx, token))
 	}
+
 	return list
 }

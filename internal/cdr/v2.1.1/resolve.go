@@ -1,8 +1,9 @@
 package cdr
 
 import (
-	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/cdr"
+	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/node"
 	"github.com/satimoto/go-ocpi-api/internal/calibration"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
@@ -18,6 +19,7 @@ type CdrResolver struct {
 	CalibrationResolver    *calibration.CalibrationResolver
 	ChargingPeriodResolver *chargingperiod.ChargingPeriodResolver
 	LocationResolver       *location.LocationResolver
+	NodeRepository         node.NodeRepository
 	TariffResolver         *tariff.TariffResolver
 	TokenResolver          *token.TokenResolver
 	VersionDetailResolver  *versiondetail.VersionDetailResolver
@@ -34,6 +36,7 @@ func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiReques
 		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
 		LocationResolver:       location.NewResolver(repositoryService),
+		NodeRepository:         node.NewRepository(repositoryService),
 		TariffResolver:         tariff.NewResolver(repositoryService),
 		TokenResolver:          token.NewResolver(repositoryService),
 		VersionDetailResolver:  versiondetail.NewResolver(repositoryService),

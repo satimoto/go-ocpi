@@ -2,10 +2,12 @@ package chargingperiod
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 )
 
 type ChargingPeriodDto struct {
@@ -26,18 +28,26 @@ func NewChargingPeriodDto(chargingPeriod db.ChargingPeriod) *ChargingPeriodDto {
 func (r *ChargingPeriodResolver) CreateChargingPeriodDto(ctx context.Context, chargingPeriod db.ChargingPeriod) *ChargingPeriodDto {
 	response := NewChargingPeriodDto(chargingPeriod)
 
-	if chargingPeriodDimensions, err := r.Repository.ListChargingPeriodDimensions(ctx, chargingPeriod.ID); err == nil {
-		response.Dimensions = r.CreateChargingPeriodDimensionListDto(ctx, chargingPeriodDimensions)
+	chargingPeriodDimensions, err := r.Repository.ListChargingPeriodDimensions(ctx, chargingPeriod.ID)
+	
+	if err != nil {
+		util.LogOnError("OCPI223", "Error listing charging period dimensions", err)
+		log.Printf("OCPI223: CalibrationID=%v", chargingPeriod.ID)
+		return response
 	}
+	
+	response.Dimensions = r.CreateChargingPeriodDimensionListDto(ctx, chargingPeriodDimensions)
 
 	return response
 }
 
 func (r *ChargingPeriodResolver) CreateChargingPeriodListDto(ctx context.Context, chargingPeriods []db.ChargingPeriod) []*ChargingPeriodDto {
 	list := []*ChargingPeriodDto{}
+
 	for _, chargingPeriod := range chargingPeriods {
 		list = append(list, r.CreateChargingPeriodDto(ctx, chargingPeriod))
 	}
+	
 	return list
 }
 
@@ -63,8 +73,10 @@ func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionDto(ctx context.Co
 
 func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionListDto(ctx context.Context, chargingPeriodDimensions []db.ChargingPeriodDimension) []*ChargingPeriodDimensionDto {
 	list := []*ChargingPeriodDimensionDto{}
+
 	for _, chargingPeriodDimension := range chargingPeriodDimensions {
 		list = append(list, r.CreateChargingPeriodDimensionDto(ctx, chargingPeriodDimension))
 	}
+
 	return list
 }

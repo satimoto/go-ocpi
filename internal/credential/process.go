@@ -55,7 +55,7 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 	if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
 		log.Printf("OCPI010: Error credential not registered")
 		log.Printf("OCPI010: CredentialID=%v, ClientToken=%v", credential.ID, credential.ClientToken)
-		return nil, errors.New("Error credential not registered")
+		return nil, errors.New("error credential not registered")
 	}
 
 	if credential.ServerToken.Valid {
@@ -64,7 +64,7 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		if err != nil {
 			util.LogOnError("OCPI011", "Error retrieving version endpoint", err)
 			log.Printf("OCPI011: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
-			return nil, errors.New("Error retrieving version endpoint")
+			return nil, errors.New("error retrieving version endpoint")
 		}
 
 		updateCredentialParams := param.NewUpdateCredentialParams(credential)
@@ -75,7 +75,7 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		if err != nil {
 			util.LogOnError("OCPI012", "Error updating credential", err)
 			log.Printf("OCPI012: Params=%#v", updateCredentialParams)
-			return nil, errors.New("Error updating credential")
+			return nil, errors.New("error updating credential")
 		}
 
 		header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
@@ -84,7 +84,7 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		if err != nil {
 			util.LogOnError("OCPI013", "Error sending delete request", err)
 			log.Printf("OCPI013: Url=%v", versionEndpoint.Url)
-			return nil, errors.New("Error sending delete request")
+			return nil, errors.New("error sending delete request")
 		}
 
 		defer response.Body.Close()
@@ -93,13 +93,13 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		if err != nil {
 			util.LogOnError("OCPI014", "Error unmarshalling response", err)
 			util.LogHttpResponse("OCPI014", versionEndpoint.Url, response, true)
-			return nil, errors.New("Error unmarshalling response")
+			return nil, errors.New("error unmarshalling response")
 		}
 
 		if responseDto.StatusCode != transportation.STATUS_CODE_OK {
 			log.Printf("OCPI015: Error in delete response")
 			log.Printf("OCPI015: Response=%#v", responseDto)
-			return nil, errors.New("Error in delete response")
+			return nil, errors.New("error in delete response")
 		}
 
 		return &cred, nil

@@ -157,7 +157,7 @@ func TestUnregisterCredential(t *testing.T) {
 
 		_, err := credentialResolver.UnregisterCredential(ctx, credential)
 
-		if err == nil || err.Error() != "Error credential not registered" {
+		if err == nil || err.Error() != "error credential not registered" {
 			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error credential not registered")
 		}
 	})
@@ -177,7 +177,7 @@ func TestUnregisterCredential(t *testing.T) {
 
 		_, err := credentialResolver.UnregisterCredential(ctx, credential)
 
-		if err == nil || err.Error() != "Error retrieving version endpoint" {
+		if err == nil || err.Error() != "error retrieving version endpoint" {
 			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error retrieving version endpoint")
 		}
 	})
@@ -204,7 +204,7 @@ func TestUnregisterCredential(t *testing.T) {
 
 		_, err := credentialResolver.UnregisterCredential(ctx, credential)
 
-		if err == nil || err.Error() != "Error unmarshalling response" {
+		if err == nil || err.Error() != "error unmarshalling response" {
 			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error unmarshalling response")
 		}
 	})
@@ -235,7 +235,7 @@ func TestUnregisterCredential(t *testing.T) {
 
 		_, err := credentialResolver.UnregisterCredential(ctx, credential)
 
-		if err == nil || err.Error() != "Error in delete response" {
+		if err == nil || err.Error() != "error in delete response" {
 			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error in delete response")
 		}
 	})

@@ -2,6 +2,7 @@ package elementrestriction
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
@@ -44,7 +45,15 @@ func NewElementRestrictionDto(elementRestriction db.ElementRestriction) *Element
 func (r *ElementRestrictionResolver) CreateElementRestrictionDto(ctx context.Context, elementRestriction db.ElementRestriction) *ElementRestrictionDto {
 	response := NewElementRestrictionDto(elementRestriction)
 
-	if weekdays, err := r.Repository.ListElementRestrictionWeekdays(ctx, elementRestriction.ID); err == nil && len(weekdays) > 0 {
+	weekdays, err := r.Repository.ListElementRestrictionWeekdays(ctx, elementRestriction.ID)
+
+	if err != nil {
+		util.LogOnError("OCPI228", "Error listing element restriction weekdays", err)
+		log.Printf("OCPI228: ElementRestrictionID=%v", elementRestriction.ID)
+		return response
+	}
+
+	if len(weekdays) > 0 {
 		response.DayOfWeek = r.CreateWeekdayListDto(ctx, weekdays)
 	}
 
@@ -53,9 +62,11 @@ func (r *ElementRestrictionResolver) CreateElementRestrictionDto(ctx context.Con
 
 func (r *ElementRestrictionResolver) CreateWeekdayListDto(ctx context.Context, weekdays []db.Weekday) []*string {
 	list := []*string{}
+
 	for _, weekday := range weekdays {
 		text := weekday.Text
 		list = append(list, &text)
 	}
+
 	return list
 }

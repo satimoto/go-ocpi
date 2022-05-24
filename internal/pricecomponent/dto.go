@@ -2,6 +2,7 @@ package pricecomponent
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
@@ -34,13 +35,23 @@ func (r *PriceComponentResolver) CreatePriceComponentDto(ctx context.Context, pr
 	response := NewPriceComponentDto(priceComponent)
 
 	if priceComponent.PriceRoundingID.Valid {
-		if priceComponentRounding, err := r.Repository.GetPriceComponentRounding(ctx, priceComponent.PriceRoundingID.Int64); err == nil {
+		priceComponentRounding, err := r.Repository.GetPriceComponentRounding(ctx, priceComponent.PriceRoundingID.Int64)
+
+		if err != nil {
+			util.LogOnError("OCPI252", "Error retrieving price rounding", err)
+			log.Printf("OCPI252: PriceRoundingID=%#v", priceComponent.PriceRoundingID)
+		} else {	
 			response.PriceRound = r.CreatePriceComponentRoundingDto(ctx, priceComponentRounding)
 		}
 	}
 
 	if priceComponent.StepRoundingID.Valid {
-		if priceComponentRounding, err := r.Repository.GetPriceComponentRounding(ctx, priceComponent.StepRoundingID.Int64); err == nil {
+		priceComponentRounding, err := r.Repository.GetPriceComponentRounding(ctx, priceComponent.StepRoundingID.Int64)
+
+		if err != nil {
+			util.LogOnError("OCPI253", "Error retrieving step rounding", err)
+			log.Printf("OCPI253: StepRoundingID=%#v", priceComponent.StepRoundingID)
+		} else {	
 			response.StepRound = r.CreatePriceComponentRoundingDto(ctx, priceComponentRounding)
 		}
 	}
@@ -50,9 +61,11 @@ func (r *PriceComponentResolver) CreatePriceComponentDto(ctx context.Context, pr
 
 func (r *PriceComponentResolver) CreatePriceComponentListDto(ctx context.Context, priceComponents []db.PriceComponent) []*PriceComponentDto {
 	list := []*PriceComponentDto{}
+	
 	for _, priceComponent := range priceComponents {
 		list = append(list, r.CreatePriceComponentDto(ctx, priceComponent))
 	}
+
 	return list
 }
 

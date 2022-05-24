@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/middleware"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
@@ -16,6 +17,9 @@ func (r *LocationResolver) GetLocation(rw http.ResponseWriter, request *http.Req
 	dto := r.CreateLocationDto(ctx, location)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
+		util.LogOnError("OCPI130", "Error rendering response", err)
+		util.LogHttpRequest("OCPI130", request.URL.String(), request, true)
+
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 }
@@ -29,6 +33,9 @@ func (r *LocationResolver) UpdateLocation(rw http.ResponseWriter, request *http.
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
+		util.LogOnError("OCPI131", "Error unmarshalling request", err)
+		util.LogHttpRequest("OCPI131", request.URL.String(), request, true)
+
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 		return
 	}
@@ -36,6 +43,9 @@ func (r *LocationResolver) UpdateLocation(rw http.ResponseWriter, request *http.
 	location := r.ReplaceLocationByIdentifier(ctx, *cred, &countryCode, &partyID, uid, dto)
 
 	if location == nil {
+		util.LogOnError("OCPI132", "Error replacing location", err)
+		util.LogHttpRequest("OCPI132", request.URL.String(), request, true)
+
 		render.Render(rw, request, transportation.OcpiErrorMissingParameters(nil))
 		return
 	}
