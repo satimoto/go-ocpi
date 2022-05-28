@@ -3,6 +3,8 @@ COMMIT_HASH=$(git log -1 --pretty=%h)
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 VERSION=$(echo ${BRANCH} | sed -e 's/.*\/v//g' | sed -e 's/\/.*//g')
 UNCOMMITED_FILES=$(git status -s | wc -l | tr -d ' ')
+ACCOUNT_ID="909899099608"
+NETWORK="testnet"
 
 usage()
 {
@@ -13,8 +15,8 @@ usage()
     echo ""
     echo "Options:"
     echo "  -b, --build    Rebuild the docker image"
-    echo "  -t, --testnet  Tag the image for testnet"
-    echo "  -m, --mainnet  Tag the image for mainnet"
+    echo "  -t, --tag      Tag the image with network"
+    echo "  -m, --mainnet  Switch to mainnet"
     echo "  -c, --commit   Push all tagged images"
     echo "  -f, --force    Forces continuation if there are uncommitted files, otherwise user is prompted"
     echo ""
@@ -24,7 +26,7 @@ while [ $# -ge 1 ]; do
     case $1 in
         -b|--build) BUILD="SET"            
         ;;
-        -t|--testnet) TESTNET="SET"            
+        -t|--tag) TAG="SET"            
         ;;
         -m|--mainnet) MAINNET="SET"            
         ;;
@@ -53,39 +55,34 @@ if [ -z "$VERSION" ]; then
     VERSION=${BRANCH}
 fi
 
+if [ -n "$MAINNET" ]; then
+    ACCOUNT_ID="490833747373"
+    NETWORK="mainnet"
+fi
+
 if [ -n "$BUILD" ]; then
     echo "Building ocpi"
     docker build -t ocpi .
 fi
 
-if [ -n "$TESTNET" ]; then
-    docker tag ocpi 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:testnet
-    echo "Tagged 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:testnet"
-fi
+docker tag ocpi ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${VERSION}
+echo "Tagged ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${VERSION}"
+docker tag ocpi ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${VERSION}-${COMMIT_HASH}
+echo "Tagged ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${VERSION}-${COMMIT_HASH}"
 
-docker tag ocpi 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:${VERSION}
-echo "Tagged 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:${VERSION}"
-docker tag ocpi 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:${VERSION}-${COMMIT_HASH}
-echo "Tagged 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:${VERSION}-${COMMIT_HASH}"
-
-if [ -n "$MAINNET" ]; then
-    docker tag ocpi 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:mainnet
-    echo "Tagged 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:mainnet"
+if [ -n "$TAG" ]; then
+    docker tag ocpi ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${NETWORK}
+    echo "Tagged ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${NETWORK}"
 fi
 
 if [ -n "$COMMIT" ]; then
-    if [ -n "$TESTNET" ]; then
-        docker push 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:testnet
-        echo "Pushed 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:testnet"
-    fi
+    docker push ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${VERSION}
+    echo "Pushed ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${VERSION}"
+    docker push ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${VERSION}-${COMMIT_HASH}
+    echo "Pushed ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${VERSION}-${COMMIT_HASH}"
 
-    docker push 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:${VERSION}
-    echo "Pushed 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:${VERSION}"
-    docker push 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:${VERSION}-${COMMIT_HASH}
-    echo "Pushed 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:${VERSION}-${COMMIT_HASH}"
-
-    if [ -n "$MAINNET" ]; then
-        docker push 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:mainnet
-        echo "Pushed 526438337184.dkr.ecr.eu-west-1.amazonaws.com/ocpi:mainnet"
+    if [ -n "TAG" ]; then
+        docker push ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${NETWORK}
+        echo "Pushed ${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ocpi:${NETWORK}"
     fi
 fi

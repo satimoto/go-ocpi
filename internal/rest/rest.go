@@ -95,6 +95,7 @@ func (rs *RestService) handler() *chi.Mux {
 
 	// Add routes
 	router.Mount("/", rs.mountVersions())
+	router.Mount("/health", rs.mountHealth())
 	router.Mount("/metrics", promhttp.Handler())
 	router.Mount("/2.1.1", rs.mount211())
 
