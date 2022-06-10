@@ -10,6 +10,9 @@ import (
 )
 
 type Ocpi interface {
+	TestConnection(ctx context.Context, in *ocpirpc.TestConnectionRequest, opts ...grpc.CallOption) (*ocpirpc.TestConnectionResponse, error)
+	TestMessage(ctx context.Context, in *ocpirpc.TestMessageRequest, opts ...grpc.CallOption) (*ocpirpc.TestMessageResponse, error)
+
 	CdrCreated(ctx context.Context, in *ocpirpc.CdrCreatedRequest, opts ...grpc.CallOption) (*ocpirpc.CdrCreatedResponse, error)
 
 	CreateCredential(ctx context.Context, in *ocpirpc.CreateCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.CreateCredentialResponse, error)
@@ -30,6 +33,7 @@ type OcpiService struct {
 	commandClient    *ocpirpc.CommandServiceClient
 	cdrClient        *ocpirpc.CdrServiceClient
 	credentialClient *ocpirpc.CredentialServiceClient
+	rpcClient        *ocpirpc.RpcServiceClient
 	sessionClient    *ocpirpc.SessionServiceClient
 	tokenClient      *ocpirpc.TokenServiceClient
 }
