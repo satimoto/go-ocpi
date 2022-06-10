@@ -11,6 +11,8 @@ type MockOcpiService struct {
 	unregisterCredentialMockData []*ocpirpc.UnregisterCredentialResponse
 	startSessionMockData         []*ocpirpc.StartSessionResponse
 	stopSessionMockData          []*ocpirpc.StopSessionResponse
+	testConnectionMockData       []*ocpirpc.TestConnectionResponse
+	testMessageMockData          []*ocpirpc.TestMessageResponse
 	sessionCreatedMockData       []*ocpirpc.SessionCreatedResponse
 	createTokenMockData          []*ocpirpc.CreateTokenResponse
 	updateTokensMockData         []*ocpirpc.UpdateTokensResponse
