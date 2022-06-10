@@ -40,6 +40,6 @@ env_party_id = "SAT"
 
 env_issuer = "Satimoto"
 
-env_rpc_port = 50001
+env_rpc_port = 50000
 
 env_shutdown_timeout = 20

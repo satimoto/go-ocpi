@@ -101,6 +101,7 @@ module "service-ocpi" {
     region                 = var.region
     service_name           = var.service_name
     service_container_port = var.service_container_port
+    rpc_container_port     = var.env_rpc_port
     task_network_mode      = var.task_network_mode
     env_api_domain         = "https://${var.subdomain_name}.${data.terraform_remote_state.infrastructure.outputs.route53_zone_name}"
     env_country_code       = var.env_country_code
