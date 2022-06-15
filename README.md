@@ -6,22 +6,10 @@ Satimoto OCPI hub API using golang
 ### Generate proto files
 Generates the golang code from proto files
 ```bash
-protoc proto/businessdetail.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/image.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/credential.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/command.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/session.proto --go_out=plugins=grpc:$GOPATH/src
-protoc proto/token.proto --go_out=plugins=grpc:$GOPATH/src
+./scripts/rpc/build.sh
 ```
 
 ### Run
 ```bash
-go run ./cmd/ocpi
-```
-
-## Build
-
-### Run
-```bash
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '-s -w' -o bin/main cmd/ocpi/main.go
+./scripts/run.sh
 ```
