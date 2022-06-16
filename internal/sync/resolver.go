@@ -10,9 +10,9 @@ import (
 type SyncRepository interface{}
 
 type SyncResolver struct {
-	Repository        SyncRepository
-	Sync2_1_1Resolver *sync2_1_1.SyncResolver
-	VersionResolver   *version.VersionResolver
+	Repository         SyncRepository
+	SyncResolver_2_1_1 *sync2_1_1.SyncResolver
+	VersionResolver    *version.VersionResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *SyncResolver {
@@ -23,8 +23,8 @@ func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiReques
 	repo := SyncRepository(repositoryService)
 
 	return &SyncResolver{
-		Repository:        repo,
-		Sync2_1_1Resolver: sync2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
-		VersionResolver:   version.NewResolverWithServices(repositoryService, ocpiRequester),
+		Repository:         repo,
+		SyncResolver_2_1_1: sync2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionResolver:    version.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

@@ -27,8 +27,8 @@ func (r *OcpiRequester) Do(method, url string, header OcpiRequestHeader, body io
 		return nil, err
 	}
 
-	if header.Authentication != nil && len(*header.Authentication) > 0 {
-		request.Header.Set("Authentication", fmt.Sprintf("Token %s", *header.Authentication))
+	if header.Authorization != nil && len(*header.Authorization) > 0 {
+		request.Header.Set("Authorization", fmt.Sprintf("Token %s", *header.Authorization))
 	}
 
 	if header.ToCountryCode != nil && len(*header.ToCountryCode) > 0 {

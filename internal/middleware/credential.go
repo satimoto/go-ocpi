@@ -19,7 +19,7 @@ type CredentialRepository interface {
 }
 
 func GetCredentialByToken(r CredentialRepository, ctx context.Context, request *http.Request) (db.Credential, error) {
-	if token := GetAuthenticationToken(request); token != "" {
+	if token := GetAuthorizationToken(request); token != "" {
 		return r.GetCredentialByServerToken(ctx, util.SqlNullString(token))
 	}
 
@@ -74,10 +74,10 @@ func GetCredential(ctx context.Context) *db.Credential {
 	return nil
 }
 
-func GetAuthenticationToken(r *http.Request) string {
-	authentication := r.Header.Get("Authentication")
-	if len(authentication) > 6 && strings.ToUpper(authentication[0:5]) == "TOKEN" {
-		return authentication[6:]
+func GetAuthorizationToken(r *http.Request) string {
+	authorization := r.Header.Get("Authorization")
+	if len(authorization) > 6 && strings.ToUpper(authorization[0:5]) == "TOKEN" {
+		return authorization[6:]
 	}
 
 	return ""

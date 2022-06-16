@@ -16,8 +16,8 @@ func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocp
 	repo := sync.SyncRepository(repositoryService)
 
 	return &sync.SyncResolver{
-		Repository:        repo,
-		Sync2_1_1Resolver: sync2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
-		VersionResolver:   version.NewResolverWithServices(repositoryService, ocpiRequester),
+		Repository:         repo,
+		SyncResolver_2_1_1: sync2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionResolver:    version.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

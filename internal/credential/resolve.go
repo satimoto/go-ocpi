@@ -4,6 +4,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/credential"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
+	credential_2_1_1 "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/sync"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/version"
@@ -11,12 +12,13 @@ import (
 )
 
 type CredentialResolver struct {
-	Repository             credential.CredentialRepository
-	OcpiRequester          *transportation.OcpiRequester
-	BusinessDetailResolver *businessdetail.BusinessDetailResolver
-	SyncResolver           *sync.SyncResolver
-	VersionResolver        *version.VersionResolver
-	VersionDetailResolver  *versiondetail.VersionDetailResolver
+	Repository               credential.CredentialRepository
+	OcpiRequester            *transportation.OcpiRequester
+	BusinessDetailResolver   *businessdetail.BusinessDetailResolver
+	CredentialResolver_2_1_1 *credential_2_1_1.CredentialResolver
+	SyncResolver             *sync.SyncResolver
+	VersionResolver          *version.VersionResolver
+	VersionDetailResolver    *versiondetail.VersionDetailResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *CredentialResolver {
@@ -25,11 +27,12 @@ func NewResolver(repositoryService *db.RepositoryService) *CredentialResolver {
 
 func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CredentialResolver {
 	return &CredentialResolver{
-		Repository:             credential.NewRepository(repositoryService),
-		OcpiRequester:          ocpiRequester,
-		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
-		SyncResolver:           sync.NewResolver(repositoryService),
-		VersionResolver:        version.NewResolver(repositoryService),
-		VersionDetailResolver:  versiondetail.NewResolver(repositoryService),
+		Repository:               credential.NewRepository(repositoryService),
+		OcpiRequester:            ocpiRequester,
+		BusinessDetailResolver:   businessdetail.NewResolver(repositoryService),
+		CredentialResolver_2_1_1: credential_2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
+		SyncResolver:             sync.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionResolver:          version.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionDetailResolver:    versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

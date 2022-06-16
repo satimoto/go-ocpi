@@ -5,11 +5,19 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
 )
+
+type OcpiCredentialDto struct {
+	Data          *CredentialDto `json:"data,omitempty"`
+	StatusCode    int16          `json:"status_code"`
+	StatusMessage string         `json:"status_message"`
+	Timestamp     time.Time      `json:"timestamp"`
+}
 
 type CredentialDto struct {
 	Token          *string                           `json:"token"`

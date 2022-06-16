@@ -19,11 +19,12 @@ import (
 )
 
 func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credential, token db.Token, location db.Location, evseUid *string, expiryDate time.Time) (*db.CommandReservation, error) {
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "commands", credential.CountryCode, credential.PartyID)
+	identifier := "commands"
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI042", "Error retrieving version endpoint", err)
-		log.Printf("OCPI042: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
+		log.Printf("OCPI042: CountryCode=%v, PartyID=%v, Idenitifer=%v", credential.CountryCode, credential.PartyID, identifier)
 		return nil, errors.New("error requesting reservation")
 	}
 
@@ -91,11 +92,12 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 }
 
 func (r *CommandResolver) StartSession(ctx context.Context, credential db.Credential, token db.Token, location db.Location, evseUid *string) (*db.CommandStart, error) {
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "commands", credential.CountryCode, credential.PartyID)
+	identifier := "commands"
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI049", "Error retrieving version endpoint", err)
-		log.Printf("OCPI049: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
+		log.Printf("OCPI049: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return nil, errors.New("error starting session")
 	}
 
@@ -163,11 +165,12 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 }
 
 func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credential, sessionID string) (*db.CommandStop, error) {
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "commands", credential.CountryCode, credential.PartyID)
+	identifier := "commands"
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI056", "Error retrieving version endpoint", err)
-		log.Printf("OCPI056: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
+		log.Printf("OCPI056: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return nil, errors.New("error stopping session")
 	}
 
@@ -235,11 +238,12 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 }
 
 func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Credential, location db.Location, evseUid string, connectorID string) (*db.CommandUnlock, error) {
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "commands", credential.CountryCode, credential.PartyID)
+	identifier := "commands"
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI064", "Error retrieving version endpoint", err)
-		log.Printf("OCPI064: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
+		log.Printf("OCPI064: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return nil, errors.New("error unlocking connector")
 	}
 

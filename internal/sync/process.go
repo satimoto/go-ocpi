@@ -19,7 +19,7 @@ func (r *SyncResolver) SynchronizeCredential(ctx context.Context, credential db.
 		}
 
 		if version.Version == "2.1.1" {
-			r.Sync2_1_1Resolver.SynchronizeCredential(ctx, credential)
+			r.SyncResolver_2_1_1.SynchronizeCredential(ctx, credential)
 		}
 	}
 }

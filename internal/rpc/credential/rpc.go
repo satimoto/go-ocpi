@@ -56,7 +56,7 @@ func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request 
 			token = request.ClientToken
 		}
 
-		_, err = r.CredentialResolver.RegisterCredential(ctx, credential, token, credential.Url, credential.CountryCode, credential.PartyID)
+		_, err = r.CredentialResolver.RegisterCredential(ctx, credential, token)
 
 		if err != nil {
 			util.LogOnError("OCPI006", "Error registering credential", err)
