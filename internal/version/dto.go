@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/go-chi/render"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type OcpiVersionsDto struct {
-	Data          []*VersionDto `json:"data,omitempty"`
-	StatusCode    int16         `json:"status_code"`
-	StatusMessage string        `json:"status_message"`
-	Timestamp     time.Time     `json:"timestamp"`
+	Data          []*VersionDto           `json:"data,omitempty"`
+	StatusCode    int16                   `json:"status_code"`
+	StatusMessage string                  `json:"status_message"`
+	Timestamp     transportation.OcpiTime `json:"timestamp"`
 }
 
 type VersionDto struct {

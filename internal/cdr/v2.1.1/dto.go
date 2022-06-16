@@ -13,13 +13,14 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
 	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type OcpiCdrsDto struct {
-	Data          []*CdrDto `json:"data,omitempty"`
-	StatusCode    int16     `json:"status_code"`
-	StatusMessage string    `json:"status_message"`
-	Timestamp     time.Time `json:"timestamp"`
+	Data          []*CdrDto               `json:"data,omitempty"`
+	StatusCode    int16                   `json:"status_code"`
+	StatusMessage string                  `json:"status_message"`
+	Timestamp     transportation.OcpiTime `json:"timestamp"`
 }
 
 type CdrDto struct {
@@ -112,7 +113,7 @@ func (r *CdrResolver) CreateCdrDto(ctx context.Context, cdr db.Cdr) *CdrDto {
 
 func (r *CdrResolver) CreateCdrListDto(ctx context.Context, cdrs []db.Cdr) []render.Renderer {
 	list := []render.Renderer{}
-	
+
 	for _, cdr := range cdrs {
 		list = append(list, r.CreateCdrDto(ctx, cdr))
 	}
