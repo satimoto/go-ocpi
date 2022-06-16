@@ -72,7 +72,9 @@ func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credenti
 		
 		if dto.StatusCode != transportation.STATUS_CODE_OK {
 			util.LogOnError("OCPI174", "Error response failure", err)
+			util.LogHttpRequest("OCPI174", requestUrl.String(), response.Request, true)
 			util.LogHttpResponse("OCPI174", requestUrl.String(), response, true)
+			log.Printf("OCPI174: StatusCode=%v, StatusMessage=%v", dto.StatusCode, dto.StatusMessage)
 			break
 		}
 

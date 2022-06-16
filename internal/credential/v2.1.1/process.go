@@ -34,7 +34,7 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 		return nil, transportation.OcpiRegistrationError(nil)
 	}
 
-	response, err := r.OcpiRequester.Do(httpMethod, versionEndpoint.Url, header, bytes.NewReader(dtoBytes))
+	response, err := r.OcpiRequester.Do(httpMethod, versionEndpoint.Url, header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI266", "Error making request", err)
@@ -52,6 +52,8 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
+		dbUtil.LogOnError("OCPI268", "Error response failure", err)
+		dbUtil.LogHttpRequest("OCPI268", versionEndpoint.Url, response.Request, true)
 		dbUtil.LogHttpResponse("OCPI268", versionEndpoint.Url, response, true)
 		log.Printf("OCPI268: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return nil, transportation.OcpiRegistrationError(nil)
@@ -68,7 +70,7 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 	if credentialDto.Url != nil {
 		updateCredentialParams.Url = *credentialDto.Url
 	}
-	
+
 	if credentialDto.CountryCode != nil {
 		updateCredentialParams.CountryCode = *credentialDto.CountryCode
 	}

@@ -86,7 +86,7 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 			}
 
 			util.AppendPath(requestUrl, fmt.Sprintf("%s/%s/%s", countryCode, partyID, uid))
-			response, err := r.OcpiRequester.Do(httpMethod, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+			response, err := r.OcpiRequester.Do(httpMethod, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 			if err != nil {
 				dbUtil.LogOnError("OCPI199", "Error making request", err)
@@ -104,6 +104,8 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 			}
 
 			if pullDto.StatusCode != transportation.STATUS_CODE_OK {
+				dbUtil.LogOnError("OCPI201", "Error response failure", err)
+				dbUtil.LogHttpRequest("OCPI201", requestUrl.String(), response.Request, true)
 				dbUtil.LogHttpResponse("OCPI201", requestUrl.String(), response, true)
 				log.Printf("OCPI201: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 			}

@@ -42,7 +42,7 @@ func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url st
 		return []*db.VersionEndpoint{}
 	}
 
-	ocpiResponse, err := r.UnmarshalPullDto(response.Body)
+	pullDto, err := r.UnmarshalPullDto(response.Body)
 	defer response.Body.Close()
 
 	if err != nil {
@@ -51,11 +51,13 @@ func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url st
 		return []*db.VersionEndpoint{}
 	}
 
-	if ocpiResponse.StatusCode != transportation.STATUS_CODE_OK {
+	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
 		util.LogOnError("OCPI219", "Error response failure", err)
+		util.LogHttpRequest("OCPI219", url, response.Request, true)
 		util.LogHttpResponse("OCPI219", url, response, true)
+		log.Printf("OCPI219: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return []*db.VersionEndpoint{}
 	}
 
-	return r.ReplaceVersionEndpoints(ctx, versionID, ocpiResponse.Data)
+	return r.ReplaceVersionEndpoints(ctx, versionID, pullDto.Data)
 }

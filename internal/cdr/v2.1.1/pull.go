@@ -72,6 +72,7 @@ func (r *CdrResolver) PullCdrsByIdentifier(ctx context.Context, credential db.Cr
 
 		if dto.StatusCode != transportation.STATUS_CODE_OK {
 			util.LogOnError("OCPI032", "Error response failure", err)
+			util.LogHttpRequest("OCPI032", requestUrl.String(), response.Request, true)
 			util.LogHttpResponse("OCPI032", requestUrl.String(), response, true)
 			break
 		}

@@ -72,7 +72,9 @@ func (r *TariffResolver) PullTariffsByIdentifier(ctx context.Context, credential
 
 		if dto.StatusCode != transportation.STATUS_CODE_OK {
 			util.LogOnError("OCPI186", "Error response failure", err)
+			util.LogHttpRequest("OCPI186", requestUrl.String(), response.Request, true)
 			util.LogHttpResponse("OCPI186", requestUrl.String(), response, true)
+			log.Printf("OCPI186: StatusCode=%v, StatusMessage=%v", dto.StatusCode, dto.StatusMessage)
 			break
 		}
 

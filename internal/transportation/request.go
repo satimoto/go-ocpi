@@ -27,6 +27,10 @@ func (r *OcpiRequester) Do(method, url string, header OcpiRequestHeader, body io
 		return nil, err
 	}
 
+	if body != nil {
+		request.Header.Set("Content-Type", "application/json; charset=UTF-8")
+	}
+
 	if header.Authorization != nil && len(*header.Authorization) > 0 {
 		request.Header.Set("Authorization", fmt.Sprintf("Token %s", *header.Authorization))
 	}
