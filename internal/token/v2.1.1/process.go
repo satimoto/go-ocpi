@@ -55,8 +55,8 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 		return
 	}
 
-	partyID := os.Getenv("API_PARTY_ID")
-	countryCode := os.Getenv("API_COUNTRY_CODE")
+	partyID := os.Getenv("PARTY_ID")
+	countryCode := os.Getenv("COUNTRY_CODE")
 
 	for _, credential := range credentials {
 		if credential.ClientToken.Valid {

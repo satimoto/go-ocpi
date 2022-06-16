@@ -91,6 +91,7 @@ module "service-ocpi" {
     rpc_container_port     = var.env_rpc_port
     task_network_mode      = var.task_network_mode
     env_api_domain         = "https://${var.subdomain_name}.${data.terraform_remote_state.infrastructure.outputs.route53_zone_name}"
+    env_web_domain         = "https://${data.terraform_remote_state.infrastructure.outputs.route53_zone_name}"
     env_country_code       = var.env_country_code
     env_party_id           = var.env_party_id
     env_issuer             = var.env_issuer

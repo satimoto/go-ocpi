@@ -27,6 +27,10 @@
         "value": "${env_api_domain}"
       },
       {
+        "name": "WEB_DOMAIN",
+        "value": "${env_web_domain}"
+      },
+      {
         "name": "COUNTRY_CODE",
         "value": "${env_country_code}"
       },

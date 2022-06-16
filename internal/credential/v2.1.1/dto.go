@@ -42,8 +42,8 @@ func NewCredentialDto(credential db.Credential) *CredentialDto {
 
 func (r *CredentialResolver) CreateCredentialDto(ctx context.Context, credential db.Credential) *CredentialDto {
 	apiDomain := os.Getenv("API_DOMAIN")
-	apiPartyID := os.Getenv("API_PARTY_ID")
-	apiCountryCode := os.Getenv("API_COUNTRY_CODE")
+	apiPartyID := os.Getenv("PARTY_ID")
+	apiCountryCode := os.Getenv("COUNTRY_CODE")
 	webDomain := os.Getenv("WEB_DOMAIN")
 
 	imageDto := r.BusinessDetailResolver.ImageResolver.CreateImageDto(ctx, db.Image{
