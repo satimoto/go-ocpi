@@ -18,12 +18,12 @@ func TestCreateCredentialDto(t *testing.T) {
 	ctx := context.Background()
 
 	os.Setenv("API_DOMAIN", "https://api.local:8080")
-	os.Setenv("API_PARTY_ID", "SAT")
-	os.Setenv("API_COUNTRY_CODE", "DE")
+	os.Setenv("PARTY_ID", "SAT")
+	os.Setenv("COUNTRY_CODE", "DE")
 	os.Setenv("WEB_DOMAIN", "https://web.local:8080")
 	defer os.Unsetenv("API_DOMAIN")
-	defer os.Unsetenv("API_PARTY_ID")
-	defer os.Unsetenv("API_COUNTRY_CODE")
+	defer os.Unsetenv("PARTY_ID")
+	defer os.Unsetenv("COUNTRY_CODE")
 	defer os.Unsetenv("WEB_DOMAIN")
 
 	t.Run("Create dto", func(t *testing.T) {
