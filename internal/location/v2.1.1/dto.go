@@ -16,13 +16,14 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	"github.com/satimoto/go-ocpi-api/internal/image"
 	"github.com/satimoto/go-ocpi-api/internal/openingtime"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type OcpiLocationsDto struct {
-	Data          []*LocationDto `json:"data,omitempty"`
-	StatusCode    int16          `json:"status_code"`
-	StatusMessage string         `json:"status_message"`
-	Timestamp     time.Time      `json:"timestamp"`
+	Data          []*LocationDto          `json:"data,omitempty"`
+	StatusCode    int16                   `json:"status_code"`
+	StatusMessage string                  `json:"status_message"`
+	Timestamp     transportation.OcpiTime `json:"timestamp"`
 }
 
 type LocationDto struct {
@@ -132,7 +133,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		if err != nil {
 			util.LogOnError("OCPI243", "Error retrieving energy mix", err)
 			log.Printf("OCPI243: EnergyMixID=%#v", location.EnergyMixID)
-		} else {	
+		} else {
 			response.EnergyMix = r.EnergyMixResolver.CreateEnergyMixDto(ctx, energyMix)
 		}
 	}
@@ -143,7 +144,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		if err != nil {
 			util.LogOnError("OCPI244", "Error retrieving operator business detail", err)
 			log.Printf("OCPI244: OperatorID=%#v", location.OperatorID)
-		} else {	
+		} else {
 			response.Operator = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, operator)
 		}
 	}
@@ -154,18 +155,18 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		if err != nil {
 			util.LogOnError("OCPI245", "Error retrieving suboperator business detail", err)
 			log.Printf("OCPI245: SuboperatorID=%#v", location.SuboperatorID)
-		} else {	
+		} else {
 			response.Suboperator = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, suboperator)
 		}
 	}
 
 	if location.OwnerID.Valid {
 		owner, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.OwnerID.Int64)
-		
+
 		if err != nil {
 			util.LogOnError("OCPI246", "Error retrieving owner business detail", err)
 			log.Printf("OCPI246: OwnerID=%#v", location.OwnerID)
-		} else {	
+		} else {
 			response.Owner = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, owner)
 		}
 	}
@@ -176,7 +177,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		if err != nil {
 			util.LogOnError("OCPI247", "Error retrieving opening time", err)
 			log.Printf("OCPI247: OpeningTimeID=%#v", location.OpeningTimeID)
-		} else {	
+		} else {
 			response.OpeningTimes = r.OpeningTimeResolver.CreateOpeningTimeDto(ctx, openingTime)
 		}
 	}
@@ -195,7 +196,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 
 func (r *LocationResolver) CreateLocationListDto(ctx context.Context, locations []db.Location) []render.Renderer {
 	list := []render.Renderer{}
-	
+
 	for _, location := range locations {
 		list = append(list, r.CreateLocationDto(ctx, location))
 	}

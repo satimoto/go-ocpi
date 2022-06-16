@@ -88,6 +88,7 @@ func TestRegisterCredential(t *testing.T) {
 		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
 
 		token := "1802EC4A-2A34-4573-803E-1E142CF7BC1C"
+		pushToken := "9528DF0E-348F-4ED8-B235-1FD15E0FD835"
 		credential := db.Credential{
 			ClientToken: util.SqlNullString(nil),
 			ServerToken: util.SqlNullString("C33B6CB9-BDE4-4C47-91A2-DC390DA3C374"),
@@ -108,6 +109,25 @@ func TestRegisterCredential(t *testing.T) {
 
 		mockRepository.SetListVersionsMockData(dbMocks.VersionsMockData{Versions: versions})
 
+		mockRepository.SetGetVersionEndpointByIdentityMockData(dbMocks.VersionEndpointMockData{VersionEndpoint: db.VersionEndpoint{
+			Identifier: "credentials",
+			Url:        "http://localhost:9000/2.1.1/credentials",
+		}})
+
+		mockHTTPRequester.SetResponseWithBytes(200, ``, nil)
+		mockHTTPRequester.SetResponseWithBytes(200, ``, nil)
+		mockHTTPRequester.SetResponseWithBytes(200, `{
+			"data": {
+				"token": "9528DF0E-348F-4ED8-B235-1FD15E0FD835",
+				"url": "http://localhost:9000/versions",
+				"country_code": "DE",
+				"party_id": "ABC"
+			},
+			"status_code": 1000,
+			"status_message": "Success",
+			"timestamp": "2018-12-16T11:00:02Z"
+		}`, nil)
+
 		_, err := credentialResolver.RegisterCredential(ctx, credential, token)
 
 		if err != nil {
@@ -117,11 +137,11 @@ func TestRegisterCredential(t *testing.T) {
 		mockHTTPRequester.GetRequest()            // Versions
 		request := mockHTTPRequester.GetRequest() // Version endpoints
 
-		authenticationHeader := request.Header.Get("Authentication")
-		expectedAuthenticationHeader := fmt.Sprintf("Token %s", token)
+		authorizationHeader := request.Header.Get("Authorization")
+		expectedAuthorizationHeader := fmt.Sprintf("Token %s", token)
 
-		if authenticationHeader != expectedAuthenticationHeader {
-			t.Errorf("Error mismatch: '%v' expecting '%v'", authenticationHeader, expectedAuthenticationHeader)
+		if authorizationHeader != expectedAuthorizationHeader {
+			t.Errorf("Error mismatch: '%v' expecting '%v'", authorizationHeader, expectedAuthorizationHeader)
 		}
 
 		if request.URL.String() != rightVersion.Url {
@@ -132,6 +152,16 @@ func TestRegisterCredential(t *testing.T) {
 
 		if updateCredential.ClientToken.String != token {
 			t.Errorf("Error mismatch: '%v' expecting '%v'", updateCredential.ClientToken.String, token)
+		}
+
+		if updateCredential.ServerToken.String == credential.ServerToken.String {
+			t.Errorf("Error mismatch: '%v' expecting new UUID", updateCredential.ServerToken.String)
+		}
+
+		updateCredential, err = mockRepository.GetUpdateCredentialMockData()
+
+		if updateCredential.ClientToken.String != pushToken {
+			t.Errorf("Error mismatch: '%v' expecting '%v'", updateCredential.ClientToken.String, pushToken)
 		}
 
 		if updateCredential.ServerToken.String == credential.ServerToken.String {

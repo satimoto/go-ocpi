@@ -12,13 +12,14 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/element"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
 	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type OcpiTariffsDto struct {
-	Data          []*TariffDto `json:"data,omitempty"`
-	StatusCode    int16        `json:"status_code"`
-	StatusMessage string       `json:"status_message"`
-	Timestamp     time.Time    `json:"timestamp"`
+	Data          []*TariffDto            `json:"data,omitempty"`
+	StatusCode    int16                   `json:"status_code"`
+	StatusMessage string                  `json:"status_message"`
+	Timestamp     transportation.OcpiTime `json:"timestamp"`
 }
 
 type TariffDto struct {
@@ -74,7 +75,7 @@ func (r *TariffResolver) CreateTariffDto(ctx context.Context, tariff db.Tariff) 
 		if err != nil {
 			util.LogOnError("OCPI258", "Error retrieving energy mix", err)
 			log.Printf("OCPI258: EnergyMixID=%#v", tariff.EnergyMixID)
-		} else {	
+		} else {
 			response.EnergyMix = r.EnergyMixResolver.CreateEnergyMixDto(ctx, energyMix)
 		}
 	}
@@ -85,7 +86,7 @@ func (r *TariffResolver) CreateTariffDto(ctx context.Context, tariff db.Tariff) 
 		if err != nil {
 			util.LogOnError("OCPI259", "Error retrieving tariff restriction", err)
 			log.Printf("OCPI259: TariffRestrictionID=%#v", tariff.TariffRestrictionID)
-		} else {	
+		} else {
 			response.Restriction = r.TariffRestrictionResolver.CreateTariffRestrictionDto(ctx, tariffRestriction)
 		}
 	}
@@ -95,7 +96,7 @@ func (r *TariffResolver) CreateTariffDto(ctx context.Context, tariff db.Tariff) 
 
 func (r *TariffResolver) CreateTariffPushListDto(ctx context.Context, tariffs []db.Tariff) []*TariffDto {
 	list := []*TariffDto{}
-	
+
 	for _, tariff := range tariffs {
 		list = append(list, r.CreateTariffDto(ctx, tariff))
 	}

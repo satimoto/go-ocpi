@@ -11,13 +11,14 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type OcpiSessionsDto struct {
-	Data          []*SessionDto `json:"data,omitempty"`
-	StatusCode    int16         `json:"status_code"`
-	StatusMessage string        `json:"status_message"`
-	Timestamp     time.Time     `json:"timestamp"`
+	Data          []*SessionDto           `json:"data,omitempty"`
+	StatusCode    int16                   `json:"status_code"`
+	StatusMessage string                  `json:"status_message"`
+	Timestamp     transportation.OcpiTime `json:"timestamp"`
 }
 
 type SessionDto struct {
@@ -84,7 +85,7 @@ func (r *SessionResolver) CreateSessionDto(ctx context.Context, session db.Sessi
 
 func (r *SessionResolver) CreateSessionListDto(ctx context.Context, sessions []db.Session) []render.Renderer {
 	list := []render.Renderer{}
-	
+
 	for _, session := range sessions {
 		list = append(list, r.CreateSessionDto(ctx, session))
 	}
