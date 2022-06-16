@@ -6,22 +6,28 @@ import (
 )
 
 func NewCreateGeoLocationParams(dto *GeoLocationDto) db.CreateGeoLocationParams {
+	latitudeStr := dto.Latitude.String()
+	longitudeStr := dto.Longitude.String()
+
 	return db.CreateGeoLocationParams{
-		Latitude:       dto.Latitude,
-		LatitudeFloat:  util.ParseFloat64(dto.Latitude, 0),
-		Longitude:      dto.Longitude,
-		LongitudeFloat: util.ParseFloat64(dto.Longitude, 0),
+		Latitude:       latitudeStr,
+		LatitudeFloat:  util.ParseFloat64(latitudeStr, 0),
+		Longitude:      longitudeStr,
+		LongitudeFloat: util.ParseFloat64(longitudeStr, 0),
 		Name:           util.SqlNullString(dto.Name),
 	}
 }
 
 func NewUpdateGeoLocationParams(id int64, dto *GeoLocationDto) db.UpdateGeoLocationParams {
+	latitudeStr := dto.Latitude.String()
+	longitudeStr := dto.Longitude.String()
+
 	return db.UpdateGeoLocationParams{
 		ID:             id,
-		Latitude:       dto.Latitude,
-		LatitudeFloat:  util.ParseFloat64(dto.Latitude, 0),
-		Longitude:      dto.Longitude,
-		LongitudeFloat: util.ParseFloat64(dto.Longitude, 0),
+		Latitude:       latitudeStr,
+		LatitudeFloat:  util.ParseFloat64(latitudeStr, 0),
+		Longitude:      longitudeStr,
+		LongitudeFloat: util.ParseFloat64(longitudeStr, 0),
 		Name:           util.SqlNullString(dto.Name),
 	}
 }
