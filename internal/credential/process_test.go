@@ -28,7 +28,7 @@ func TestRegisterCredential(t *testing.T) {
 			PartyID:     "ABC",
 		}
 
-		_, err := credentialResolver.RegisterCredential(ctx, credential, credential.ClientToken.String, credential.Url, credential.CountryCode, credential.PartyID)
+		_, err := credentialResolver.RegisterCredential(ctx, credential, credential.ClientToken.String)
 
 		if err == nil || err.Error() != "Registration error" {
 			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Registration error")
@@ -47,7 +47,7 @@ func TestRegisterCredential(t *testing.T) {
 			PartyID:     "ABC",
 		}
 
-		_, err := credentialResolver.RegisterCredential(ctx, credential, credential.ClientToken.String, credential.Url, credential.CountryCode, credential.PartyID)
+		_, err := credentialResolver.RegisterCredential(ctx, credential, credential.ClientToken.String)
 
 		if err == nil || err.Error() != "Unsupported version" {
 			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Unsupported version")
@@ -75,7 +75,7 @@ func TestRegisterCredential(t *testing.T) {
 
 		mockRepository.SetListVersionsMockData(dbMocks.VersionsMockData{Versions: versions})
 
-		_, err := credentialResolver.RegisterCredential(ctx, credential, token, credential.Url, credential.CountryCode, credential.PartyID)
+		_, err := credentialResolver.RegisterCredential(ctx, credential, token)
 
 		if err == nil || err.Error() != "Unsupported version" {
 			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Unsupported version")
@@ -108,7 +108,7 @@ func TestRegisterCredential(t *testing.T) {
 
 		mockRepository.SetListVersionsMockData(dbMocks.VersionsMockData{Versions: versions})
 
-		_, err := credentialResolver.RegisterCredential(ctx, credential, token, credential.Url, credential.CountryCode, credential.PartyID)
+		_, err := credentialResolver.RegisterCredential(ctx, credential, token)
 
 		if err != nil {
 			t.Errorf("Error mismatch: '%v' expecting '%v'", err, nil)

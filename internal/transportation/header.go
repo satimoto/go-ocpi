@@ -6,14 +6,14 @@ import (
 )
 
 type OcpiRequestHeader struct {
-	Authentication *string
+	Authorization *string
 	ToCountryCode  *string
 	ToPartyId      *string
 }
 
 func NewOcpiRequestHeader(token *string, countryCode *string, partyID *string) OcpiRequestHeader {
 	return OcpiRequestHeader{
-		Authentication: token,
+		Authorization: token,
 		ToCountryCode:  countryCode,
 		ToPartyId:      partyID,
 	}

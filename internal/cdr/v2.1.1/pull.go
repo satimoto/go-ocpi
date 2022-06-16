@@ -15,12 +15,13 @@ import (
 
 func (r *CdrResolver) PullCdrsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {
 	limit, offset, retries := 500, 0, 0
+	identifier := "cdrs"
 
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "cdrs", credential.CountryCode, credential.PartyID)
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx,identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		util.LogOnError("OCPI028", "Error retrieving version endpoint", err)
-		log.Printf("OCPI028: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
+		log.Printf("OCPI028: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return
 	}
 

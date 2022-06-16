@@ -17,3 +17,15 @@ func (r *VersionResolver) GetBestVersion(ctx context.Context, credentialID int64
 
 	return nil
 }
+
+func (r *VersionResolver) GetPreferredVersion(ctx context.Context, credentialID int64, version string) *db.Version {
+	if versions, err := r.Repository.ListVersions(ctx, credentialID); err == nil {
+		for _, v := range versions {
+			if v.Version == version {
+				return &v
+			}
+		}
+	}
+
+	return nil
+}

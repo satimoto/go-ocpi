@@ -50,9 +50,9 @@ func TestPullVersionEndpoints(t *testing.T) {
 		})
 
 		header := transportation.OcpiRequestHeader{
-			Authentication: util.NilString("F72FB7A3-BD45-4A9E-8972-D0452EA0F452"),
-			ToCountryCode:  util.NilString("DE"),
-			ToPartyId:      util.NilString("EXA"),
+			Authorization: util.NilString("F72FB7A3-BD45-4A9E-8972-D0452EA0F452"),
+			ToCountryCode: util.NilString("DE"),
+			ToPartyId:     util.NilString("EXA"),
 		}
 
 		response := versionDetailResolver.PullVersionEndpoints(ctx, "/version/2.1.1", header, 1)

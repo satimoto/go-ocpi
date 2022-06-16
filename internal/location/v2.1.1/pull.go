@@ -15,12 +15,13 @@ import (
 
 func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {
 	limit, offset, retries := 500, 0, 0
-
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "locations", credential.CountryCode, credential.PartyID)
+	identifier := "locations"
+	
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		util.LogOnError("OCPI125", "Error retrieving version endpoint", err)
-		log.Printf("OCPI125: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
+		log.Printf("OCPI125: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return
 	}
 

@@ -15,12 +15,13 @@ import (
 
 func (r *TariffResolver) PullTariffsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {
 	limit, offset, retries := 500, 0, 0
+	identifier := "tariffs"
 
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, "tariffs", credential.CountryCode, credential.PartyID)
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		util.LogOnError("OCPI182", "Error retrieving version endpoint", err)
-		log.Printf("OCPI182: CountryCode=%v, PartyID=%v", credential.CountryCode, credential.PartyID)
+		log.Printf("OCPI182: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return
 	}
 
