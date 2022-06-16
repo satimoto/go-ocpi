@@ -12,7 +12,7 @@ func NewCommandReservationResponse(command db.CommandReservation) *ocpirpc.Reser
 		Id:            command.ID,
 		Status:        string(command.Status),
 		ReservationId: command.ReservationID,
-		ExpiryDate:    command.ExpiryDate.Format(time.RFC3339Nano),
+		ExpiryDate:    command.ExpiryDate.Format(time.RFC3339),
 		LocationUid:   command.LocationID,
 		EvseUid:       command.EvseUid.String,
 	}
