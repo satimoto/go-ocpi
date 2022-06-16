@@ -37,7 +37,7 @@ func (r *TariffResolver) PullTariffsByIdentifier(ctx context.Context, credential
 	query := requestUrl.Query()
 
 	if tariff, err := r.GetLastTariffByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
-		query.Set("date_from", tariff.LastUpdated.Format(time.RFC3339Nano))
+		query.Set("date_from", tariff.LastUpdated.Format(time.RFC3339))
 	}
 
 	for {

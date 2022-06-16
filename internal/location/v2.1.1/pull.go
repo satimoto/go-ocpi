@@ -37,7 +37,7 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 	query := requestUrl.Query()
 
 	if location, err := r.GetLastLocationByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
-		query.Set("date_from", location.LastUpdated.Format(time.RFC3339Nano))
+		query.Set("date_from", location.LastUpdated.Format(time.RFC3339))
 	}
 
 	for {

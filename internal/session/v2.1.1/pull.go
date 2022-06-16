@@ -37,7 +37,7 @@ func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credenti
 	query := requestUrl.Query()
 
 	if session, err := r.GetLastSessionByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
-		query.Set("date_from", session.LastUpdated.Format(time.RFC3339Nano))
+		query.Set("date_from", session.LastUpdated.Format(time.RFC3339))
 	}
 
 	for {
@@ -46,7 +46,7 @@ func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credenti
 		requestUrl.RawQuery = query.Encode()
 
 		response, err := r.OcpiRequester.Do(http.MethodGet, requestUrl.String(), header, nil)
-		
+
 		if err != nil {
 			util.LogOnError("OCPI172", "Error making request", err)
 			log.Printf("OCPI172: Method=%v, Url=%v, Header=%#v", http.MethodGet, requestUrl.String(), header)
@@ -69,7 +69,7 @@ func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credenti
 		}
 
 		limit = transportation.GetXLimitHeader(response, limit)
-		
+
 		if dto.StatusCode != transportation.STATUS_CODE_OK {
 			util.LogOnError("OCPI174", "Error response failure", err)
 			util.LogHttpRequest("OCPI174", requestUrl.String(), response.Request, true)

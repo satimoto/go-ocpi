@@ -17,7 +17,7 @@ func (r *CdrResolver) PullCdrsByIdentifier(ctx context.Context, credential db.Cr
 	limit, offset, retries := 500, 0, 0
 	identifier := "cdrs"
 
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx,identifier, credential.CountryCode, credential.PartyID)
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		util.LogOnError("OCPI028", "Error retrieving version endpoint", err)
@@ -37,7 +37,7 @@ func (r *CdrResolver) PullCdrsByIdentifier(ctx context.Context, credential db.Cr
 	query := requestUrl.Query()
 
 	if cdr, err := r.GetLastCdrByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
-		query.Set("date_from", cdr.LastUpdated.Format(time.RFC3339Nano))
+		query.Set("date_from", cdr.LastUpdated.Format(time.RFC3339))
 	}
 
 	for {
@@ -78,7 +78,7 @@ func (r *CdrResolver) PullCdrsByIdentifier(ctx context.Context, credential db.Cr
 		}
 
 		retries = 0
-	
+
 		if dto.StatusCode == transportation.STATUS_CODE_OK {
 			r.ReplaceCdrsByIdentifier(ctx, credential, countryCode, partyID, dto.Data)
 			offset += limit
