@@ -35,7 +35,7 @@ func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.Nu
 			id.Scan(geoLocation.ID)
 		}
 
-		point, err := geom.NewPoint(dto.Latitude, dto.Longitude)
+		point, err := geom.NewPoint(dto.Latitude.String(), dto.Longitude.String())
 
 		if err != nil {
 			util.LogOnError("OCPI116", "Error creating geom point", err)

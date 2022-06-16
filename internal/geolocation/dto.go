@@ -9,8 +9,8 @@ import (
 )
 
 type GeoLocationDto struct {
-	Latitude  string  `json:"latitude"`
-	Longitude string  `json:"longitude"`
+	Latitude  DecimalString  `json:"latitude"`
+	Longitude DecimalString  `json:"longitude"`
 	Name      *string `json:"name,omitempty"`
 }
 
@@ -20,8 +20,8 @@ func (r *GeoLocationDto) Render(writer http.ResponseWriter, request *http.Reques
 
 func NewGeoLocationDto(geoLocation db.GeoLocation) *GeoLocationDto {
 	return &GeoLocationDto{
-		Latitude:  geoLocation.Latitude,
-		Longitude: geoLocation.Longitude,
+		Latitude:  NewDecimalString(geoLocation.Latitude),
+		Longitude: NewDecimalString(geoLocation.Longitude),
 		Name:      util.NilString(geoLocation.Name),
 	}
 }
