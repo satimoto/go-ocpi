@@ -39,7 +39,9 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 			}
 
 			if pushedCredential, err := r.PushCredential(ctx, http.MethodPost, *version, registeredCredential); err == nil {
-				go r.SyncResolver.SynchronizeCredential(ctx, *pushedCredential)
+				backgroundCtx := context.Background()
+				
+				go r.SyncResolver.SynchronizeCredential(backgroundCtx, *pushedCredential)
 				
 				return pushedCredential, nil
 			}
