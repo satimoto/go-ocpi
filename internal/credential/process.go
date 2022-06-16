@@ -106,8 +106,10 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		}
 
 		if responseDto.StatusCode != transportation.STATUS_CODE_OK {
-			log.Printf("OCPI015: Error in delete response")
-			log.Printf("OCPI015: Response=%#v", responseDto)
+			util.LogOnError("OCPI015", "Error response failure", err)
+			util.LogHttpRequest("OCPI015", versionEndpoint.Url, response.Request, true)
+			util.LogHttpResponse("OCPI015", versionEndpoint.Url, response, true)
+			log.Printf("OCPI015: StatusCode=%v, StatusMessage=%v", responseDto.StatusCode, responseDto.StatusMessage)
 			return nil, errors.New("error in delete response")
 		}
 

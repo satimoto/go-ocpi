@@ -210,7 +210,7 @@ func TestSessionRequest(t *testing.T) {
 		// Push replace
 		mockRepository.SetGetSessionByUidMockData(dbMocks.SessionMockData{Session: sess, Error: nil})
 
-		request, err := http.NewRequest(http.MethodPatch, "/DE/ABC/SESSION0001", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPatch, "/DE/ABC/SESSION0001", bytes.NewBuffer([]byte(`{
 			"kwh": 16.1
 		}`)))
 

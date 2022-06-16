@@ -16,7 +16,7 @@ import (
 func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {
 	limit, offset, retries := 500, 0, 0
 	identifier := "locations"
-	
+
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
@@ -72,7 +72,9 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 
 		if dto.StatusCode != transportation.STATUS_CODE_OK {
 			util.LogOnError("OCPI129", "Error response failure", err)
+			util.LogHttpRequest("OCPI129", versionEndpoint.Url, response.Request, true)
 			util.LogHttpResponse("OCPI129", requestUrl.String(), response, true)
+			log.Printf("OCPI129: StatusCode=%v, StatusMessage=%v", dto.StatusCode, dto.StatusMessage)
 			break
 		}
 

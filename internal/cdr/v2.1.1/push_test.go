@@ -208,7 +208,7 @@ func TestCdrRequest(t *testing.T) {
 			},
 		})
 
-		request, err := http.NewRequest(http.MethodPost, "/", bytes.NewReader([]byte(`{
+		request, err := http.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(`{
 			"id": "CDR0003",
 			"start_date_time": "2015-06-29T21:39:09Z",
 			"stop_date_time": "2015-06-29T21:39:09Z",

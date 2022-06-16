@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-datastore/pkg/param"
+	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/transportation"
 	"github.com/satimoto/go-ocpi-api/internal/util"
 	ocpiCommand "github.com/satimoto/go-ocpi-api/pkg/ocpi/command"
@@ -56,7 +56,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	}
 
 	util.AppendPath(requestUrl, "RESERVE_NOW")
-	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI046", "Error making request", err)
@@ -74,6 +74,8 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
+		dbUtil.LogOnError("OCPI047", "Error response failure", err)
+		dbUtil.LogHttpRequest("OCPI048", requestUrl.String(), response.Request, true)
 		dbUtil.LogHttpResponse("OCPI048", requestUrl.String(), response, true)
 		log.Printf("OCPI048: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return nil, errors.New("error requesting reservation")
@@ -129,7 +131,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	}
 
 	util.AppendPath(requestUrl, "START_SESSION")
-	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI053", "Error making request", err)
@@ -147,6 +149,8 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
+		dbUtil.LogOnError("OCPI055", "Error response failure", err)
+		dbUtil.LogHttpRequest("OCPI055", requestUrl.String(), response.Request, true)
 		dbUtil.LogHttpResponse("OCPI055", requestUrl.String(), response, true)
 		log.Printf("OCPI055: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return nil, errors.New("error starting reservation")
@@ -202,7 +206,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	}
 
 	util.AppendPath(requestUrl, "STOP_SESSION")
-	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI060", "Error making request", err)
@@ -220,6 +224,8 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
+		dbUtil.LogOnError("OCPI063", "Error response failure", err)
+		dbUtil.LogHttpRequest("OCPI063", requestUrl.String(), response.Request, true)
 		dbUtil.LogHttpResponse("OCPI063", requestUrl.String(), response, true)
 		log.Printf("OCPI063: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return nil, errors.New("error stopping reservation")
@@ -275,7 +281,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 	}
 
 	util.AppendPath(requestUrl, "UNLOCK_CONNECTOR")
-	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewReader(dtoBytes))
+	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI068", "Error making request", err)
@@ -294,7 +300,9 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
 		dbUtil.LogOnError("OCPI070", "Error response failure", err)
+		dbUtil.LogHttpRequest("OCPI070", requestUrl.String(), response.Request, true)
 		dbUtil.LogHttpResponse("OCPI070", requestUrl.String(), response, true)
+		log.Printf("OCPI070: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
 		return nil, errors.New("error unlocking reservation")
 	}
 
