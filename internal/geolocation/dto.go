@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
 )
 
 type GeoLocationDto struct {
-	Latitude  DecimalString  `json:"latitude"`
-	Longitude DecimalString  `json:"longitude"`
+	Latitude  ocpitype.String `json:"latitude"`
+	Longitude ocpitype.String `json:"longitude"`
 }
 
 func (r *GeoLocationDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -18,8 +19,8 @@ func (r *GeoLocationDto) Render(writer http.ResponseWriter, request *http.Reques
 
 func NewGeoLocationDto(geoLocation db.GeoLocation) *GeoLocationDto {
 	return &GeoLocationDto{
-		Latitude:  NewDecimalString(geoLocation.Latitude),
-		Longitude: NewDecimalString(geoLocation.Longitude),
+		Latitude:  ocpitype.NewString(geoLocation.Latitude),
+		Longitude: ocpitype.NewString(geoLocation.Longitude),
 	}
 }
 
@@ -29,7 +30,7 @@ func (r *GeoLocationResolver) CreateGeoLocationDto(ctx context.Context, geoLocat
 
 func (r *GeoLocationResolver) CreateGeoLocationListDto(ctx context.Context, geoLocations []db.GeoLocation) []*GeoLocationDto {
 	list := []*GeoLocationDto{}
-	
+
 	for _, geoLocation := range geoLocations {
 		list = append(list, r.CreateGeoLocationDto(ctx, geoLocation))
 	}

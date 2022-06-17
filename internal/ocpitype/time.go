@@ -1,4 +1,4 @@
-package transportation
+package ocpitype
 
 import (
 	"strings"
@@ -9,9 +9,9 @@ const (
 	RFC3339     = "2006-01-02T15:04:05"
 )
 
-type OcpiTime time.Time
+type Time time.Time
 
-func (t OcpiTime) MarshalJSON() ([]byte, error) {
+func (t Time) MarshalJSON() ([]byte, error) {
 	ot :=time.Time(t)
 	b := make([]byte, 0, len(time.RFC3339)+2)
 	b = append(b, '"')
@@ -21,19 +21,19 @@ func (t OcpiTime) MarshalJSON() ([]byte, error) {
 	return b, nil
 }
 
-func (t OcpiTime) String() string {
+func (t Time) String() string {
 	return time.Time(t).String()
 }
 
-func NewOcpiTime(t *time.Time) OcpiTime {
+func NewTime(t *time.Time) Time {
 	if t == nil {
-		return (OcpiTime)(time.Now())
+		return (Time)(time.Now())
 	}
 
-	return (OcpiTime)(*t)
+	return (Time)(*t)
 }
 
-func (t *OcpiTime) UnmarshalJSON(data []byte) error {
+func (t *Time) UnmarshalJSON(data []byte) error {
 	dataStr := string(data)
 
 	if dataStr == "null" {

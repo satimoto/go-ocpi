@@ -15,15 +15,15 @@ import (
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	"github.com/satimoto/go-ocpi-api/internal/image"
+	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
 	"github.com/satimoto/go-ocpi-api/internal/openingtime"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type OcpiLocationsDto struct {
-	Data          []*LocationDto          `json:"data,omitempty"`
-	StatusCode    int16                   `json:"status_code"`
-	StatusMessage string                  `json:"status_message"`
-	Timestamp     transportation.OcpiTime `json:"timestamp"`
+	Data          []*LocationDto `json:"data,omitempty"`
+	StatusCode    int16          `json:"status_code"`
+	StatusMessage string         `json:"status_message"`
+	Timestamp     ocpitype.Time  `json:"timestamp"`
 }
 
 type LocationDto struct {
@@ -205,8 +205,8 @@ func (r *LocationResolver) CreateLocationListDto(ctx context.Context, locations 
 }
 
 type AdditionalGeoLocationDto struct {
-	Latitude  geolocation.DecimalString   `json:"latitude"`
-	Longitude geolocation.DecimalString   `json:"longitude"`
+	Latitude  ocpitype.String             `json:"latitude"`
+	Longitude ocpitype.String             `json:"longitude"`
 	Name      *displaytext.DisplayTextDto `json:"name,omitempty"`
 }
 
@@ -216,8 +216,8 @@ func (r *AdditionalGeoLocationDto) Render(writer http.ResponseWriter, request *h
 
 func NewAdditionalGeoLocationDto(additionalGeoLocation db.AdditionalGeoLocation) *AdditionalGeoLocationDto {
 	return &AdditionalGeoLocationDto{
-		Latitude:  geolocation.NewDecimalString(additionalGeoLocation.Latitude),
-		Longitude: geolocation.NewDecimalString(additionalGeoLocation.Longitude),
+		Latitude:  ocpitype.NewString(additionalGeoLocation.Latitude),
+		Longitude: ocpitype.NewString(additionalGeoLocation.Longitude),
 	}
 }
 

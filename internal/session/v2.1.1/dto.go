@@ -11,14 +11,14 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
 )
 
 type OcpiSessionsDto struct {
-	Data          []*SessionDto           `json:"data,omitempty"`
-	StatusCode    int16                   `json:"status_code"`
-	StatusMessage string                  `json:"status_message"`
-	Timestamp     transportation.OcpiTime `json:"timestamp"`
+	Data          []*SessionDto `json:"data,omitempty"`
+	StatusCode    int16         `json:"status_code"`
+	StatusMessage string        `json:"status_message"`
+	Timestamp     ocpitype.Time `json:"timestamp"`
 }
 
 type SessionDto struct {

@@ -7,10 +7,11 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
 )
 
 type EnergyMixDto struct {
-	IsGreenEnergy     bool                      `json:"is_green_energy"`
+	IsGreenEnergy     ocpitype.Bool             `json:"is_green_energy"`
 	EnergySources     []*EnergySourceDto        `json:"energy_sources,omitempty"`
 	EnvironImpact     []*EnvironmentalImpactDto `json:"environ_impact,omitempty"`
 	SupplierName      *string                   `json:"supplier_name,omitempty"`
@@ -23,7 +24,7 @@ func (r *EnergyMixDto) Render(writer http.ResponseWriter, request *http.Request)
 
 func NewEnergyMixDto(energyMix db.EnergyMix) *EnergyMixDto {
 	return &EnergyMixDto{
-		IsGreenEnergy:     energyMix.IsGreenEnergy,
+		IsGreenEnergy:     ocpitype.NewBool(energyMix.IsGreenEnergy),
 		SupplierName:      util.NilString(energyMix.SupplierName),
 		EnergyProductName: util.NilString(energyMix.EnergyProductName),
 	}
@@ -33,7 +34,7 @@ func (r *EnergyMixResolver) CreateEnergyMixDto(ctx context.Context, energyMix db
 	response := NewEnergyMixDto(energyMix)
 
 	energySources, err := r.Repository.ListEnergySources(ctx, energyMix.ID)
-	
+
 	if err != nil {
 		util.LogOnError("OCPI229", "Error listing energy sources", err)
 		log.Printf("OCPI229: EnergyMixID=%v", energyMix.ID)

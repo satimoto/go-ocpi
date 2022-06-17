@@ -7,7 +7,7 @@ import (
 
 func NewCreateEnergyMixParams(dto *EnergyMixDto) db.CreateEnergyMixParams {
 	return db.CreateEnergyMixParams{
-		IsGreenEnergy:     dto.IsGreenEnergy,
+		IsGreenEnergy:     dto.IsGreenEnergy.Bool(),
 		SupplierName:      util.SqlNullString(dto.SupplierName),
 		EnergyProductName: util.SqlNullString(dto.EnergyProductName),
 	}
@@ -16,7 +16,7 @@ func NewCreateEnergyMixParams(dto *EnergyMixDto) db.CreateEnergyMixParams {
 func NewUpdateEnergyMixParams(id int64, dto *EnergyMixDto) db.UpdateEnergyMixParams {
 	return db.UpdateEnergyMixParams{
 		ID:                id,
-		IsGreenEnergy:     dto.IsGreenEnergy,
+		IsGreenEnergy:     dto.IsGreenEnergy.Bool(),
 		SupplierName:      util.SqlNullString(dto.SupplierName),
 		EnergyProductName: util.SqlNullString(dto.EnergyProductName),
 	}

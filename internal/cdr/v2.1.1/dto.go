@@ -12,15 +12,15 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/calibration"
 	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
+	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
 	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type OcpiCdrsDto struct {
-	Data          []*CdrDto               `json:"data,omitempty"`
-	StatusCode    int16                   `json:"status_code"`
-	StatusMessage string                  `json:"status_message"`
-	Timestamp     transportation.OcpiTime `json:"timestamp"`
+	Data          []*CdrDto     `json:"data,omitempty"`
+	StatusCode    int16         `json:"status_code"`
+	StatusMessage string        `json:"status_message"`
+	Timestamp     ocpitype.Time `json:"timestamp"`
 }
 
 type CdrDto struct {
