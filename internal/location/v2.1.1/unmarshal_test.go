@@ -156,12 +156,14 @@ func TestLocationUnmarshal(t *testing.T) {
 			},
 			"related_locations": [{
 				"latitude": "50.770773",
-				"longitude": "-126.104966",
-				"name": "Entrance"
+				"longitude": "-126.104966"
 			}, {
 				"latitude": "50.77077443",
 				"longitude": "-126.104963",
-				"name": "Exit"
+				"name": {
+					"language": "nl",
+					"text": "Bloemenspeciaalzaak Bergmans (Store)"
+				}
 			}],
 			"evses": [],
 			"directions": [],

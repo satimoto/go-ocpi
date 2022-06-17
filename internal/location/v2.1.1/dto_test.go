@@ -273,18 +273,21 @@ func TestCreateLocationDto(t *testing.T) {
 		}
 		mockRepository.SetGetGeoLocationMockData(dbMocks.GeoLocationMockData{GeoLocation: coordinates, Error: nil})
 
-		relatedLocations := []db.GeoLocation{}
-		relatedLocations = append(relatedLocations, db.GeoLocation{
+		relatedLocations := []db.AdditionalGeoLocation{}
+		relatedLocations = append(relatedLocations, db.AdditionalGeoLocation{
 			Latitude:  "50.770773",
 			Longitude: "-126.104966",
-			Name:      util.SqlNullString("Entrance"),
 		})
-		relatedLocations = append(relatedLocations, db.GeoLocation{
+		relatedLocations = append(relatedLocations, db.AdditionalGeoLocation{
 			Latitude:  "50.77077443",
 			Longitude: "-126.104963",
-			Name:      util.SqlNullString("Exit"),
+			DisplayTextID: util.SqlNullInt64(2),
 		})
-		mockRepository.SetListRelatedLocationsMockData(dbMocks.GeoLocationsMockData{GeoLocations: relatedLocations, Error: nil})
+		mockRepository.SetGetDisplayTextMockData(dbMocks.DisplayTextMockData{DisplayText: db.DisplayText{
+			Language: "nl",
+			Text: "Bloemenspeciaalzaak Bergmans (Store)",
+		}})
+		mockRepository.SetListAdditionalGeoLocationsMockData(dbMocks.AdditionalGeoLocationsMockData{AdditionalGeoLocations: relatedLocations, Error: nil})
 
 		images := []db.Image{}
 		images = append(images, db.Image{
@@ -332,12 +335,14 @@ func TestCreateLocationDto(t *testing.T) {
 			},
 			"related_locations": [{
 				"latitude": "50.770773",
-				"longitude": "-126.104966",
-				"name": "Entrance"
+				"longitude": "-126.104966"
 			}, {
 				"latitude": "50.77077443",
 				"longitude": "-126.104963",
-				"name": "Exit"
+				"name": {
+					"language": "nl",
+					"text": "Bloemenspeciaalzaak Bergmans (Store)"
+				}
 			}],
 			"evses": [],
 			"directions": [],
