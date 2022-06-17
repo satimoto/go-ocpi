@@ -14,7 +14,6 @@ func NewCreateGeoLocationParams(dto *GeoLocationDto) db.CreateGeoLocationParams 
 		LatitudeFloat:  util.ParseFloat64(latitudeStr, 0),
 		Longitude:      longitudeStr,
 		LongitudeFloat: util.ParseFloat64(longitudeStr, 0),
-		Name:           util.SqlNullString(dto.Name),
 	}
 }
 
@@ -28,6 +27,5 @@ func NewUpdateGeoLocationParams(id int64, dto *GeoLocationDto) db.UpdateGeoLocat
 		LatitudeFloat:  util.ParseFloat64(latitudeStr, 0),
 		Longitude:      longitudeStr,
 		LongitudeFloat: util.ParseFloat64(longitudeStr, 0),
-		Name:           util.SqlNullString(dto.Name),
 	}
 }

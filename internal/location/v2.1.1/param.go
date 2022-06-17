@@ -23,3 +23,16 @@ func NewCreateLocationParams(dto *LocationDto) db.CreateLocationParams {
 		LastUpdated:        *dto.LastUpdated,
 	}
 }
+
+func NewCreateAdditionalGeoLocationParams(dto *AdditionalGeoLocationDto, locationID int64) db.CreateAdditionalGeoLocationParams {
+	latitudeStr := dto.Latitude.String()
+	longitudeStr := dto.Longitude.String()
+
+	return db.CreateAdditionalGeoLocationParams{
+		LocationID:     locationID,
+		Latitude:       latitudeStr,
+		LatitudeFloat:  util.ParseFloat64(latitudeStr, 0),
+		Longitude:      longitudeStr,
+		LongitudeFloat: util.ParseFloat64(longitudeStr, 0),
+	}
+}

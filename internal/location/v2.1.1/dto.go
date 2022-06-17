@@ -35,7 +35,7 @@ type LocationDto struct {
 	PostalCode         *string                           `json:"postal_code"`
 	Country            *string                           `json:"country"`
 	Coordinates        *geolocation.GeoLocationDto       `json:"coordinates"`
-	RelatedLocations   []*geolocation.GeoLocationDto     `json:"related_locations"`
+	RelatedLocations   []*AdditionalGeoLocationDto       `json:"related_locations"`
 	Evses              []*evse.EvseDto                   `json:"evses"`
 	Directions         []*displaytext.DisplayTextDto     `json:"directions"`
 	Facilities         []*string                         `json:"facilities"`
@@ -91,13 +91,13 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		response.Coordinates = r.GeoLocationResolver.CreateGeoLocationDto(ctx, geoLocation)
 	}
 
-	relatedLocations, err := r.Repository.ListRelatedLocations(ctx, location.ID)
+	additionalGeoLocations, err := r.Repository.ListAdditionalGeoLocations(ctx, location.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI239", "Error listing related locations", err)
+		util.LogOnError("OCPI239", "Error listing additional geo locations", err)
 		log.Printf("OCPI239: LocationID=%v", location.ID)
 	} else {
-		response.RelatedLocations = r.GeoLocationResolver.CreateGeoLocationListDto(ctx, relatedLocations)
+		response.RelatedLocations = r.CreateAdditionalGeoLocationListDto(ctx, additionalGeoLocations)
 	}
 
 	evses, err := r.Repository.ListEvses(ctx, location.ID)
@@ -199,6 +199,50 @@ func (r *LocationResolver) CreateLocationListDto(ctx context.Context, locations 
 
 	for _, location := range locations {
 		list = append(list, r.CreateLocationDto(ctx, location))
+	}
+
+	return list
+}
+
+type AdditionalGeoLocationDto struct {
+	Latitude  geolocation.DecimalString   `json:"latitude"`
+	Longitude geolocation.DecimalString   `json:"longitude"`
+	Name      *displaytext.DisplayTextDto `json:"name,omitempty"`
+}
+
+func (r *AdditionalGeoLocationDto) Render(writer http.ResponseWriter, request *http.Request) error {
+	return nil
+}
+
+func NewAdditionalGeoLocationDto(additionalGeoLocation db.AdditionalGeoLocation) *AdditionalGeoLocationDto {
+	return &AdditionalGeoLocationDto{
+		Latitude:  geolocation.NewDecimalString(additionalGeoLocation.Latitude),
+		Longitude: geolocation.NewDecimalString(additionalGeoLocation.Longitude),
+	}
+}
+
+func (r *LocationResolver) CreateAdditionalGeoLocationDto(ctx context.Context, additionalGeoLocation db.AdditionalGeoLocation) *AdditionalGeoLocationDto {
+	response := NewAdditionalGeoLocationDto(additionalGeoLocation)
+
+	if additionalGeoLocation.DisplayTextID.Valid {
+		displayText, err := r.DisplayTextResolver.Repository.GetDisplayText(ctx, additionalGeoLocation.DisplayTextID.Int64)
+
+		if err != nil {
+			util.LogOnError("OCPI271", "Error retrieving display text", err)
+			log.Printf("OCPI271: LocationID=%v, DisplayTextID=%v", additionalGeoLocation.LocationID, additionalGeoLocation.DisplayTextID.Int64)
+		} else {
+			response.Name = r.DisplayTextResolver.CreateDisplayTextDto(ctx, displayText)
+		}
+	}
+
+	return response
+}
+
+func (r *LocationResolver) CreateAdditionalGeoLocationListDto(ctx context.Context, additionalGeoLocations []db.AdditionalGeoLocation) []*AdditionalGeoLocationDto {
+	list := []*AdditionalGeoLocationDto{}
+
+	for _, additionalGeoLocation := range additionalGeoLocations {
+		list = append(list, r.CreateAdditionalGeoLocationDto(ctx, additionalGeoLocation))
 	}
 
 	return list

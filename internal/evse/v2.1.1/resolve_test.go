@@ -227,8 +227,7 @@ func TestReplaceEvse(t *testing.T) {
 			"latitude": "31.3434",
 			"latitudeFloat": 31.3434,
 			"longitude": "-62.6996",
-			"longitudeFloat": -62.6996,
-			"name": {"String": "", "Valid": false}
+			"longitudeFloat": -62.6996
 		}`))
 	})
 }

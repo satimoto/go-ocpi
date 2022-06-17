@@ -9,7 +9,6 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/geolocation"
 	"github.com/satimoto/go-ocpi-api/internal/image"
 )
 
@@ -253,27 +252,29 @@ func (r *LocationResolver) replaceImages(ctx context.Context, locationID int64, 
 }
 
 func (r *LocationResolver) replaceRelatedLocations(ctx context.Context, locationID int64, dto *LocationDto) {
-	r.Repository.DeleteRelatedLocations(ctx, locationID)
+	r.Repository.DeleteAdditionalGeoLocations(ctx, locationID)
 
 	for _, relatedLocation := range dto.RelatedLocations {
-		geoLocationParams := geolocation.NewCreateGeoLocationParams(relatedLocation)
-		geoLocation, err := r.GeoLocationResolver.Repository.CreateGeoLocation(ctx, geoLocationParams)
+		additionalGeoLocationParams := NewCreateAdditionalGeoLocationParams(relatedLocation, locationID)
 
-		if err != nil {
-			util.LogOnError("OCPI123", "Error creating geolocation", err)
-			log.Printf("OCPI123: Params=%#v", geoLocationParams)
-			continue
+		if relatedLocation.Name != nil {
+			displayTextParams := displaytext.NewCreateDisplayTextParams(relatedLocation.Name)
+			displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams)
+
+			if err != nil {
+				util.LogOnError("OCPI123", "Error creating display text", err)
+				log.Printf("OCPI123: LocationID=%v, Params=%#v", locationID, displayTextParams)
+				continue
+			}
+
+			additionalGeoLocationParams.DisplayTextID = util.SqlNullInt64(displayText.ID)
 		}
 
-		setRelatedLocationParams := db.SetRelatedLocationParams{
-			LocationID:    locationID,
-			GeoLocationID: geoLocation.ID,
-		}
-		r.Repository.SetRelatedLocation(ctx, setRelatedLocationParams)
+		_, err := r.Repository.CreateAdditionalGeoLocation(ctx, additionalGeoLocationParams)
 
 		if err != nil {
-			util.LogOnError("OCPI124", "Error setting relation location", err)
-			log.Printf("OCPI124: Params=%#v", setRelatedLocationParams)
+			util.LogOnError("OCPI124", "Error creating additional geo location", err)
+			log.Printf("OCPI124: Params=%#v", additionalGeoLocationParams)
 		}
 	}
 }
