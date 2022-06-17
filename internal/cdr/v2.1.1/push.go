@@ -39,7 +39,7 @@ func (r *CdrResolver) PostCdr(rw http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	cdr := r.ReplaceCdr(ctx, *cred, dto)
+	cdr := r.ReplaceCdr(ctx, *cred, *dto.ID, dto)
 
 	if cdr == nil {
 		log.Print("OCPI035", "Error replacing cdr")

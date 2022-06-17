@@ -13,15 +13,13 @@ func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.Nu
 	if dto != nil {
 		if id.Valid {
 			updateGeoLocationParams := NewUpdateGeoLocationParams(id.Int64, dto)
-			geoLocation, err := r.Repository.UpdateGeoLocation(ctx, updateGeoLocationParams)
+			_, err := r.Repository.UpdateGeoLocation(ctx, updateGeoLocationParams)
 
 			if err != nil {
 				util.LogOnError("OCPI114", "Error updating geolocation", err)
 				log.Printf("OCPI114: Params=%#v", updateGeoLocationParams)
 				return nil
 			}
-
-			id.Scan(geoLocation.ID)
 		} else {
 			createGeoLocationParams := NewCreateGeoLocationParams(dto)
 			geoLocation, err := r.Repository.CreateGeoLocation(ctx, createGeoLocationParams)
@@ -35,7 +33,7 @@ func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.Nu
 			id.Scan(geoLocation.ID)
 		}
 
-		point, err := geom.NewPoint(dto.Latitude.String(), dto.Longitude.String())
+		point, err := geom.NewPoint(dto.Longitude.String(), dto.Latitude.String())
 
 		if err != nil {
 			util.LogOnError("OCPI116", "Error creating geom point", err)

@@ -26,11 +26,11 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 	if dto != nil {
 		location, err := r.Repository.GetLocationByUid(ctx, uid)
 		geoLocationID := util.SqlNullInt64(util.NilInt64(location.GeoLocationID))
-		energyMixID := util.NilInt64(location.EnergyMixID)
-		openingTimeID := util.NilInt64(location.OpeningTimeID)
-		operatorID := util.NilInt64(location.OperatorID)
-		ownerID := util.NilInt64(location.OwnerID)
-		suboperatorID := util.NilInt64(location.SuboperatorID)
+		energyMixID := location.EnergyMixID
+		openingTimeID := location.OpeningTimeID
+		operatorID := location.OperatorID
+		ownerID := location.OwnerID
+		suboperatorID := location.SuboperatorID
 		geomPoint := &location.Geom
 
 		if dto.Coordinates != nil {
@@ -42,23 +42,23 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 		}
 
 		if dto.EnergyMix != nil {
-			r.EnergyMixResolver.ReplaceEnergyMix(ctx, energyMixID, dto.EnergyMix)
+			r.EnergyMixResolver.ReplaceEnergyMix(ctx, &energyMixID, dto.EnergyMix)
 		}
 
 		if dto.OpeningTimes != nil {
-			r.OpeningTimeResolver.ReplaceOpeningTime(ctx, openingTimeID, dto.OpeningTimes)
+			r.OpeningTimeResolver.ReplaceOpeningTime(ctx, &openingTimeID, dto.OpeningTimes)
 		}
 
 		if dto.Operator != nil {
-			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, operatorID, dto.Operator)
+			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, &operatorID, dto.Operator)
 		}
 
 		if dto.Owner != nil {
-			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, ownerID, dto.Owner)
+			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, &ownerID, dto.Owner)
 		}
 
 		if dto.Suboperator != nil {
-			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, suboperatorID, dto.Suboperator)
+			r.BusinessDetailResolver.ReplaceBusinessDetail(ctx, &suboperatorID, dto.Suboperator)
 		}
 
 		if err == nil {
@@ -67,11 +67,11 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			locationParams.PartyID = util.SqlNullString(partyID)
 			locationParams.Geom = *geomPoint
 			locationParams.GeoLocationID = geoLocationID.Int64
-			locationParams.EnergyMixID = util.SqlNullInt64(energyMixID)
-			locationParams.OpeningTimeID = util.SqlNullInt64(openingTimeID)
-			locationParams.OperatorID = util.SqlNullInt64(operatorID)
-			locationParams.OwnerID = util.SqlNullInt64(ownerID)
-			locationParams.SuboperatorID = util.SqlNullInt64(suboperatorID)
+			locationParams.EnergyMixID = energyMixID
+			locationParams.OpeningTimeID = openingTimeID
+			locationParams.OperatorID = operatorID
+			locationParams.OwnerID = ownerID
+			locationParams.SuboperatorID = suboperatorID
 
 			if dto.Address != nil {
 				locationParams.Address = *dto.Address
@@ -125,11 +125,11 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			locationParams.PartyID = util.SqlNullString(partyID)
 			locationParams.Geom = *geomPoint
 			locationParams.GeoLocationID = geoLocationID.Int64
-			locationParams.EnergyMixID = util.SqlNullInt64(energyMixID)
-			locationParams.OpeningTimeID = util.SqlNullInt64(openingTimeID)
-			locationParams.OperatorID = util.SqlNullInt64(operatorID)
-			locationParams.OwnerID = util.SqlNullInt64(ownerID)
-			locationParams.SuboperatorID = util.SqlNullInt64(suboperatorID)
+			locationParams.EnergyMixID = energyMixID
+			locationParams.OpeningTimeID = openingTimeID
+			locationParams.OperatorID = operatorID
+			locationParams.OwnerID = ownerID
+			locationParams.SuboperatorID =suboperatorID
 
 			location, err = r.Repository.CreateLocation(ctx, locationParams)
 
@@ -164,6 +164,12 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 	}
 
 	return nil
+}
+
+func (r *LocationResolver) ReplaceLocations(ctx context.Context, credential db.Credential, dto []*LocationDto) {
+	for _, locationDto := range dto {
+		r.ReplaceLocation(ctx, credential, *locationDto.ID, locationDto)
+	}
 }
 
 func (r *LocationResolver) ReplaceLocationsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, dto []*LocationDto) {

@@ -2,37 +2,38 @@ package elementrestriction
 
 import (
 	"context"
+	"database/sql"
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
-func (r *ElementRestrictionResolver) ReplaceElementRestriction(ctx context.Context, id *int64, dto *ElementRestrictionDto) {
+func (r *ElementRestrictionResolver) ReplaceElementRestriction(ctx context.Context, id *sql.NullInt64, dto *ElementRestrictionDto) {
 	if dto != nil {
-		if id == nil {
-			elementRestrictionParams := NewCreateElementRestrictionParams(dto)
-			elementRestriction, err := r.Repository.CreateElementRestriction(ctx, elementRestrictionParams)
-			
-			if err != nil {
-				util.LogOnError("OCPI092", "Error creating element restriction", err)
-				log.Printf("OCPI092: Params=%#v", elementRestrictionParams)
-				return
-			}
-
-			id = &elementRestriction.ID
-		} else {
-			elementRestrictionParams := NewUpdateElementRestrictionParams(*id, dto)
+		if id.Valid {
+			elementRestrictionParams := NewUpdateElementRestrictionParams(id.Int64, dto)
 			_, err := r.Repository.UpdateElementRestriction(ctx, elementRestrictionParams)
 
 			if err != nil {
 				util.LogOnError("OCPI093", "Error updating element restriction", err)
 				log.Printf("OCPI093: Params=%#v", elementRestrictionParams)
 			}
+		} else {
+			elementRestrictionParams := NewCreateElementRestrictionParams(dto)
+			elementRestriction, err := r.Repository.CreateElementRestriction(ctx, elementRestrictionParams)
+
+			if err != nil {
+				util.LogOnError("OCPI092", "Error creating element restriction", err)
+				log.Printf("OCPI092: Params=%#v", elementRestrictionParams)
+				return
+			}
+
+			id.Scan(elementRestriction.ID)
 		}
 
 		if dto.DayOfWeek != nil {
-			r.replaceWeekdays(ctx, *id, dto)
+			r.replaceWeekdays(ctx, id.Int64, dto)
 		}
 	}
 }

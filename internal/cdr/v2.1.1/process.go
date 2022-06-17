@@ -11,11 +11,11 @@ import (
 	ocpiCdr "github.com/satimoto/go-ocpi-api/pkg/ocpi/cdr"
 )
 
-func (r *CdrResolver) ReplaceCdr(ctx context.Context, credential db.Credential, dto *CdrDto) *db.Cdr {
+func (r *CdrResolver) ReplaceCdr(ctx context.Context, credential db.Credential, uid string, dto *CdrDto) *db.Cdr {
 	if dto != nil {
 		countryCode, partyID := evse.GetEvsesIdentity(dto.Location.Evses)
 
-		return r.ReplaceCdrByIdentifier(ctx, credential, countryCode, partyID, *dto.ID, dto)
+		return r.ReplaceCdrByIdentifier(ctx, credential, countryCode, partyID, uid, dto)
 	}
 
 	return nil
@@ -128,6 +128,12 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 	}
 
 	return nil
+}
+
+func (r *CdrResolver) ReplaceCdrs(ctx context.Context, credential db.Credential, dto []*CdrDto) {
+	for _, cdrDto := range dto {
+		r.ReplaceCdr(ctx, credential, *cdrDto.ID, cdrDto)
+	}
 }
 
 func (r *CdrResolver) ReplaceCdrsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, dto []*CdrDto) {

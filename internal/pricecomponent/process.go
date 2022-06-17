@@ -2,6 +2,7 @@ package pricecomponent
 
 import (
 	"context"
+	"database/sql"
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/util"
@@ -9,21 +10,21 @@ import (
 
 func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elementID int64, dto []*PriceComponentDto) {
 	for _, priceComponentDto := range dto {
-		priceRoundingID := util.NilInt64(nil)
-		stepRoundingID := util.NilInt64(nil)
+		priceRoundingID := util.SqlNullInt64(nil)
+		stepRoundingID := util.SqlNullInt64(nil)
 
 		if priceComponentDto.PriceRound != nil {
-			r.createPriceComponentRounding(ctx, priceRoundingID, priceComponentDto.PriceRound)
+			r.createPriceComponentRounding(ctx, &priceRoundingID, priceComponentDto.PriceRound)
 		}
 
 		if priceComponentDto.StepRound != nil {
-			r.createPriceComponentRounding(ctx, stepRoundingID, priceComponentDto.StepRound)
+			r.createPriceComponentRounding(ctx, &stepRoundingID, priceComponentDto.StepRound)
 		}
 
 		priceComponentParams := NewCreatePriceComponentParams(priceComponentDto)
 		priceComponentParams.ElementID = elementID
-		priceComponentParams.PriceRoundingID = util.SqlNullInt64(priceRoundingID)
-		priceComponentParams.StepRoundingID = util.SqlNullInt64(stepRoundingID)
+		priceComponentParams.PriceRoundingID = priceRoundingID
+		priceComponentParams.StepRoundingID = stepRoundingID
 		_, err := r.Repository.CreatePriceComponent(ctx, priceComponentParams)
 
 		if err != nil {
@@ -33,7 +34,7 @@ func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elem
 	}
 }
 
-func (r *PriceComponentResolver) createPriceComponentRounding(ctx context.Context, id *int64, dto *PriceComponentRoundingDto) {
+func (r *PriceComponentResolver) createPriceComponentRounding(ctx context.Context, id *sql.NullInt64, dto *PriceComponentRoundingDto) {
 	if dto != nil {
 		priceComponentRoundingParams := NewCreatePriceComponentRoundingParams(dto)
 		priceComponentRounding, err := r.Repository.CreatePriceComponentRounding(ctx, priceComponentRoundingParams)
@@ -44,6 +45,6 @@ func (r *PriceComponentResolver) createPriceComponentRounding(ctx context.Contex
 			return
 		}
 		
-		id = &priceComponentRounding.ID
+		id.Scan(priceComponentRounding.ID)
 	}
 }

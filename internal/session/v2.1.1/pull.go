@@ -81,7 +81,7 @@ func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credenti
 		retries = 0
 
 		if dto.StatusCode == transportation.STATUS_CODE_OK {
-			r.ReplaceSessionsByIdentifier(ctx, credential, countryCode, partyID, dto.Data)
+			r.ReplaceSessions(ctx, credential, dto.Data)
 			offset += limit
 
 			if len(dto.Data) < limit {
