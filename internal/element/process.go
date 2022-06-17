@@ -18,9 +18,9 @@ func (r *ElementResolver) ReplaceElements(ctx context.Context, tariffID int64, d
 			elementParams.TariffID = tariffID
 
 			if elementDto.Restrictions != nil {
-				restrictionID := util.NilInt64(nil)
-				r.ElementRestrictionResolver.ReplaceElementRestriction(ctx, restrictionID, elementDto.Restrictions)
-				elementParams.ElementRestrictionID = util.SqlNullInt64(restrictionID)
+				restrictionID := util.SqlNullInt64(nil)
+				r.ElementRestrictionResolver.ReplaceElementRestriction(ctx, &restrictionID, elementDto.Restrictions)
+				elementParams.ElementRestrictionID = restrictionID
 			}
 
 			element, err := r.Repository.CreateElement(ctx, elementParams)

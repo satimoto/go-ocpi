@@ -7,9 +7,20 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
+	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi-api/pkg/ocpi"
 	ocpiSession "github.com/satimoto/go-ocpi-api/pkg/ocpi/session"
 )
+
+func (r *SessionResolver) ReplaceSession(ctx context.Context, credential db.Credential, uid string, dto *SessionDto) *db.Session {
+	if dto != nil {
+		countryCode, partyID := evse.GetEvsesIdentity(dto.Location.Evses)
+
+		return r.ReplaceSessionByIdentifier(ctx, credential, countryCode, partyID, uid, dto)
+	}
+
+	return nil
+}
 
 func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
 	if dto != nil {
@@ -156,6 +167,12 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 	}
 
 	return nil
+}
+
+func (r *SessionResolver) ReplaceSessions(ctx context.Context, credential db.Credential, dto []*SessionDto) {
+	for _, sessionDto := range dto {
+		r.ReplaceSession(ctx, credential, *sessionDto.ID, sessionDto)
+	}
 }
 
 func (r *SessionResolver) ReplaceSessionsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, dto []*SessionDto) {

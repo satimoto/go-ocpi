@@ -80,7 +80,7 @@ func (r *CdrResolver) PullCdrsByIdentifier(ctx context.Context, credential db.Cr
 		retries = 0
 
 		if dto.StatusCode == transportation.STATUS_CODE_OK {
-			r.ReplaceCdrsByIdentifier(ctx, credential, countryCode, partyID, dto.Data)
+			r.ReplaceCdrs(ctx, credential, dto.Data)
 			offset += limit
 
 			if len(dto.Data) < limit {

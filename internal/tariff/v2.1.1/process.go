@@ -13,23 +13,23 @@ import (
 func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, dto *TariffDto) *db.Tariff {
 	if dto != nil {
 		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
-		energyMixID := util.NilInt64(tariff.EnergyMixID)
-		tariffRestrictionID := util.NilInt64(tariff.TariffRestrictionID)
+		energyMixID := util.SqlNullInt64(tariff.EnergyMixID)
+		tariffRestrictionID := util.SqlNullInt64(tariff.TariffRestrictionID)
 
 		if dto.EnergyMix != nil {
-			r.EnergyMixResolver.ReplaceEnergyMix(ctx, energyMixID, dto.EnergyMix)
+			r.EnergyMixResolver.ReplaceEnergyMix(ctx, &energyMixID, dto.EnergyMix)
 		}
 
 		if dto.Restriction != nil {
-			r.TariffRestrictionResolver.ReplaceTariffByIdentifierRestriction(ctx, tariffRestrictionID, dto.Restriction)
+			r.TariffRestrictionResolver.ReplaceTariffByIdentifierRestriction(ctx, &tariffRestrictionID, dto.Restriction)
 		}
 
 		if err == nil {
 			tariffParams := param.NewUpdateTariffByUidParams(tariff)
 			tariffParams.CountryCode = util.SqlNullString(countryCode)
 			tariffParams.PartyID = util.SqlNullString(partyID)
-			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)
-			tariffParams.TariffRestrictionID = util.SqlNullInt64(tariffRestrictionID)
+			tariffParams.EnergyMixID = energyMixID
+			tariffParams.TariffRestrictionID = tariffRestrictionID
 
 			if dto.Currency != nil {
 				tariffParams.Currency = *dto.Currency
@@ -58,8 +58,8 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 			tariffParams.CountryCode = util.SqlNullString(countryCode)
 			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.CdrID = util.SqlNullInt64(cdrID)
-			tariffParams.EnergyMixID = util.SqlNullInt64(energyMixID)
-			tariffParams.TariffRestrictionID = util.SqlNullInt64(tariffRestrictionID)
+			tariffParams.EnergyMixID = energyMixID
+			tariffParams.TariffRestrictionID = tariffRestrictionID
 
 			tariff, err = r.Repository.CreateTariff(ctx, tariffParams)
 

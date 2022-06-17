@@ -81,7 +81,7 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 		retries = 0
 
 		if dto.StatusCode == transportation.STATUS_CODE_OK {
-			r.ReplaceLocationsByIdentifier(ctx, credential, countryCode, partyID, dto.Data)
+			r.ReplaceLocations(ctx, credential, dto.Data)
 			offset += limit
 
 			if len(dto.Data) < limit {
