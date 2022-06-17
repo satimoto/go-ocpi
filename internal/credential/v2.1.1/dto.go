@@ -9,14 +9,14 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
 )
 
 type OcpiCredentialDto struct {
-	Data          *CredentialDto          `json:"data,omitempty"`
-	StatusCode    int16                   `json:"status_code"`
-	StatusMessage string                  `json:"status_message"`
-	Timestamp     transportation.OcpiTime `json:"timestamp"`
+	Data          *CredentialDto `json:"data,omitempty"`
+	StatusCode    int16          `json:"status_code"`
+	StatusMessage string         `json:"status_message"`
+	Timestamp     ocpitype.Time  `json:"timestamp"`
 }
 
 type CredentialDto struct {

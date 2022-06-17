@@ -11,15 +11,15 @@ import (
 	"github.com/satimoto/go-ocpi-api/internal/displaytext"
 	"github.com/satimoto/go-ocpi-api/internal/element"
 	"github.com/satimoto/go-ocpi-api/internal/energymix"
+	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
 	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type OcpiTariffsDto struct {
-	Data          []*TariffDto            `json:"data,omitempty"`
-	StatusCode    int16                   `json:"status_code"`
-	StatusMessage string                  `json:"status_message"`
-	Timestamp     transportation.OcpiTime `json:"timestamp"`
+	Data          []*TariffDto  `json:"data,omitempty"`
+	StatusCode    int16         `json:"status_code"`
+	StatusMessage string        `json:"status_message"`
+	Timestamp     ocpitype.Time `json:"timestamp"`
 }
 
 type TariffDto struct {

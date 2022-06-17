@@ -10,15 +10,15 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
 	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
 )
 
 type OcpiCommandResponseDto struct {
-	Data          *CommandResponseDto     `json:"data,omitempty"`
-	StatusCode    int16                   `json:"status_code"`
-	StatusMessage string                  `json:"status_message"`
-	Timestamp     transportation.OcpiTime `json:"timestamp"`
+	Data          *CommandResponseDto `json:"data,omitempty"`
+	StatusCode    int16               `json:"status_code"`
+	StatusMessage string              `json:"status_message"`
+	Timestamp     ocpitype.Time       `json:"timestamp"`
 }
 
 type CommandReservationDto struct {

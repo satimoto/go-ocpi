@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
 )
 
 var (
@@ -14,10 +14,10 @@ var (
 )
 
 type OcpiVersionDetailDto struct {
-	Data          *VersionDetailDto       `json:"data,omitempty"`
-	StatusCode    int16                   `json:"status_code"`
-	StatusMessage string                  `json:"status_message"`
-	Timestamp     transportation.OcpiTime `json:"timestamp"`
+	Data          *VersionDetailDto `json:"data,omitempty"`
+	StatusCode    int16             `json:"status_code"`
+	StatusMessage string            `json:"status_message"`
+	Timestamp     ocpitype.Time     `json:"timestamp"`
 }
 
 type VersionDetailDto struct {
