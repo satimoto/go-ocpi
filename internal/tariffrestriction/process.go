@@ -43,11 +43,11 @@ func (r *TariffRestrictionResolver) replaceWeekdays(ctx context.Context, tariffR
 	r.Repository.UnsetTariffRestrictionWeekdays(ctx, tariffRestrictionID)
 
 	if weekdays, err := r.Repository.ListWeekdays(ctx); err == nil {
-		filteredWeekdays := []*db.Weekday{}
+		filteredWeekdays := []db.Weekday{}
 
 		for _, weekday := range weekdays {
 			if util.StringsContainString(dto.DayOfWeek, weekday.Text) {
-				filteredWeekdays = append(filteredWeekdays, &weekday)
+				filteredWeekdays = append(filteredWeekdays, weekday)
 			}
 		}
 

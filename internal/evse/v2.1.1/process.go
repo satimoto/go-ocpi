@@ -155,11 +155,11 @@ func (r *EvseResolver) replaceCapabilities(ctx context.Context, evseID int64, dt
 	r.Repository.UnsetEvseCapabilities(ctx, evseID)
 
 	if capabilities, err := r.Repository.ListCapabilities(ctx); err == nil {
-		filteredCapabilities := []*db.Capability{}
+		filteredCapabilities := []db.Capability{}
 
 		for _, capability := range capabilities {
 			if util.StringsContainString(dto.Capabilities, capability.Text) {
-				filteredCapabilities = append(filteredCapabilities, &capability)
+				filteredCapabilities = append(filteredCapabilities, capability)
 			}
 		}
 
@@ -233,11 +233,11 @@ func (r *EvseResolver) replaceParkingRestrictions(ctx context.Context, evseID in
 	r.Repository.UnsetEvseParkingRestrictions(ctx, evseID)
 
 	if parkingRestrictions, err := r.Repository.ListParkingRestrictions(ctx); err == nil {
-		filteredParkingRestrictions := []*db.ParkingRestriction{}
+		filteredParkingRestrictions := []db.ParkingRestriction{}
 
 		for _, parkingRestriction := range parkingRestrictions {
 			if util.StringsContainString(dto.ParkingRestrictions, parkingRestriction.Text) {
-				filteredParkingRestrictions = append(filteredParkingRestrictions, &parkingRestriction)
+				filteredParkingRestrictions = append(filteredParkingRestrictions, parkingRestriction)
 			}
 		}
 
