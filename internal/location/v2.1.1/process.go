@@ -207,11 +207,11 @@ func (r *LocationResolver) replaceFacilities(ctx context.Context, locationID int
 	r.Repository.UnsetLocationFacilities(ctx, locationID)
 
 	if facilities, err := r.Repository.ListFacilities(ctx); err == nil {
-		filteredFacilities := []*db.Facility{}
+		filteredFacilities := []db.Facility{}
 
 		for _, facility := range facilities {
 			if util.StringsContainString(dto.Facilities, facility.Text) {
-				filteredFacilities = append(filteredFacilities, &facility)
+				filteredFacilities = append(filteredFacilities, facility)
 			}
 		}
 
