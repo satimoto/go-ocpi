@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	"github.com/satimoto/go-ocpi/internal/businessdetail"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestBusinessDetailUnmarshal(t *testing.T) {

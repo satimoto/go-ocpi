@@ -3,7 +3,7 @@ package mocks
 import (
 	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	tariffrestrictionMocks "github.com/satimoto/go-datastore/pkg/tariffrestriction/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
+	"github.com/satimoto/go-ocpi/internal/tariffrestriction"
 )
 
 func NewResolver(repositoryService *mocks.MockRepositoryService) *tariffrestriction.TariffRestrictionResolver {

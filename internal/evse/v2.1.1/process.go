@@ -7,8 +7,8 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/displaytext"
-	"github.com/satimoto/go-ocpi-api/internal/image"
+	"github.com/satimoto/go-ocpi/internal/displaytext"
+	"github.com/satimoto/go-ocpi/internal/image"
 )
 
 func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid string, dto *EvseDto) *db.Evse {
@@ -194,13 +194,13 @@ func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, dto 
 			log.Printf("OCPI103: Params=%#v", displayTextParams)
 			continue
 		}
-			
+
 		setEvseDirectionParams := db.SetEvseDirectionParams{
 			EvseID:        evseID,
 			DisplayTextID: displayText.ID,
 		}
 		err = r.Repository.SetEvseDirection(ctx, setEvseDirectionParams)
-		
+
 		if err != nil {
 			util.LogOnError("OCPI104", "Error setting evse direction", err)
 			log.Printf("OCPI104: Params=%#v", setEvseDirectionParams)

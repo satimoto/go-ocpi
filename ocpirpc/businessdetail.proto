@@ -4,7 +4,7 @@ import "ocpirpc/image.proto";
 
 package businessdetail;
 
-option go_package = "github.com/satimoto/go-ocpi-api/ocpirpc";
+option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
 
 message CreateBusinessDetailRequest {
   string name = 1;

@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestOcpiResponse(t *testing.T) {

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	session "github.com/satimoto/go-ocpi/internal/session/v2.1.1"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestSessionUnmarshal(t *testing.T) {

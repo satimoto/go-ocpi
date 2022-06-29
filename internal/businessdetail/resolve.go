@@ -3,7 +3,7 @@ package businessdetail
 import (
 	"github.com/satimoto/go-datastore/pkg/businessdetail"
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-ocpi-api/internal/image"
+	"github.com/satimoto/go-ocpi/internal/image"
 )
 
 type BusinessDetailResolver struct {

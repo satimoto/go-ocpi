@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func (r *TokenResolver) UnmarshalDto(body io.ReadCloser) (*TokenDto, error) {

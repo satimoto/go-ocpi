@@ -7,8 +7,8 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
-	ocpiCommand "github.com/satimoto/go-ocpi-api/pkg/ocpi/command"
+	"github.com/satimoto/go-ocpi/ocpirpc"
+	ocpiCommand "github.com/satimoto/go-ocpi/pkg/ocpi/command"
 )
 
 func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *ocpirpc.ReserveNowRequest) (*ocpirpc.ReserveNowResponse, error) {

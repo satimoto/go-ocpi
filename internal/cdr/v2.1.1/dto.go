@@ -9,11 +9,11 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/calibration"
-	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
-	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
-	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/calibration"
+	"github.com/satimoto/go-ocpi/internal/chargingperiod"
+	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
 )
 
 type OcpiCdrsDto struct {

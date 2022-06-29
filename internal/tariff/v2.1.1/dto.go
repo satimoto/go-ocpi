@@ -8,11 +8,11 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/displaytext"
-	"github.com/satimoto/go-ocpi-api/internal/element"
-	"github.com/satimoto/go-ocpi-api/internal/energymix"
-	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
-	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
+	"github.com/satimoto/go-ocpi/internal/displaytext"
+	"github.com/satimoto/go-ocpi/internal/element"
+	"github.com/satimoto/go-ocpi/internal/energymix"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	"github.com/satimoto/go-ocpi/internal/tariffrestriction"
 )
 
 type OcpiTariffsDto struct {

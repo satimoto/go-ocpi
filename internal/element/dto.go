@@ -7,8 +7,8 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/elementrestriction"
-	"github.com/satimoto/go-ocpi-api/internal/pricecomponent"
+	"github.com/satimoto/go-ocpi/internal/elementrestriction"
+	"github.com/satimoto/go-ocpi/internal/pricecomponent"
 )
 
 type ElementDto struct {

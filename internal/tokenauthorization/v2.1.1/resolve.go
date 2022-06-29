@@ -3,8 +3,8 @@ package tokenauthorization
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/tokenauthorization"
-	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
-	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
+	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
+	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
 )
 
 type TokenAuthorizationResolver struct {

@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
-	versionDetailMocks "github.com/satimoto/go-ocpi-api/internal/versiondetail/mocks"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
+	versionDetailMocks "github.com/satimoto/go-ocpi/internal/versiondetail/mocks"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestCreateVersionDetailDto(t *testing.T) {

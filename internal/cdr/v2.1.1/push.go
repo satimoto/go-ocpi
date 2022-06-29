@@ -9,8 +9,8 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/middleware"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/middleware"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func (r *CdrResolver) GetCdr(rw http.ResponseWriter, request *http.Request) {

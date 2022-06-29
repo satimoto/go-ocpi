@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	command "github.com/satimoto/go-ocpi-api/internal/command/v2.1.1"
+	command "github.com/satimoto/go-ocpi/internal/command/v2.1.1"
 )
 
 func (rs *RestService) mountCommands() *chi.Mux {

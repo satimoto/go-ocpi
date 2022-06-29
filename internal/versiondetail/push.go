@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/render"
 
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func (r *VersionDetailResolver) GetVersionDetail(rw http.ResponseWriter, request *http.Request) {

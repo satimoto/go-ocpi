@@ -2,8 +2,8 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/satimoto/go-ocpi-api/internal/middleware"
-	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/middleware"
+	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
 )
 
 func (rs *RestService) mountTokens() *chi.Mux {

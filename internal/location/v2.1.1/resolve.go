@@ -3,15 +3,15 @@ package location
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/location"
-	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
-	"github.com/satimoto/go-ocpi-api/internal/displaytext"
-	"github.com/satimoto/go-ocpi-api/internal/energymix"
-	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/geolocation"
-	"github.com/satimoto/go-ocpi-api/internal/image"
-	"github.com/satimoto/go-ocpi-api/internal/openingtime"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
+	"github.com/satimoto/go-ocpi/internal/businessdetail"
+	"github.com/satimoto/go-ocpi/internal/displaytext"
+	"github.com/satimoto/go-ocpi/internal/energymix"
+	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/geolocation"
+	"github.com/satimoto/go-ocpi/internal/image"
+	"github.com/satimoto/go-ocpi/internal/openingtime"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/versiondetail"
 )
 
 type LocationResolver struct {

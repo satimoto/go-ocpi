@@ -1,8 +1,8 @@
 package mocks
 
 import (
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func NewOcpiRequester(requester *mocks.MockHTTPRequester) *transportation.OcpiRequester {

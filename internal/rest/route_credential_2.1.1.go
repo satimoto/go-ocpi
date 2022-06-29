@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	credential "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
+	credential "github.com/satimoto/go-ocpi/internal/credential/v2.1.1"
 )
 
 func (rs *RestService) mountCredentials() *chi.Mux {

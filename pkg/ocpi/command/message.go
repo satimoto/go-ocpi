@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
 func NewCommandReservationResponse(command db.CommandReservation) *ocpirpc.ReserveNowResponse {

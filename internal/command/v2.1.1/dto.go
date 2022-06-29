@@ -10,8 +10,8 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
-	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
 )
 
 type OcpiCommandResponseDto struct {

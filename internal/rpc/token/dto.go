@@ -6,8 +6,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
 func NewCreateTokenDto(input *ocpirpc.CreateTokenRequest) *token.TokenDto {

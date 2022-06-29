@@ -3,7 +3,7 @@ package evid_test
 import (
 	"testing"
 
-	"github.com/satimoto/go-ocpi-api/pkg/evid"
+	"github.com/satimoto/go-ocpi/pkg/evid"
 )
 
 func runEvIdTest(t *testing.T, value string, checksumResult string, validOk bool) {
@@ -58,11 +58,11 @@ func TestEvId(t *testing.T) {
 		partyID := evId.GetPartyID()
 
 		if *countryCode != "NL" {
-			t.Errorf("CountryCode error: %v, %v, %v", evId, countryCode,  "NL")
+			t.Errorf("CountryCode error: %v, %v, %v", evId, countryCode, "NL")
 		}
 
 		if *partyID != "LMS" {
-			t.Errorf("PartyID error: %v, %v, %v", evId, partyID,  "LMS")
+			t.Errorf("PartyID error: %v, %v, %v", evId, partyID, "LMS")
 		}
 	})
 
@@ -72,11 +72,11 @@ func TestEvId(t *testing.T) {
 		partyID := evId.GetPartyID()
 
 		if countryCode != nil {
-			t.Errorf("CountryCode error: %v, %v, %v", evId, countryCode,  "NL")
+			t.Errorf("CountryCode error: %v, %v, %v", evId, countryCode, "NL")
 		}
 
 		if partyID != nil {
-			t.Errorf("PartyID error: %v, %v, %v", evId, partyID,  "LMS")
+			t.Errorf("PartyID error: %v, %v, %v", evId, partyID, "LMS")
 		}
 	})
 }

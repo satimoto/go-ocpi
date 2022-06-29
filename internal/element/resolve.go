@@ -3,8 +3,8 @@ package element
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/element"
-	"github.com/satimoto/go-ocpi-api/internal/elementrestriction"
-	"github.com/satimoto/go-ocpi-api/internal/pricecomponent"
+	"github.com/satimoto/go-ocpi/internal/elementrestriction"
+	"github.com/satimoto/go-ocpi/internal/pricecomponent"
 )
 
 type ElementResolver struct {

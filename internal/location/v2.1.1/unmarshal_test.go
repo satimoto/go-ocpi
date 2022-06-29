@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestLocationUnmarshal(t *testing.T) {

@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"
+	session "github.com/satimoto/go-ocpi/internal/session/v2.1.1"
 )
 
 func (rs *RestService) mountSessions() *chi.Mux {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-ocpi/internal/util"
 )
 
 func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, uid string, dto *ConnectorDto) *db.Connector {

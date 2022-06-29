@@ -9,9 +9,9 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
-	locationMocks "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1/mocks"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	locationMocks "github.com/satimoto/go-ocpi/internal/location/v2.1.1/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestCreateLocationDto(t *testing.T) {
@@ -279,13 +279,13 @@ func TestCreateLocationDto(t *testing.T) {
 			Longitude: "-126.104966",
 		})
 		relatedLocations = append(relatedLocations, db.AdditionalGeoLocation{
-			Latitude:  "50.77077443",
-			Longitude: "-126.104963",
+			Latitude:      "50.77077443",
+			Longitude:     "-126.104963",
 			DisplayTextID: util.SqlNullInt64(2),
 		})
 		mockRepository.SetGetDisplayTextMockData(dbMocks.DisplayTextMockData{DisplayText: db.DisplayText{
 			Language: "nl",
-			Text: "Bloemenspeciaalzaak Bergmans (Store)",
+			Text:     "Bloemenspeciaalzaak Bergmans (Store)",
 		}})
 		mockRepository.SetListAdditionalGeoLocationsMockData(dbMocks.AdditionalGeoLocationsMockData{AdditionalGeoLocations: relatedLocations, Error: nil})
 

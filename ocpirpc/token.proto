@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package token;
 
-option go_package = "github.com/satimoto/go-ocpi-api/ocpirpc";
+option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
 
 service TokenService {
   rpc CreateToken(CreateTokenRequest) returns (CreateTokenResponse);

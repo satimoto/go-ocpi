@@ -12,8 +12,8 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/rest"
-	"github.com/satimoto/go-ocpi-api/internal/rpc"
+	"github.com/satimoto/go-ocpi/internal/rest"
+	"github.com/satimoto/go-ocpi/internal/rpc"
 )
 
 var (

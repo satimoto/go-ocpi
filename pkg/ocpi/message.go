@@ -2,7 +2,7 @@ package ocpi
 
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
 func NewBusinessDetailResponse(businessDetail db.BusinessDetail) *ocpirpc.BusinessDetailResponse {

@@ -3,7 +3,7 @@ package version
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/version"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 type VersionResolver struct {

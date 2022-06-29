@@ -11,11 +11,11 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/middleware"
-	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
-	tokenMocks "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1/mocks"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	"github.com/satimoto/go-ocpi/internal/middleware"
+	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	tokenMocks "github.com/satimoto/go-ocpi/internal/token/v2.1.1/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func setupRoutes(tokenResolver *token.TokenResolver) *chi.Mux {

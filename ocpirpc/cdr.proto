@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package cdr;
 
-option go_package = "github.com/satimoto/go-ocpi-api/ocpirpc";
+option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
 
 service CdrService {
   rpc CdrCreated(CdrCreatedRequest) returns (CdrCreatedResponse);

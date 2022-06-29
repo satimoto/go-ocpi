@@ -3,10 +3,10 @@ package evse
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/evse"
-	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/displaytext"
-	"github.com/satimoto/go-ocpi-api/internal/geolocation"
-	"github.com/satimoto/go-ocpi-api/internal/image"
+	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/displaytext"
+	"github.com/satimoto/go-ocpi/internal/geolocation"
+	"github.com/satimoto/go-ocpi/internal/image"
 )
 
 type EvseResolver struct {

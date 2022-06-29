@@ -15,10 +15,10 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
-	cdr "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1"
-	cdrMocks "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1/mocks"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	cdr "github.com/satimoto/go-ocpi/internal/cdr/v2.1.1"
+	cdrMocks "github.com/satimoto/go-ocpi/internal/cdr/v2.1.1/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 var (

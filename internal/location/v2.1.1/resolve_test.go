@@ -9,12 +9,12 @@ import (
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/geom"
 	"github.com/satimoto/go-datastore/pkg/util"
-	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/geolocation"
-	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
-	locationMocks "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1/mocks"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/geolocation"
+	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
+	locationMocks "github.com/satimoto/go-ocpi/internal/location/v2.1.1/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestReplaceLocation(t *testing.T) {

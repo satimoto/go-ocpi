@@ -3,7 +3,7 @@ package connector
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dtUtil "github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/util"
+	"github.com/satimoto/go-ocpi/internal/util"
 )
 
 func NewCreateConnectorParams(evseID int64, dto *ConnectorDto) db.CreateConnectorParams {

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	"github.com/satimoto/go-ocpi/ocpirpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

@@ -9,9 +9,9 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
-	ocpiToken "github.com/satimoto/go-ocpi-api/pkg/ocpi/token"
+	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	"github.com/satimoto/go-ocpi/ocpirpc"
+	ocpiToken "github.com/satimoto/go-ocpi/pkg/ocpi/token"
 )
 
 func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.CreateTokenRequest) (*ocpirpc.CreateTokenResponse, error) {

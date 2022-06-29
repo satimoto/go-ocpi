@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func (r *ConnectorResolver) ConnectorContext(next http.Handler) http.Handler {

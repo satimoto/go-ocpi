@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	cdr "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1"
+	cdr "github.com/satimoto/go-ocpi/internal/cdr/v2.1.1"
 )
 
 func (rs *RestService) mountCdrs() *chi.Mux {

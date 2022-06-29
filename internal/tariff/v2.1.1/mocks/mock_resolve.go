@@ -3,13 +3,13 @@ package mocks
 import (
 	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	tariffMocks "github.com/satimoto/go-datastore/pkg/tariff/mocks"
-	displaytext "github.com/satimoto/go-ocpi-api/internal/displaytext/mocks"
-	element "github.com/satimoto/go-ocpi-api/internal/element/mocks"
-	energymix "github.com/satimoto/go-ocpi-api/internal/energymix/mocks"
-	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
-	tariffrestriction "github.com/satimoto/go-ocpi-api/internal/tariffrestriction/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail/mocks"
+	displaytext "github.com/satimoto/go-ocpi/internal/displaytext/mocks"
+	element "github.com/satimoto/go-ocpi/internal/element/mocks"
+	energymix "github.com/satimoto/go-ocpi/internal/energymix/mocks"
+	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
+	tariffrestriction "github.com/satimoto/go-ocpi/internal/tariffrestriction/mocks"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	versiondetail "github.com/satimoto/go-ocpi/internal/versiondetail/mocks"
 )
 
 func NewResolver(repositoryService *mocks.MockRepositoryService) *tariff.TariffResolver {

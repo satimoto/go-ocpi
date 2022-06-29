@@ -2,7 +2,7 @@ package token
 
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
 func NewCreateTokenResponse(token db.Token) *ocpirpc.CreateTokenResponse {

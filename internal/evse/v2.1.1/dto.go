@@ -8,10 +8,10 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/displaytext"
-	"github.com/satimoto/go-ocpi-api/internal/geolocation"
-	"github.com/satimoto/go-ocpi-api/internal/image"
+	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/displaytext"
+	"github.com/satimoto/go-ocpi/internal/geolocation"
+	"github.com/satimoto/go-ocpi/internal/image"
 )
 
 func (r *EvseResolver) CreateCapabilityListDto(ctx context.Context, capabilities []db.Capability) []*string {
@@ -106,7 +106,7 @@ func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto
 	}
 
 	parkingRestrictions, err := r.Repository.ListEvseParkingRestrictions(ctx, evse.ID)
-	
+
 	if err != nil {
 		util.LogOnError("OCPI236", "Error listing evse parking restrictions", err)
 		log.Printf("OCPI236: EvseID=%v", evse.ID)

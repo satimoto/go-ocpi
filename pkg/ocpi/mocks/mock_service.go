@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
 type MockOcpiService struct {

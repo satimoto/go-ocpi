@@ -7,9 +7,9 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
-	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/pkg/ocpi"
-	ocpiSession "github.com/satimoto/go-ocpi-api/pkg/ocpi/session"
+	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
+	"github.com/satimoto/go-ocpi/pkg/ocpi"
+	ocpiSession "github.com/satimoto/go-ocpi/pkg/ocpi/session"
 )
 
 func (r *SessionResolver) ReplaceSession(ctx context.Context, credential db.Credential, uid string, dto *SessionDto) *db.Session {

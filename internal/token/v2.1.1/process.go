@@ -15,9 +15,9 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	"github.com/satimoto/go-ocpi-api/internal/util"
-	"github.com/satimoto/go-ocpi-api/pkg/evid"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/util"
+	"github.com/satimoto/go-ocpi/pkg/evid"
 )
 
 func (r *TokenResolver) GenerateAuthID(ctx context.Context) (string, error) {

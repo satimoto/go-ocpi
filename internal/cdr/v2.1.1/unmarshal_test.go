@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	cdr "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	cdr "github.com/satimoto/go-ocpi/internal/cdr/v2.1.1"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestCdrUnmarshal(t *testing.T) {

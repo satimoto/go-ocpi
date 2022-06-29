@@ -13,9 +13,9 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	"github.com/satimoto/go-ocpi-api/internal/util"
-	ocpiCommand "github.com/satimoto/go-ocpi-api/pkg/ocpi/command"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/util"
+	ocpiCommand "github.com/satimoto/go-ocpi/pkg/ocpi/command"
 )
 
 func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credential, token db.Token, location db.Location, evseUid *string, expiryDate time.Time) (*db.CommandReservation, error) {

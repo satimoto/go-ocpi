@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestEvseUnmarshal(t *testing.T) {
