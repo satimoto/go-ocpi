@@ -10,7 +10,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {

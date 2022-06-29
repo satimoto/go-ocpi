@@ -1,4 +1,4 @@
-# go-ocpi-api
+# go-ocpi
 Satimoto OCPI hub API using golang
 
 ## Development

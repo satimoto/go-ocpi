@@ -8,9 +8,9 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
-	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
-	connectorMocks "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1/mocks"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
+	connectorMocks "github.com/satimoto/go-ocpi/internal/connector/v2.1.1/mocks"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestReplaceConnector(t *testing.T) {

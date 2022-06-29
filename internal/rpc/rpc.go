@@ -10,11 +10,11 @@ import (
 	"sync"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-ocpi-api/internal/rpc/command"
-	"github.com/satimoto/go-ocpi-api/internal/rpc/credential"
-	"github.com/satimoto/go-ocpi-api/internal/rpc/rpc"
-	"github.com/satimoto/go-ocpi-api/internal/rpc/token"
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	"github.com/satimoto/go-ocpi/internal/rpc/command"
+	"github.com/satimoto/go-ocpi/internal/rpc/credential"
+	"github.com/satimoto/go-ocpi/internal/rpc/rpc"
+	"github.com/satimoto/go-ocpi/internal/rpc/token"
+	"github.com/satimoto/go-ocpi/ocpirpc"
 	"google.golang.org/grpc"
 )
 

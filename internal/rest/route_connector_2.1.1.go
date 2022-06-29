@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	connector "github.com/satimoto/go-ocpi-api/internal/connector/v2.1.1"
+	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
 )
 
 func (rs *RestService) mountConnectors() *chi.Mux {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/image"
+	"github.com/satimoto/go-ocpi/internal/image"
 )
 
 type BusinessDetailDto struct {
@@ -32,13 +32,13 @@ func (r *BusinessDetailResolver) CreateBusinessDetailDto(ctx context.Context, bu
 
 	if businessDetail.LogoID.Valid {
 		image, err := r.ImageResolver.Repository.GetImage(ctx, businessDetail.LogoID.Int64)
-		
+
 		if err != nil {
 			util.LogOnError("OCPI221", "Error retrieving image", err)
 			log.Printf("OCPI222: LogoID=%#v", businessDetail.LogoID)
 			return response
 		}
-		
+
 		response.Logo = r.ImageResolver.CreateImageDto(ctx, image)
 	}
 

@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
+	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
 )
 
 func (rs *RestService) mountTariffs() *chi.Mux {

@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
+	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
 )
 
 func (rs *RestService) mountLocations() *chi.Mux {

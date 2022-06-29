@@ -1,9 +1,9 @@
 package mocks
 
 import (
-	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	calibrationMocks "github.com/satimoto/go-datastore/pkg/calibration/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/calibration"
+	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
+	"github.com/satimoto/go-ocpi/internal/calibration"
 )
 
 func NewResolver(repositoryService *mocks.MockRepositoryService) *calibration.CalibrationResolver {

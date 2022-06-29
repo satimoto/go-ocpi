@@ -3,8 +3,8 @@ package mocks
 import (
 	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	versiondetailMocks "github.com/satimoto/go-datastore/pkg/versiondetail/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	versiondetail "github.com/satimoto/go-ocpi-api/internal/versiondetail"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	versiondetail "github.com/satimoto/go-ocpi/internal/versiondetail"
 )
 
 func NewResolver(repositoryService *mocks.MockRepositoryService) *versiondetail.VersionDetailResolver {

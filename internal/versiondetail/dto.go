@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 )
 
 var (

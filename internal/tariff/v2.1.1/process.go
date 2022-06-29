@@ -7,7 +7,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/displaytext"
+	"github.com/satimoto/go-ocpi/internal/displaytext"
 )
 
 func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, dto *TariffDto) *db.Tariff {
@@ -96,7 +96,7 @@ func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int6
 	for _, displayTextDto := range dto.TariffAltText {
 		displayTextParams := displaytext.NewCreateDisplayTextParams(displayTextDto)
 		displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams)
-		
+
 		if err != nil {
 			util.LogOnError("OCPI180", "Error creating display text", err)
 			log.Printf("OCPI180: Params=%#v", displayTextParams)

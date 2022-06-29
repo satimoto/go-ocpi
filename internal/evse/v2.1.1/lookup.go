@@ -1,6 +1,6 @@
 package evse
 
-import "github.com/satimoto/go-ocpi-api/pkg/evid"
+import "github.com/satimoto/go-ocpi/pkg/evid"
 
 func GetEvseIdentity(evse *EvseDto) (*string, *string) {
 	evseId := evid.NewEvid(*evse.EvseID)

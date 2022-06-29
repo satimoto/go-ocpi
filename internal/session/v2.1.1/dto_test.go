@@ -8,9 +8,9 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
-	sessionMocks "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1/mocks"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	sessionMocks "github.com/satimoto/go-ocpi/internal/session/v2.1.1/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestCreateSessionDto(t *testing.T) {

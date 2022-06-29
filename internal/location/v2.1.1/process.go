@@ -7,9 +7,9 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/displaytext"
-	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/image"
+	"github.com/satimoto/go-ocpi/internal/displaytext"
+	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/image"
 )
 
 func (r *LocationResolver) ReplaceLocation(ctx context.Context, credential db.Credential, uid string, dto *LocationDto) *db.Location {
@@ -129,7 +129,7 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			locationParams.OpeningTimeID = openingTimeID
 			locationParams.OperatorID = operatorID
 			locationParams.OwnerID = ownerID
-			locationParams.SuboperatorID =suboperatorID
+			locationParams.SuboperatorID = suboperatorID
 
 			location, err = r.Repository.CreateLocation(ctx, locationParams)
 

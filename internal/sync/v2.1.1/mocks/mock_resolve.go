@@ -2,12 +2,12 @@ package mocks
 
 import (
 	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
-	cdr "github.com/satimoto/go-ocpi-api/internal/cdr/v2.1.1/mocks"
-	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1/mocks"
-	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1/mocks"
-	sync "github.com/satimoto/go-ocpi-api/internal/sync/v2.1.1"
-	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	cdr "github.com/satimoto/go-ocpi/internal/cdr/v2.1.1/mocks"
+	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1/mocks"
+	session "github.com/satimoto/go-ocpi/internal/session/v2.1.1/mocks"
+	sync "github.com/satimoto/go-ocpi/internal/sync/v2.1.1"
+	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1/mocks"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func NewResolver(repositoryService *mocks.MockRepositoryService) *sync.SyncResolver {

@@ -4,13 +4,13 @@ import (
 	"github.com/satimoto/go-datastore/pkg/cdr"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/node"
-	"github.com/satimoto/go-ocpi-api/internal/calibration"
-	"github.com/satimoto/go-ocpi-api/internal/chargingperiod"
-	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
-	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
-	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
+	"github.com/satimoto/go-ocpi/internal/calibration"
+	"github.com/satimoto/go-ocpi/internal/chargingperiod"
+	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
+	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
+	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/versiondetail"
 )
 
 type CdrResolver struct {

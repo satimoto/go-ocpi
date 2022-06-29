@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package session;
 
-option go_package = "github.com/satimoto/go-ocpi-api/ocpirpc";
+option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
 
 service SessionService {
   rpc SessionCreated(SessionCreatedRequest) returns (SessionCreatedResponse);

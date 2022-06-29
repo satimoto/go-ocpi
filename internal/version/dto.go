@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/go-chi/render"
-	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 )
 
 type OcpiVersionsDto struct {

@@ -1,11 +1,11 @@
 package mocks
 
 import (
-	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	commandMocks "github.com/satimoto/go-datastore/pkg/command/mocks"
-	command "github.com/satimoto/go-ocpi-api/internal/command/v2.1.1"
-	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1/mocks"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
+	command "github.com/satimoto/go-ocpi/internal/command/v2.1.1"
+	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1/mocks"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func NewResolver(repositoryService *mocks.MockRepositoryService) *command.CommandResolver {

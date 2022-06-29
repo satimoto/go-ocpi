@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
-	"github.com/satimoto/go-ocpi-api/pkg/ocpi"
-	ocpiCredential "github.com/satimoto/go-ocpi-api/pkg/ocpi/credential"
+	"github.com/satimoto/go-ocpi/ocpirpc"
+	"github.com/satimoto/go-ocpi/pkg/ocpi"
+	ocpiCredential "github.com/satimoto/go-ocpi/pkg/ocpi/credential"
 )
 
 func (r *RpcCredentialResolver) CreateCredentialResponse(ctx context.Context, credential db.Credential) *ocpirpc.CreateCredentialResponse {

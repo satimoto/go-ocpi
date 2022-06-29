@@ -11,10 +11,10 @@ import (
 
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	transportationMocks "github.com/satimoto/go-ocpi-api/internal/transportation/mocks"
-	versionDetailMocks "github.com/satimoto/go-ocpi-api/internal/versiondetail/mocks"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
+	versionDetailMocks "github.com/satimoto/go-ocpi/internal/versiondetail/mocks"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestPullVersionEndpoints(t *testing.T) {

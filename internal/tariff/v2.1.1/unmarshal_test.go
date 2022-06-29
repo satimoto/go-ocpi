@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	tariff "github.com/satimoto/go-ocpi-api/internal/tariff/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestTariffUnmarshal(t *testing.T) {

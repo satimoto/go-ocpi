@@ -2,9 +2,9 @@ package credential
 
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
-	"github.com/satimoto/go-ocpi-api/internal/credential"
-	"github.com/satimoto/go-ocpi-api/internal/image"
+	"github.com/satimoto/go-ocpi/internal/businessdetail"
+	"github.com/satimoto/go-ocpi/internal/credential"
+	"github.com/satimoto/go-ocpi/internal/image"
 )
 
 type RpcCredentialResolver struct {

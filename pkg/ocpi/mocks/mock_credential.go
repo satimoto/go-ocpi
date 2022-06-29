@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/satimoto/go-ocpi-api/ocpirpc"
+	"github.com/satimoto/go-ocpi/ocpirpc"
 	"google.golang.org/grpc"
 )
 

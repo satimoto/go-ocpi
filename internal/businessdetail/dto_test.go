@@ -9,8 +9,8 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
-	businessDetailMocks "github.com/satimoto/go-ocpi-api/internal/businessdetail/mocks"
-	"github.com/satimoto/go-ocpi-api/test/mocks"
+	businessDetailMocks "github.com/satimoto/go-ocpi/internal/businessdetail/mocks"
+	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestCreateBusinessDetailDto(t *testing.T) {

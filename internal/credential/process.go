@@ -11,7 +11,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential db.Credential, token string) (*db.Credential, error) {
@@ -40,9 +40,9 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 
 			if pushedCredential, err := r.PushCredential(ctx, http.MethodPost, *version, registeredCredential); err == nil {
 				backgroundCtx := context.Background()
-				
+
 				go r.SyncResolver.SynchronizeCredential(backgroundCtx, *pushedCredential)
-				
+
 				return pushedCredential, nil
 			}
 		} else {

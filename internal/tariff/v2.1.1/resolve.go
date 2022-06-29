@@ -3,12 +3,12 @@ package tariff
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/tariff"
-	"github.com/satimoto/go-ocpi-api/internal/displaytext"
-	"github.com/satimoto/go-ocpi-api/internal/element"
-	"github.com/satimoto/go-ocpi-api/internal/energymix"
-	"github.com/satimoto/go-ocpi-api/internal/tariffrestriction"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
+	"github.com/satimoto/go-ocpi/internal/displaytext"
+	"github.com/satimoto/go-ocpi/internal/element"
+	"github.com/satimoto/go-ocpi/internal/energymix"
+	"github.com/satimoto/go-ocpi/internal/tariffrestriction"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/versiondetail"
 )
 
 type TariffResolver struct {

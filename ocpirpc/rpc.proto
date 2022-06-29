@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ping;
 
-option go_package = "github.com/satimoto/go-ocpi-api/ocpirpc";
+option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
 
 service RpcService {
   rpc TestConnection(TestConnectionRequest) returns (TestConnectionResponse);

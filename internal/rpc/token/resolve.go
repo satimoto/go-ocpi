@@ -2,7 +2,7 @@ package token
 
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
-	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
+	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
 )
 
 type RpcTokenRepository interface{}

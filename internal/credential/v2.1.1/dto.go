@@ -8,8 +8,8 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
-	"github.com/satimoto/go-ocpi-api/internal/ocpitype"
+	"github.com/satimoto/go-ocpi/internal/businessdetail"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 )
 
 type OcpiCredentialDto struct {

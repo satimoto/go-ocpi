@@ -6,9 +6,9 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	evse "github.com/satimoto/go-ocpi-api/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/pkg/ocpi"
-	ocpiCdr "github.com/satimoto/go-ocpi-api/pkg/ocpi/cdr"
+	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
+	"github.com/satimoto/go-ocpi/pkg/ocpi"
+	ocpiCdr "github.com/satimoto/go-ocpi/pkg/ocpi/cdr"
 )
 
 func (r *CdrResolver) ReplaceCdr(ctx context.Context, credential db.Credential, uid string, dto *CdrDto) *db.Cdr {

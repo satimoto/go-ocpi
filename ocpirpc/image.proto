@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package image;
 
-option go_package = "github.com/satimoto/go-ocpi-api/ocpirpc";
+option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
 
 message CreateImageRequest {
   string url = 1;

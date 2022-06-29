@@ -3,7 +3,7 @@ package rest
 import (
 	"net/http"
 
-	"github.com/satimoto/go-ocpi-api/internal/middleware"
+	"github.com/satimoto/go-ocpi/internal/middleware"
 )
 
 func (rs *RestService) CredentialContextByToken(next http.Handler) http.Handler {

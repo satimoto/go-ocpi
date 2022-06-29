@@ -1,4 +1,4 @@
-module github.com/satimoto/go-ocpi-api
+module github.com/satimoto/go-ocpi
 
 go 1.17
 

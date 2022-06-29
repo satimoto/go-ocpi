@@ -3,12 +3,12 @@ package credential
 import (
 	"github.com/satimoto/go-datastore/pkg/credential"
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-ocpi-api/internal/businessdetail"
-	credential_2_1_1 "github.com/satimoto/go-ocpi-api/internal/credential/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/sync"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
-	"github.com/satimoto/go-ocpi-api/internal/version"
-	"github.com/satimoto/go-ocpi-api/internal/versiondetail"
+	"github.com/satimoto/go-ocpi/internal/businessdetail"
+	credential_2_1_1 "github.com/satimoto/go-ocpi/internal/credential/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/sync"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/version"
+	"github.com/satimoto/go-ocpi/internal/versiondetail"
 )
 
 type CredentialResolver struct {

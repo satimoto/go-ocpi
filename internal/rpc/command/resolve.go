@@ -2,12 +2,12 @@ package command
 
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
-	command "github.com/satimoto/go-ocpi-api/internal/command/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/credential"
-	location "github.com/satimoto/go-ocpi-api/internal/location/v2.1.1"
-	session "github.com/satimoto/go-ocpi-api/internal/session/v2.1.1"
-	token "github.com/satimoto/go-ocpi-api/internal/token/v2.1.1"
-	"github.com/satimoto/go-ocpi-api/internal/transportation"
+	command "github.com/satimoto/go-ocpi/internal/command/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/credential"
+	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
+	session "github.com/satimoto/go-ocpi/internal/session/v2.1.1"
+	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 type RpcCommandResolver struct {
