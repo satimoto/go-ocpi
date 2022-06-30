@@ -69,7 +69,7 @@ func TestReplaceLocation(t *testing.T) {
 			"country": "BEL",
 			"geom": {
 				"type": "Point",
-				"coordinates": [31.3434, -62.6996]
+				"coordinates": [-62.6996, 31.3434]
 			},
 			"geoLocationID": 1,
 			"availableEvses": 0,

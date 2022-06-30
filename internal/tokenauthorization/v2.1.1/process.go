@@ -2,6 +2,7 @@ package tokenauthorization
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
@@ -9,7 +10,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
-func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, dto *LocationReferencesDto) *db.TokenAuthorization {
+func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, dto *LocationReferencesDto) (*db.TokenAuthorization, error) {
 	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
 
 	if dto != nil {
@@ -21,13 +22,13 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 	if err != nil {
 		util.LogOnError("OCPI206", "Error creating token authorization", err)
 		log.Printf("OCPI206: Params=%#v", tokenAuthorizationParams)
-		return nil
+		return nil, errors.New("error creating token authorization")
 	}
 
 	r.createTokenAuthorizationEvses(ctx, tokenAuthorization.ID, dto)
 	r.createTokenAuthorizationConnectors(ctx, tokenAuthorization.ID, dto)
 
-	return &tokenAuthorization
+	return &tokenAuthorization, nil
 }
 
 func (r *TokenAuthorizationResolver) createTokenAuthorizationConnectors(ctx context.Context, tokenAuthorizationID int64, dto *LocationReferencesDto) {

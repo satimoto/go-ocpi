@@ -17,13 +17,19 @@ func NewCreateCommandReservationParams(token db.Token, expiryDate time.Time, loc
 	}
 }
 
-func NewCreateCommandStartParams(token db.Token, location db.Location, evseUid *string) db.CreateCommandStartParams {
-	return db.CreateCommandStartParams{
-		Status:     db.CommandResponseTypeREQUESTED,
-		TokenID:    token.ID,
-		LocationID: location.Uid,
-		EvseUid:    util.SqlNullString(evseUid),
+func NewCreateCommandStartParams(tokenAuthorization db.TokenAuthorization, evseUid *string) db.CreateCommandStartParams {
+	createCommandStartParams := db.CreateCommandStartParams{
+		AuthorizationID: util.SqlNullString(tokenAuthorization.AuthorizationID),
+		Status:          db.CommandResponseTypeREQUESTED,
+		TokenID:         tokenAuthorization.TokenID,
+		EvseUid:         util.SqlNullString(evseUid),
 	}
+
+	if tokenAuthorization.LocationID.Valid {
+		createCommandStartParams.LocationID = tokenAuthorization.LocationID.String
+	}
+
+	return createCommandStartParams
 }
 
 func NewCreateCommandStopParams(sessionID string) db.CreateCommandStopParams {

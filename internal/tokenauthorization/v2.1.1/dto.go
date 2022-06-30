@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/displaytext"
 )
 
@@ -51,4 +52,10 @@ type LocationReferencesDto struct {
 
 func (r *LocationReferencesDto) Render(writer http.ResponseWriter, request *http.Request) error {
 	return nil
+}
+
+func NewLocationReferencesDto(locationID string) *LocationReferencesDto {
+	return &LocationReferencesDto{
+		LocationID: util.NilString(locationID),
+	}
 }
