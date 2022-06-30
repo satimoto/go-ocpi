@@ -18,7 +18,13 @@ func (r *TokenAuthorizationResolver) AuthorizeToken(rw http.ResponseWriter, requ
 		return
 	}
 
-	tokenAuthorization := r.CreateTokenAuthorization(ctx, token, locationReferencesDto)
+	tokenAuthorization, err := r.CreateTokenAuthorization(ctx, token, locationReferencesDto)
+
+	if err != nil {
+		render.Render(rw, request, transportation.OcpiErrorNotEnoughInformation(nil))
+		return
+	}
+
 	dto := r.CreateAuthorizationInfoDto(ctx, token, tokenAuthorization, locationReferencesDto, nil)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {

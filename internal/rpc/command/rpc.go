@@ -7,6 +7,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	tokenauthorization "github.com/satimoto/go-ocpi/internal/tokenauthorization/v2.1.1"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 	ocpiCommand "github.com/satimoto/go-ocpi/pkg/ocpi/command"
 )
@@ -112,11 +113,25 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 			return nil, errors.New("error requesting reservation")
 		}
 
-		command, err := r.CommandResolver.StartSession(ctx, credential, token, location, &input.EvseUid)
+		locationReferencesDto := tokenauthorization.NewLocationReferencesDto(location.Uid)
+
+		if len(input.EvseUid) > 0 {
+			locationReferencesDto.EvseUids = []*string{&input.EvseUid}
+		}
+
+		tokenAuthorization, err := r.TokenResolver.TokenAuthorizationResolver.CreateTokenAuthorization(ctx, token, locationReferencesDto)
 
 		if err != nil {
-			util.LogOnError("OCPI151", "Error requesting start", err)
-			log.Printf("OCPI151: Input=%#v", input)
+			util.LogOnError("OCPI151", "Error creating token authorization", err)
+			log.Printf("OCPI151: LocationReferencesDto=%#v", locationReferencesDto)
+			return nil, errors.New("error starting session")
+		}
+
+		command, err := r.CommandResolver.StartSession(ctx, credential, *tokenAuthorization, &input.EvseUid)
+
+		if err != nil {
+			util.LogOnError("OCPI152", "Error requesting start", err)
+			log.Printf("OCPI152: Input=%#v", input)
 			return nil, errors.New("error starting session")
 		}
 

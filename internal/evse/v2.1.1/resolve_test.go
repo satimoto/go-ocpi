@@ -208,7 +208,7 @@ func TestReplaceEvse(t *testing.T) {
 			"geom": {
 				"Geometry4326": {
 					"type": "Point",
-					"coordinates": [31.3434, -62.6996]
+					"coordinates": [-62.6996, 31.3434]
 				}, 
 				"Valid": true
 			},

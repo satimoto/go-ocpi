@@ -93,7 +93,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	return &command, nil
 }
 
-func (r *CommandResolver) StartSession(ctx context.Context, credential db.Credential, token db.Token, location db.Location, evseUid *string) (*db.CommandStart, error) {
+func (r *CommandResolver) StartSession(ctx context.Context, credential db.Credential, tokenAuthorization db.TokenAuthorization, evseUid *string) (*db.CommandStart, error) {
 	identifier := "commands"
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
@@ -111,7 +111,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		return nil, errors.New("error starting session")
 	}
 
-	createCommandStartParams := ocpiCommand.NewCreateCommandStartParams(token, location, evseUid)
+	createCommandStartParams := ocpiCommand.NewCreateCommandStartParams(tokenAuthorization, evseUid)
 	command, err := r.Repository.CreateCommandStart(ctx, createCommandStartParams)
 
 	if err != nil {
