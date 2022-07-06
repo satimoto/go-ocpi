@@ -2,24 +2,28 @@ package connector
 
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
-	dtUtil "github.com/satimoto/go-datastore/pkg/util"
+	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/util"
 )
 
-func NewCreateConnectorParams(evseID int64, dto *ConnectorDto) db.CreateConnectorParams {
-	wattage := util.CalculateWattage(*dto.PowerType, *dto.Voltage, *dto.Amperage)
-
-	return db.CreateConnectorParams{
-		EvseID:             evseID,
+func NewCreateConnectorParams(evse db.Evse, dto *ConnectorDto) db.CreateConnectorParams {
+	params := db.CreateConnectorParams{
+		EvseID:             evse.ID,
 		Uid:                *dto.Id,
 		Standard:           *dto.Standard,
 		Format:             *dto.Format,
 		PowerType:          *dto.PowerType,
 		Voltage:            *dto.Voltage,
 		Amperage:           *dto.Amperage,
-		Wattage:            wattage,
-		TariffID:           dtUtil.SqlNullString(dto.TariffID),
-		TermsAndConditions: dtUtil.SqlNullString(dto.TermsAndConditions),
+		Wattage:            util.CalculateWattage(*dto.PowerType, *dto.Voltage, *dto.Amperage),
+		TariffID:           dbUtil.SqlNullString(dto.TariffID),
+		TermsAndConditions: dbUtil.SqlNullString(dto.TermsAndConditions),
 		LastUpdated:        *dto.LastUpdated,
 	}
+
+	if evse.EvseID.Valid {
+		params.ConnectorID = dbUtil.SqlNullString(evse.EvseID.String + *dto.Id)
+	}
+
+	return params
 }

@@ -5,19 +5,24 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/util"
 )
 
-func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, uid string, dto *ConnectorDto) *db.Connector {
+func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, uid string, dto *ConnectorDto) *db.Connector {
 	if dto != nil {
 		connector, err := r.Repository.GetConnectorByUid(ctx, db.GetConnectorByUidParams{
-			EvseID: evseID,
+			EvseID: evse.ID,
 			Uid:    uid,
 		})
 
 		if err == nil {
-			connectorParams := db.NewUpdateConnectorByUidParams(connector)
+			connectorParams := param.NewUpdateConnectorByUidParams(connector)
+
+			if evse.EvseID.Valid {
+				connectorParams.ConnectorID = dbUtil.SqlNullString(evse.EvseID.String + connector.Uid)
+			}
 
 			if dto.Standard != nil {
 				connectorParams.Standard = *dto.Standard
@@ -58,7 +63,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, 
 
 			connector = updatedConnector
 		} else {
-			connectorParams := NewCreateConnectorParams(evseID, dto)
+			connectorParams := NewCreateConnectorParams(evse, dto)
 			connector, err = r.Repository.CreateConnector(ctx, connectorParams)
 
 			if err != nil {
@@ -74,10 +79,10 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evseID int64, 
 	return nil
 }
 
-func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evseID int64, dto []*ConnectorDto) {
+func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evse db.Evse, dto []*ConnectorDto) {
 	for _, connector := range dto {
 		if connector.Id != nil {
-			r.ReplaceConnector(ctx, evseID, *connector.Id, connector)
+			r.ReplaceConnector(ctx, evse, *connector.Id, connector)
 		}
 	}
 }

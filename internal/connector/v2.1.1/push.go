@@ -39,7 +39,7 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 		return
 	}
 
-	connector := r.ReplaceConnector(ctx, evse.ID, uid, &dto)
+	connector := r.ReplaceConnector(ctx, evse, uid, &dto)
 
 	if connector != nil {
 		updateEvseLastUpdatedParams := db.UpdateEvseLastUpdatedParams{
