@@ -40,7 +40,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "3257",
-			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
+			"evseID": {"String": "BEBECE041503002", "Valid": true},
 			"locationID": 1,
 			"status": "RESERVED",
 			"geom": {"Geometry4326": {"type": ""}, "Valid": false},
@@ -60,7 +60,7 @@ func TestReplaceEvse(t *testing.T) {
 		mockRepository.SetGetEvseByUidMockData(dbMocks.EvseMockData{
 			Evse: db.Evse{
 				Uid:               "3257",
-				EvseID:            util.SqlNullString("BE-BEC-E041503002"),
+				EvseID:            util.SqlNullString("BEBECE041503002"),
 				LocationID:        1,
 				Status:            "RESERVED",
 				PhysicalReference: util.SqlNullString("2"),
@@ -82,7 +82,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "3257",
-			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
+			"evseID": {"String": "BEBECE041503002", "Valid": true},
 			"status": "AVAILABLE",
 			"geom": {"Geometry4326": {"type": ""}, "Valid": false},
 			"geoLocationID": {"Int64": 0, "Valid": false},
@@ -101,7 +101,7 @@ func TestReplaceEvse(t *testing.T) {
 		mockRepository.SetGetEvseByUidMockData(dbMocks.EvseMockData{
 			Evse: db.Evse{
 				Uid:               "3257",
-				EvseID:            util.SqlNullString("BE-BEC-E041503002"),
+				EvseID:            util.SqlNullString("BEBECE041503002"),
 				LocationID:        1,
 				Status:            "RESERVED",
 				PhysicalReference: util.SqlNullString("2"),
@@ -114,6 +114,7 @@ func TestReplaceEvse(t *testing.T) {
 			Connector: db.Connector{
 				Uid:         "1",
 				EvseID:      1,
+				ConnectorID: util.SqlNullString("BEBECE0415030021"),
 				Standard:    "IEC_62196_T2",
 				Format:      "CABLE",
 				PowerType:   "AC_3_PHASE",
@@ -141,7 +142,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "3257",
-			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
+			"evseID": {"String": "BEBECE041503002", "Valid": true},
 			"status": "RESERVED",
 			"geom": {"Geometry4326": {"type": ""}, "Valid": false},
 			"geoLocationID": {"Int64": 0, "Valid": false},
@@ -158,6 +159,7 @@ func TestReplaceEvse(t *testing.T) {
 		mocks.CompareJson(t, connectorParamsJson, []byte(`{
 			"uid": "1",
 			"evseID": 1,
+			"connectorID": {"String": "BEBECE0415030021", "Valid": true},
 			"standard": "IEC_62196_T2",
 			"format": "CABLE",
 			"powerType": "AC_3_PHASE",
@@ -177,7 +179,7 @@ func TestReplaceEvse(t *testing.T) {
 		mockRepository.SetGetEvseByUidMockData(dbMocks.EvseMockData{
 			Evse: db.Evse{
 				Uid:               "3257",
-				EvseID:            util.SqlNullString("BE-BEC-E041503002"),
+				EvseID:            util.SqlNullString("BEBECE041503002"),
 				LocationID:        1,
 				Status:            "RESERVED",
 				PhysicalReference: util.SqlNullString("2"),
@@ -203,7 +205,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "3257",
-			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
+			"evseID": {"String": "BEBECE041503002", "Valid": true},
 			"status": "AVAILABLE",
 			"geom": {
 				"Geometry4326": {

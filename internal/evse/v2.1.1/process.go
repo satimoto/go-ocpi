@@ -6,9 +6,10 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
-	"github.com/satimoto/go-datastore/pkg/util"
+	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/displaytext"
 	"github.com/satimoto/go-ocpi/internal/image"
+	"github.com/satimoto/go-ocpi/internal/util"
 )
 
 func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid string, dto *EvseDto) *db.Evse {
@@ -19,26 +20,26 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			evseParams := param.NewUpdateEvseByUidParams(evse)
 
 			if dto.Coordinates != nil {
-				geoLocationID := util.SqlNullInt64(nil)
+				geoLocationID := dbUtil.SqlNullInt64(nil)
 				geometry := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, dto.Coordinates)
 
 				if geometry != nil {
-					evseParams.Geom = util.SqlNullGeometry4326(geometry)
+					evseParams.Geom = dbUtil.SqlNullGeometry4326(geometry)
 					evseParams.GeoLocationID = geoLocationID
 				}
 			}
 
 			if dto.Capabilities != nil {
-				evseParams.IsRemoteCapable = util.StringsContainString(dto.Capabilities, "REMOTE_START_STOP_CAPABLE")
-				evseParams.IsRfidCapable = util.StringsContainString(dto.Capabilities, "RFID_READER")
+				evseParams.IsRemoteCapable = dbUtil.StringsContainString(dto.Capabilities, "REMOTE_START_STOP_CAPABLE")
+				evseParams.IsRfidCapable = dbUtil.StringsContainString(dto.Capabilities, "RFID_READER")
 			}
 
 			if dto.EvseID != nil {
-				evseParams.EvseID = util.SqlNullString(dto.EvseID)
+				evseParams.EvseID = dbUtil.SqlNullString(util.ReplaceAllString(dto.EvseID, "", "[^a-zA-Z0-9]+"))
 			}
 
 			if dto.FloorLevel != nil {
-				evseParams.FloorLevel = util.SqlNullString(dto.FloorLevel)
+				evseParams.FloorLevel = dbUtil.SqlNullString(dto.FloorLevel)
 			}
 
 			if dto.LastUpdated != nil {
@@ -46,7 +47,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			}
 
 			if dto.PhysicalReference != nil {
-				evseParams.PhysicalReference = util.SqlNullString(dto.PhysicalReference)
+				evseParams.PhysicalReference = dbUtil.SqlNullString(dto.PhysicalReference)
 			}
 
 			if dto.Status != nil {
@@ -56,7 +57,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			updatedEvse, err := r.Repository.UpdateEvseByUid(ctx, evseParams)
 
 			if err != nil {
-				util.LogOnError("OCPI099", "Error updating evse", err)
+				dbUtil.LogOnError("OCPI099", "Error updating evse", err)
 				log.Printf("OCPI099: Params=%#v", evseParams)
 				return nil
 			}
@@ -66,24 +67,24 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			evseParams := NewCreateEvseParams(locationID, dto)
 
 			if dto.Coordinates != nil {
-				geoLocationID := util.SqlNullInt64(evse.GeoLocationID)
+				geoLocationID := dbUtil.SqlNullInt64(evse.GeoLocationID)
 				geometry := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, dto.Coordinates)
 
 				if geometry != nil {
-					evseParams.Geom = util.SqlNullGeometry4326(geometry)
+					evseParams.Geom = dbUtil.SqlNullGeometry4326(geometry)
 					evseParams.GeoLocationID = geoLocationID
 				}
 			}
 
 			if dto.Capabilities != nil {
-				evseParams.IsRemoteCapable = util.StringsContainString(dto.Capabilities, "REMOTE_START_STOP_CAPABLE")
-				evseParams.IsRfidCapable = util.StringsContainString(dto.Capabilities, "RFID_READER")
+				evseParams.IsRemoteCapable = dbUtil.StringsContainString(dto.Capabilities, "REMOTE_START_STOP_CAPABLE")
+				evseParams.IsRfidCapable = dbUtil.StringsContainString(dto.Capabilities, "RFID_READER")
 			}
 
 			evse, err = r.Repository.CreateEvse(ctx, evseParams)
 
 			if err != nil {
-				util.LogOnError("OCPI100", "Error creating evse", err)
+				dbUtil.LogOnError("OCPI100", "Error creating evse", err)
 				log.Printf("OCPI100: Params=%#v", evseParams)
 				return nil
 			}
@@ -94,7 +95,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 		}
 
 		if dto.Connectors != nil {
-			r.replaceConnectors(ctx, evse.ID, dto)
+			r.replaceConnectors(ctx, evse, dto)
 		}
 
 		if dto.Directions != nil {
@@ -136,12 +137,12 @@ func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, dto [
 			}
 
 			for _, evse := range evseMap {
-				evseParams := db.NewUpdateEvseByUidParams(evse)
+				evseParams := param.NewUpdateEvseByUidParams(evse)
 				evseParams.Status = db.EvseStatusREMOVED
 				_, err := r.Repository.UpdateEvseByUid(ctx, evseParams)
 
 				if err != nil {
-					util.LogOnError("OCPI101", "Error updating evse", err)
+					dbUtil.LogOnError("OCPI101", "Error updating evse", err)
 					log.Printf("OCPI101: Params=%#v", evseParams)
 				}
 			}
@@ -158,7 +159,7 @@ func (r *EvseResolver) replaceCapabilities(ctx context.Context, evseID int64, dt
 		filteredCapabilities := []db.Capability{}
 
 		for _, capability := range capabilities {
-			if util.StringsContainString(dto.Capabilities, capability.Text) {
+			if dbUtil.StringsContainString(dto.Capabilities, capability.Text) {
 				filteredCapabilities = append(filteredCapabilities, capability)
 			}
 		}
@@ -171,15 +172,15 @@ func (r *EvseResolver) replaceCapabilities(ctx context.Context, evseID int64, dt
 			err := r.Repository.SetEvseCapability(ctx, setEvseCapabilityParams)
 
 			if err != nil {
-				util.LogOnError("OCPI102", "Error setting evse capability", err)
+				dbUtil.LogOnError("OCPI102", "Error setting evse capability", err)
 				log.Printf("OCPI102: Params=%#v", setEvseCapabilityParams)
 			}
 		}
 	}
 }
 
-func (r *EvseResolver) replaceConnectors(ctx context.Context, evseID int64, dto *EvseDto) {
-	r.ConnectorResolver.ReplaceConnectors(ctx, evseID, dto.Connectors)
+func (r *EvseResolver) replaceConnectors(ctx context.Context, evse db.Evse, dto *EvseDto) {
+	r.ConnectorResolver.ReplaceConnectors(ctx, evse, dto.Connectors)
 }
 
 func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, dto *EvseDto) {
@@ -190,7 +191,7 @@ func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, dto 
 		displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams)
 
 		if err != nil {
-			util.LogOnError("OCPI103", "Error creating display text", err)
+			dbUtil.LogOnError("OCPI103", "Error creating display text", err)
 			log.Printf("OCPI103: Params=%#v", displayTextParams)
 			continue
 		}
@@ -202,7 +203,7 @@ func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, dto 
 		err = r.Repository.SetEvseDirection(ctx, setEvseDirectionParams)
 
 		if err != nil {
-			util.LogOnError("OCPI104", "Error setting evse direction", err)
+			dbUtil.LogOnError("OCPI104", "Error setting evse direction", err)
 			log.Printf("OCPI104: Params=%#v", setEvseDirectionParams)
 		}
 	}
@@ -222,7 +223,7 @@ func (r *EvseResolver) replaceImages(ctx context.Context, evseID int64, dto *Evs
 			err := r.Repository.SetEvseImage(ctx, setEvseImageParams)
 
 			if err != nil {
-				util.LogOnError("OCPI106", "Error setting evse image", err)
+				dbUtil.LogOnError("OCPI106", "Error setting evse image", err)
 				log.Printf("OCPI106: Params=%#v", setEvseImageParams)
 			}
 		}
@@ -236,7 +237,7 @@ func (r *EvseResolver) replaceParkingRestrictions(ctx context.Context, evseID in
 		filteredParkingRestrictions := []db.ParkingRestriction{}
 
 		for _, parkingRestriction := range parkingRestrictions {
-			if util.StringsContainString(dto.ParkingRestrictions, parkingRestriction.Text) {
+			if dbUtil.StringsContainString(dto.ParkingRestrictions, parkingRestriction.Text) {
 				filteredParkingRestrictions = append(filteredParkingRestrictions, parkingRestriction)
 			}
 		}
@@ -249,7 +250,7 @@ func (r *EvseResolver) replaceParkingRestrictions(ctx context.Context, evseID in
 			err := r.Repository.SetEvseParkingRestriction(ctx, setEvseParkingRestrictionParams)
 
 			if err != nil {
-				util.LogOnError("OCPI107", "Error setting evse parking restriction", err)
+				dbUtil.LogOnError("OCPI107", "Error setting evse parking restriction", err)
 				log.Printf("OCPI107: Params=%#v", setEvseParkingRestrictionParams)
 			}
 		}
@@ -264,7 +265,7 @@ func (r *EvseResolver) replaceStatusSchedule(ctx context.Context, evseID int64, 
 		_, err := r.Repository.CreateStatusSchedule(ctx, statusScheduleParams)
 
 		if err != nil {
-			util.LogOnError("OCPI108", "Error creating status schedule", err)
+			dbUtil.LogOnError("OCPI108", "Error creating status schedule", err)
 			log.Printf("OCPI108: Params=%#v", statusScheduleParams)
 		}
 	}
@@ -292,7 +293,7 @@ func (r *EvseResolver) updateLocationAvailability(ctx context.Context, locationI
 		err := r.Repository.UpdateLocationAvailability(ctx, updateLocationAvailabilityParams)
 
 		if err != nil {
-			util.LogOnError("OCPI109", "Error updating location availability", err)
+			dbUtil.LogOnError("OCPI109", "Error updating location availability", err)
 			log.Printf("OCPI109: Params=%#v", updateLocationAvailabilityParams)
 		}
 	}
