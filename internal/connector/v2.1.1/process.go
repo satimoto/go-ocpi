@@ -20,10 +20,6 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 		if err == nil {
 			connectorParams := param.NewUpdateConnectorByUidParams(connector)
 
-			if evse.EvseID.Valid {
-				connectorParams.ConnectorID = dbUtil.SqlNullString(evse.EvseID.String + connector.Uid)
-			}
-
 			if dto.Standard != nil {
 				connectorParams.Standard = *dto.Standard
 			}
@@ -52,6 +48,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 				connectorParams.LastUpdated = *dto.LastUpdated
 			}
 
+			connectorParams.Identifier = dbUtil.SqlNullString(GetConnectorIdentifier(evse, dto))
 			connectorParams.Wattage = util.CalculateWattage(connectorParams.PowerType, connectorParams.Voltage, connectorParams.Amperage)
 			updatedConnector, err := r.Repository.UpdateConnectorByUid(ctx, connectorParams)
 

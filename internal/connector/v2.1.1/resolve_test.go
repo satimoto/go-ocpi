@@ -26,8 +26,10 @@ func TestReplaceConnector(t *testing.T) {
 
 		evse := db.Evse{
 			ID: 1,
-			EvseID: util.SqlNullString("DEABC1234567"),
+			EvseID: util.SqlNullString("DE-ABC-1234567"),
+			Identifier: util.SqlNullString("DE*ABC*1234567"),
 		}
+
 		dto := connector.ConnectorDto{
 			Id:          util.NilString("1"),
 			Standard:    &connectorTypeIEC62196T2,
@@ -47,7 +49,7 @@ func TestReplaceConnector(t *testing.T) {
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "1",
 			"evseID": 1,
-			"connectorID": {"String": "DEABC12345671", "Valid": true},
+			"identifier": {"String": "DE*ABC*1234567*1", "Valid": true},
 			"standard": "IEC_62196_T2",
 			"format": "CABLE",
 			"powerType": "AC_3_PHASE",
@@ -93,7 +95,7 @@ func TestReplaceConnector(t *testing.T) {
 		mocks.CompareJson(t, paramsJson, []byte(`{
 			"uid": "1",
 			"evseID": 1,
-			"connectorID": {"String": "", "Valid": false},
+			"identifier": {"String": "", "Valid": false},
 			"standard": "IEC_62196_T2",
 			"format": "CABLE",
 			"powerType": "AC_3_PHASE",

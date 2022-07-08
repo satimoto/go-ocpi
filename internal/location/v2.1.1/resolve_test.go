@@ -262,6 +262,7 @@ func TestReplaceLocation(t *testing.T) {
 		mocks.CompareJson(t, evseParamsJson, []byte(`{
 			"uid": "3257",
 			"evseID": {"String": "BE-BEC-E04150300-8", "Valid": true},
+			"identifier": {"String": "BE*BEC*E04150300", "Valid": true},
 			"locationID": 0,
 			"status": "RESERVED",
 			"geom": {"Geometry4326": {"type": ""}, "Valid": false},

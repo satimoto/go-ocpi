@@ -7,9 +7,10 @@ import (
 )
 
 func NewCreateConnectorParams(evse db.Evse, dto *ConnectorDto) db.CreateConnectorParams {
-	params := db.CreateConnectorParams{
+	return db.CreateConnectorParams{
 		EvseID:             evse.ID,
 		Uid:                *dto.Id,
+		Identifier:         dbUtil.SqlNullString(GetConnectorIdentifier(evse, dto)),
 		Standard:           *dto.Standard,
 		Format:             *dto.Format,
 		PowerType:          *dto.PowerType,
@@ -20,10 +21,4 @@ func NewCreateConnectorParams(evse db.Evse, dto *ConnectorDto) db.CreateConnecto
 		TermsAndConditions: dbUtil.SqlNullString(dto.TermsAndConditions),
 		LastUpdated:        *dto.LastUpdated,
 	}
-
-	if evse.EvseID.Valid {
-		params.ConnectorID = dbUtil.SqlNullString(evse.EvseID.String + *dto.Id)
-	}
-
-	return params
 }

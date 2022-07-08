@@ -3,13 +3,13 @@ package evse
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi/internal/util"
 )
 
 func NewCreateEvseParams(locationID int64, dto *EvseDto) db.CreateEvseParams {
 	return db.CreateEvseParams{
 		Uid:               *dto.Uid,
-		EvseID:            dbUtil.SqlNullString(util.ReplaceAllString(dto.EvseID, "", "[^a-zA-Z0-9]+")),
+		EvseID:            dbUtil.SqlNullString(dto.EvseID),
+		Identifier:        dbUtil.SqlNullString(GetEvseIdentifier(dto)),
 		LocationID:        locationID,
 		Status:            *dto.Status,
 		IsRemoteCapable:   false,
