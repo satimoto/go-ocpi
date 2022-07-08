@@ -9,7 +9,6 @@ import (
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/displaytext"
 	"github.com/satimoto/go-ocpi/internal/image"
-	"github.com/satimoto/go-ocpi/internal/util"
 )
 
 func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid string, dto *EvseDto) *db.Evse {
@@ -35,7 +34,8 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			}
 
 			if dto.EvseID != nil {
-				evseParams.EvseID = dbUtil.SqlNullString(util.ReplaceAllString(dto.EvseID, "", "[^a-zA-Z0-9]+"))
+				evseParams.EvseID = dbUtil.SqlNullString(dto.EvseID)
+				evseParams.Identifier = dbUtil.SqlNullString(GetEvseIdentifier(dto))
 			}
 
 			if dto.FloorLevel != nil {
