@@ -23,6 +23,7 @@ type Ocpi interface {
 	StopSession(ctx context.Context, in *ocpirpc.StopSessionRequest, opts ...grpc.CallOption) (*ocpirpc.StopSessionResponse, error)
 
 	SessionCreated(ctx context.Context, in *ocpirpc.SessionCreatedRequest, opts ...grpc.CallOption) (*ocpirpc.SessionCreatedResponse, error)
+	SessionUpdated(ctx context.Context, in *ocpirpc.SessionUpdatedRequest, opts ...grpc.CallOption) (*ocpirpc.SessionUpdatedResponse, error)
 
 	CreateToken(ctx context.Context, in *ocpirpc.CreateTokenRequest, opts ...grpc.CallOption) (*ocpirpc.CreateTokenResponse, error)
 	UpdateTokens(ctx context.Context, in *ocpirpc.UpdateTokensRequest, opts ...grpc.CallOption) (*ocpirpc.UpdateTokensResponse, error)
