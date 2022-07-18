@@ -25,6 +25,7 @@ func (r *SessionResolver) ReplaceSession(ctx context.Context, credential db.Cred
 func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
 	if dto != nil {
 		session, err := r.Repository.GetSessionByUid(ctx, uid)
+		sessionCreated := false
 
 		if err == nil {
 			sessionParams := param.NewUpdateSessionByUidParams(session)
@@ -75,6 +76,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 
 			session = updatedSession
 		} else {
+			sessionCreated = true
 			sessionParams := NewCreateSessionParams(dto)
 			sessionParams.CredentialID = credential.ID
 			sessionParams.CountryCode = util.SqlNullString(countryCode)
@@ -145,6 +147,9 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			r.replaceChargingPeriods(ctx, session.ID, dto)
 		}
 
+		/*
+		 * Send a session crwated/update RPC message to LSP 
+		 */
 		node, err := r.NodeRepository.GetNodeByUserID(ctx, session.UserID)
 
 		if err != nil {
@@ -155,12 +160,23 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 
 		// TODO: Handle failed RPC call more robustly
 		ocpiService := ocpi.NewService(node.LspAddr)
-		sessionCreatedRequest := ocpiSession.NewSessionCreatedRequest(session)
-		sessionCreatedResponse, err := ocpiService.SessionCreated(ctx, sessionCreatedRequest)
 
-		if err != nil {
-			util.LogOnError("OCPI168", "Error calling RPC service", err)
-			log.Printf("OCPI168: Request=%#v, Response=%#v", sessionCreatedRequest, sessionCreatedResponse)
+		if sessionCreated {
+			sessionCreatedRequest := ocpiSession.NewSessionCreatedRequest(session)
+			sessionCreatedResponse, err := ocpiService.SessionCreated(ctx, sessionCreatedRequest)
+
+			if err != nil {
+				util.LogOnError("OCPI168", "Error calling RPC service", err)
+				log.Printf("OCPI168: Request=%#v, Response=%#v", sessionCreatedRequest, sessionCreatedResponse)
+			}	
+		} else {
+			sessionUpdatedRequest := ocpiSession.NewSessionUpdatedRequest(session)
+			sessionUpdatedResponse, err := ocpiService.SessionUpdated(ctx, sessionUpdatedRequest)
+
+			if err != nil {
+				util.LogOnError("OCPI273", "Error calling RPC service", err)
+				log.Printf("OCPI273: Request=%#v, Response=%#v", sessionUpdatedRequest, sessionUpdatedResponse)
+			}	
 		}
 
 		return &session

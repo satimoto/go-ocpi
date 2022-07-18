@@ -10,3 +10,10 @@ func NewSessionCreatedRequest(session db.Session) *ocpirpc.SessionCreatedRequest
 		SessionUid: session.Uid,
 	}
 }
+
+func NewSessionUpdatedRequest(session db.Session) *ocpirpc.SessionUpdatedRequest {
+	return &ocpirpc.SessionUpdatedRequest{
+		SessionUid: session.Uid,
+		Status: string(session.Status),
+	}
+}
