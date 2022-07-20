@@ -26,6 +26,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 	if dto != nil {
 		session, err := r.Repository.GetSessionByUid(ctx, uid)
 		sessionCreated := false
+		statusChanged := false
 
 		if err == nil {
 			sessionParams := param.NewUpdateSessionByUidParams(session)
@@ -55,6 +56,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			}
 
 			if dto.Status != nil {
+				statusChanged = true
 				sessionParams.Status = *dto.Status
 			}
 
@@ -169,7 +171,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 				util.LogOnError("OCPI168", "Error calling RPC service", err)
 				log.Printf("OCPI168: Request=%#v, Response=%#v", sessionCreatedRequest, sessionCreatedResponse)
 			}	
-		} else {
+		} else if statusChanged {
 			sessionUpdatedRequest := ocpiSession.NewSessionUpdatedRequest(session)
 			sessionUpdatedResponse, err := ocpiService.SessionUpdated(ctx, sessionUpdatedRequest)
 

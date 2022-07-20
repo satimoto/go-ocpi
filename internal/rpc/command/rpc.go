@@ -110,7 +110,7 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
 			util.LogOnError("OCPI150", "Error invalid credential", err)
 			log.Printf("OCPI150: CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
-			return nil, errors.New("error requesting reservation")
+			return nil, errors.New("invalid credential token")
 		}
 
 		locationReferencesDto := tokenauthorization.NewLocationReferencesDto(location.Uid)
@@ -164,7 +164,7 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
 			util.LogOnError("OCPI155", "Error invalid credential", err)
 			log.Printf("OCPI155: CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
-			return nil, errors.New("error requesting reservation")
+			return nil, errors.New("invalid credential token")
 		}
 
 		command, err := r.CommandResolver.StopSession(ctx, credential, input.SessionUid)
