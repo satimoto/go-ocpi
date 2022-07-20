@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/rpc/command"
 	"github.com/satimoto/go-ocpi/internal/rpc/credential"
 	"github.com/satimoto/go-ocpi/internal/rpc/rpc"
@@ -63,10 +64,7 @@ func (rs *RpcService) StartRpc(ctx context.Context, waitGroup *sync.WaitGroup) {
 
 func (rs *RpcService) listenAndServe() {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("RPC_PORT")))
-
-	if err != nil {
-		log.Printf("Error creating network address: %v", err)
-	}
+	util.PanicOnError("OCPI274", "Error creating network address", err)
 
 	ocpirpc.RegisterCommandServiceServer(rs.Server, rs.RpcCommandResolver)
 	ocpirpc.RegisterCredentialServiceServer(rs.Server, rs.RpcCredentialResolver)
