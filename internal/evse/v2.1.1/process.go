@@ -276,17 +276,19 @@ func (r *EvseResolver) updateLocationAvailability(ctx context.Context, locationI
 
 	if evses, err := r.Repository.ListEvses(ctx, locationID); err == nil {
 		for _, evse := range evses {
-			updateLocationAvailabilityParams.TotalEvses++
+			if evse.Status != db.EvseStatusREMOVED {
+				updateLocationAvailabilityParams.TotalEvses++
 
-			if evse.Status == db.EvseStatusAVAILABLE {
-				updateLocationAvailabilityParams.AvailableEvses++
-			}
+				if evse.Status == db.EvseStatusAVAILABLE {
+					updateLocationAvailabilityParams.AvailableEvses++
+				}
 
-			if evse.IsRemoteCapable {
-				updateLocationAvailabilityParams.IsRemoteCapable = true
-			}
-			if evse.IsRfidCapable {
-				updateLocationAvailabilityParams.IsRfidCapable = true
+				if evse.IsRemoteCapable {
+					updateLocationAvailabilityParams.IsRemoteCapable = true
+				}
+				if evse.IsRfidCapable {
+					updateLocationAvailabilityParams.IsRfidCapable = true
+				}
 			}
 		}
 
