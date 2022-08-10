@@ -1,0 +1,23 @@
+package mocks
+
+import (
+	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
+	sync "github.com/satimoto/go-ocpi/internal/sync"
+	sync2_1_1 "github.com/satimoto/go-ocpi/internal/sync/v2.1.1/mocks"
+	"github.com/satimoto/go-ocpi/internal/transportation"
+	version "github.com/satimoto/go-ocpi/internal/version/mocks"
+)
+
+func NewResolver(repositoryService *mocks.MockRepositoryService) *sync.SyncResolver {
+	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
+}
+
+func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *sync.SyncResolver {
+	repo := sync.SyncRepository(repositoryService)
+
+	return &sync.SyncResolver{
+		Repository:         repo,
+		SyncResolver_2_1_1: sync2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionResolver:    version.NewResolverWithServices(repositoryService, ocpiRequester),
+	}
+}
