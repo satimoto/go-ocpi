@@ -35,10 +35,10 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseResolver.ReplaceEvse(ctx, 1, *dto.Uid, &dto)
 
-		params, _ := mockRepository.GetCreateEvseMockData()
-		paramsJson, _ := json.Marshal(params)
+		createEvseParams, _ := mockRepository.GetCreateEvseMockData()
+		createEvseParamsJson, _ := json.Marshal(createEvseParams)
 
-		mocks.CompareJson(t, paramsJson, []byte(`{
+		mocks.CompareJson(t, createEvseParamsJson, []byte(`{
 			"uid": "3257",
 			"evseID": {"String": "BE-BEC-E041503002", "Valid": true},
 			"identifier": {"String": "BE*BEC*E041503002", "Valid": true},
@@ -52,6 +52,16 @@ func TestReplaceEvse(t *testing.T) {
 			"floorLevel": {"String": "-2", "Valid": true},
 			"lastUpdated": "2015-03-16T10:10:02Z"
 		}`))
+
+		createEvseStatusPeriodParams, _ := mockRepository.GetCreateEvseStatusPeriodMockData()
+		createEvseStatusPeriodParamsJson, _ := json.Marshal(createEvseStatusPeriodParams)
+
+		mocks.CompareJson(t, createEvseStatusPeriodParamsJson, []byte(`{
+			"endDate": "0001-01-01T00:00:00Z",
+			"evseID": 0,
+			"startDate": "0001-01-01T00:00:00Z",
+			"status": ""
+		}`))
 	})
 
 	t.Run("Update Evse", func(t *testing.T) {
@@ -60,6 +70,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		mockRepository.SetGetEvseByUidMockData(dbMocks.EvseMockData{
 			Evse: db.Evse{
+				ID:                1,
 				Uid:               "3257",
 				EvseID:            util.SqlNullString("BE-BEC-E041503002"),
 				Identifier:        util.SqlNullString("BE*BEC*E041503002"),
@@ -67,14 +78,15 @@ func TestReplaceEvse(t *testing.T) {
 				Status:            "RESERVED",
 				PhysicalReference: util.SqlNullString("2"),
 				FloorLevel:        util.SqlNullString("-2"),
-				LastUpdated:       *util.ParseTime("2015-03-16T10:10:02Z", nil),
+				LastUpdated:       *util.ParseTime("2015-03-16T10:00:00Z", nil),
 			},
 		})
 
 		evseStatusAVAILABLE := db.EvseStatusAVAILABLE
 
 		dto := evse.EvseDto{
-			Status: &evseStatusAVAILABLE,
+			Status:      &evseStatusAVAILABLE,
+			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		evseResolver.ReplaceEvse(ctx, 1, "1", &dto)
@@ -95,6 +107,16 @@ func TestReplaceEvse(t *testing.T) {
 			"floorLevel": {"String": "-2", "Valid": true},
 			"lastUpdated": "2015-03-16T10:10:02Z"
 		}`))
+
+		createEvseStatusPeriodParams, _ := mockRepository.GetCreateEvseStatusPeriodMockData()
+		createEvseStatusPeriodParamsJson, _ := json.Marshal(createEvseStatusPeriodParams)
+
+		mocks.CompareJson(t, createEvseStatusPeriodParamsJson, []byte(`{
+			"endDate": "2015-03-16T10:10:02Z",
+			"evseID": 1,
+			"startDate": "2015-03-16T10:00:00Z",
+			"status": "RESERVED"
+		}`))
 	})
 
 	t.Run("Update Evse with Connectors", func(t *testing.T) {
@@ -110,7 +132,7 @@ func TestReplaceEvse(t *testing.T) {
 				Status:            "RESERVED",
 				PhysicalReference: util.SqlNullString("2"),
 				FloorLevel:        util.SqlNullString("-2"),
-				LastUpdated:       *util.ParseTime("2015-03-16T10:10:02Z", nil),
+				LastUpdated:       *util.ParseTime("2015-03-16T10:00:00Z", nil),
 			},
 		})
 
@@ -125,7 +147,7 @@ func TestReplaceEvse(t *testing.T) {
 				Voltage:     220,
 				Amperage:    16,
 				TariffID:    util.SqlNullString("11"),
-				LastUpdated: *util.ParseTime("2015-03-16T10:10:02Z", nil),
+				LastUpdated: *util.ParseTime("2015-03-16T10:00:00Z", nil),
 			},
 		})
 
@@ -133,10 +155,12 @@ func TestReplaceEvse(t *testing.T) {
 		connectorsDto = append(connectorsDto, &connector.ConnectorDto{
 			Id:       util.NilString("1"),
 			TariffID: util.NilString("12"),
+			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		})
 
 		dto := evse.EvseDto{
 			Connectors: connectorsDto,
+			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		evseResolver.ReplaceEvse(ctx, 1, "1", &dto)
@@ -175,6 +199,16 @@ func TestReplaceEvse(t *testing.T) {
 			"termsAndConditions": {"String": "", "Valid": false},
 			"lastUpdated": "2015-03-16T10:10:02Z"
 		}`))
+
+		createEvseStatusPeriodParams, _ := mockRepository.GetCreateEvseStatusPeriodMockData()
+		createEvseStatusPeriodParamsJson, _ := json.Marshal(createEvseStatusPeriodParams)
+
+		mocks.CompareJson(t, createEvseStatusPeriodParamsJson, []byte(`{
+			"endDate": "0001-01-01T00:00:00Z",
+			"evseID": 0,
+			"startDate": "0001-01-01T00:00:00Z",
+			"status": ""
+		}`))
 	})
 
 	t.Run("Update Evse with Coordinates", func(t *testing.T) {
@@ -183,6 +217,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		mockRepository.SetGetEvseByUidMockData(dbMocks.EvseMockData{
 			Evse: db.Evse{
+				ID:            1,
 				Uid:               "3257",
 				EvseID:            util.SqlNullString("BE-BEC-E041503002"),
 				Identifier:        util.SqlNullString("BE*BEC*E041503002"),
@@ -190,7 +225,7 @@ func TestReplaceEvse(t *testing.T) {
 				Status:            "RESERVED",
 				PhysicalReference: util.SqlNullString("2"),
 				FloorLevel:        util.SqlNullString("-2"),
-				LastUpdated:       *util.ParseTime("2015-03-16T10:10:02Z", nil),
+				LastUpdated:       *util.ParseTime("2015-03-16T10:00:00Z", nil),
 			},
 		})
 
@@ -202,6 +237,7 @@ func TestReplaceEvse(t *testing.T) {
 				Latitude:  "31.3434",
 				Longitude: "-62.6996",
 			},
+			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		evseResolver.ReplaceEvse(ctx, 1, "1", &dto)
@@ -237,6 +273,16 @@ func TestReplaceEvse(t *testing.T) {
 			"latitudeFloat": 31.3434,
 			"longitude": "-62.6996",
 			"longitudeFloat": -62.6996
+		}`))
+
+		createEvseStatusPeriodParams, _ := mockRepository.GetCreateEvseStatusPeriodMockData()
+		createEvseStatusPeriodParamsJson, _ := json.Marshal(createEvseStatusPeriodParams)
+
+		mocks.CompareJson(t, createEvseStatusPeriodParamsJson, []byte(`{
+			"endDate": "2015-03-16T10:10:02Z",
+			"evseID": 1,
+			"startDate": "2015-03-16T10:00:00Z",
+			"status": "RESERVED"
 		}`))
 	})
 }

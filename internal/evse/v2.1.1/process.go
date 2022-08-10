@@ -54,6 +54,16 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 				evseParams.Status = *dto.Status
 			}
 
+			if dto.Status != nil && dto.LastUpdated != nil {
+				evseStatusPeriodParams := param.NewCreateEvseStatusPeriodParams(evse, *dto.LastUpdated)
+				_, err := r.Repository.CreateEvseStatusPeriod(ctx, evseStatusPeriodParams)
+
+				if err != nil {
+					dbUtil.LogOnError("OCPI275", "Error creating evse status period", err)
+					log.Printf("OCPI275: Params=%#v", evseStatusPeriodParams)
+				}
+			}
+
 			updatedEvse, err := r.Repository.UpdateEvseByUid(ctx, evseParams)
 
 			if err != nil {
