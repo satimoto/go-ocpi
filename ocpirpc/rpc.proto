@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ping;
+
+option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
+
+service RpcService {
+  rpc TestConnection(TestConnectionRequest) returns (TestConnectionResponse);
+  rpc TestMessage(TestMessageRequest) returns (TestMessageResponse);
+};
+
+message TestConnectionRequest { string addr = 1; };
+
+message TestConnectionResponse { string result = 1; };
+
+message TestMessageRequest { string message = 1; };
+
+message TestMessageResponse { string message = 1; };
