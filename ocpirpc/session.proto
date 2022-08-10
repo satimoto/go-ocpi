@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package session;
+
+option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
+
+service SessionService {
+  rpc SessionCreated(SessionCreatedRequest) returns (SessionCreatedResponse);
+  rpc SessionUpdated(SessionUpdatedRequest) returns (SessionUpdatedResponse);
+};
+
+message SessionCreatedRequest { string session_uid = 1; };
+
+message SessionCreatedResponse {};
+
+message SessionUpdatedRequest {
+  string session_uid = 1;
+  string status = 2;
+};
+
+message SessionUpdatedResponse {};
