@@ -74,7 +74,7 @@ func (rs *RpcService) listenAndServe() {
 	err = rs.Server.Serve(listener)
 
 	if err != nil {
-		log.Printf("Error in Rpc service: %v", err)
+		util.LogOnError("OCPI278", "Error in Rpc service", err)
 	}
 }
 

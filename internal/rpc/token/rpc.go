@@ -21,8 +21,8 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 		authID, err := r.TokenResolver.GenerateAuthID(ctx)
 
 		if err != nil {
-			log.Printf("Error CreateToken GenerateAuthID: %v", err)
-			log.Printf("Request=%#v", request)
+			util.LogOnError("OCPI279", "Error generating AuthID", err)
+			log.Printf("OCPI279: Request=%#v", request)
 			return nil, errors.New("error creating token")
 		}
 
@@ -41,8 +41,8 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 		t := r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *dto.Uid, dto)
 
 		if t == nil {
-			log.Printf("Error CreateToken ReplaceToken: %v", err)
-			log.Printf("Dto=%#v", dto)
+			util.LogOnError("OCPI280", "Error replacing token", err)
+			log.Printf("OCPI280: Dto=%#v", dto)
 			return nil, errors.New("error creating token")
 		}
 
@@ -57,17 +57,15 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.Up
 		tokens, err := r.TokenResolver.Repository.ListTokensByUserID(ctx, request.UserId)
 
 		if err != nil {
-			log.Printf("Error UpdateTokens ListTokensByUserID: %v", err)
-			log.Printf("Request=%#v", request)
+			util.LogOnError("OCPI281", "Error listing tokens", err)
+			log.Printf("OCPI281: Request=%#v", request)
 			return nil, errors.New("error updating tokens")
 		}
 
 		for _, t := range tokens {
 			if len(request.Uid) == 0 || request.Uid == t.Uid {
-				dto := &token.TokenDto{
-					Uid:         &request.Uid,
-					LastUpdated: util.NilTime(time.Now()),
-				}
+				dto := token.NewTokenDto(t)
+				dto.LastUpdated = util.NilTime(time.Now())
 
 				tokenAllowed := t.Allowed
 
