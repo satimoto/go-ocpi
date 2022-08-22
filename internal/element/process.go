@@ -4,18 +4,19 @@ import (
 	"context"
 	"log"
 
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
-func (r *ElementResolver) ReplaceElements(ctx context.Context, tariffID int64, dto []*ElementDto) {
+func (r *ElementResolver) ReplaceElements(ctx context.Context, tariff db.Tariff, dto []*ElementDto) {
 	if dto != nil {
-		r.PriceComponentResolver.Repository.DeletePriceComponents(ctx, tariffID)
-		r.Repository.DeleteElements(ctx, tariffID)
-		r.ElementRestrictionResolver.Repository.DeleteElementRestrictions(ctx, tariffID)
+		r.PriceComponentResolver.Repository.DeletePriceComponents(ctx, tariff.ID)
+		r.Repository.DeleteElements(ctx, tariff.ID)
+		r.ElementRestrictionResolver.Repository.DeleteElementRestrictions(ctx, tariff.ID)
 
 		for _, elementDto := range dto {
 			elementParams := NewCreateElementParams(elementDto)
-			elementParams.TariffID = tariffID
+			elementParams.TariffID = tariff.ID
 
 			if elementDto.Restrictions != nil {
 				restrictionID := util.SqlNullInt64(nil)
@@ -31,7 +32,7 @@ func (r *ElementResolver) ReplaceElements(ctx context.Context, tariffID int64, d
 				continue
 			}
 	
-			r.PriceComponentResolver.CreatePriceComponents(ctx, element.ID, elementDto.PriceComponents)
+			r.PriceComponentResolver.CreatePriceComponents(ctx, element.ID, tariff, elementDto.PriceComponents)
 		}
 	}
 }
