@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
-func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elementID int64, dto []*PriceComponentDto) {
+func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elementID int64, tariff db.Tariff, dto []*PriceComponentDto) {
 	for _, priceComponentDto := range dto {
 		priceRoundingID := util.SqlNullInt64(nil)
 		stepRoundingID := util.SqlNullInt64(nil)
@@ -22,6 +23,7 @@ func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elem
 		}
 
 		priceComponentParams := NewCreatePriceComponentParams(priceComponentDto)
+		priceComponentParams.Currency = tariff.Currency
 		priceComponentParams.ElementID = elementID
 		priceComponentParams.PriceRoundingID = priceRoundingID
 		priceComponentParams.StepRoundingID = stepRoundingID

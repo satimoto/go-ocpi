@@ -75,7 +75,7 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 		}
 
 		if dto.Elements != nil {
-			r.replaceElements(ctx, tariff.ID, dto)
+			r.replaceElements(ctx, tariff, dto)
 		}
 
 		return &tariff
@@ -115,6 +115,6 @@ func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int6
 	}
 }
 
-func (r *TariffResolver) replaceElements(ctx context.Context, tariffID int64, dto *TariffDto) {
-	r.ElementResolver.ReplaceElements(ctx, tariffID, dto.Elements)
+func (r *TariffResolver) replaceElements(ctx context.Context, tariff db.Tariff, dto *TariffDto) {
+	r.ElementResolver.ReplaceElements(ctx, tariff, dto.Elements)
 }
