@@ -189,7 +189,7 @@ func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *ocpirpc
 
 		if err != nil {
 			util.LogOnError("OCPI157", "Error retrieving session", err)
-			log.Printf("OCPI57: LocationUid=%v", input.LocationUid)
+			log.Printf("OCPI157: LocationUid=%v", input.LocationUid)
 			return nil, errors.New("location not found")
 		}
 
