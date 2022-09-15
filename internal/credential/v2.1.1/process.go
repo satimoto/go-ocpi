@@ -5,13 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/util"
 )
 
 func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod string, credential db.Credential) (*db.Credential, error) {
@@ -61,7 +61,7 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 
 	credentialDto := pullDto.Data
 	updateCredentialParams := param.NewUpdateCredentialParams(credential)
-	updateCredentialParams.LastUpdated = time.Now()
+	updateCredentialParams.LastUpdated = util.NewTimeUTC()
 
 	if credentialDto.Token != nil {
 		updateCredentialParams.ClientToken = dbUtil.SqlNullString(credentialDto.Token)
@@ -136,7 +136,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 			updateCredentialParams.CountryCode = countryCode
 			updateCredentialParams.PartyID = partyID
 			updateCredentialParams.VersionID = dbUtil.SqlNullInt64(version.ID)
-			updateCredentialParams.LastUpdated = time.Now()
+			updateCredentialParams.LastUpdated = util.NewTimeUTC()
 
 			cred, err := r.Repository.UpdateCredential(ctx, updateCredentialParams)
 
