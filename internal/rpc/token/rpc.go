@@ -5,11 +5,11 @@ import (
 	"errors"
 	"log"
 	"os"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
+	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/util"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 	ocpiToken "github.com/satimoto/go-ocpi/pkg/ocpi/token"
 )
@@ -21,14 +21,14 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 		authID, err := r.TokenResolver.GenerateAuthID(ctx)
 
 		if err != nil {
-			util.LogOnError("OCPI279", "Error generating AuthID", err)
+			dbUtil.LogOnError("OCPI279", "Error generating AuthID", err)
 			log.Printf("OCPI279: Request=%#v", request)
 			return nil, errors.New("error creating token")
 		}
 
 		dto.AuthID = &authID
 		dto.VisualNumber = &authID
-		dto.Issuer = util.NilString(os.Getenv("ISSUER"))
+		dto.Issuer = dbUtil.NilString(os.Getenv("ISSUER"))
 
 		if len(request.Allowed) > 0 {
 			tokenAllowed = db.TokenAllowedType(request.Allowed)
@@ -41,7 +41,7 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 		t := r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *dto.Uid, dto)
 
 		if t == nil {
-			util.LogOnError("OCPI280", "Error replacing token", err)
+			dbUtil.LogOnError("OCPI280", "Error replacing token", err)
 			log.Printf("OCPI280: Dto=%#v", dto)
 			return nil, errors.New("error creating token")
 		}
@@ -57,7 +57,7 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.Up
 		tokens, err := r.TokenResolver.Repository.ListTokensByUserID(ctx, request.UserId)
 
 		if err != nil {
-			util.LogOnError("OCPI281", "Error listing tokens", err)
+			dbUtil.LogOnError("OCPI281", "Error listing tokens", err)
 			log.Printf("OCPI281: Request=%#v", request)
 			return nil, errors.New("error updating tokens")
 		}
@@ -65,7 +65,7 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.Up
 		for _, t := range tokens {
 			if len(request.Uid) == 0 || request.Uid == t.Uid {
 				dto := token.NewTokenDto(t)
-				dto.LastUpdated = util.NilTime(time.Now())
+				dto.LastUpdated = dbUtil.NilTime(util.NewTimeUTC())
 
 				tokenAllowed := t.Allowed
 

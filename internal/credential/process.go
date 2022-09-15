@@ -5,13 +5,13 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
-	"github.com/satimoto/go-datastore/pkg/util"
+	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/util"
 )
 
 func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential db.Credential, token string) (*db.Credential, error) {
@@ -25,15 +25,15 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 			r.VersionDetailResolver.PullVersionEndpoints(ctx, version.Url, header, version.ID)
 
 			updateCredentialParams := param.NewUpdateCredentialParams(credential)
-			updateCredentialParams.ClientToken = util.SqlNullString(token)
-			updateCredentialParams.ServerToken = util.SqlNullString(uuid.NewString())
-			updateCredentialParams.VersionID = util.SqlNullInt64(version.ID)
-			updateCredentialParams.LastUpdated = time.Now()
+			updateCredentialParams.ClientToken = dbUtil.SqlNullString(token)
+			updateCredentialParams.ServerToken = dbUtil.SqlNullString(uuid.NewString())
+			updateCredentialParams.VersionID = dbUtil.SqlNullInt64(version.ID)
+			updateCredentialParams.LastUpdated = util.NewTimeUTC()
 
 			registeredCredential, err := r.Repository.UpdateCredential(ctx, updateCredentialParams)
 
 			if err != nil {
-				util.LogOnError("OCPI009", "Error updating credential", err)
+				dbUtil.LogOnError("OCPI009", "Error updating credential", err)
 				log.Printf("OCPI009: Params=%#v", updateCredentialParams)
 				return nil, transportation.OcpiRegistrationError(nil)
 			}
@@ -73,18 +73,18 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 		if err != nil {
-			util.LogOnError("OCPI011", "Error retrieving version endpoint", err)
+			dbUtil.LogOnError("OCPI011", "Error retrieving version endpoint", err)
 			log.Printf("OCPI011: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 			return nil, errors.New("error retrieving version endpoint")
 		}
 
 		updateCredentialParams := param.NewUpdateCredentialParams(credential)
-		updateCredentialParams.ServerToken = util.SqlNullString(nil)
+		updateCredentialParams.ServerToken = dbUtil.SqlNullString(nil)
 
 		cred, err := r.Repository.UpdateCredential(ctx, updateCredentialParams)
 
 		if err != nil {
-			util.LogOnError("OCPI012", "Error updating credential", err)
+			dbUtil.LogOnError("OCPI012", "Error updating credential", err)
 			log.Printf("OCPI012: Params=%#v", updateCredentialParams)
 			return nil, errors.New("error updating credential")
 		}
@@ -93,7 +93,7 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		response, err := r.OcpiRequester.Do(http.MethodDelete, versionEndpoint.Url, header, nil)
 
 		if err != nil {
-			util.LogOnError("OCPI013", "Error sending delete request", err)
+			dbUtil.LogOnError("OCPI013", "Error sending delete request", err)
 			log.Printf("OCPI013: Url=%v", versionEndpoint.Url)
 			return nil, errors.New("error sending delete request")
 		}
@@ -102,15 +102,15 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		responseDto, err := transportation.UnmarshalResponseDto(response.Body)
 
 		if err != nil {
-			util.LogOnError("OCPI014", "Error unmarshalling response", err)
-			util.LogHttpResponse("OCPI014", versionEndpoint.Url, response, true)
+			dbUtil.LogOnError("OCPI014", "Error unmarshalling response", err)
+			dbUtil.LogHttpResponse("OCPI014", versionEndpoint.Url, response, true)
 			return nil, errors.New("error unmarshalling response")
 		}
 
 		if responseDto.StatusCode != transportation.STATUS_CODE_OK {
-			util.LogOnError("OCPI015", "Error response failure", err)
-			util.LogHttpRequest("OCPI015", versionEndpoint.Url, response.Request, true)
-			util.LogHttpResponse("OCPI015", versionEndpoint.Url, response, true)
+			dbUtil.LogOnError("OCPI015", "Error response failure", err)
+			dbUtil.LogHttpRequest("OCPI015", versionEndpoint.Url, response.Request, true)
+			dbUtil.LogHttpResponse("OCPI015", versionEndpoint.Url, response, true)
 			log.Printf("OCPI015: StatusCode=%v, StatusMessage=%v", responseDto.StatusCode, responseDto.StatusMessage)
 			return nil, errors.New("error in delete response")
 		}
