@@ -69,6 +69,8 @@ github.com/cpuguy83/go-md2man/v2 v2.0.1/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46t
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 h1:HbphB4TFFXpv7MNrT52FGrrgVXF1owhMVTHFZIlnvd4=
+github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0/go.mod h1:DZGJHZMqrU4JJqFAWUS2UO1+lbSKsdiOoYi9Zzey7Fc=
 github.com/dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48/go.mod h1:if7Fbed8SFyPtHLHbg49SI7NAdJiC5WIA09pe59rfAA=
 github.com/edjumacator/chi-prometheus v0.0.0-20181210190628-e076595e3e86 h1:z4W/w/Z3Tu+0aHCW3iqDr/Cp/shwp6tGzHlfe4Wmn7E=
 github.com/edjumacator/chi-prometheus v0.0.0-20181210190628-e076595e3e86/go.mod h1:RUzb0aMCQW0RRvyj54uZhN5bmi+HbdYyBX4wIXYubW8=
@@ -300,6 +302,8 @@ github.com/satimoto/go-datastore v0.3.1-0.20220914214546-40fc25a69ff7 h1:hnvf72s
 github.com/satimoto/go-datastore v0.3.1-0.20220914214546-40fc25a69ff7/go.mod h1:SvM8losYPwH6hJgUKLkjNtQwVv06lZgCMWl8cGdllCM=
 github.com/satimoto/go-datastore v0.3.1-0.20220915183717-06f735c0d779 h1:/OCOrMeEM9MzRE4m98W2nudo6VrqnwmTyCEUc2oWQeU=
 github.com/satimoto/go-datastore v0.3.1-0.20220915183717-06f735c0d779/go.mod h1:SvM8losYPwH6hJgUKLkjNtQwVv06lZgCMWl8cGdllCM=
+github.com/satimoto/go-datastore v0.3.1-0.20220923103917-5ee40c184ca7 h1:CbCOu92CQr4NqpThDfdZQsweGlz3u57steYbMrNGN6E=
+github.com/satimoto/go-datastore v0.3.1-0.20220923103917-5ee40c184ca7/go.mod h1:SvM8losYPwH6hJgUKLkjNtQwVv06lZgCMWl8cGdllCM=
 github.com/sergi/go-diff v1.1.0 h1:we8PVUC3FE2uYfodKH/nBHMSetSfHDR6scGdBi+erh0=
 github.com/sergi/go-diff v1.1.0/go.mod h1:STckp+ISIX8hZLjrqAeVduY0gWCT9IjLuqbuNXdaHfM=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=

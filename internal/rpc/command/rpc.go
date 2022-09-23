@@ -127,6 +127,14 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 			return nil, errors.New("error starting session")
 		}
 
+		verificationKey, err := r.TokenResolver.TokenAuthorizationResolver.CreateTokenAuthorizationVerificationKey(*tokenAuthorization)
+
+		if err != nil {
+			util.LogOnError("OCPI282", "Error creating verification key", err)
+			log.Printf("OCPI282: TokenAuthorization=%#v", tokenAuthorization)
+			return nil, errors.New("error starting session")
+		}
+
 		command, err := r.CommandResolver.StartSession(ctx, credential, *tokenAuthorization, &input.EvseUid)
 
 		if err != nil {
@@ -135,7 +143,7 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 			return nil, errors.New("error starting session")
 		}
 
-		startResponse := ocpiCommand.NewCommandStartResponse(*command)
+		startResponse := ocpiCommand.NewCommandStartResponse(*command, verificationKey)
 
 		return startResponse, nil
 	}
