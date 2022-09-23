@@ -37,8 +37,9 @@ message StartSessionResponse {
   int64 id = 1;
   string status = 2;
   string authorizationId = 3;
-  string location_uid = 4;
-  string evse_uid = 5;
+  string verificationKey = 4;
+  string location_uid = 5;
+  string evse_uid = 6;
 };
 
 message StopSessionRequest { string session_uid = 1; };

@@ -13,7 +13,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/nsf/jsondiff v0.0.0-20210926074059-1e845ec5d249
 	github.com/prometheus/client_golang v1.12.1
-	github.com/satimoto/go-datastore v0.3.1-0.20220915183717-06f735c0d779
+	github.com/satimoto/go-datastore v0.3.1-0.20220923103917-5ee40c184ca7
 	google.golang.org/grpc v1.46.0
 )
 
@@ -21,6 +21,7 @@ require (
 	github.com/99designs/gqlgen v0.17.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0
 	github.com/lib/pq v1.10.3 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/paulmach/orb v0.7.1 // indirect

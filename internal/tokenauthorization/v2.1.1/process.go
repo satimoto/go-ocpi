@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 
+	secp "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
@@ -12,6 +13,7 @@ import (
 
 func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, dto *LocationReferencesDto) (*db.TokenAuthorization, error) {
 	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
+	tokenAuthorizationParams.SigningKey = r.createTokenAuthorizationSigningKey()
 
 	if dto != nil {
 		tokenAuthorizationParams.LocationID = util.SqlNullString(dto.LocationID)
@@ -82,4 +84,24 @@ func (r *TokenAuthorizationResolver) createTokenAuthorizationEvses(ctx context.C
 			}
 		}
 	}
+}
+
+func (r *TokenAuthorizationResolver) CreateTokenAuthorizationVerificationKey(tokenAuthorization db.TokenAuthorization) ([]byte, error) {
+	privateKey := secp.PrivKeyFromBytes(tokenAuthorization.SigningKey)
+	publicKey := privateKey.PubKey()
+
+	return publicKey.SerializeCompressed(), nil
+}
+
+func (r *TokenAuthorizationResolver) createTokenAuthorizationSigningKey() []byte {
+	var privateKey *secp.PrivateKey
+	var err error
+
+	for {
+		if privateKey, err = secp.GeneratePrivateKey(); err == nil {
+			break
+		}
+	}
+
+	return privateKey.Serialize()
 }
