@@ -8,11 +8,11 @@ import (
 
 func (r *SessionResolver) GetLastSessionByIdentity(ctx context.Context, credentialID *int64, countryCode *string, partyID *string) (db.Session, error) {
 	params := db.GetSessionByLastUpdatedParams{
-		CredentalID: -1,
+		CredentialID: -1,
 	}
 
 	if credentialID != nil {
-		params.CredentalID = *credentialID
+		params.CredentialID = *credentialID
 	}
 
 	if countryCode != nil {
