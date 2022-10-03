@@ -9,8 +9,6 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
-var API_VERSION = "2.1.1"
-
 func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command db.CommandReservation, dto *CommandResponseDto) {
 	if dto != nil {
 		commandParams := param.NewUpdateCommandReservationParams(command)

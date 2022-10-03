@@ -4,11 +4,12 @@ import (
 	"github.com/satimoto/go-datastore/pkg/cdr"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/node"
+	"github.com/satimoto/go-datastore/pkg/session"
+	"github.com/satimoto/go-datastore/pkg/token"
 	"github.com/satimoto/go-ocpi/internal/calibration"
 	"github.com/satimoto/go-ocpi/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
 	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
-	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/versiondetail"
 )
@@ -20,8 +21,9 @@ type CdrResolver struct {
 	ChargingPeriodResolver *chargingperiod.ChargingPeriodResolver
 	LocationResolver       *location.LocationResolver
 	NodeRepository         node.NodeRepository
+	SessionRepository      session.SessionRepository
 	TariffResolver         *tariff.TariffResolver
-	TokenResolver          *token.TokenResolver
+	TokenRepository        token.TokenRepository
 	VersionDetailResolver  *versiondetail.VersionDetailResolver
 }
 
@@ -37,8 +39,9 @@ func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiReques
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
 		LocationResolver:       location.NewResolver(repositoryService),
 		NodeRepository:         node.NewRepository(repositoryService),
+		SessionRepository:      session.NewRepository(repositoryService),
 		TariffResolver:         tariff.NewResolver(repositoryService),
-		TokenResolver:          token.NewResolver(repositoryService),
+		TokenRepository:        token.NewRepository(repositoryService),
 		VersionDetailResolver:  versiondetail.NewResolver(repositoryService),
 	}
 }

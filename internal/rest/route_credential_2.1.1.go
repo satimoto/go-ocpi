@@ -6,9 +6,9 @@ import (
 )
 
 func (rs *RestService) mountCredentials() *chi.Mux {
-	credentialResolver := credential.NewResolver(rs.RepositoryService)
-	router := chi.NewRouter()
+	credentialResolver := credential.NewResolver(rs.RepositoryService, rs.SyncService, rs.OcpiRequester)
 
+	router := chi.NewRouter()
 	router.Delete("/", credentialResolver.DeleteCredential)
 	router.Post("/", credentialResolver.UpdateCredential)
 	router.Put("/", credentialResolver.UpdateCredential)

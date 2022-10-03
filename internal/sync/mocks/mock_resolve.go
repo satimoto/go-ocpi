@@ -1,23 +1,19 @@
 package mocks
 
 import (
+	credential "github.com/satimoto/go-datastore/pkg/credential/mocks"
 	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	sync "github.com/satimoto/go-ocpi/internal/sync"
-	sync2_1_1 "github.com/satimoto/go-ocpi/internal/sync/v2.1.1/mocks"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	version "github.com/satimoto/go-ocpi/internal/version/mocks"
 )
 
-func NewResolver(repositoryService *mocks.MockRepositoryService) *sync.SyncResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *sync.SyncResolver {
+func NewService(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *sync.SyncService {
 	repo := sync.SyncRepository(repositoryService)
 
-	return &sync.SyncResolver{
-		Repository:         repo,
-		SyncResolver_2_1_1: sync2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
-		VersionResolver:    version.NewResolverWithServices(repositoryService, ocpiRequester),
+	return &sync.SyncService{
+		Repository:           repo,
+		CredentialRepository: credential.NewRepository(repositoryService),
+		VersionResolver:      version.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

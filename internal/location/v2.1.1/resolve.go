@@ -10,6 +10,7 @@ import (
 	"github.com/satimoto/go-ocpi/internal/geolocation"
 	"github.com/satimoto/go-ocpi/internal/image"
 	"github.com/satimoto/go-ocpi/internal/openingtime"
+	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/versiondetail"
 )
@@ -24,6 +25,7 @@ type LocationResolver struct {
 	GeoLocationResolver    *geolocation.GeoLocationResolver
 	ImageResolver          *image.ImageResolver
 	OpeningTimeResolver    *openingtime.OpeningTimeResolver
+	TariffResolver         *tariff.TariffResolver
 	VersionDetailResolver  *versiondetail.VersionDetailResolver
 }
 
@@ -42,6 +44,7 @@ func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiReques
 		GeoLocationResolver:    geolocation.NewResolver(repositoryService),
 		ImageResolver:          image.NewResolver(repositoryService),
 		OpeningTimeResolver:    openingtime.NewResolver(repositoryService),
+		TariffResolver:         tariff.NewResolverWithServices(repositoryService, ocpiRequester),
 		VersionDetailResolver:  versiondetail.NewResolver(repositoryService),
 	}
 }

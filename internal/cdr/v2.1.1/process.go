@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi/pkg/ocpi"
@@ -37,7 +38,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 		cdrParams.CredentialID = credential.ID
 
 		if dto.AuthID != nil {
-			token, err := r.TokenResolver.Repository.GetTokenByAuthID(ctx, *dto.AuthID)
+			token, err := r.TokenRepository.GetTokenByAuthID(ctx, *dto.AuthID)
 
 			if err != nil {
 				util.LogOnError("OCPI020", "Error retrieving token", err)
@@ -112,6 +113,21 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			util.LogOnError("OCPI025", "Error retrieving node", err)
 			log.Printf("OCPI025: UserID=%v", cdr.UserID)
 			return &cdr
+		}
+
+		// If cdr received before session is completed, set status to completed
+		if cdr.AuthorizationID.Valid {
+			if session, err := r.SessionRepository.GetSessionByAuthorizationID(ctx, cdr.AuthorizationID.String); err == nil {
+				sessionParams := param.NewUpdateSessionByUidParams(session)
+				sessionParams.Status = db.SessionStatusTypeCOMPLETED
+
+				_, err = r.SessionRepository.UpdateSessionByUid(ctx, sessionParams)
+
+				if err != nil {
+					util.LogOnError("OCPI283", "Error updating session", err)
+					log.Printf("OCPI283: Params=%#v", sessionParams)
+				}
+			}
 		}
 
 		// TODO: Handle failed RPC call more robustly

@@ -3,13 +3,15 @@ package sync
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
-func (r *SyncResolver) SynchronizeCredential(ctx context.Context, credential db.Credential) {
+func (r *SyncService) SynchronizeCredential(ctx context.Context, credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string) {
 	if credential.VersionID.Valid {
+		log.Printf("Sync credential Url=%v LastUpdated=%v CountryCode=%v PartyID=%v", credential.Url, lastUpdated, countryCode, partyID)
 		version, err := r.VersionResolver.Repository.GetVersion(ctx, credential.VersionID.Int64)
 
 		if err != nil {
@@ -18,8 +20,10 @@ func (r *SyncResolver) SynchronizeCredential(ctx context.Context, credential db.
 			return
 		}
 
-		if version.Version == "2.1.1" {
-			r.SyncResolver_2_1_1.SynchronizeCredential(ctx, credential)
+		for _, syncerHandler := range r.syncerHandlers {
+			if syncerHandler.Version == version.Version {
+				syncerHandler.Syncer.SyncByIdentifier(ctx, credential, lastUpdated, countryCode, partyID)
+			}
 		}
 	}
 }

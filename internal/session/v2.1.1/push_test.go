@@ -230,6 +230,7 @@ func TestSessionRequest(t *testing.T) {
 			"authorizationID": {"String": "", "Valid": false},
 			"startDatetime": "2015-06-29T22:39:09Z",
 			"endDatetime": {"Time": "0001-01-01T00:00:00Z", "Valid": false},
+			"invoiceRequestID": {"Int64": 0, "Valid": false},
 			"kwh": 16.1,
 			"authMethod": "AUTH_REQUEST",
 			"meterID": {"String": "", "Valid": false},

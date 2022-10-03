@@ -13,7 +13,8 @@ import (
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *TariffResolver) PullTariffsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {
+func (r *TariffResolver) SyncByIdentifier(ctx context.Context, credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string) {
+	log.Printf("Sync tariffs Url=%v LastUpdated=%v CountryCode=%v PartyID=%v", credential.Url, lastUpdated, countryCode, partyID)
 	limit, offset, retries := 500, 0, 0
 	identifier := "tariffs"
 
@@ -36,7 +37,9 @@ func (r *TariffResolver) PullTariffsByIdentifier(ctx context.Context, credential
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, countryCode, partyID)
 	query := requestUrl.Query()
 
-	if tariff, err := r.GetLastTariffByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
+	if lastUpdated != nil {
+		query.Set("date_from", lastUpdated.UTC().Format(time.RFC3339))
+	} else if tariff, err := r.GetLastTariffByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
 		query.Set("date_from", tariff.LastUpdated.Format(time.RFC3339))
 	}
 

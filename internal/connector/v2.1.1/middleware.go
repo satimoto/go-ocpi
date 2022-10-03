@@ -7,28 +7,42 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
+	"github.com/satimoto/go-ocpi/internal/middleware"
+	"github.com/satimoto/go-ocpi/internal/sync"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *ConnectorResolver) ConnectorContext(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, request *http.Request) {
-		ctx := request.Context()
+func (r *ConnectorResolver) ConnectorContext(syncService *sync.SyncService) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(rw http.ResponseWriter, request *http.Request) {
+			requestCtx := request.Context()
 
-		if connectorID := chi.URLParam(request, "connector_id"); connectorID != "" {
-			evse := ctx.Value("evse").(*db.Evse)
+			if connectorID := chi.URLParam(request, "connector_id"); connectorID != "" {
+				evse := requestCtx.Value("evse").(*db.Evse)
 
-			connector, err := r.Repository.GetConnectorByUid(ctx, db.GetConnectorByUidParams{
-				EvseID: evse.ID,
-				Uid:    connectorID,
-			})
+				connector, err := r.Repository.GetConnectorByUid(requestCtx, db.GetConnectorByUidParams{
+					EvseID: evse.ID,
+					Uid:    connectorID,
+				})
 
-			if err == nil {
-				ctx = context.WithValue(ctx, "connector", connector)
-				next.ServeHTTP(rw, request.WithContext(ctx))
-				return
+				if err == nil {
+					requestCtx = context.WithValue(requestCtx, "connector", connector)
+					next.ServeHTTP(rw, request.WithContext(requestCtx))
+					return
+				}
 			}
-		}
 
-		render.Render(rw, request, transportation.OcpiErrorUnknownResource(nil))
-	})
+			if request.Method == http.MethodPatch {
+				countryCode := util.NilString(chi.URLParam(request, "country_code"))
+				partyID := util.NilString(chi.URLParam(request, "party_id"))
+				credential := middleware.GetCredential(requestCtx)
+				ctx := context.Background()
+
+				go syncService.SynchronizeCredential(ctx, *credential, nil, countryCode, partyID)
+			}
+
+			render.Render(rw, request, transportation.OcpiErrorUnknownResource(nil))
+		})
+	}
 }

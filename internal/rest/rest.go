@@ -18,6 +18,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	opciSync "github.com/satimoto/go-ocpi/internal/sync"
+	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 type Rest interface {
@@ -25,30 +27,45 @@ type Rest interface {
 }
 
 type RestService struct {
-	*db.RepositoryService
-	*http.Server
+	RepositoryService *db.RepositoryService
+	OcpiRequester     *transportation.OcpiRequester
+	SyncService       *opciSync.SyncService
+	Server            *http.Server
+	shutdownCtx       context.Context
+	waitGroup         *sync.WaitGroup
 }
 
 func NewRest(d *sql.DB) Rest {
+	repositoryService := db.NewRepositoryService(d)
+	ocpiRequester := transportation.NewOcpiRequester()
+	syncService := opciSync.NewService(repositoryService, ocpiRequester)
+
 	restService := &RestService{
-		RepositoryService: db.NewRepositoryService(d),
-	}
-	restService.Server = &http.Server{
-		Addr:    fmt.Sprintf(":%s", os.Getenv("REST_PORT")),
-		Handler: restService.handler(),
+		RepositoryService: repositoryService,
+		OcpiRequester:     ocpiRequester,
+		SyncService:       syncService,
 	}
 
 	return restService
 }
 
-func (rs *RestService) StartRest(ctx context.Context, waitGroup *sync.WaitGroup) {
+func (rs *RestService) StartRest(shutdownCtx context.Context, waitGroup *sync.WaitGroup) {
 	log.Printf("Starting Rest service")
+	rs.shutdownCtx = shutdownCtx
+	rs.waitGroup = waitGroup
 	waitGroup.Add(1)
+
+	rs.SyncService.StartService(rs.shutdownCtx, rs.waitGroup)
+
+	rs.Server = &http.Server{
+		Addr:    fmt.Sprintf(":%s", os.Getenv("REST_PORT")),
+		Handler: rs.handler(),
+	}
 
 	go rs.listenAndServe()
 
 	go func() {
-		<-ctx.Done()
+		<-shutdownCtx.Done()
 		log.Printf("Shutting down Rest service")
 
 		rs.shutdown()
