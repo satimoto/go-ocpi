@@ -5,7 +5,7 @@ import (
 	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	businessdetail "github.com/satimoto/go-ocpi/internal/businessdetail/mocks"
 	credential "github.com/satimoto/go-ocpi/internal/credential/v2.1.1"
-	sync "github.com/satimoto/go-ocpi/internal/sync/v2.1.1/mocks"
+	sync "github.com/satimoto/go-ocpi/internal/sync/mocks"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	version "github.com/satimoto/go-ocpi/internal/version/mocks"
 	versiondetail "github.com/satimoto/go-ocpi/internal/versiondetail/mocks"
@@ -20,7 +20,7 @@ func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocp
 		Repository:             credentialMocks.NewRepository(repositoryService),
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		OcpiRequester:          ocpiRequester,
-		SyncResolver:           sync.NewResolverWithServices(repositoryService, ocpiRequester),
+		SyncService:            sync.NewService(repositoryService, ocpiRequester),
 		VersionResolver:        version.NewResolverWithServices(repositoryService, ocpiRequester),
 		VersionDetailResolver:  versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}

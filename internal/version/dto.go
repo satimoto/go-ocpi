@@ -39,6 +39,6 @@ func (r *VersionResolver) CreateVersionListDto(ctx context.Context) []render.Ren
 	apiDomain := os.Getenv("API_DOMAIN")
 
 	list := []render.Renderer{}
-	list = append(list, r.CreateLocationDto(ctx, apiDomain, "2.1.1"))
+	list = append(list, r.CreateLocationDto(ctx, apiDomain, VERSION_2_1_1))
 	return list
 }

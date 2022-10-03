@@ -16,22 +16,18 @@ type CredentialResolver struct {
 	OcpiRequester            *transportation.OcpiRequester
 	BusinessDetailResolver   *businessdetail.BusinessDetailResolver
 	CredentialResolver_2_1_1 *credential_2_1_1.CredentialResolver
-	SyncResolver             *sync.SyncResolver
+	SyncService              *sync.SyncService
 	VersionResolver          *version.VersionResolver
 	VersionDetailResolver    *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *CredentialResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CredentialResolver {
+func NewResolver(repositoryService *db.RepositoryService, syncService *sync.SyncService, ocpiRequester *transportation.OcpiRequester) *CredentialResolver {
 	return &CredentialResolver{
 		Repository:               credential.NewRepository(repositoryService),
 		OcpiRequester:            ocpiRequester,
 		BusinessDetailResolver:   businessdetail.NewResolver(repositoryService),
-		CredentialResolver_2_1_1: credential_2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
-		SyncResolver:             sync.NewResolverWithServices(repositoryService, ocpiRequester),
+		CredentialResolver_2_1_1: credential_2_1_1.NewResolver(repositoryService, syncService, ocpiRequester),
+		SyncService:              sync.NewService(repositoryService, ocpiRequester),
 		VersionResolver:          version.NewResolverWithServices(repositoryService, ocpiRequester),
 		VersionDetailResolver:    versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}

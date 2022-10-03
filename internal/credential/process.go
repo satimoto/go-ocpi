@@ -12,6 +12,7 @@ import (
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
+	ocpiVersion "github.com/satimoto/go-ocpi/internal/version"
 )
 
 func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential db.Credential, token string) (*db.Credential, error) {
@@ -41,7 +42,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 			if pushedCredential, err := r.PushCredential(ctx, http.MethodPost, *version, registeredCredential); err == nil {
 				backgroundCtx := context.Background()
 
-				go r.SyncResolver.SynchronizeCredential(backgroundCtx, *pushedCredential)
+				go r.SyncService.SynchronizeCredential(backgroundCtx, *pushedCredential, nil, nil, nil)
 
 				return pushedCredential, nil
 			}
@@ -54,7 +55,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 }
 
 func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod string, version db.Version, credential db.Credential) (*db.Credential, error) {
-	if version.Version == "2.1.1" {
+	if version.Version == ocpiVersion.VERSION_2_1_1 {
 		return r.CredentialResolver_2_1_1.PushCredential(ctx, http.MethodPost, credential)
 	}
 

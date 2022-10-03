@@ -12,6 +12,7 @@ import (
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
+	ocpiVersion "github.com/satimoto/go-ocpi/internal/version"
 )
 
 func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod string, credential db.Credential) (*db.Credential, error) {
@@ -124,7 +125,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 		header := transportation.NewOcpiRequestHeader(&token, nil, nil)
 
 		r.VersionResolver.PullVersions(ctx, url, header, credential.ID)
-		version := r.VersionResolver.GetPreferredVersion(ctx, credential.ID, "2.1.1")
+		version := r.VersionResolver.GetPreferredVersion(ctx, credential.ID, ocpiVersion.VERSION_2_1_1)
 
 		if version != nil {
 			r.VersionDetailResolver.PullVersionEndpoints(ctx, version.Url, header, version.ID)
@@ -148,7 +149,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 
 			backgroundCtx := context.Background()
 
-			go r.SyncResolver.SynchronizeCredential(backgroundCtx, cred)
+			go r.SyncService.SynchronizeCredential(backgroundCtx, cred, nil, nil, nil)
 
 			return &cred, nil
 		} else {

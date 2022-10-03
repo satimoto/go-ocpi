@@ -11,6 +11,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/version"
 )
 
 func (r *CdrResolver) GetCdr(rw http.ResponseWriter, request *http.Request) {
@@ -49,7 +50,7 @@ func (r *CdrResolver) PostCdr(rw http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	location := fmt.Sprintf("%s/%s/%s/%s", os.Getenv("API_DOMAIN"), "2.1.1", "cdrs", cdr.Uid)
+	location := fmt.Sprintf("%s/%s/%s/%s", os.Getenv("API_DOMAIN"), version.VERSION_2_1_1, "cdrs", cdr.Uid)
 	rw.Header().Add("Location", location)
 	render.Render(rw, request, transportation.OcpiSuccess(nil))
 }

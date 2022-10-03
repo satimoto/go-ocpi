@@ -13,7 +13,8 @@ import (
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {
+func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string) {
+	log.Printf("Sync locations Url=%v LastUpdated=%v CountryCode=%v PartyID=%v", credential.Url, lastUpdated, countryCode, partyID)
 	limit, offset, retries := 500, 0, 0
 	identifier := "locations"
 
@@ -36,7 +37,9 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, countryCode, partyID)
 	query := requestUrl.Query()
 
-	if location, err := r.GetLastLocationByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
+	if lastUpdated != nil {
+		query.Set("date_from", lastUpdated.UTC().Format(time.RFC3339))
+	} else if location, err := r.GetLastLocationByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
 		query.Set("date_from", location.LastUpdated.Format(time.RFC3339))
 	}
 

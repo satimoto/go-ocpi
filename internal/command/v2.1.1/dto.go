@@ -12,6 +12,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/ocpitype"
 	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/version"
 )
 
 type OcpiCommandResponseDto struct {
@@ -35,7 +36,7 @@ func (r *CommandReservationDto) Render(writer http.ResponseWriter, request *http
 }
 
 func NewCommandReservationDto(command db.CommandReservation) *CommandReservationDto {
-	responseUrl := fmt.Sprintf("%s/%s/commands/RESERVE_NOW/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
+	responseUrl := fmt.Sprintf("%s/%s/commands/RESERVE_NOW/%v", os.Getenv("API_DOMAIN"), version.VERSION_2_1_1, command.ID)
 
 	return &CommandReservationDto{
 		ResponseUrl:   &responseUrl,
@@ -83,7 +84,7 @@ func (r *CommandStartDto) Render(writer http.ResponseWriter, request *http.Reque
 }
 
 func NewCommandStartDto(command db.CommandStart) *CommandStartDto {
-	responseUrl := fmt.Sprintf("%s/%s/commands/START_SESSION/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
+	responseUrl := fmt.Sprintf("%s/%s/commands/START_SESSION/%v", os.Getenv("API_DOMAIN"), version.VERSION_2_1_1, command.ID)
 
 	return &CommandStartDto{
 		ResponseUrl:     &responseUrl,
@@ -119,7 +120,7 @@ func (r *CommandStopDto) Render(writer http.ResponseWriter, request *http.Reques
 }
 
 func NewCommandStopDto(command db.CommandStop) *CommandStopDto {
-	responseUrl := fmt.Sprintf("%s/%s/commands/STOP_SESSION/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
+	responseUrl := fmt.Sprintf("%s/%s/commands/STOP_SESSION/%v", os.Getenv("API_DOMAIN"), version.VERSION_2_1_1, command.ID)
 
 	return &CommandStopDto{
 		ResponseUrl: &responseUrl,
@@ -143,7 +144,7 @@ func (r *CommandUnlockDto) Render(writer http.ResponseWriter, request *http.Requ
 }
 
 func NewCommandUnlockDto(command db.CommandUnlock) *CommandUnlockDto {
-	responseUrl := fmt.Sprintf("%s/%s/commands/UNLOCK_CONNECTOR/%v", os.Getenv("API_DOMAIN"), API_VERSION, command.ID)
+	responseUrl := fmt.Sprintf("%s/%s/commands/UNLOCK_CONNECTOR/%v", os.Getenv("API_DOMAIN"), version.VERSION_2_1_1, command.ID)
 
 	return &CommandUnlockDto{
 		ResponseUrl: &responseUrl,

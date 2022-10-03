@@ -7,10 +7,7 @@ import (
 	"os"
 
 	"github.com/satimoto/go-ocpi/internal/ocpitype"
-)
-
-var (
-	version = "2.1.1"
+	"github.com/satimoto/go-ocpi/internal/version"
 )
 
 type OcpiVersionDetailDto struct {
@@ -37,7 +34,7 @@ type EndpointDto struct {
 func (r *VersionDetailResolver) CreateEndpointDto(ctx context.Context, apiDomain string, identifier string) *EndpointDto {
 	return &EndpointDto{
 		Identifier: identifier,
-		Url:        fmt.Sprintf("%s/%s/%s", apiDomain, version, identifier),
+		Url:        fmt.Sprintf("%s/%s/%s", apiDomain, version.VERSION_2_1_1, identifier),
 	}
 }
 
@@ -54,7 +51,7 @@ func (r *VersionDetailResolver) CreateVersionDetailDto(ctx context.Context) *Ver
 	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "tokens"))
 
 	return &VersionDetailDto{
-		Version:   version,
+		Version:   version.VERSION_2_1_1,
 		Endpoints: endpoints,
 	}
 }

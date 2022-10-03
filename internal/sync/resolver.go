@@ -1,30 +1,32 @@
 package sync
 
 import (
+	"context"
+	"sync"
+
+	"github.com/satimoto/go-datastore/pkg/credential"
 	"github.com/satimoto/go-datastore/pkg/db"
-	sync2_1_1 "github.com/satimoto/go-ocpi/internal/sync/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/version"
 )
 
 type SyncRepository interface{}
 
-type SyncResolver struct {
-	Repository         SyncRepository
-	SyncResolver_2_1_1 *sync2_1_1.SyncResolver
-	VersionResolver    *version.VersionResolver
+type SyncService struct {
+	Repository           SyncRepository
+	CredentialRepository credential.CredentialRepository
+	VersionResolver      *version.VersionResolver
+	syncerHandlers       []*SyncerHandler
+	shutdownCtx          context.Context
+	waitGroup            *sync.WaitGroup
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *SyncResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *SyncResolver {
+func NewService(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *SyncService {
 	repo := SyncRepository(repositoryService)
 
-	return &SyncResolver{
-		Repository:         repo,
-		SyncResolver_2_1_1: sync2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
-		VersionResolver:    version.NewResolverWithServices(repositoryService, ocpiRequester),
+	return &SyncService{
+		Repository:           repo,
+		CredentialRepository: credential.NewRepository(repositoryService),
+		VersionResolver:      version.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
 }

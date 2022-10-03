@@ -22,7 +22,7 @@ func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocp
 		OcpiRequester:            ocpiRequester,
 		BusinessDetailResolver:   businessdetail.NewResolver(repositoryService),
 		CredentialResolver_2_1_1: credential_2_1_1.NewResolverWithServices(repositoryService, ocpiRequester),
-		SyncResolver:             sync.NewResolverWithServices(repositoryService, ocpiRequester),
+		SyncService:              sync.NewService(repositoryService, ocpiRequester),
 		VersionResolver:          version.NewResolverWithServices(repositoryService, ocpiRequester),
 		VersionDetailResolver:    versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}

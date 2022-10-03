@@ -1,4 +1,4 @@
-package session
+package cdr
 
 import (
 	"context"
@@ -13,31 +13,32 @@ import (
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {
+func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string) {
+	log.Printf("Sync cdrs Url=%v LastUpdated=%v CountryCode=%v PartyID=%v", credential.Url, lastUpdated, countryCode, partyID)
 	limit, offset, retries := 500, 0, 0
-	identifier := "sessions"
+	identifier := "cdrs"
 
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
-		util.LogOnError("OCPI170", "Error retrieving version endpoint", err)
-		log.Printf("OCPI170: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
+		util.LogOnError("OCPI028", "Error retrieving version endpoint", err)
+		log.Printf("OCPI028: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return
 	}
 
 	requestUrl, err := url.Parse(versionEndpoint.Url)
 
 	if err != nil {
-		util.LogOnError("OCPI171", "Error parsing url", err)
-		log.Printf("OCPI171: Url=%v", versionEndpoint.Url)
+		util.LogOnError("OCPI029", "Error parsing url", err)
+		log.Printf("OCPI029: Url=%v", versionEndpoint.Url)
 		return
 	}
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, countryCode, partyID)
 	query := requestUrl.Query()
 
-	if session, err := r.GetLastSessionByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
-		query.Set("date_from", session.LastUpdated.Format(time.RFC3339))
+	if cdr, err := r.GetLastCdrByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
+		query.Set("date_from", cdr.LastUpdated.Format(time.RFC3339))
 	}
 
 	for {
@@ -48,8 +49,8 @@ func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credenti
 		response, err := r.OcpiRequester.Do(http.MethodGet, requestUrl.String(), header, nil)
 
 		if err != nil {
-			util.LogOnError("OCPI172", "Error making request", err)
-			log.Printf("OCPI172: Method=%v, Url=%v, Header=%#v", http.MethodGet, requestUrl.String(), header)
+			util.LogOnError("OCPI030", "Error making request", err)
+			log.Printf("OCPI030: Method=%v, Url=%v, Header=%#v", http.MethodGet, requestUrl.String(), header)
 			retries++
 
 			if retries >= 5 {
@@ -63,25 +64,24 @@ func (r *SessionResolver) PullSessionsByIdentifier(ctx context.Context, credenti
 		defer response.Body.Close()
 
 		if err != nil {
-			util.LogOnError("OCPI173", "Error unmarshalling response", err)
-			util.LogHttpResponse("OCPI173", requestUrl.String(), response, true)
+			util.LogOnError("OCPI031", "Error unmarshalling response", err)
+			util.LogHttpResponse("OCPI031", requestUrl.String(), response, true)
 			break
 		}
 
 		limit = transportation.GetXLimitHeader(response, limit)
 
 		if dto.StatusCode != transportation.STATUS_CODE_OK {
-			util.LogOnError("OCPI174", "Error response failure", err)
-			util.LogHttpRequest("OCPI174", requestUrl.String(), response.Request, true)
-			util.LogHttpResponse("OCPI174", requestUrl.String(), response, true)
-			log.Printf("OCPI174: StatusCode=%v, StatusMessage=%v", dto.StatusCode, dto.StatusMessage)
+			util.LogOnError("OCPI032", "Error response failure", err)
+			util.LogHttpRequest("OCPI032", requestUrl.String(), response.Request, true)
+			util.LogHttpResponse("OCPI032", requestUrl.String(), response, true)
 			break
 		}
 
 		retries = 0
 
 		if dto.StatusCode == transportation.STATUS_CODE_OK {
-			r.ReplaceSessions(ctx, credential, dto.Data)
+			r.ReplaceCdrs(ctx, credential, dto.Data)
 			offset += limit
 
 			if len(dto.Data) < limit {
