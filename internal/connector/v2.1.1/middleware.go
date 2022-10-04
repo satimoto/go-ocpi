@@ -21,7 +21,7 @@ func (r *ConnectorResolver) ConnectorContext(syncService *sync.SyncService) func
 			if connectorID := chi.URLParam(request, "connector_id"); connectorID != "" {
 				evse := requestCtx.Value("evse").(*db.Evse)
 
-				connector, err := r.Repository.GetConnectorByUid(requestCtx, db.GetConnectorByUidParams{
+				connector, err := r.Repository.GetConnectorByEvse(requestCtx, db.GetConnectorByEvseParams{
 					EvseID: evse.ID,
 					Uid:    connectorID,
 				})
@@ -37,9 +37,8 @@ func (r *ConnectorResolver) ConnectorContext(syncService *sync.SyncService) func
 				countryCode := util.NilString(chi.URLParam(request, "country_code"))
 				partyID := util.NilString(chi.URLParam(request, "party_id"))
 				credential := middleware.GetCredential(requestCtx)
-				ctx := context.Background()
 
-				go syncService.SynchronizeCredential(ctx, *credential, nil, countryCode, partyID)
+				go syncService.SynchronizeCredential(*credential, nil, countryCode, partyID)
 			}
 
 			render.Render(rw, request, transportation.OcpiErrorUnknownResource(nil))

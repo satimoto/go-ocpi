@@ -136,7 +136,7 @@ func TestReplaceEvse(t *testing.T) {
 			},
 		})
 
-		mockRepository.SetGetConnectorByUidMockData(dbMocks.ConnectorMockData{
+		mockRepository.SetGetConnectorByEvseMockData(dbMocks.ConnectorMockData{
 			Connector: db.Connector{
 				Uid:         "1",
 				EvseID:      1,
@@ -153,13 +153,13 @@ func TestReplaceEvse(t *testing.T) {
 
 		connectorsDto := []*connector.ConnectorDto{}
 		connectorsDto = append(connectorsDto, &connector.ConnectorDto{
-			Id:       util.NilString("1"),
-			TariffID: util.NilString("12"),
+			Id:          util.NilString("1"),
+			TariffID:    util.NilString("12"),
 			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		})
 
 		dto := evse.EvseDto{
-			Connectors: connectorsDto,
+			Connectors:  connectorsDto,
 			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
@@ -182,7 +182,7 @@ func TestReplaceEvse(t *testing.T) {
 			"lastUpdated": "2015-03-16T10:10:02Z"
 		}`))
 
-		connectorParams, _ := mockRepository.GetUpdateConnectorByUidMockData()
+		connectorParams, _ := mockRepository.GetUpdateConnectorByEvseMockData()
 		connectorParamsJson, _ := json.Marshal(connectorParams)
 
 		mocks.CompareJson(t, connectorParamsJson, []byte(`{
@@ -217,7 +217,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		mockRepository.SetGetEvseByUidMockData(dbMocks.EvseMockData{
 			Evse: db.Evse{
-				ID:            1,
+				ID:                1,
 				Uid:               "3257",
 				EvseID:            util.SqlNullString("BE-BEC-E041503002"),
 				Identifier:        util.SqlNullString("BE*BEC*E041503002"),

@@ -118,11 +118,11 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 				}
 
 				connectorDto := evseDto.Connectors[0]
-				connectorParams := db.GetConnectorByUidParams{
+				connectorParams := db.GetConnectorByEvseParams{
 					EvseID: sessionParams.EvseID,
 					Uid:    *connectorDto.Id,
 				}
-				connector, err := r.LocationResolver.EvseResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams)
+				connector, err := r.LocationResolver.EvseResolver.ConnectorResolver.Repository.GetConnectorByEvse(ctx, connectorParams)
 
 				if err != nil {
 					util.LogOnError("OCPI165", "Error retrieving connector", err)

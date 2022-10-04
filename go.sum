@@ -306,6 +306,8 @@ github.com/satimoto/go-datastore v0.3.1-0.20220923103917-5ee40c184ca7 h1:CbCOu92
 github.com/satimoto/go-datastore v0.3.1-0.20220923103917-5ee40c184ca7/go.mod h1:SvM8losYPwH6hJgUKLkjNtQwVv06lZgCMWl8cGdllCM=
 github.com/satimoto/go-datastore v0.3.1-0.20220924195801-e58d30eb692b h1:Uhu+nGvURBozW9hczVu0G6zmnT3tPEI94N4Wggec8LA=
 github.com/satimoto/go-datastore v0.3.1-0.20220924195801-e58d30eb692b/go.mod h1:SvM8losYPwH6hJgUKLkjNtQwVv06lZgCMWl8cGdllCM=
+github.com/satimoto/go-datastore v0.3.1-0.20221004183020-7a9d87531a1a h1:eSI+PT5Ita/WQiZCC1kIysDQTEznAY/HfoP9i958g7c=
+github.com/satimoto/go-datastore v0.3.1-0.20221004183020-7a9d87531a1a/go.mod h1:SvM8losYPwH6hJgUKLkjNtQwVv06lZgCMWl8cGdllCM=
 github.com/sergi/go-diff v1.1.0 h1:we8PVUC3FE2uYfodKH/nBHMSetSfHDR6scGdBi+erh0=
 github.com/sergi/go-diff v1.1.0/go.mod h1:STckp+ISIX8hZLjrqAeVduY0gWCT9IjLuqbuNXdaHfM=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
