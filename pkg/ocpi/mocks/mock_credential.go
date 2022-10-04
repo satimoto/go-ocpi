@@ -28,6 +28,16 @@ func (s *MockOcpiService) RegisterCredential(ctx context.Context, in *ocpirpc.Re
 	return response, nil
 }
 
+func (s *MockOcpiService) SyncCredential(ctx context.Context, in *ocpirpc.SyncCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.SyncCredentialResponse, error) {
+	if len(s.syncCredentialMockData) == 0 {
+		return &ocpirpc.SyncCredentialResponse{}, errors.New("NotFound")
+	}
+
+	response := s.syncCredentialMockData[0]
+	s.syncCredentialMockData = s.syncCredentialMockData[1:]
+	return response, nil
+}
+
 func (s *MockOcpiService) UnregisterCredential(ctx context.Context, in *ocpirpc.UnregisterCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.UnregisterCredentialResponse, error) {
 	if len(s.unregisterCredentialMockData) == 0 {
 		return &ocpirpc.UnregisterCredentialResponse{}, errors.New("NotFound")
@@ -44,6 +54,10 @@ func (s *MockOcpiService) SetCreateCredentialMockData(mockData *ocpirpc.CreateCr
 
 func (s *MockOcpiService) SetRegisterCredentialMockData(mockData *ocpirpc.RegisterCredentialResponse) {
 	s.registerCredentialMockData = append(s.registerCredentialMockData, mockData)
+}
+
+func (s *MockOcpiService) SetSyncCredentialMockData(mockData *ocpirpc.SyncCredentialResponse) {
+	s.syncCredentialMockData = append(s.syncCredentialMockData, mockData)
 }
 
 func (s *MockOcpiService) SetUnregisterCredentialMockData(mockData *ocpirpc.UnregisterCredentialResponse) {

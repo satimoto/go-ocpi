@@ -15,6 +15,10 @@ func (s *OcpiService) RegisterCredential(ctx context.Context, in *ocpirpc.Regist
 	return s.getCredentialClient().RegisterCredential(ctx, in, opts...)
 }
 
+func (s *OcpiService) SyncCredential(ctx context.Context, in *ocpirpc.SyncCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.SyncCredentialResponse, error) {
+	return s.getCredentialClient().SyncCredential(ctx, in, opts...)
+}
+
 func (s *OcpiService) UnregisterCredential(ctx context.Context, in *ocpirpc.UnregisterCredentialRequest, opts ...grpc.CallOption) (*ocpirpc.UnregisterCredentialResponse, error) {
 	return s.getCredentialClient().UnregisterCredential(ctx, in, opts...)
 }
