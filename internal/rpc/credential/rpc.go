@@ -70,6 +70,29 @@ func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request 
 	return nil, errors.New("Missing request")
 }
 
+func (r *RpcCredentialResolver) SyncCredential(ctx context.Context, request *ocpirpc.SyncCredentialRequest) (*ocpirpc.SyncCredentialResponse, error) {
+	if request != nil {
+		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)
+
+		if err != nil {
+			util.LogOnError("OCPI284", "Error retrieving credential", err)
+			log.Printf("OCPI284: CredentialID=%v", request.Id)
+			return nil, errors.New("error syncing credential")
+		}
+
+		backgroundCtx := context.Background()
+		lastUpdated := util.ParseTime(request.FromDate, nil)
+		countryCode := util.NilString(request.CountryCode)
+		partyID := util.NilString(request.PartyId)
+
+		go r.CredentialResolver.SyncService.SynchronizeCredential(backgroundCtx, credential, lastUpdated, countryCode, partyID)
+
+		return &ocpirpc.SyncCredentialResponse{Id: credential.ID}, nil
+	}
+
+	return nil, errors.New("Missing request")
+}
+
 func (r *RpcCredentialResolver) UnregisterCredential(ctx context.Context, request *ocpirpc.UnregisterCredentialRequest) (*ocpirpc.UnregisterCredentialResponse, error) {
 	if request != nil {
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)

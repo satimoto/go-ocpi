@@ -24,7 +24,7 @@ func NewResolver(repositoryService *db.RepositoryService, syncService *sync.Sync
 		Repository:             credentialRepository.NewRepository(repositoryService),
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		OcpiRequester:          ocpiRequester,
-		SyncService:            sync.NewService(repositoryService, ocpiRequester),
+		SyncService:            syncService,
 		VersionResolver:        version.NewResolverWithServices(repositoryService, ocpiRequester),
 		VersionDetailResolver:  versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
 	}
