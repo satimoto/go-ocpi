@@ -8,6 +8,7 @@ type MockOcpiService struct {
 	cdrCreatedMockData           []*ocpirpc.CdrCreatedResponse
 	createCredentialMockData     []*ocpirpc.CreateCredentialResponse
 	registerCredentialMockData   []*ocpirpc.RegisterCredentialResponse
+	syncCredentialMockData       []*ocpirpc.SyncCredentialResponse
 	unregisterCredentialMockData []*ocpirpc.UnregisterCredentialResponse
 	startSessionMockData         []*ocpirpc.StartSessionResponse
 	stopSessionMockData          []*ocpirpc.StopSessionResponse
