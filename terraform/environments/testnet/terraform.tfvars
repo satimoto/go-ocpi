@@ -34,9 +34,9 @@ target_health_matcher = "200"
 
 subdomain_name = "ocpi"
 
-env_country_code = "DE"
+env_country_code = "XX"
 
-env_party_id = "SAT"
+env_party_id = "RAD"
 
 env_issuer = "Satimoto"
 

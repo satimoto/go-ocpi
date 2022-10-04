@@ -36,7 +36,7 @@ subdomain_name = "ocpi"
 
 env_country_code = "DE"
 
-env_party_id = "SAT"
+env_party_id = "BTC"
 
 env_issuer = "Satimoto"
 
