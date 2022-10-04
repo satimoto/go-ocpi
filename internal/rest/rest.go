@@ -2,7 +2,6 @@ package rest
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/edjumacator/chi-prometheus"
+	chiprometheus "github.com/edjumacator/chi-prometheus"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -18,7 +17,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	opciSync "github.com/satimoto/go-ocpi/internal/sync"
+	ocpiSync "github.com/satimoto/go-ocpi/internal/sync"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -29,17 +28,13 @@ type Rest interface {
 type RestService struct {
 	RepositoryService *db.RepositoryService
 	OcpiRequester     *transportation.OcpiRequester
-	SyncService       *opciSync.SyncService
+	SyncService       *ocpiSync.SyncService
 	Server            *http.Server
 	shutdownCtx       context.Context
 	waitGroup         *sync.WaitGroup
 }
 
-func NewRest(d *sql.DB) Rest {
-	repositoryService := db.NewRepositoryService(d)
-	ocpiRequester := transportation.NewOcpiRequester()
-	syncService := opciSync.NewService(repositoryService, ocpiRequester)
-
+func NewRest(repositoryService *db.RepositoryService, syncService *ocpiSync.SyncService, ocpiRequester *transportation.OcpiRequester) Rest {
 	restService := &RestService{
 		RepositoryService: repositoryService,
 		OcpiRequester:     ocpiRequester,
