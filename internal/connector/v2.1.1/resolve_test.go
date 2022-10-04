@@ -25,8 +25,8 @@ func TestReplaceConnector(t *testing.T) {
 		powerTypeAC3PHASE := db.PowerTypeAC3PHASE
 
 		evse := db.Evse{
-			ID: 1,
-			EvseID: util.SqlNullString("DE-ABC-1234567"),
+			ID:         1,
+			EvseID:     util.SqlNullString("DE-ABC-1234567"),
 			Identifier: util.SqlNullString("DE*ABC*1234567"),
 		}
 
@@ -66,7 +66,7 @@ func TestReplaceConnector(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		connectorResolver := connectorMocks.NewResolver(mockRepository)
 
-		mockRepository.SetGetConnectorByUidMockData(dbMocks.ConnectorMockData{
+		mockRepository.SetGetConnectorByEvseMockData(dbMocks.ConnectorMockData{
 			Connector: db.Connector{
 				Uid:         "1",
 				EvseID:      1,
@@ -89,7 +89,7 @@ func TestReplaceConnector(t *testing.T) {
 
 		connectorResolver.ReplaceConnector(ctx, evse, "1", &dto)
 
-		params, _ := mockRepository.GetUpdateConnectorByUidMockData()
+		params, _ := mockRepository.GetUpdateConnectorByEvseMockData()
 		paramsJson, _ := json.Marshal(params)
 
 		mocks.CompareJson(t, paramsJson, []byte(`{

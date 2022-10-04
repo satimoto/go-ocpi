@@ -12,13 +12,13 @@ import (
 
 func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, uid string, dto *ConnectorDto) *db.Connector {
 	if dto != nil {
-		connector, err := r.Repository.GetConnectorByUid(ctx, db.GetConnectorByUidParams{
+		connector, err := r.Repository.GetConnectorByEvse(ctx, db.GetConnectorByEvseParams{
 			EvseID: evse.ID,
 			Uid:    uid,
 		})
 
 		if err == nil {
-			connectorParams := param.NewUpdateConnectorByUidParams(connector)
+			connectorParams := param.NewUpdateConnectorByEvseParams(connector)
 
 			if dto.Standard != nil {
 				connectorParams.Standard = *dto.Standard
@@ -50,11 +50,11 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 
 			connectorParams.Identifier = dbUtil.SqlNullString(GetConnectorIdentifier(evse, dto))
 			connectorParams.Wattage = util.CalculateWattage(connectorParams.PowerType, connectorParams.Voltage, connectorParams.Amperage)
-			updatedConnector, err := r.Repository.UpdateConnectorByUid(ctx, connectorParams)
+			updatedConnector, err := r.Repository.UpdateConnectorByEvse(ctx, connectorParams)
 
 			if err != nil {
 				dbUtil.LogOnError("OCPI079", "Error updating connector", err)
-				log.Printf("OCPI079: Params=%v", connectorParams)
+				log.Printf("OCPI079: Params=%#v", connectorParams)
 				return nil
 			}
 
@@ -65,7 +65,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 
 			if err != nil {
 				dbUtil.LogOnError("OCPI080", "Error creating connector", err)
-				log.Printf("OCPI080: Params=%v", connectorParams)
+				log.Printf("OCPI080: Params=%#v", connectorParams)
 				return nil
 			}
 		}

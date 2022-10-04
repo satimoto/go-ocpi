@@ -9,8 +9,10 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
-func (r *SyncService) SynchronizeCredential(ctx context.Context, credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string) {
+func (r *SyncService) SynchronizeCredential(credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string) {
 	if credential.VersionID.Valid {
+		ctx := context.Background()
+
 		log.Printf("Sync credential Url=%v LastUpdated=%v CountryCode=%v PartyID=%v", credential.Url, lastUpdated, countryCode, partyID)
 		version, err := r.VersionResolver.Repository.GetVersion(ctx, credential.VersionID.Int64)
 

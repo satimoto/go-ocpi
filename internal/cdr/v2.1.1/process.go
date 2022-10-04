@@ -71,11 +71,11 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			}
 
 			connectorDto := evseDto.Connectors[0]
-			connectorParams := db.GetConnectorByUidParams{
+			connectorParams := db.GetConnectorByEvseParams{
 				EvseID: cdrParams.EvseID,
 				Uid:    *connectorDto.Id,
 			}
-			connector, err := r.LocationResolver.EvseResolver.ConnectorResolver.Repository.GetConnectorByUid(ctx, connectorParams)
+			connector, err := r.LocationResolver.EvseResolver.ConnectorResolver.Repository.GetConnectorByEvse(ctx, connectorParams)
 
 			if err != nil {
 				util.LogOnError("OCPI023", "Error retrieving connector", err)

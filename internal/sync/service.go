@@ -26,7 +26,7 @@ func (r *SyncService) startLoop() {
 
 			for _, credential := range credentials {
 				if credential.ClientToken.Valid {
-					r.SynchronizeCredential(ctx, credential, &lastUpdated, nil, nil)
+					r.SynchronizeCredential(credential, &lastUpdated, nil, nil)
 				}
 			}
 
