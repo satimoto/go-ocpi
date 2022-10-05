@@ -7,23 +7,24 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi/pkg/ocpi"
 	ocpiSession "github.com/satimoto/go-ocpi/pkg/ocpi/session"
 )
 
-func (r *SessionResolver) ReplaceSession(ctx context.Context, credential db.Credential, uid string, dto *SessionDto) *db.Session {
-	if dto != nil {
-		countryCode, partyID := evse.GetEvsesIdentity(dto.Location.Evses)
+func (r *SessionResolver) ReplaceSession(ctx context.Context, credential db.Credential, uid string, sessionDto *dto.SessionDto) *db.Session {
+	if sessionDto != nil {
+		countryCode, partyID := evse.GetEvsesIdentity(sessionDto.Location, sessionDto.Location.Evses)
 
-		return r.ReplaceSessionByIdentifier(ctx, credential, countryCode, partyID, uid, dto)
+		return r.ReplaceSessionByIdentifier(ctx, credential, countryCode, partyID, uid, sessionDto)
 	}
 
 	return nil
 }
 
-func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *SessionDto) *db.Session {
-	if dto != nil {
+func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, sessionDto *dto.SessionDto) *db.Session {
+	if sessionDto != nil {
 		session, err := r.Repository.GetSessionByUid(ctx, uid)
 		sessionCreated := false
 		statusChanged := false
@@ -31,41 +32,41 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 		if err == nil {
 			sessionParams := param.NewUpdateSessionByUidParams(session)
 
-			if dto.AuthMethod != nil {
-				sessionParams.AuthMethod = *dto.AuthMethod
+			if sessionDto.AuthMethod != nil {
+				sessionParams.AuthMethod = *sessionDto.AuthMethod
 			}
 
-			if dto.Currency != nil {
-				sessionParams.Currency = *dto.Currency
+			if sessionDto.Currency != nil {
+				sessionParams.Currency = *sessionDto.Currency
 			}
 
-			if dto.EndDatetime != nil {
-				sessionParams.EndDatetime = util.SqlNullTime(dto.EndDatetime)
+			if sessionDto.EndDatetime != nil {
+				sessionParams.EndDatetime = util.SqlNullTime(sessionDto.EndDatetime)
 			}
 
-			if dto.Kwh != nil {
-				sessionParams.Kwh = *dto.Kwh
+			if sessionDto.Kwh != nil {
+				sessionParams.Kwh = *sessionDto.Kwh
 			}
 
-			if dto.LastUpdated != nil {
-				sessionParams.LastUpdated = *dto.LastUpdated
+			if sessionDto.LastUpdated != nil {
+				sessionParams.LastUpdated = *sessionDto.LastUpdated
 			}
 
-			if dto.MeterID != nil {
-				sessionParams.MeterID = util.SqlNullString(dto.MeterID)
+			if sessionDto.MeterID != nil {
+				sessionParams.MeterID = util.SqlNullString(sessionDto.MeterID)
 			}
 
-			if dto.Status != nil && session.Status != sessionParams.Status {
+			if sessionDto.Status != nil && session.Status != sessionParams.Status {
 				statusChanged = true
-				sessionParams.Status = *dto.Status
+				sessionParams.Status = *sessionDto.Status
 			}
 
-			if dto.StartDatetime != nil {
-				sessionParams.StartDatetime = *dto.StartDatetime
+			if sessionDto.StartDatetime != nil {
+				sessionParams.StartDatetime = *sessionDto.StartDatetime
 			}
 
-			if dto.TotalCost != nil {
-				sessionParams.TotalCost = util.SqlNullFloat64(dto.TotalCost)
+			if sessionDto.TotalCost != nil {
+				sessionParams.TotalCost = util.SqlNullFloat64(sessionDto.TotalCost)
 			}
 
 			updatedSession, err := r.Repository.UpdateSessionByUid(ctx, sessionParams)
@@ -79,17 +80,17 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			session = updatedSession
 		} else {
 			sessionCreated = true
-			sessionParams := NewCreateSessionParams(dto)
+			sessionParams := NewCreateSessionParams(sessionDto)
 			sessionParams.CredentialID = credential.ID
 			sessionParams.CountryCode = util.SqlNullString(countryCode)
 			sessionParams.PartyID = util.SqlNullString(partyID)
 
-			if dto.AuthID != nil {
-				token, err := r.TokenRepository.GetTokenByAuthID(ctx, *dto.AuthID)
+			if sessionDto.AuthID != nil {
+				token, err := r.TokenRepository.GetTokenByAuthID(ctx, *sessionDto.AuthID)
 
 				if err != nil {
 					util.LogOnError("OCPI162", "Error retrieving token", err)
-					log.Printf("OCPI162: AuthID=%v", *dto.AuthID)
+					log.Printf("OCPI162: AuthID=%v", *sessionDto.AuthID)
 					return nil
 				}
 
@@ -97,17 +98,17 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 				sessionParams.UserID = token.UserID
 			}
 
-			if dto.Location != nil {
-				location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID)
+			if sessionDto.Location != nil {
+				location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *sessionDto.Location.ID)
 
 				if err != nil {
 					util.LogOnError("OCPI163", "Error retrieving location", err)
-					log.Printf("OCPI163: Uid=%v", *dto.Location.ID)
+					log.Printf("OCPI163: Uid=%v", *sessionDto.Location.ID)
 				} else {
 					sessionParams.LocationID = location.ID
 				}
 
-				evseDto := dto.Location.Evses[0]
+				evseDto := sessionDto.Location.Evses[0]
 				evse, err := r.LocationResolver.EvseResolver.Repository.GetEvseByUid(ctx, *evseDto.Uid)
 
 				if err != nil {
@@ -141,12 +142,12 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			}
 		}
 
-		if dto.AuthorizationID != nil {
-			r.replaceTokenAuthorization(ctx, countryCode, partyID, dto)
+		if sessionDto.AuthorizationID != nil {
+			r.replaceTokenAuthorization(ctx, countryCode, partyID, sessionDto)
 		}
 
-		if dto.ChargingPeriods != nil {
-			r.replaceChargingPeriods(ctx, session.ID, dto)
+		if sessionDto.ChargingPeriods != nil {
+			r.replaceChargingPeriods(ctx, session.ID, sessionDto)
 		}
 
 		// Send a session created/update RPC message to LSP
@@ -187,22 +188,22 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 	return nil
 }
 
-func (r *SessionResolver) ReplaceSessions(ctx context.Context, credential db.Credential, dto []*SessionDto) {
-	for _, sessionDto := range dto {
+func (r *SessionResolver) ReplaceSessions(ctx context.Context, credential db.Credential, sessionsDto []*dto.SessionDto) {
+	for _, sessionDto := range sessionsDto {
 		r.ReplaceSession(ctx, credential, *sessionDto.ID, sessionDto)
 	}
 }
 
-func (r *SessionResolver) ReplaceSessionsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, dto []*SessionDto) {
-	for _, sessionDto := range dto {
+func (r *SessionResolver) ReplaceSessionsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, sessionsDto []*dto.SessionDto) {
+	for _, sessionDto := range sessionsDto {
 		r.ReplaceSessionByIdentifier(ctx, credential, countryCode, partyID, *sessionDto.ID, sessionDto)
 	}
 }
 
-func (r *SessionResolver) replaceChargingPeriods(ctx context.Context, sessionID int64, dto *SessionDto) {
+func (r *SessionResolver) replaceChargingPeriods(ctx context.Context, sessionID int64, sessionDto *dto.SessionDto) {
 	r.Repository.DeleteSessionChargingPeriods(ctx, sessionID)
 
-	for _, chargingPeriodDto := range dto.ChargingPeriods {
+	for _, chargingPeriodDto := range sessionDto.ChargingPeriods {
 		chargingPeriod := r.ChargingPeriodResolver.ReplaceChargingPeriod(ctx, chargingPeriodDto)
 
 		if chargingPeriod != nil {
@@ -220,7 +221,7 @@ func (r *SessionResolver) replaceChargingPeriods(ctx context.Context, sessionID 
 	}
 }
 
-func (r *SessionResolver) replaceTokenAuthorization(ctx context.Context, countryCode *string, partyID *string, dto *SessionDto) {
-	tokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(*dto.AuthorizationID, countryCode, partyID)
+func (r *SessionResolver) replaceTokenAuthorization(ctx context.Context, countryCode *string, partyID *string, sessionDto *dto.SessionDto) {
+	tokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(*sessionDto.AuthorizationID, countryCode, partyID)
 	r.TokenAuthorizationRepository.UpdateTokenAuthorizationByAuthorizationID(ctx, tokenAuthorizationParams)
 }

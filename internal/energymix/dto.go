@@ -3,35 +3,14 @@ package energymix
 import (
 	"context"
 	"log"
-	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-type EnergyMixDto struct {
-	IsGreenEnergy     ocpitype.Bool             `json:"is_green_energy"`
-	EnergySources     []*EnergySourceDto        `json:"energy_sources,omitempty"`
-	EnvironImpact     []*EnvironmentalImpactDto `json:"environ_impact,omitempty"`
-	SupplierName      *string                   `json:"supplier_name,omitempty"`
-	EnergyProductName *string                   `json:"energy_product_name,omitempty"`
-}
-
-func (r *EnergyMixDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewEnergyMixDto(energyMix db.EnergyMix) *EnergyMixDto {
-	return &EnergyMixDto{
-		IsGreenEnergy:     ocpitype.NewBool(energyMix.IsGreenEnergy),
-		SupplierName:      util.NilString(energyMix.SupplierName),
-		EnergyProductName: util.NilString(energyMix.EnergyProductName),
-	}
-}
-
-func (r *EnergyMixResolver) CreateEnergyMixDto(ctx context.Context, energyMix db.EnergyMix) *EnergyMixDto {
-	response := NewEnergyMixDto(energyMix)
+func (r *EnergyMixResolver) CreateEnergyMixDto(ctx context.Context, energyMix db.EnergyMix) *coreDto.EnergyMixDto {
+	response := coreDto.NewEnergyMixDto(energyMix)
 
 	energySources, err := r.Repository.ListEnergySources(ctx, energyMix.ID)
 
@@ -54,28 +33,12 @@ func (r *EnergyMixResolver) CreateEnergyMixDto(ctx context.Context, energyMix db
 	return response
 }
 
-type EnergySourceDto struct {
-	Source     db.EnergySourceCategory `json:"source"`
-	Percentage float64                 `json:"percentage"`
+func (r *EnergyMixResolver) CreateEnergySourceDto(ctx context.Context, energySource db.EnergySource) *coreDto.EnergySourceDto {
+	return coreDto.NewEnergySourceDto(energySource)
 }
 
-func (r *EnergySourceDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewEnergySourceDto(energySource db.EnergySource) *EnergySourceDto {
-	return &EnergySourceDto{
-		Source:     energySource.Source,
-		Percentage: energySource.Percentage,
-	}
-}
-
-func (r *EnergyMixResolver) CreateEnergySourceDto(ctx context.Context, energySource db.EnergySource) *EnergySourceDto {
-	return NewEnergySourceDto(energySource)
-}
-
-func (r *EnergyMixResolver) CreateEnergySourceListDto(ctx context.Context, energySources []db.EnergySource) []*EnergySourceDto {
-	list := []*EnergySourceDto{}
+func (r *EnergyMixResolver) CreateEnergySourceListDto(ctx context.Context, energySources []db.EnergySource) []*coreDto.EnergySourceDto {
+	list := []*coreDto.EnergySourceDto{}
 
 	for _, energySource := range energySources {
 		list = append(list, r.CreateEnergySourceDto(ctx, energySource))
@@ -84,28 +47,12 @@ func (r *EnergyMixResolver) CreateEnergySourceListDto(ctx context.Context, energ
 	return list
 }
 
-type EnvironmentalImpactDto struct {
-	Source db.EnvironmentalImpactCategory `json:"source"`
-	Amount float64                        `json:"amount"`
+func (r *EnergyMixResolver) CreateEnvironmentalImpactDto(ctx context.Context, environImpact db.EnvironmentalImpact) *coreDto.EnvironmentalImpactDto {
+	return coreDto.NewEnvironmentalImpactDto(environImpact)
 }
 
-func (r *EnvironmentalImpactDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewEnvironmentalImpactDto(environmentalImpact db.EnvironmentalImpact) *EnvironmentalImpactDto {
-	return &EnvironmentalImpactDto{
-		Source: environmentalImpact.Source,
-		Amount: environmentalImpact.Amount,
-	}
-}
-
-func (r *EnergyMixResolver) CreateEnvironmentalImpactDto(ctx context.Context, environImpact db.EnvironmentalImpact) *EnvironmentalImpactDto {
-	return NewEnvironmentalImpactDto(environImpact)
-}
-
-func (r *EnergyMixResolver) CreateEnvironmentalImpactListDto(ctx context.Context, environImpacts []db.EnvironmentalImpact) []*EnvironmentalImpactDto {
-	list := []*EnvironmentalImpactDto{}
+func (r *EnergyMixResolver) CreateEnvironmentalImpactListDto(ctx context.Context, environImpacts []db.EnvironmentalImpact) []*coreDto.EnvironmentalImpactDto {
+	list := []*coreDto.EnvironmentalImpactDto{}
 
 	for _, environImpact := range environImpacts {
 		list = append(list, r.CreateEnvironmentalImpactDto(ctx, environImpact))

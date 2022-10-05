@@ -1,10 +1,13 @@
 package displaytext
 
-import "github.com/satimoto/go-datastore/pkg/db"
+import (
+	"github.com/satimoto/go-datastore/pkg/db"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+)
 
-func NewCreateDisplayTextParams(dto *DisplayTextDto) db.CreateDisplayTextParams {
+func NewCreateDisplayTextParams(displayTextDto *coreDto.DisplayTextDto) db.CreateDisplayTextParams {
 	return db.CreateDisplayTextParams{
-		Language: dto.Language,
-		Text:     dto.Text,
+		Language: displayTextDto.Language,
+		Text:     displayTextDto.Text,
 	}
 }

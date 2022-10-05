@@ -8,20 +8,21 @@ import (
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/displaytext"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, dto *TariffDto) *db.Tariff {
-	if dto != nil {
+func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, tariffDto *dto.TariffDto) *db.Tariff {
+	if tariffDto != nil {
 		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
 		energyMixID := util.SqlNullInt64(tariff.EnergyMixID)
 		tariffRestrictionID := util.SqlNullInt64(tariff.TariffRestrictionID)
 
-		if dto.EnergyMix != nil {
-			r.EnergyMixResolver.ReplaceEnergyMix(ctx, &energyMixID, dto.EnergyMix)
+		if tariffDto.EnergyMix != nil {
+			r.EnergyMixResolver.ReplaceEnergyMix(ctx, &energyMixID, tariffDto.EnergyMix)
 		}
 
-		if dto.Restriction != nil {
-			r.TariffRestrictionResolver.ReplaceTariffByIdentifierRestriction(ctx, &tariffRestrictionID, dto.Restriction)
+		if tariffDto.Restriction != nil {
+			r.TariffRestrictionResolver.ReplaceTariffByIdentifierRestriction(ctx, &tariffRestrictionID, tariffDto.Restriction)
 		}
 
 		if err == nil {
@@ -31,16 +32,16 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 			tariffParams.EnergyMixID = energyMixID
 			tariffParams.TariffRestrictionID = tariffRestrictionID
 
-			if dto.Currency != nil {
-				tariffParams.Currency = *dto.Currency
+			if tariffDto.Currency != nil {
+				tariffParams.Currency = *tariffDto.Currency
 			}
 
-			if dto.LastUpdated != nil {
-				tariffParams.LastUpdated = *dto.LastUpdated
+			if tariffDto.LastUpdated != nil {
+				tariffParams.LastUpdated = *tariffDto.LastUpdated
 			}
 
-			if dto.TariffAltUrl != nil {
-				tariffParams.TariffAltUrl = util.SqlNullString(dto.TariffAltUrl)
+			if tariffDto.TariffAltUrl != nil {
+				tariffParams.TariffAltUrl = util.SqlNullString(tariffDto.TariffAltUrl)
 			}
 
 			updatedTariff, err := r.Repository.UpdateTariffByUid(ctx, tariffParams)
@@ -53,7 +54,7 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 
 			tariff = updatedTariff
 		} else {
-			tariffParams := NewCreateTariffParams(dto)
+			tariffParams := NewCreateTariffParams(tariffDto)
 			tariffParams.CredentialID = credential.ID
 			tariffParams.CountryCode = util.SqlNullString(countryCode)
 			tariffParams.PartyID = util.SqlNullString(partyID)
@@ -70,12 +71,12 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 			}
 		}
 
-		if dto.TariffAltText != nil {
-			r.replaceTariffAltText(ctx, tariff.ID, dto)
+		if tariffDto.TariffAltText != nil {
+			r.replaceTariffAltText(ctx, tariff.ID, tariffDto)
 		}
 
-		if dto.Elements != nil {
-			r.replaceElements(ctx, tariff, dto)
+		if tariffDto.Elements != nil {
+			r.replaceElements(ctx, tariff, tariffDto)
 		}
 
 		return &tariff
@@ -84,16 +85,16 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 	return nil
 }
 
-func (r *TariffResolver) ReplaceTariffsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrID *int64, dto []*TariffDto) {
-	for _, tariffDto := range dto {
+func (r *TariffResolver) ReplaceTariffsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrID *int64, tariffsDto []*dto.TariffDto) {
+	for _, tariffDto := range tariffsDto {
 		r.ReplaceTariffByIdentifier(ctx, credential, countryCode, partyID, *tariffDto.ID, cdrID, tariffDto)
 	}
 }
 
-func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int64, dto *TariffDto) {
+func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int64, tariffDto *dto.TariffDto) {
 	r.Repository.DeleteTariffAltTexts(ctx, tariffID)
 
-	for _, displayTextDto := range dto.TariffAltText {
+	for _, displayTextDto := range tariffDto.TariffAltText {
 		displayTextParams := displaytext.NewCreateDisplayTextParams(displayTextDto)
 		displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams)
 
@@ -115,6 +116,6 @@ func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int6
 	}
 }
 
-func (r *TariffResolver) replaceElements(ctx context.Context, tariff db.Tariff, dto *TariffDto) {
-	r.ElementResolver.ReplaceElements(ctx, tariff, dto.Elements)
+func (r *TariffResolver) replaceElements(ctx context.Context, tariff db.Tariff, tariffDto *dto.TariffDto) {
+	r.ElementResolver.ReplaceElements(ctx, tariff, tariffDto.Elements)
 }

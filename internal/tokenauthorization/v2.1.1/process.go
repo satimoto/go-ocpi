@@ -9,14 +9,15 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, dto *LocationReferencesDto) (*db.TokenAuthorization, error) {
+func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, locationReferencesDto *dto.LocationReferencesDto) (*db.TokenAuthorization, error) {
 	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
 	tokenAuthorizationParams.SigningKey = r.createTokenAuthorizationSigningKey()
 
-	if dto != nil {
-		tokenAuthorizationParams.LocationID = util.SqlNullString(dto.LocationID)
+	if locationReferencesDto != nil {
+		tokenAuthorizationParams.LocationID = util.SqlNullString(locationReferencesDto.LocationID)
 	}
 
 	tokenAuthorization, err := r.Repository.CreateTokenAuthorization(ctx, tokenAuthorizationParams)
@@ -27,14 +28,14 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		return nil, errors.New("error creating token authorization")
 	}
 
-	r.createTokenAuthorizationRelations(ctx, tokenAuthorization.ID, dto)
+	r.createTokenAuthorizationRelations(ctx, tokenAuthorization.ID, locationReferencesDto)
 
 	return &tokenAuthorization, nil
 }
 
-func (r *TokenAuthorizationResolver) createTokenAuthorizationRelations(ctx context.Context, tokenAuthorizationID int64, dto *LocationReferencesDto) {
-	if dto != nil {
-		for _, evseUid := range dto.EvseUids {
+func (r *TokenAuthorizationResolver) createTokenAuthorizationRelations(ctx context.Context, tokenAuthorizationID int64, locationReferencesDto *dto.LocationReferencesDto) {
+	if locationReferencesDto != nil {
+		for _, evseUid := range locationReferencesDto.EvseUids {
 			if evse, err := r.EvseResolver.Repository.GetEvseByUid(ctx, *evseUid); err == nil {
 				setTokenAuthorizationEvseParams := db.SetTokenAuthorizationEvseParams{
 					TokenAuthorizationID: tokenAuthorizationID,
@@ -48,7 +49,7 @@ func (r *TokenAuthorizationResolver) createTokenAuthorizationRelations(ctx conte
 					log.Printf("OCPI207: Params=%#v", setTokenAuthorizationEvseParams)
 				}
 
-				for _, connectorId := range dto.ConnectorIds {
+				for _, connectorId := range locationReferencesDto.ConnectorIds {
 					getConnectorByEvseParams := db.GetConnectorByEvseParams{
 						EvseID: evse.ID,
 						Uid:    *connectorId,

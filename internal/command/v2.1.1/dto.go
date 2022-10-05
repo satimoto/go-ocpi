@@ -2,53 +2,15 @@ package command
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"net/http"
-	"os"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi/internal/ocpitype"
-	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
-	"github.com/satimoto/go-ocpi/internal/version"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-type OcpiCommandResponseDto struct {
-	Data          *CommandResponseDto `json:"data,omitempty"`
-	StatusCode    int16               `json:"status_code"`
-	StatusMessage string              `json:"status_message"`
-	Timestamp     ocpitype.Time       `json:"timestamp"`
-}
-
-type CommandReservationDto struct {
-	ResponseUrl   *string         `json:"response_url"`
-	Token         *token.TokenDto `json:"token"`
-	ExpiryDate    *time.Time      `json:"expiry_date"`
-	ReservationID *int64          `json:"reservation_id"`
-	LocationID    *string         `json:"location_id"`
-	EvseUid       *string         `json:"evse_uid,omitempty"`
-}
-
-func (r *CommandReservationDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewCommandReservationDto(command db.CommandReservation) *CommandReservationDto {
-	responseUrl := fmt.Sprintf("%s/%s/commands/RESERVE_NOW/%v", os.Getenv("API_DOMAIN"), version.VERSION_2_1_1, command.ID)
-
-	return &CommandReservationDto{
-		ResponseUrl:   &responseUrl,
-		ExpiryDate:    &command.ExpiryDate,
-		ReservationID: &command.ReservationID,
-		LocationID:    &command.LocationID,
-		EvseUid:       util.NilString(command.EvseUid),
-	}
-}
-
-func (r *CommandResolver) CreateCommandReservationDto(ctx context.Context, command db.CommandReservation) *CommandReservationDto {
-	response := NewCommandReservationDto(command)
+func (r *CommandResolver) CreateCommandReservationDto(ctx context.Context, command db.CommandReservation) *dto.CommandReservationDto {
+	response := dto.NewCommandReservationDto(command)
 
 	token, err := r.TokenResolver.Repository.GetToken(ctx, command.TokenID)
 
@@ -63,39 +25,8 @@ func (r *CommandResolver) CreateCommandReservationDto(ctx context.Context, comma
 	return response
 }
 
-type CommandResponseDto struct {
-	Result *db.CommandResponseType `json:"result"`
-}
-
-func (r *CommandResponseDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-type CommandStartDto struct {
-	ResponseUrl     *string         `json:"response_url"`
-	Token           *token.TokenDto `json:"token"`
-	AuthorizationID *string         `json:"authorization_id,omitempty"`
-	LocationID      *string         `json:"location_id"`
-	EvseUid         *string         `json:"evse_uid,omitempty"`
-}
-
-func (r *CommandStartDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewCommandStartDto(command db.CommandStart) *CommandStartDto {
-	responseUrl := fmt.Sprintf("%s/%s/commands/START_SESSION/%v", os.Getenv("API_DOMAIN"), version.VERSION_2_1_1, command.ID)
-
-	return &CommandStartDto{
-		ResponseUrl:     &responseUrl,
-		AuthorizationID: util.NilString(command.AuthorizationID),
-		LocationID:      &command.LocationID,
-		EvseUid:         util.NilString(command.EvseUid),
-	}
-}
-
-func (r *CommandResolver) CreateCommandStartDto(ctx context.Context, command db.CommandStart) *CommandStartDto {
-	response := NewCommandStartDto(command)
+func (r *CommandResolver) CreateCommandStartDto(ctx context.Context, command db.CommandStart) *dto.CommandStartDto {
+	response := dto.NewCommandStartDto(command)
 
 	token, err := r.TokenResolver.Repository.GetToken(ctx, command.TokenID)
 
@@ -110,50 +41,10 @@ func (r *CommandResolver) CreateCommandStartDto(ctx context.Context, command db.
 	return response
 }
 
-type CommandStopDto struct {
-	ResponseUrl *string `json:"response_url"`
-	SessionID   *string `json:"session_id"`
+func (r *CommandResolver) CreateCommandStopDto(ctx context.Context, command db.CommandStop) *dto.CommandStopDto {
+	return dto.NewCommandStopDto(command)
 }
 
-func (r *CommandStopDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewCommandStopDto(command db.CommandStop) *CommandStopDto {
-	responseUrl := fmt.Sprintf("%s/%s/commands/STOP_SESSION/%v", os.Getenv("API_DOMAIN"), version.VERSION_2_1_1, command.ID)
-
-	return &CommandStopDto{
-		ResponseUrl: &responseUrl,
-		SessionID:   &command.SessionID,
-	}
-}
-
-func (r *CommandResolver) CreateCommandStopDto(ctx context.Context, command db.CommandStop) *CommandStopDto {
-	return NewCommandStopDto(command)
-}
-
-type CommandUnlockDto struct {
-	ResponseUrl *string `json:"response_url"`
-	LocationID  *string `json:"location_id"`
-	EvseUid     *string `json:"evse_uid"`
-	ConnectorID *string `json:"connector_id"`
-}
-
-func (r *CommandUnlockDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewCommandUnlockDto(command db.CommandUnlock) *CommandUnlockDto {
-	responseUrl := fmt.Sprintf("%s/%s/commands/UNLOCK_CONNECTOR/%v", os.Getenv("API_DOMAIN"), version.VERSION_2_1_1, command.ID)
-
-	return &CommandUnlockDto{
-		ResponseUrl: &responseUrl,
-		LocationID:  &command.LocationID,
-		EvseUid:     &command.EvseUid,
-		ConnectorID: &command.ConnectorID,
-	}
-}
-
-func (r *CommandResolver) CreateCommandUnlockDto(ctx context.Context, command db.CommandUnlock) *CommandUnlockDto {
-	return NewCommandUnlockDto(command)
+func (r *CommandResolver) CreateCommandUnlockDto(ctx context.Context, command db.CommandUnlock) *dto.CommandUnlockDto {
+	return dto.NewCommandUnlockDto(command)
 }

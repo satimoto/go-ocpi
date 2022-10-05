@@ -3,35 +3,36 @@ package elementrestriction
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func NewCreateElementRestrictionParams(dto *ElementRestrictionDto) db.CreateElementRestrictionParams {
+func NewCreateElementRestrictionParams(elementRestrictionDto *coreDto.ElementRestrictionDto) db.CreateElementRestrictionParams {
 	return db.CreateElementRestrictionParams{
-		StartTime:   util.SqlNullString(dto.StartTime),
-		EndTime:     util.SqlNullString(dto.EndTime),
-		StartDate:   util.SqlNullString(dto.StartDate),
-		EndDate:     util.SqlNullString(dto.EndDate),
-		MinKwh:      util.SqlNullFloat64(dto.MinKwh),
-		MaxKwh:      util.SqlNullFloat64(dto.MaxKwh),
-		MinPower:    util.SqlNullFloat64(dto.MinPower),
-		MaxPower:    util.SqlNullFloat64(dto.MaxPower),
-		MinDuration: util.SqlNullInt32(dto.MinDuration),
-		MaxDuration: util.SqlNullInt32(dto.MaxDuration),
+		StartTime:   util.SqlNullString(elementRestrictionDto.StartTime),
+		EndTime:     util.SqlNullString(elementRestrictionDto.EndTime),
+		StartDate:   util.SqlNullString(elementRestrictionDto.StartDate),
+		EndDate:     util.SqlNullString(elementRestrictionDto.EndDate),
+		MinKwh:      util.SqlNullFloat64(elementRestrictionDto.MinKwh),
+		MaxKwh:      util.SqlNullFloat64(elementRestrictionDto.MaxKwh),
+		MinPower:    util.SqlNullFloat64(elementRestrictionDto.MinPower),
+		MaxPower:    util.SqlNullFloat64(elementRestrictionDto.MaxPower),
+		MinDuration: util.SqlNullInt32(elementRestrictionDto.MinDuration),
+		MaxDuration: util.SqlNullInt32(elementRestrictionDto.MaxDuration),
 	}
 }
 
-func NewUpdateElementRestrictionParams(id int64, dto *ElementRestrictionDto) db.UpdateElementRestrictionParams {
+func NewUpdateElementRestrictionParams(id int64, elementRestrictionDto *coreDto.ElementRestrictionDto) db.UpdateElementRestrictionParams {
 	return db.UpdateElementRestrictionParams{
 		ID:          id,
-		StartTime:   util.SqlNullString(dto.StartTime),
-		EndTime:     util.SqlNullString(dto.EndTime),
-		StartDate:   util.SqlNullString(dto.StartDate),
-		EndDate:     util.SqlNullString(dto.EndDate),
-		MinKwh:      util.SqlNullFloat64(dto.MinKwh),
-		MaxKwh:      util.SqlNullFloat64(dto.MaxKwh),
-		MinPower:    util.SqlNullFloat64(dto.MinPower),
-		MaxPower:    util.SqlNullFloat64(dto.MaxPower),
-		MinDuration: util.SqlNullInt32(dto.MinDuration),
-		MaxDuration: util.SqlNullInt32(dto.MaxDuration),
+		StartTime:   util.SqlNullString(elementRestrictionDto.StartTime),
+		EndTime:     util.SqlNullString(elementRestrictionDto.EndTime),
+		StartDate:   util.SqlNullString(elementRestrictionDto.StartDate),
+		EndDate:     util.SqlNullString(elementRestrictionDto.EndDate),
+		MinKwh:      util.SqlNullFloat64(elementRestrictionDto.MinKwh),
+		MaxKwh:      util.SqlNullFloat64(elementRestrictionDto.MaxKwh),
+		MinPower:    util.SqlNullFloat64(elementRestrictionDto.MinPower),
+		MaxPower:    util.SqlNullFloat64(elementRestrictionDto.MaxPower),
+		MinDuration: util.SqlNullInt32(elementRestrictionDto.MinDuration),
+		MaxDuration: util.SqlNullInt32(elementRestrictionDto.MaxDuration),
 	}
 }

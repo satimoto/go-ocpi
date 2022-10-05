@@ -7,12 +7,13 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func (r *TariffRestrictionResolver) ReplaceTariffByIdentifierRestriction(ctx context.Context, id *sql.NullInt64, dto *TariffRestrictionDto) {
-	if dto != nil {
+func (r *TariffRestrictionResolver) ReplaceTariffByIdentifierRestriction(ctx context.Context, id *sql.NullInt64, tariffRestrictionDto *coreDto.TariffRestrictionDto) {
+	if tariffRestrictionDto != nil {
 		if id.Valid {
-			tariffRestrictionParams := NewUpdateTariffRestrictionParams(id.Int64, dto)
+			tariffRestrictionParams := NewUpdateTariffRestrictionParams(id.Int64, tariffRestrictionDto)
 			_, err := r.Repository.UpdateTariffRestriction(ctx, tariffRestrictionParams)
 
 			if err != nil {
@@ -21,7 +22,7 @@ func (r *TariffRestrictionResolver) ReplaceTariffByIdentifierRestriction(ctx con
 				return
 			}
 		} else {
-			tariffRestrictionParams := NewCreateTariffRestrictionParams(dto)
+			tariffRestrictionParams := NewCreateTariffRestrictionParams(tariffRestrictionDto)
 			tariffRestriction, err := r.Repository.CreateTariffRestriction(ctx, tariffRestrictionParams)
 				
 			if err != nil {
@@ -33,20 +34,20 @@ func (r *TariffRestrictionResolver) ReplaceTariffByIdentifierRestriction(ctx con
 			id.Scan(tariffRestriction.ID)
 		}
 
-		if dto.DayOfWeek != nil {
-			r.replaceWeekdays(ctx, id.Int64, dto)
+		if tariffRestrictionDto.DayOfWeek != nil {
+			r.replaceWeekdays(ctx, id.Int64, tariffRestrictionDto)
 		}
 	}
 }
 
-func (r *TariffRestrictionResolver) replaceWeekdays(ctx context.Context, tariffRestrictionID int64, dto *TariffRestrictionDto) {
+func (r *TariffRestrictionResolver) replaceWeekdays(ctx context.Context, tariffRestrictionID int64, tariffRestrictionDto *coreDto.TariffRestrictionDto) {
 	r.Repository.UnsetTariffRestrictionWeekdays(ctx, tariffRestrictionID)
 
 	if weekdays, err := r.Repository.ListWeekdays(ctx); err == nil {
 		filteredWeekdays := []db.Weekday{}
 
 		for _, weekday := range weekdays {
-			if util.StringsContainString(dto.DayOfWeek, weekday.Text) {
+			if util.StringsContainString(tariffRestrictionDto.DayOfWeek, weekday.Text) {
 				filteredWeekdays = append(filteredWeekdays, weekday)
 			}
 		}

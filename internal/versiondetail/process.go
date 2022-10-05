@@ -7,16 +7,17 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *VersionDetailResolver) ReplaceVersionEndpoints(ctx context.Context, versionID int64, dto *VersionDetailDto) []*db.VersionEndpoint {
+func (r *VersionDetailResolver) ReplaceVersionEndpoints(ctx context.Context, versionID int64, versionDetailDto *coreDto.VersionDetailDto) []*db.VersionEndpoint {
 	endpoints := []*db.VersionEndpoint{}
 
-	if dto != nil {
+	if versionDetailDto != nil {
 		r.Repository.DeleteVersionEndpoints(ctx, versionID)
 
-		for _, endpointDto := range dto.Endpoints {
+		for _, endpointDto := range versionDetailDto.Endpoints {
 			endpointParams := NewCreateVersionEndpointParams(versionID, endpointDto)
 			endpoint, err := r.Repository.CreateVersionEndpoint(ctx, endpointParams)
 

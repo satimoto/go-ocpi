@@ -7,7 +7,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	tokenauthorization "github.com/satimoto/go-ocpi/internal/tokenauthorization/v2.1.1"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 	ocpiCommand "github.com/satimoto/go-ocpi/pkg/ocpi/command"
 )
@@ -113,7 +113,7 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 			return nil, errors.New("invalid credential token")
 		}
 
-		locationReferencesDto := tokenauthorization.NewLocationReferencesDto(location.Uid)
+		locationReferencesDto := dto.NewLocationReferencesDto(location.Uid)
 
 		if len(input.EvseUid) > 0 {
 			locationReferencesDto.EvseUids = []*string{&input.EvseUid}

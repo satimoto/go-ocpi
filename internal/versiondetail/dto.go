@@ -3,45 +3,23 @@ package versiondetail
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"os"
 
-	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	"github.com/satimoto/go-ocpi/internal/version"
 )
 
-type OcpiVersionDetailDto struct {
-	Data          *VersionDetailDto `json:"data,omitempty"`
-	StatusCode    int16             `json:"status_code"`
-	StatusMessage string            `json:"status_message"`
-	Timestamp     ocpitype.Time     `json:"timestamp"`
-}
-
-type VersionDetailDto struct {
-	Version   string         `json:"version"`
-	Endpoints []*EndpointDto `json:"endpoints"`
-}
-
-func (r *VersionDetailDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-type EndpointDto struct {
-	Identifier string `json:"identifier"`
-	Url        string `json:"url"`
-}
-
-func (r *VersionDetailResolver) CreateEndpointDto(ctx context.Context, apiDomain string, identifier string) *EndpointDto {
-	return &EndpointDto{
+func (r *VersionDetailResolver) CreateEndpointDto(ctx context.Context, apiDomain string, identifier string) *coreDto.EndpointDto {
+	return &coreDto.EndpointDto{
 		Identifier: identifier,
 		Url:        fmt.Sprintf("%s/%s/%s", apiDomain, version.VERSION_2_1_1, identifier),
 	}
 }
 
-func (r *VersionDetailResolver) CreateVersionDetailDto(ctx context.Context) *VersionDetailDto {
+func (r *VersionDetailResolver) CreateVersionDetailDto(ctx context.Context) *coreDto.VersionDetailDto {
 	apiDomain := os.Getenv("API_DOMAIN")
 
-	var endpoints []*EndpointDto
+	var endpoints []*coreDto.EndpointDto
 	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "cdrs"))
 	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "credentials"))
 	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "commands"))
@@ -50,7 +28,7 @@ func (r *VersionDetailResolver) CreateVersionDetailDto(ctx context.Context) *Ver
 	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "tariffs"))
 	endpoints = append(endpoints, r.CreateEndpointDto(ctx, apiDomain, "tokens"))
 
-	return &VersionDetailDto{
+	return &coreDto.VersionDetailDto{
 		Version:   version.VERSION_2_1_1,
 		Endpoints: endpoints,
 	}

@@ -10,6 +10,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
 	ocpiVersion "github.com/satimoto/go-ocpi/internal/version"
@@ -91,27 +92,27 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 	return &cred, nil
 }
 
-func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential db.Credential, dto *CredentialDto) (*db.Credential, error) {
-	if dto != nil {
+func (r *CredentialResolver) ReplaceCredential(ctx context.Context, credential db.Credential, credentialDto *dto.CredentialDto) (*db.Credential, error) {
+	if credentialDto != nil {
 		token := credential.ClientToken.String
 		url := credential.Url
 		partyID := credential.PartyID
 		countryCode := credential.CountryCode
 
-		if dto.Token != nil {
-			token = *dto.Token
+		if credentialDto.Token != nil {
+			token = *credentialDto.Token
 		}
 
-		if dto.Url != nil {
-			url = *dto.Url
+		if credentialDto.Url != nil {
+			url = *credentialDto.Url
 		}
 
-		if dto.CountryCode != nil {
-			countryCode = *dto.CountryCode
+		if credentialDto.CountryCode != nil {
+			countryCode = *credentialDto.CountryCode
 		}
 
-		if dto.PartyID != nil {
-			partyID = *dto.PartyID
+		if credentialDto.PartyID != nil {
+			partyID = *credentialDto.PartyID
 		}
 
 		return r.RegisterCredential(ctx, credential, token, url, countryCode, partyID)

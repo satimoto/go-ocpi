@@ -7,11 +7,12 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/util"
 )
 
-func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, uid string, dto *ConnectorDto) *db.Connector {
-	if dto != nil {
+func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, uid string, connectorDto *dto.ConnectorDto) *db.Connector {
+	if connectorDto != nil {
 		connector, err := r.Repository.GetConnectorByEvse(ctx, db.GetConnectorByEvseParams{
 			EvseID: evse.ID,
 			Uid:    uid,
@@ -20,35 +21,35 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 		if err == nil {
 			connectorParams := param.NewUpdateConnectorByEvseParams(connector)
 
-			if dto.Standard != nil {
-				connectorParams.Standard = *dto.Standard
+			if connectorDto.Standard != nil {
+				connectorParams.Standard = *connectorDto.Standard
 			}
 
-			if dto.Format != nil {
-				connectorParams.Format = *dto.Format
+			if connectorDto.Format != nil {
+				connectorParams.Format = *connectorDto.Format
 			}
 
-			if dto.PowerType != nil {
-				connectorParams.PowerType = *dto.PowerType
+			if connectorDto.PowerType != nil {
+				connectorParams.PowerType = *connectorDto.PowerType
 			}
 
-			if dto.Amperage != nil {
-				connectorParams.Amperage = *dto.Amperage
+			if connectorDto.Amperage != nil {
+				connectorParams.Amperage = *connectorDto.Amperage
 			}
 
-			if dto.Voltage != nil {
-				connectorParams.Voltage = *dto.Voltage
+			if connectorDto.Voltage != nil {
+				connectorParams.Voltage = *connectorDto.Voltage
 			}
 
-			if dto.TariffID != nil {
-				connectorParams.TariffID = dbUtil.SqlNullString(dto.TariffID)
+			if connectorDto.TariffID != nil {
+				connectorParams.TariffID = dbUtil.SqlNullString(connectorDto.TariffID)
 			}
 
-			if dto.LastUpdated != nil {
-				connectorParams.LastUpdated = *dto.LastUpdated
+			if connectorDto.LastUpdated != nil {
+				connectorParams.LastUpdated = *connectorDto.LastUpdated
 			}
 
-			connectorParams.Identifier = dbUtil.SqlNullString(GetConnectorIdentifier(evse, dto))
+			connectorParams.Identifier = dbUtil.SqlNullString(GetConnectorIdentifier(evse, connectorDto))
 			connectorParams.Wattage = util.CalculateWattage(connectorParams.PowerType, connectorParams.Voltage, connectorParams.Amperage)
 			updatedConnector, err := r.Repository.UpdateConnectorByEvse(ctx, connectorParams)
 
@@ -60,7 +61,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 
 			connector = updatedConnector
 		} else {
-			connectorParams := NewCreateConnectorParams(evse, dto)
+			connectorParams := NewCreateConnectorParams(evse, connectorDto)
 			connector, err = r.Repository.CreateConnector(ctx, connectorParams)
 
 			if err != nil {
@@ -76,10 +77,10 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 	return nil
 }
 
-func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evse db.Evse, dto []*ConnectorDto) {
-	for _, connector := range dto {
-		if connector.Id != nil {
-			r.ReplaceConnector(ctx, evse, *connector.Id, connector)
+func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evse db.Evse, connectorsDto []*dto.ConnectorDto) {
+	for _, connectorDto := range connectorsDto {
+		if connectorDto.Id != nil {
+			r.ReplaceConnector(ctx, evse, *connectorDto.Id, connectorDto)
 		}
 	}
 }

@@ -3,14 +3,15 @@ package image
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func NewCreateImageParams(dto *ImageDto) db.CreateImageParams {
+func NewCreateImageParams(imageDto *coreDto.ImageDto) db.CreateImageParams {
 	return db.CreateImageParams{
-		Url:       dto.Url,
-		Thumbnail: util.SqlNullString(dto.Thumbnail),
-		Category:  dto.Category,
-		Width:     util.SqlNullInt32(dto.Width),
-		Height:    util.SqlNullInt32(dto.Height),
+		Url:       imageDto.Url,
+		Thumbnail: util.SqlNullString(imageDto.Thumbnail),
+		Category:  imageDto.Category,
+		Width:     util.SqlNullInt32(imageDto.Width),
+		Height:    util.SqlNullInt32(imageDto.Height),
 	}
 }

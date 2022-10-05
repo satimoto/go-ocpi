@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestEvseUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		dto := evse.EvseDto{}
+		evseDto := dto.EvseDto{}
 		request := []byte(`{
 			"uid": null,
 			"status": null,
@@ -23,14 +23,14 @@ func TestEvseUnmarshal(t *testing.T) {
 			"last_updated": null
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &evseDto)
+		responseJson, _ := json.Marshal(evseDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Status Schedules", func(t *testing.T) {
-		dto := evse.EvseDto{}
+		evseDto := dto.EvseDto{}
 		request := []byte(`{
 			"uid": "3257",
 			"evse_id": "BE-BEC-E041503002",
@@ -57,14 +57,14 @@ func TestEvseUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &evseDto)
+		responseJson, _ := json.Marshal(evseDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Capabilities", func(t *testing.T) {
-		dto := evse.EvseDto{}
+		evseDto := dto.EvseDto{}
 		request := []byte(`{
 			"uid": "3257",
 			"evse_id": "BE-BEC-E041503002",
@@ -78,14 +78,14 @@ func TestEvseUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &evseDto)
+		responseJson, _ := json.Marshal(evseDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Connectors", func(t *testing.T) {
-		dto := evse.EvseDto{}
+		evseDto := dto.EvseDto{}
 		request := []byte(`{
 			"uid": "3256",
 			"evse_id": "BE-BEC-E041503001",
@@ -119,8 +119,8 @@ func TestEvseUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-28T08:12:01Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &evseDto)
+		responseJson, _ := json.Marshal(evseDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

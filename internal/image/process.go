@@ -5,11 +5,12 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func (r *ImageResolver) CreateImage(ctx context.Context, dto *ImageDto) *int64 {
-	if dto != nil {
-		imageParams := NewCreateImageParams(dto)
+func (r *ImageResolver) CreateImage(ctx context.Context, imageDto *coreDto.ImageDto) *int64 {
+	if imageDto != nil {
+		imageParams := NewCreateImageParams(imageDto)
 		image, err := r.Repository.CreateImage(ctx, imageParams)
 		
 		if err != nil {

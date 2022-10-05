@@ -15,6 +15,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
 	"github.com/satimoto/go-ocpi/pkg/evid"
@@ -47,7 +48,7 @@ func (r *TokenResolver) GenerateAuthID(ctx context.Context) (string, error) {
 	return "", errors.New("error generating AuthID")
 }
 
-func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid string, dto *TokenDto) {
+func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid string, tokenDto *dto.TokenDto) {
 	credentials, err := r.Repository.ListCredentials(ctx)
 
 	if err != nil {
@@ -77,11 +78,11 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 			}
 
 			header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-			dtoBytes, err := json.Marshal(dto)
+			dtoBytes, err := json.Marshal(tokenDto)
 
 			if err != nil {
 				dbUtil.LogOnError("OCPI198", "Error marshalling dto", err)
-				log.Printf("OCPI198: Dto=%#v", dto)
+				log.Printf("OCPI198: Dto=%#v", tokenDto)
 				continue
 			}
 
@@ -113,44 +114,44 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 	}
 }
 
-func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAllowed db.TokenAllowedType, uid string, dto *TokenDto) *db.Token {
-	if dto != nil {
+func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAllowed db.TokenAllowedType, uid string, tokenDto *dto.TokenDto) *db.Token {
+	if tokenDto != nil {
 		token, err := r.Repository.GetTokenByUid(ctx, uid)
 
 		if err == nil {
 			tokenParams := param.NewUpdateTokenByUidParams(token)
 			tokenParams.Allowed = tokenAllowed
 
-			if dto.AuthID != nil {
-				tokenParams.AuthID = *dto.AuthID
+			if tokenDto.AuthID != nil {
+				tokenParams.AuthID = *tokenDto.AuthID
 			}
 
-			if dto.Issuer != nil {
-				tokenParams.Issuer = *dto.Issuer
+			if tokenDto.Issuer != nil {
+				tokenParams.Issuer = *tokenDto.Issuer
 			}
 
-			if dto.Language != nil {
-				tokenParams.Language = dbUtil.SqlNullString(dto.Language)
+			if tokenDto.Language != nil {
+				tokenParams.Language = dbUtil.SqlNullString(tokenDto.Language)
 			}
 
-			if dto.LastUpdated != nil {
-				tokenParams.LastUpdated = *dto.LastUpdated
+			if tokenDto.LastUpdated != nil {
+				tokenParams.LastUpdated = *tokenDto.LastUpdated
 			}
 
-			if dto.Type != nil {
-				tokenParams.Type = *dto.Type
+			if tokenDto.Type != nil {
+				tokenParams.Type = *tokenDto.Type
 			}
 
-			if dto.Valid != nil {
-				tokenParams.Valid = *dto.Valid
+			if tokenDto.Valid != nil {
+				tokenParams.Valid = *tokenDto.Valid
 			}
 
-			if dto.VisualNumber != nil {
-				tokenParams.VisualNumber = dbUtil.SqlNullString(dto.VisualNumber)
+			if tokenDto.VisualNumber != nil {
+				tokenParams.VisualNumber = dbUtil.SqlNullString(tokenDto.VisualNumber)
 			}
 
-			if dto.Whitelist != nil {
-				tokenParams.Whitelist = *dto.Whitelist
+			if tokenDto.Whitelist != nil {
+				tokenParams.Whitelist = *tokenDto.Whitelist
 			}
 
 			updatedToken, err := r.Repository.UpdateTokenByUid(ctx, tokenParams)
@@ -162,9 +163,9 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAll
 			}
 
 			token = updatedToken
-			r.PushToken(ctx, http.MethodPatch, token.Uid, dto)
+			r.PushToken(ctx, http.MethodPatch, token.Uid, tokenDto)
 		} else {
-			tokenParams := NewCreateTokenParams(dto)
+			tokenParams := NewCreateTokenParams(tokenDto)
 			tokenParams.Allowed = tokenAllowed
 			tokenParams.UserID = userId
 
@@ -176,7 +177,7 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAll
 				return nil
 			}
 
-			r.PushToken(ctx, http.MethodPut, token.Uid, dto)
+			r.PushToken(ctx, http.MethodPut, token.Uid, tokenDto)
 		}
 
 		return &token

@@ -6,14 +6,15 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func (r *BusinessDetailResolver) ReplaceBusinessDetail(ctx context.Context, id *sql.NullInt64, dto *BusinessDetailDto) {
-	if dto != nil {
-		logoID := r.ImageResolver.CreateImage(ctx, dto.Logo)
+func (r *BusinessDetailResolver) ReplaceBusinessDetail(ctx context.Context, id *sql.NullInt64, businessDetailDto *coreDto.BusinessDetailDto) {
+	if businessDetailDto != nil {
+		logoID := r.ImageResolver.CreateImage(ctx, businessDetailDto.Logo)
 
 		if id.Valid {
-			businessDetailParams := NewUpdateBusinessDetailParams(id.Int64, dto)
+			businessDetailParams := NewUpdateBusinessDetailParams(id.Int64, businessDetailDto)
 			businessDetailParams.LogoID = util.SqlNullInt64(logoID)
 
 			_, err := r.Repository.UpdateBusinessDetail(ctx, businessDetailParams)
@@ -23,7 +24,7 @@ func (r *BusinessDetailResolver) ReplaceBusinessDetail(ctx context.Context, id *
 				log.Printf("OCPI272: Params=%#v", businessDetailParams)
 			}	
 		} else {
-			businessDetailParams := NewCreateBusinessDetailParams(dto)
+			businessDetailParams := NewCreateBusinessDetailParams(businessDetailDto)
 			businessDetailParams.LogoID = util.SqlNullInt64(logoID)
 
 			businessDetail, err := r.Repository.CreateBusinessDetail(ctx, businessDetailParams)

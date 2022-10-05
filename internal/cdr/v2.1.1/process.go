@@ -7,23 +7,24 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi/pkg/ocpi"
 	ocpiCdr "github.com/satimoto/go-ocpi/pkg/ocpi/cdr"
 )
 
-func (r *CdrResolver) ReplaceCdr(ctx context.Context, credential db.Credential, uid string, dto *CdrDto) *db.Cdr {
-	if dto != nil {
-		countryCode, partyID := evse.GetEvsesIdentity(dto.Location.Evses)
+func (r *CdrResolver) ReplaceCdr(ctx context.Context, credential db.Credential, uid string, cdrDto *dto.CdrDto) *db.Cdr {
+	if cdrDto != nil {
+		countryCode, partyID := evse.GetEvsesIdentity(cdrDto.Location, cdrDto.Location.Evses)
 
-		return r.ReplaceCdrByIdentifier(ctx, credential, countryCode, partyID, uid, dto)
+		return r.ReplaceCdrByIdentifier(ctx, credential, countryCode, partyID, uid, cdrDto)
 	}
 
 	return nil
 }
 
-func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, dto *CdrDto) *db.Cdr {
-	if dto != nil {
+func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrDto *dto.CdrDto) *db.Cdr {
+	if cdrDto != nil {
 		cdr, err := r.Repository.GetCdrByUid(ctx, uid)
 
 		if err == nil {
@@ -32,17 +33,17 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			return nil
 		}
 
-		cdrParams := NewCreateCdrParams(dto)
+		cdrParams := NewCreateCdrParams(cdrDto)
 		cdrParams.CountryCode = util.SqlNullString(countryCode)
 		cdrParams.PartyID = util.SqlNullString(partyID)
 		cdrParams.CredentialID = credential.ID
 
-		if dto.AuthID != nil {
-			token, err := r.TokenRepository.GetTokenByAuthID(ctx, *dto.AuthID)
+		if cdrDto.AuthID != nil {
+			token, err := r.TokenRepository.GetTokenByAuthID(ctx, *cdrDto.AuthID)
 
 			if err != nil {
 				util.LogOnError("OCPI020", "Error retrieving token", err)
-				log.Printf("OCPI020: AuthID=%v", *dto.AuthID)
+				log.Printf("OCPI020: AuthID=%v", *cdrDto.AuthID)
 				return nil
 			}
 
@@ -50,17 +51,17 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			cdrParams.UserID = token.UserID
 		}
 
-		if dto.Location != nil {
-			location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *dto.Location.ID)
+		if cdrDto.Location != nil {
+			location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *cdrDto.Location.ID)
 
 			if err != nil {
 				util.LogOnError("OCPI021", "Error retrieving location", err)
-				log.Printf("OCPI021: Uid=%v", *dto.Location.ID)
+				log.Printf("OCPI021: Uid=%v", *cdrDto.Location.ID)
 			} else {
 				cdrParams.LocationID = location.ID
 			}
 
-			evseDto := dto.Location.Evses[0]
+			evseDto := cdrDto.Location.Evses[0]
 			evse, err := r.LocationResolver.EvseResolver.Repository.GetEvseByUid(ctx, *evseDto.Uid)
 
 			if err != nil {
@@ -85,8 +86,8 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			}
 		}
 
-		if dto.SignedData != nil {
-			if calibration := r.CalibrationResolver.CreateCalibration(ctx, dto.SignedData); calibration != nil {
+		if cdrDto.SignedData != nil {
+			if calibration := r.CalibrationResolver.CreateCalibration(ctx, cdrDto.SignedData); calibration != nil {
 				cdrParams.CalibrationID = util.SqlNullInt64(calibration.ID)
 			}
 		}
@@ -99,12 +100,12 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			return nil
 		}
 
-		if dto.ChargingPeriods != nil {
-			r.createChargingPeriods(ctx, cdr.ID, dto)
+		if cdrDto.ChargingPeriods != nil {
+			r.createChargingPeriods(ctx, cdr.ID, cdrDto)
 		}
 
-		if dto.Tariffs != nil {
-			r.replaceTariffs(ctx, credential, countryCode, partyID, &cdr.ID, dto)
+		if cdrDto.Tariffs != nil {
+			r.replaceTariffs(ctx, credential, countryCode, partyID, &cdr.ID, cdrDto)
 		}
 
 		node, err := r.NodeRepository.GetNodeByUserID(ctx, cdr.UserID)
@@ -146,20 +147,20 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 	return nil
 }
 
-func (r *CdrResolver) ReplaceCdrs(ctx context.Context, credential db.Credential, dto []*CdrDto) {
-	for _, cdrDto := range dto {
+func (r *CdrResolver) ReplaceCdrs(ctx context.Context, credential db.Credential, cdrsDto []*dto.CdrDto) {
+	for _, cdrDto := range cdrsDto {
 		r.ReplaceCdr(ctx, credential, *cdrDto.ID, cdrDto)
 	}
 }
 
-func (r *CdrResolver) ReplaceCdrsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, dto []*CdrDto) {
-	for _, cdrDto := range dto {
+func (r *CdrResolver) ReplaceCdrsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrsDto []*dto.CdrDto) {
+	for _, cdrDto := range cdrsDto {
 		r.ReplaceCdrByIdentifier(ctx, credential, countryCode, partyID, *cdrDto.ID, cdrDto)
 	}
 }
 
-func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, dto *CdrDto) {
-	for _, chargingPeriodDto := range dto.ChargingPeriods {
+func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, cdrDto *dto.CdrDto) {
+	for _, chargingPeriodDto := range cdrDto.ChargingPeriods {
 		chargingPeriod := r.ChargingPeriodResolver.ReplaceChargingPeriod(ctx, chargingPeriodDto)
 
 		if chargingPeriod != nil {
@@ -177,8 +178,8 @@ func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, dt
 	}
 }
 
-func (r *CdrResolver) replaceTariffs(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrID *int64, dto *CdrDto) {
-	for _, tariffDto := range dto.Tariffs {
+func (r *CdrResolver) replaceTariffs(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrID *int64, cdrDto *dto.CdrDto) {
+	for _, tariffDto := range cdrDto.Tariffs {
 		r.TariffResolver.ReplaceTariffByIdentifier(ctx, credential, countryCode, partyID, *tariffDto.ID, cdrID, tariffDto)
 	}
 }

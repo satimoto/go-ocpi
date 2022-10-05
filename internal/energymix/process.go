@@ -6,12 +6,13 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func (r *EnergyMixResolver) ReplaceEnergyMix(ctx context.Context, id *sql.NullInt64, dto *EnergyMixDto) {
-	if dto != nil {
+func (r *EnergyMixResolver) ReplaceEnergyMix(ctx context.Context, id *sql.NullInt64, energyMixDto *coreDto.EnergyMixDto) {
+	if energyMixDto != nil {
 		if id.Valid {
-			energyMixParams := NewUpdateEnergyMixParams(id.Int64, dto)
+			energyMixParams := NewUpdateEnergyMixParams(id.Int64, energyMixDto)
 			_, err := r.Repository.UpdateEnergyMix(ctx, energyMixParams)
 
 			if err != nil {
@@ -19,7 +20,7 @@ func (r *EnergyMixResolver) ReplaceEnergyMix(ctx context.Context, id *sql.NullIn
 				log.Printf("OCPI096: Params=%#v", energyMixParams)
 			}
 		} else {
-			energyMixParams := NewCreateEnergyMixParams(dto)
+			energyMixParams := NewCreateEnergyMixParams(energyMixDto)
 			energyMix, err := r.Repository.CreateEnergyMix(ctx, energyMixParams)
 
 			if err != nil {
@@ -31,15 +32,15 @@ func (r *EnergyMixResolver) ReplaceEnergyMix(ctx context.Context, id *sql.NullIn
 			id.Scan(energyMix.ID)
 		}
 
-		r.ReplaceEnergySources(ctx, id.Int64, *dto)
-		r.ReplaceEnvironmentalImpacts(ctx, id.Int64, *dto)
+		r.ReplaceEnergySources(ctx, id.Int64, *energyMixDto)
+		r.ReplaceEnvironmentalImpacts(ctx, id.Int64, *energyMixDto)
 	}
 }
 
-func (r *EnergyMixResolver) ReplaceEnergySources(ctx context.Context, energyMixID int64, dto EnergyMixDto) {
+func (r *EnergyMixResolver) ReplaceEnergySources(ctx context.Context, energyMixID int64, energyMixDto coreDto.EnergyMixDto) {
 	r.Repository.DeleteEnergySources(ctx, energyMixID)
 
-	for _, energySource := range dto.EnergySources {
+	for _, energySource := range energyMixDto.EnergySources {
 		energySourceParams := NewCreateEnergySourceParams(energyMixID, energySource)
 		_, err := r.Repository.CreateEnergySource(ctx, energySourceParams)
 
@@ -50,10 +51,10 @@ func (r *EnergyMixResolver) ReplaceEnergySources(ctx context.Context, energyMixI
 	}
 }
 
-func (r *EnergyMixResolver) ReplaceEnvironmentalImpacts(ctx context.Context, energyMixID int64, dto EnergyMixDto) {
+func (r *EnergyMixResolver) ReplaceEnvironmentalImpacts(ctx context.Context, energyMixID int64, energyMixDto coreDto.EnergyMixDto) {
 	r.Repository.DeleteEnvironmentalImpacts(ctx, energyMixID)
 
-	for _, environImpact := range dto.EnvironImpact {
+	for _, environImpact := range energyMixDto.EnvironImpact {
 		environImpactParams := NewCreateEnvironmentalImpactParams(energyMixID, environImpact)
 		_, err := r.Repository.CreateEnvironmentalImpact(ctx, environImpactParams)
 

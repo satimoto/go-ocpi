@@ -7,12 +7,13 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command db.CommandReservation, dto *CommandResponseDto) {
-	if dto != nil {
+func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command db.CommandReservation, commandResponseDto *dto.CommandResponseDto) {
+	if commandResponseDto != nil {
 		commandParams := param.NewUpdateCommandReservationParams(command)
-		commandParams.Status = *dto.Result
+		commandParams.Status = *commandResponseDto.Result
 
 		_, err := r.Repository.UpdateCommandReservation(ctx, commandParams)
 
@@ -23,10 +24,10 @@ func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command 
 	}
 }
 
-func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.CommandStart, dto *CommandResponseDto) {
-	if dto != nil {
+func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.CommandStart, commandResponseDto *dto.CommandResponseDto) {
+	if commandResponseDto != nil {
 		commandParams := param.NewUpdateCommandStartParams(command)
-		commandParams.Status = *dto.Result
+		commandParams.Status = *commandResponseDto.Result
 
 		_, err := r.Repository.UpdateCommandStart(ctx, commandParams)
 
@@ -37,10 +38,10 @@ func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.Com
 	}
 }
 
-func (r *CommandResolver) UpdateCommandStop(ctx context.Context, command db.CommandStop, dto *CommandResponseDto) {
-	if dto != nil {
+func (r *CommandResolver) UpdateCommandStop(ctx context.Context, command db.CommandStop, commandResponseDto *dto.CommandResponseDto) {
+	if commandResponseDto != nil {
 		commandParams := param.NewUpdateCommandStopParams(command)
-		commandParams.Status = *dto.Result
+		commandParams.Status = *commandResponseDto.Result
 
 		_, err := r.Repository.UpdateCommandStop(ctx, commandParams)
 
@@ -51,10 +52,10 @@ func (r *CommandResolver) UpdateCommandStop(ctx context.Context, command db.Comm
 	}
 }
 
-func (r *CommandResolver) UpdateCommandUnlock(ctx context.Context, command db.CommandUnlock, dto *CommandResponseDto) {
-	if dto != nil {
+func (r *CommandResolver) UpdateCommandUnlock(ctx context.Context, command db.CommandUnlock, commandResponseDto *dto.CommandResponseDto) {
+	if commandResponseDto != nil {
 		commandParams := param.NewUpdateCommandUnlockParams(command)
-		commandParams.Status = *dto.Result
+		commandParams.Status = *commandResponseDto.Result
 
 		_, err := r.Repository.UpdateCommandUnlock(ctx, commandParams)
 

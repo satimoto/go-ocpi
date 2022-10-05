@@ -7,10 +7,11 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elementID int64, tariff db.Tariff, dto []*PriceComponentDto) {
-	for _, priceComponentDto := range dto {
+func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elementID int64, tariff db.Tariff, priceComponentsDto []*coreDto.PriceComponentDto) {
+	for _, priceComponentDto := range priceComponentsDto {
 		priceRoundingID := util.SqlNullInt64(nil)
 		stepRoundingID := util.SqlNullInt64(nil)
 
@@ -36,17 +37,17 @@ func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elem
 	}
 }
 
-func (r *PriceComponentResolver) createPriceComponentRounding(ctx context.Context, id *sql.NullInt64, dto *PriceComponentRoundingDto) {
-	if dto != nil {
-		priceComponentRoundingParams := NewCreatePriceComponentRoundingParams(dto)
+func (r *PriceComponentResolver) createPriceComponentRounding(ctx context.Context, id *sql.NullInt64, priceComponentRoundingDto *coreDto.PriceComponentRoundingDto) {
+	if priceComponentRoundingDto != nil {
+		priceComponentRoundingParams := NewCreatePriceComponentRoundingParams(priceComponentRoundingDto)
 		priceComponentRounding, err := r.Repository.CreatePriceComponentRounding(ctx, priceComponentRoundingParams)
-		
+
 		if err != nil {
 			util.LogOnError("OCPI139", "Error creating price component rounding", err)
 			log.Printf("OCPI139: Params=%#v", priceComponentRoundingParams)
 			return
 		}
-		
+
 		id.Scan(priceComponentRounding.ID)
 	}
 }
