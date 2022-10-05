@@ -39,6 +39,16 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 
 	if cdr, err := r.GetLastCdrByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
 		query.Set("date_from", cdr.LastUpdated.Format(time.RFC3339))
+	} else {
+		oneMonthAgo := time.Now().UTC().Add(time.Hour * 24 * -30)
+
+		if credential.IsHub && (lastUpdated == nil || lastUpdated.Before(oneMonthAgo)) {
+			lastUpdated = &oneMonthAgo
+		}
+
+		if lastUpdated != nil {
+			query.Set("date_from", lastUpdated.Format(time.RFC3339))
+		}
 	}
 
 	for {
