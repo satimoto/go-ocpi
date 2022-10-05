@@ -14,8 +14,8 @@ import (
 func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, tariffDto *dto.TariffDto) *db.Tariff {
 	if tariffDto != nil {
 		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
-		energyMixID := util.SqlNullInt64(tariff.EnergyMixID)
-		tariffRestrictionID := util.SqlNullInt64(tariff.TariffRestrictionID)
+		energyMixID := util.SqlNullZeroInt64(tariff.EnergyMixID)
+		tariffRestrictionID := util.SqlNullZeroInt64(tariff.TariffRestrictionID)
 
 		if tariffDto.EnergyMix != nil {
 			r.EnergyMixResolver.ReplaceEnergyMix(ctx, &energyMixID, tariffDto.EnergyMix)
@@ -31,6 +31,14 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.EnergyMixID = energyMixID
 			tariffParams.TariffRestrictionID = tariffRestrictionID
+
+			if tariffDto.CountryCode != nil {
+				tariffParams.CountryCode = util.SqlNullString(tariffDto.CountryCode)
+			}
+
+			if tariffDto.PartyID != nil {
+				tariffParams.PartyID = util.SqlNullString(tariffDto.PartyID)
+			}
 
 			if tariffDto.Currency != nil {
 				tariffParams.Currency = *tariffDto.Currency
@@ -56,11 +64,17 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 		} else {
 			tariffParams := NewCreateTariffParams(tariffDto)
 			tariffParams.CredentialID = credential.ID
-			tariffParams.CountryCode = util.SqlNullString(countryCode)
-			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.CdrID = util.SqlNullInt64(cdrID)
 			tariffParams.EnergyMixID = energyMixID
 			tariffParams.TariffRestrictionID = tariffRestrictionID
+
+			if !tariffParams.CountryCode.Valid {
+				tariffParams.CountryCode = util.SqlNullString(countryCode)
+			}
+
+			if !tariffParams.PartyID.Valid {
+				tariffParams.PartyID = util.SqlNullString(partyID)
+			}
 
 			tariff, err = r.Repository.CreateTariff(ctx, tariffParams)
 

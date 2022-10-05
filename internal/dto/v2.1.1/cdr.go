@@ -18,24 +18,24 @@ type OcpiCdrsDto struct {
 }
 
 type CdrDto struct {
-	ID               *string                             `json:"id"`
-	AuthorizationID  *string                             `json:"authorization_id,omitempty"`
-	StartDateTime    *time.Time                          `json:"start_date_time"`
-	StopDateTime     *time.Time                          `json:"stop_date_time,omitempty"`
-	AuthID           *string                             `json:"auth_id"`
-	AuthMethod       *db.AuthMethodType                  `json:"auth_method"`
-	Location         *LocationDto                        `json:"location"`
-	MeterID          *string                             `json:"meter_id,omitempty"`
-	Currency         *string                             `json:"currency"`
+	ID               *string                      `json:"id"`
+	AuthorizationID  *string                      `json:"authorization_id,omitempty"`
+	StartDateTime    *time.Time                   `json:"start_date_time"`
+	StopDateTime     *time.Time                   `json:"stop_date_time,omitempty"`
+	AuthID           *string                      `json:"auth_id"`
+	AuthMethod       *db.AuthMethodType           `json:"auth_method"`
+	Location         *LocationDto                 `json:"location"`
+	MeterID          *string                      `json:"meter_id,omitempty"`
+	Currency         *string                      `json:"currency"`
 	Tariffs          []*TariffDto                 `json:"tariffs"`
 	ChargingPeriods  []*coreDto.ChargingPeriodDto `json:"charging_periods"`
-	SignedData       *coreDto.CalibrationDto             `json:"signed_data,omitempty"`
-	TotalCost        *float64                            `json:"total_cost"`
-	TotalEnergy      *float64                            `json:"total_energy"`
-	TotalTime        *float64                            `json:"total_time"`
-	TotalParkingTime *float64                            `json:"total_parking_time,omitempty"`
-	Remark           *string                             `json:"remark,omitempty"`
-	LastUpdated      *time.Time                          `json:"last_updated"`
+	SignedData       *coreDto.CalibrationDto      `json:"signed_data,omitempty"`
+	TotalCost        *float64                     `json:"total_cost"`
+	TotalEnergy      *float64                     `json:"total_energy"`
+	TotalTime        *float64                     `json:"total_time"`
+	TotalParkingTime *float64                     `json:"total_parking_time,omitempty"`
+	Remark           *string                      `json:"remark,omitempty"`
+	LastUpdated      *time.Time                   `json:"last_updated"`
 }
 
 func (r *CdrDto) Render(writer http.ResponseWriter, request *http.Request) error {

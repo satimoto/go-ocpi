@@ -8,8 +8,8 @@ import (
 )
 
 type BusinessDetailDto struct {
-	Name    string          `json:"name"`
-	Website *string         `json:"website,omitempty"`
+	Name    string    `json:"name"`
+	Website *string   `json:"website,omitempty"`
 	Logo    *ImageDto `json:"logo,omitempty"`
 }
 

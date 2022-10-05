@@ -21,7 +21,7 @@ type EvseDto struct {
 	PhysicalReference   *string                      `json:"physical_reference,omitempty"`
 	Directions          []*coreDto.DisplayTextDto    `json:"directions"`
 	ParkingRestrictions []*string                    `json:"parking_restrictions"`
-	Images              []*coreDto.ImageDto            `json:"images"`
+	Images              []*coreDto.ImageDto          `json:"images"`
 	LastUpdated         *time.Time                   `json:"last_updated"`
 }
 

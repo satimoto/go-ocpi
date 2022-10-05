@@ -7,8 +7,8 @@ import (
 )
 
 type ElementDto struct {
-	PriceComponents []*PriceComponentDto `json:"price_components"`
-	Restrictions    *ElementRestrictionDto      `json:"restrictions,omitempty"`
+	PriceComponents []*PriceComponentDto   `json:"price_components"`
+	Restrictions    *ElementRestrictionDto `json:"restrictions,omitempty"`
 }
 
 func (r *ElementDto) Render(writer http.ResponseWriter, request *http.Request) error {

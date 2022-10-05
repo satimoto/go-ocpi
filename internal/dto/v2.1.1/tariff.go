@@ -18,16 +18,16 @@ type OcpiTariffsDto struct {
 }
 
 type TariffDto struct {
-	ID            *string                                 `json:"id"`
-	CountryCode   *string                                 `json:"country_code,omitempty"`
-	PartyID       *string                                 `json:"party_id,omitempty"`
-	Currency      *string                                 `json:"currency"`
-	TariffAltText []*coreDto.DisplayTextDto               `json:"tariff_alt_text,omitempty"`
-	TariffAltUrl  *string                                 `json:"tariff_alt_url,omitempty"`
-	Elements      []*coreDto.ElementDto                   `json:"elements"`
-	EnergyMix     *coreDto.EnergyMixDto                   `json:"energy_mix,omitempty"`
+	ID            *string                       `json:"id"`
+	CountryCode   *string                       `json:"country_code,omitempty"`
+	PartyID       *string                       `json:"party_id,omitempty"`
+	Currency      *string                       `json:"currency"`
+	TariffAltText []*coreDto.DisplayTextDto     `json:"tariff_alt_text,omitempty"`
+	TariffAltUrl  *string                       `json:"tariff_alt_url,omitempty"`
+	Elements      []*coreDto.ElementDto         `json:"elements"`
+	EnergyMix     *coreDto.EnergyMixDto         `json:"energy_mix,omitempty"`
 	Restriction   *coreDto.TariffRestrictionDto `json:"restriction,omitempty"`
-	LastUpdated   *time.Time                              `json:"last_updated"`
+	LastUpdated   *time.Time                    `json:"last_updated"`
 }
 
 func (r *TariffDto) Render(writer http.ResponseWriter, request *http.Request) error {

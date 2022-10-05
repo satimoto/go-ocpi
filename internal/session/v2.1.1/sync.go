@@ -39,6 +39,16 @@ func (r *SessionResolver) SyncByIdentifier(ctx context.Context, credential db.Cr
 
 	if session, err := r.GetLastSessionByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
 		query.Set("date_from", session.LastUpdated.Format(time.RFC3339))
+	} else {
+		oneMonthAgo := time.Now().UTC().Add(time.Hour * 24 * -30)
+
+		if credential.IsHub && (lastUpdated == nil || lastUpdated.Before(oneMonthAgo)) {
+			lastUpdated = &oneMonthAgo
+		}
+
+		if lastUpdated != nil {
+			query.Set("date_from", lastUpdated.Format(time.RFC3339))
+		}
 	}
 
 	for {
