@@ -20,7 +20,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			evseParams := param.NewUpdateEvseByUidParams(evse)
 
 			if evseDto.Coordinates != nil {
-				geoLocationID := dbUtil.SqlNullInt64(nil)
+				geoLocationID := dbUtil.SqlNullInt64(evse.GeoLocationID)
 				geometry := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, evseDto.Coordinates)
 
 				if geometry != nil {
@@ -78,7 +78,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			evseParams := NewCreateEvseParams(locationID, evseDto)
 
 			if evseDto.Coordinates != nil {
-				geoLocationID := dbUtil.SqlNullInt64(evse.GeoLocationID)
+				geoLocationID := dbUtil.SqlNullInt64(nil)
 				geometry := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, evseDto.Coordinates)
 
 				if geometry != nil {
