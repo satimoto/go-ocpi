@@ -3,72 +3,15 @@ package cdr
 import (
 	"context"
 	"log"
-	"net/http"
-	"time"
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi/internal/calibration"
-	"github.com/satimoto/go-ocpi/internal/chargingperiod"
-	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
-	"github.com/satimoto/go-ocpi/internal/ocpitype"
-	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-type OcpiCdrsDto struct {
-	Data          []*CdrDto     `json:"data,omitempty"`
-	StatusCode    int16         `json:"status_code"`
-	StatusMessage string        `json:"status_message"`
-	Timestamp     ocpitype.Time `json:"timestamp"`
-}
-
-type CdrDto struct {
-	ID               *string                             `json:"id"`
-	AuthorizationID  *string                             `json:"authorization_id,omitempty"`
-	StartDateTime    *time.Time                          `json:"start_date_time"`
-	StopDateTime     *time.Time                          `json:"stop_date_time,omitempty"`
-	AuthID           *string                             `json:"auth_id"`
-	AuthMethod       *db.AuthMethodType                  `json:"auth_method"`
-	Location         *location.LocationDto               `json:"location"`
-	MeterID          *string                             `json:"meter_id,omitempty"`
-	Currency         *string                             `json:"currency"`
-	Tariffs          []*tariff.TariffDto                 `json:"tariffs"`
-	ChargingPeriods  []*chargingperiod.ChargingPeriodDto `json:"charging_periods"`
-	SignedData       *calibration.CalibrationDto         `json:"signed_data,omitempty"`
-	TotalCost        *float64                            `json:"total_cost"`
-	TotalEnergy      *float64                            `json:"total_energy"`
-	TotalTime        *float64                            `json:"total_time"`
-	TotalParkingTime *float64                            `json:"total_parking_time,omitempty"`
-	Remark           *string                             `json:"remark,omitempty"`
-	LastUpdated      *time.Time                          `json:"last_updated"`
-}
-
-func (r *CdrDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewCdrDto(cdr db.Cdr) *CdrDto {
-	return &CdrDto{
-		ID:               &cdr.Uid,
-		AuthorizationID:  util.NilString(cdr.AuthorizationID),
-		StartDateTime:    &cdr.StartDateTime,
-		StopDateTime:     util.NilTime(cdr.StopDateTime.Time),
-		AuthID:           &cdr.AuthID,
-		AuthMethod:       &cdr.AuthMethod,
-		MeterID:          util.NilString(cdr.MeterID),
-		Currency:         &cdr.Currency,
-		TotalCost:        &cdr.TotalCost,
-		TotalEnergy:      &cdr.TotalEnergy,
-		TotalTime:        &cdr.TotalTime,
-		TotalParkingTime: util.NilFloat64(cdr.TotalParkingTime.Float64),
-		Remark:           util.NilString(cdr.Remark),
-		LastUpdated:      &cdr.LastUpdated,
-	}
-}
-
-func (r *CdrResolver) CreateCdrDto(ctx context.Context, cdr db.Cdr) *CdrDto {
-	response := NewCdrDto(cdr)
+func (r *CdrResolver) CreateCdrDto(ctx context.Context, cdr db.Cdr) *dto.CdrDto {
+	response := dto.NewCdrDto(cdr)
 
 	chargingPeriods, err := r.Repository.ListCdrChargingPeriods(ctx, cdr.ID)
 

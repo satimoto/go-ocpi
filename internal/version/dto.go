@@ -3,33 +3,16 @@ package version
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/go-chi/render"
-	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-type OcpiVersionsDto struct {
-	Data          []*VersionDto `json:"data,omitempty"`
-	StatusCode    int16         `json:"status_code"`
-	StatusMessage string        `json:"status_message"`
-	Timestamp     ocpitype.Time `json:"timestamp"`
-}
-
-type VersionDto struct {
-	Version *string `json:"version"`
-	Url     *string `json:"url"`
-}
-
-func (r *VersionDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func (r *VersionResolver) CreateLocationDto(ctx context.Context, apiDomain string, version string) *VersionDto {
+func (r *VersionResolver) CreateLocationDto(ctx context.Context, apiDomain string, version string) *coreDto.VersionDto {
 	url := fmt.Sprintf("%s/%s", apiDomain, version)
 
-	return &VersionDto{
+	return &coreDto.VersionDto{
 		Version: &version,
 		Url:     &url,
 	}

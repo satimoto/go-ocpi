@@ -3,24 +3,26 @@ package evse
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-func NewCreateEvseParams(locationID int64, dto *EvseDto) db.CreateEvseParams {
+func NewCreateEvseParams(locationID int64, evseDto *dto.EvseDto) db.CreateEvseParams {
 	return db.CreateEvseParams{
-		Uid:               *dto.Uid,
-		EvseID:            dbUtil.SqlNullString(dto.EvseID),
-		Identifier:        dbUtil.SqlNullString(GetEvseIdentifier(dto)),
+		Uid:               *evseDto.Uid,
+		EvseID:            dbUtil.SqlNullString(evseDto.EvseID),
+		Identifier:        dbUtil.SqlNullString(GetEvseIdentifier(evseDto)),
 		LocationID:        locationID,
-		Status:            *dto.Status,
+		Status:            *evseDto.Status,
 		IsRemoteCapable:   false,
 		IsRfidCapable:     false,
-		FloorLevel:        dbUtil.SqlNullString(dto.FloorLevel),
-		PhysicalReference: dbUtil.SqlNullString(dto.PhysicalReference),
-		LastUpdated:       *dto.LastUpdated,
+		FloorLevel:        dbUtil.SqlNullString(evseDto.FloorLevel),
+		PhysicalReference: dbUtil.SqlNullString(evseDto.PhysicalReference),
+		LastUpdated:       *evseDto.LastUpdated,
 	}
 }
 
-func NewCreateStatusScheduleParams(evseID int64, dto *StatusScheduleDto) db.CreateStatusScheduleParams {
+func NewCreateStatusScheduleParams(evseID int64, dto *coreDto.StatusScheduleDto) db.CreateStatusScheduleParams {
 	return db.CreateStatusScheduleParams{
 		EvseID:      evseID,
 		PeriodBegin: *dto.PeriodBegin,

@@ -3,30 +3,14 @@ package chargingperiod
 import (
 	"context"
 	"log"
-	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-type ChargingPeriodDto struct {
-	StartDateTime *time.Time                    `json:"start_date_time"`
-	Dimensions    []*ChargingPeriodDimensionDto `json:"dimensions"`
-}
-
-func (r *ChargingPeriodDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewChargingPeriodDto(chargingPeriod db.ChargingPeriod) *ChargingPeriodDto {
-	return &ChargingPeriodDto{
-		StartDateTime: &chargingPeriod.StartDateTime,
-	}
-}
-
-func (r *ChargingPeriodResolver) CreateChargingPeriodDto(ctx context.Context, chargingPeriod db.ChargingPeriod) *ChargingPeriodDto {
-	response := NewChargingPeriodDto(chargingPeriod)
+func (r *ChargingPeriodResolver) CreateChargingPeriodDto(ctx context.Context, chargingPeriod db.ChargingPeriod) *coreDto.ChargingPeriodDto {
+	response := coreDto.NewChargingPeriodDto(chargingPeriod)
 
 	chargingPeriodDimensions, err := r.Repository.ListChargingPeriodDimensions(ctx, chargingPeriod.ID)
 	
@@ -41,8 +25,8 @@ func (r *ChargingPeriodResolver) CreateChargingPeriodDto(ctx context.Context, ch
 	return response
 }
 
-func (r *ChargingPeriodResolver) CreateChargingPeriodListDto(ctx context.Context, chargingPeriods []db.ChargingPeriod) []*ChargingPeriodDto {
-	list := []*ChargingPeriodDto{}
+func (r *ChargingPeriodResolver) CreateChargingPeriodListDto(ctx context.Context, chargingPeriods []db.ChargingPeriod) []*coreDto.ChargingPeriodDto {
+	list := []*coreDto.ChargingPeriodDto{}
 
 	for _, chargingPeriod := range chargingPeriods {
 		list = append(list, r.CreateChargingPeriodDto(ctx, chargingPeriod))
@@ -51,28 +35,12 @@ func (r *ChargingPeriodResolver) CreateChargingPeriodListDto(ctx context.Context
 	return list
 }
 
-type ChargingPeriodDimensionDto struct {
-	Type   db.ChargingPeriodDimensionType `json:"type"`
-	Volume float64                        `json:"volume"`
+func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionDto(ctx context.Context, chargingPeriodDimension db.ChargingPeriodDimension) *coreDto.ChargingPeriodDimensionDto {
+	return coreDto.NewChargingPeriodDimensionDto(chargingPeriodDimension)
 }
 
-func (r *ChargingPeriodDimensionDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewChargingPeriodDimensionDto(chargingPeriodDimension db.ChargingPeriodDimension) *ChargingPeriodDimensionDto {
-	return &ChargingPeriodDimensionDto{
-		Type:   chargingPeriodDimension.Type,
-		Volume: chargingPeriodDimension.Volume,
-	}
-}
-
-func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionDto(ctx context.Context, chargingPeriodDimension db.ChargingPeriodDimension) *ChargingPeriodDimensionDto {
-	return NewChargingPeriodDimensionDto(chargingPeriodDimension)
-}
-
-func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionListDto(ctx context.Context, chargingPeriodDimensions []db.ChargingPeriodDimension) []*ChargingPeriodDimensionDto {
-	list := []*ChargingPeriodDimensionDto{}
+func (r *ChargingPeriodResolver) CreateChargingPeriodDimensionListDto(ctx context.Context, chargingPeriodDimensions []db.ChargingPeriodDimension) []*coreDto.ChargingPeriodDimensionDto {
+	list := []*coreDto.ChargingPeriodDimensionDto{}
 
 	for _, chargingPeriodDimension := range chargingPeriodDimensions {
 		list = append(list, r.CreateChargingPeriodDimensionDto(ctx, chargingPeriodDimension))

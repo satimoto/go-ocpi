@@ -3,20 +3,21 @@ package pricecomponent
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func NewCreatePriceComponentParams(dto *PriceComponentDto) db.CreatePriceComponentParams {
+func NewCreatePriceComponentParams(priceComponentDto *coreDto.PriceComponentDto) db.CreatePriceComponentParams {
 	return db.CreatePriceComponentParams{
-		Type:                dto.Type,
-		Price:               dto.Price,
-		StepSize:            dto.StepSize,
-		ExactPriceComponent: util.SqlNullBool(dto.ExactPriceComponent),
+		Type:                priceComponentDto.Type,
+		Price:               priceComponentDto.Price,
+		StepSize:            priceComponentDto.StepSize,
+		ExactPriceComponent: util.SqlNullBool(priceComponentDto.ExactPriceComponent),
 	}
 }
 
-func NewCreatePriceComponentRoundingParams(dto *PriceComponentRoundingDto) db.CreatePriceComponentRoundingParams {
+func NewCreatePriceComponentRoundingParams(priceComponentRoundingDto *coreDto.PriceComponentRoundingDto) db.CreatePriceComponentRoundingParams {
 	return db.CreatePriceComponentRoundingParams{
-		Granularity: dto.Granularity,
-		Rule:        dto.Rule,
+		Granularity: priceComponentRoundingDto.Granularity,
+		Rule:        priceComponentRoundingDto.Rule,
 	}
 }

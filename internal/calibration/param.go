@@ -3,22 +3,23 @@ package calibration
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func NewCreateCalibrationParams(dto *CalibrationDto) db.CreateCalibrationParams {
+func NewCreateCalibrationParams(calibrationDto *coreDto.CalibrationDto) db.CreateCalibrationParams {
 	return db.CreateCalibrationParams{
-		EncodingMethod:        *dto.EncodingMethod,
-		EncodingMethodVersion: util.SqlNullInt32(dto.EncodingMethodVersion),
-		PublicKey:             util.SqlNullString(dto.PublicKey),
-		Url:                   util.SqlNullString(dto.Url),
+		EncodingMethod:        *calibrationDto.EncodingMethod,
+		EncodingMethodVersion: util.SqlNullInt32(calibrationDto.EncodingMethodVersion),
+		PublicKey:             util.SqlNullString(calibrationDto.PublicKey),
+		Url:                   util.SqlNullString(calibrationDto.Url),
 	}
 }
 
-func NewCreateCalibrationValueParams(id int64, dto *CalibrationValueDto) db.CreateCalibrationValueParams {
+func NewCreateCalibrationValueParams(id int64, calibrationValueDto *coreDto.CalibrationValueDto) db.CreateCalibrationValueParams {
 	return db.CreateCalibrationValueParams{
 		CalibrationID: id,
-		Nature:        *dto.Nature,
-		PlainData:     *dto.PlainData,
-		SignedData:    *dto.SignedData,
+		Nature:        *calibrationValueDto.Nature,
+		PlainData:     *calibrationValueDto.PlainData,
+		SignedData:    *calibrationValueDto.SignedData,
 	}
 }

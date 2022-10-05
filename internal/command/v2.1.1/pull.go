@@ -13,6 +13,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
 	ocpiCommand "github.com/satimoto/go-ocpi/pkg/ocpi/command"
@@ -46,12 +47,12 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	}
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-	dto := NewCommandReservationDto(command)
-	dtoBytes, err := json.Marshal(dto)
+	commandDto := dto.NewCommandReservationDto(command)
+	dtoBytes, err := json.Marshal(commandDto)
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI045", "Error marshalling dto", err)
-		log.Printf("OCPI045: Dto=%#v", dto)
+		log.Printf("OCPI045: Dto=%#v", commandDto)
 		return nil, errors.New("error requesting reservation")
 	}
 
@@ -121,12 +122,12 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	}
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-	dto := NewCommandStartDto(command)
-	dtoBytes, err := json.Marshal(dto)
+	commandDto := dto.NewCommandStartDto(command)
+	dtoBytes, err := json.Marshal(commandDto)
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI052", "Error marshalling dto", err)
-		log.Printf("OCPI052: Dto=%#v", dto)
+		log.Printf("OCPI052: Dto=%#v", commandDto)
 		return nil, errors.New("error starting session")
 	}
 
@@ -196,12 +197,12 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	}
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-	dto := NewCommandStopDto(command)
-	dtoBytes, err := json.Marshal(dto)
+	commandDto := dto.NewCommandStopDto(command)
+	dtoBytes, err := json.Marshal(commandDto)
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI059", "Error marshalling dto", err)
-		log.Printf("OCPI059: Dto=%#v", dto)
+		log.Printf("OCPI059: Dto=%#v", commandDto)
 		return nil, errors.New("error stopping session")
 	}
 
@@ -271,12 +272,12 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 	}
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-	dto := NewCommandUnlockDto(command)
-	dtoBytes, err := json.Marshal(dto)
+	commandDto := dto.NewCommandUnlockDto(command)
+	dtoBytes, err := json.Marshal(commandDto)
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI067", "Error marshalling dto", err)
-		log.Printf("OCPI067: Dto=%#v", dto)
+		log.Printf("OCPI067: Dto=%#v", commandDto)
 		return nil, errors.New("error unlocking connector")
 	}
 

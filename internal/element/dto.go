@@ -3,29 +3,14 @@ package element
 import (
 	"context"
 	"log"
-	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi/internal/elementrestriction"
-	"github.com/satimoto/go-ocpi/internal/pricecomponent"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-type ElementDto struct {
-	PriceComponents []*pricecomponent.PriceComponentDto       `json:"price_components"`
-	Restrictions    *elementrestriction.ElementRestrictionDto `json:"restrictions,omitempty"`
-}
-
-func (r *ElementDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewElementDto(element db.Element) *ElementDto {
-	return &ElementDto{}
-}
-
-func (r *ElementResolver) CreateElementDto(ctx context.Context, element db.Element) *ElementDto {
-	response := NewElementDto(element)
+func (r *ElementResolver) CreateElementDto(ctx context.Context, element db.Element) *coreDto.ElementDto {
+	response := coreDto.NewElementDto(element)
 
 	priceComponents, err := r.PriceComponentResolver.Repository.ListPriceComponents(ctx, element.ID)
 
@@ -50,8 +35,8 @@ func (r *ElementResolver) CreateElementDto(ctx context.Context, element db.Eleme
 	return response
 }
 
-func (r *ElementResolver) CreateElementListDto(ctx context.Context, elements []db.Element) []*ElementDto {
-	list := []*ElementDto{}
+func (r *ElementResolver) CreateElementListDto(ctx context.Context, elements []db.Element) []*coreDto.ElementDto {
+	list := []*coreDto.ElementDto{}
 
 	for _, element := range elements {
 		list = append(list, r.CreateElementDto(ctx, element))

@@ -8,10 +8,9 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
-	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
-	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	evseMocks "github.com/satimoto/go-ocpi/internal/evse/v2.1.1/mocks"
-	"github.com/satimoto/go-ocpi/internal/geolocation"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
@@ -24,7 +23,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseStatusRESERVED := db.EvseStatusRESERVED
 
-		dto := evse.EvseDto{
+		evseDto := dto.EvseDto{
 			Uid:               util.NilString("3257"),
 			EvseID:            util.NilString("BE-BEC-E041503002"),
 			Status:            &evseStatusRESERVED,
@@ -33,7 +32,7 @@ func TestReplaceEvse(t *testing.T) {
 			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, *dto.Uid, &dto)
+		evseResolver.ReplaceEvse(ctx, 1, *evseDto.Uid, &evseDto)
 
 		createEvseParams, _ := mockRepository.GetCreateEvseMockData()
 		createEvseParamsJson, _ := json.Marshal(createEvseParams)
@@ -84,12 +83,12 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseStatusAVAILABLE := db.EvseStatusAVAILABLE
 
-		dto := evse.EvseDto{
+		evseDto := dto.EvseDto{
 			Status:      &evseStatusAVAILABLE,
 			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, "1", &dto)
+		evseResolver.ReplaceEvse(ctx, 1, "1", &evseDto)
 
 		params, _ := mockRepository.GetUpdateEvseByUidMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -151,19 +150,19 @@ func TestReplaceEvse(t *testing.T) {
 			},
 		})
 
-		connectorsDto := []*connector.ConnectorDto{}
-		connectorsDto = append(connectorsDto, &connector.ConnectorDto{
+		connectorsDto := []*dto.ConnectorDto{}
+		connectorsDto = append(connectorsDto, &dto.ConnectorDto{
 			Id:          util.NilString("1"),
 			TariffID:    util.NilString("12"),
 			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		})
 
-		dto := evse.EvseDto{
+		evseDto := dto.EvseDto{
 			Connectors:  connectorsDto,
 			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, "1", &dto)
+		evseResolver.ReplaceEvse(ctx, 1, "1", &evseDto)
 
 		params, _ := mockRepository.GetUpdateEvseByUidMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -231,16 +230,16 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseStatusAVAILABLE := db.EvseStatusAVAILABLE
 
-		dto := evse.EvseDto{
+		evseDto := dto.EvseDto{
 			Status: &evseStatusAVAILABLE,
-			Coordinates: &geolocation.GeoLocationDto{
+			Coordinates: &coreDto.GeoLocationDto{
 				Latitude:  "31.3434",
 				Longitude: "-62.6996",
 			},
 			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, "1", &dto)
+		evseResolver.ReplaceEvse(ctx, 1, "1", &evseDto)
 
 		params, _ := mockRepository.GetUpdateEvseByUidMockData()
 		paramsJson, _ := json.Marshal(params)

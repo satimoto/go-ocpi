@@ -3,37 +3,38 @@ package energymix
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func NewCreateEnergyMixParams(dto *EnergyMixDto) db.CreateEnergyMixParams {
+func NewCreateEnergyMixParams(energyMixDto *coreDto.EnergyMixDto) db.CreateEnergyMixParams {
 	return db.CreateEnergyMixParams{
-		IsGreenEnergy:     dto.IsGreenEnergy.Bool(),
-		SupplierName:      util.SqlNullString(dto.SupplierName),
-		EnergyProductName: util.SqlNullString(dto.EnergyProductName),
+		IsGreenEnergy:     energyMixDto.IsGreenEnergy.Bool(),
+		SupplierName:      util.SqlNullString(energyMixDto.SupplierName),
+		EnergyProductName: util.SqlNullString(energyMixDto.EnergyProductName),
 	}
 }
 
-func NewUpdateEnergyMixParams(id int64, dto *EnergyMixDto) db.UpdateEnergyMixParams {
+func NewUpdateEnergyMixParams(id int64, energyMixDto *coreDto.EnergyMixDto) db.UpdateEnergyMixParams {
 	return db.UpdateEnergyMixParams{
 		ID:                id,
-		IsGreenEnergy:     dto.IsGreenEnergy.Bool(),
-		SupplierName:      util.SqlNullString(dto.SupplierName),
-		EnergyProductName: util.SqlNullString(dto.EnergyProductName),
+		IsGreenEnergy:     energyMixDto.IsGreenEnergy.Bool(),
+		SupplierName:      util.SqlNullString(energyMixDto.SupplierName),
+		EnergyProductName: util.SqlNullString(energyMixDto.EnergyProductName),
 	}
 }
 
-func NewCreateEnergySourceParams(id int64, dto *EnergySourceDto) db.CreateEnergySourceParams {
+func NewCreateEnergySourceParams(id int64, energySourceDto *coreDto.EnergySourceDto) db.CreateEnergySourceParams {
 	return db.CreateEnergySourceParams{
 		EnergyMixID: id,
-		Source:      dto.Source,
-		Percentage:  dto.Percentage,
+		Source:      energySourceDto.Source,
+		Percentage:  energySourceDto.Percentage,
 	}
 }
 
-func NewCreateEnvironmentalImpactParams(id int64, dto *EnvironmentalImpactDto) db.CreateEnvironmentalImpactParams {
+func NewCreateEnvironmentalImpactParams(id int64, environmentalImpactDto *coreDto.EnvironmentalImpactDto) db.CreateEnvironmentalImpactParams {
 	return db.CreateEnvironmentalImpactParams{
 		EnergyMixID: id,
-		Source:      dto.Source,
-		Amount:      dto.Amount,
+		Source:      environmentalImpactDto.Source,
+		Amount:      environmentalImpactDto.Amount,
 	}
 }

@@ -4,13 +4,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
-	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/util"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
-func NewCreateTokenDto(input *ocpirpc.CreateTokenRequest) *token.TokenDto {
-	return &token.TokenDto{
+func NewCreateTokenDto(input *ocpirpc.CreateTokenRequest) *dto.TokenDto {
+	return &dto.TokenDto{
 		Uid:         dbUtil.NilString(uuid.NewString()),
 		Type:        NilTokenType(input.Type),
 		Valid:       dbUtil.NilBool(true),

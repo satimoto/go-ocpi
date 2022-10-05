@@ -6,19 +6,20 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func (r *ChargingPeriodResolver) ReplaceChargingPeriod(ctx context.Context, dto *ChargingPeriodDto) *db.ChargingPeriod {
-	if dto != nil {
-		chargingPeriod, err := r.Repository.CreateChargingPeriod(ctx, *dto.StartDateTime)
+func (r *ChargingPeriodResolver) ReplaceChargingPeriod(ctx context.Context, chargingPeriodDto *coreDto.ChargingPeriodDto) *db.ChargingPeriod {
+	if chargingPeriodDto != nil {
+		chargingPeriod, err := r.Repository.CreateChargingPeriod(ctx, *chargingPeriodDto.StartDateTime)
 
 		if err != nil {
 			util.LogOnError("OCPI036", "Error creating charging period", err)
-			log.Printf("OCPI036: StartDateTime=%v", *dto.StartDateTime)
+			log.Printf("OCPI036: StartDateTime=%v", *chargingPeriodDto.StartDateTime)
 			return nil
 		}
 
-		r.ReplaceChargingPeriodDimensions(ctx, &chargingPeriod.ID, *dto)
+		r.ReplaceChargingPeriodDimensions(ctx, &chargingPeriod.ID, *chargingPeriodDto)
 
 		return &chargingPeriod
 	}
@@ -26,11 +27,11 @@ func (r *ChargingPeriodResolver) ReplaceChargingPeriod(ctx context.Context, dto 
 	return nil
 }
 
-func (r *ChargingPeriodResolver) ReplaceChargingPeriodDimensions(ctx context.Context, chargingPeriodID *int64, dto ChargingPeriodDto) {
+func (r *ChargingPeriodResolver) ReplaceChargingPeriodDimensions(ctx context.Context, chargingPeriodID *int64, chargingPeriodDto coreDto.ChargingPeriodDto) {
 	if chargingPeriodID != nil {
 		r.Repository.DeleteChargingPeriodDimensions(ctx, *chargingPeriodID)
 
-		for _, dimension := range dto.Dimensions {
+		for _, dimension := range chargingPeriodDto.Dimensions {
 			dimensionParams := NewCreateChargingPeriodDimensionParams(*chargingPeriodID, dimension)
 			_, err := r.Repository.CreateChargingPeriodDimension(ctx, dimensionParams)
 

@@ -2,20 +2,21 @@ package businessdetail
 
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
-func NewCreateBusinessDetailParams(dto *BusinessDetailDto) db.CreateBusinessDetailParams {
+func NewCreateBusinessDetailParams(businessDetailDto *coreDto.BusinessDetailDto) db.CreateBusinessDetailParams {
 	return db.CreateBusinessDetailParams{
-		Name:    dto.Name,
-		Website: util.SqlNullString(dto.Website),
+		Name:    businessDetailDto.Name,
+		Website: util.SqlNullString(businessDetailDto.Website),
 	}
 }
 
-func NewUpdateBusinessDetailParams(id int64, dto *BusinessDetailDto) db.UpdateBusinessDetailParams {
+func NewUpdateBusinessDetailParams(id int64, businessDetailDto *coreDto.BusinessDetailDto) db.UpdateBusinessDetailParams {
 	return db.UpdateBusinessDetailParams{
 		ID:      id,
-		Name:    dto.Name,
-		Website: util.SqlNullString(dto.Website),
+		Name:    businessDetailDto.Name,
+		Website: util.SqlNullString(businessDetailDto.Website),
 	}
 }

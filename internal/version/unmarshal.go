@@ -3,20 +3,22 @@ package version
 import (
 	"encoding/json"
 	"io"
+
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func (r *VersionResolver) UnmarshalPushDto(body io.ReadCloser) (*VersionDto, error) {
-	dto := VersionDto{}
+func (r *VersionResolver) UnmarshalPushDto(body io.ReadCloser) (*coreDto.VersionDto, error) {
+	versionDto := coreDto.VersionDto{}
 
-	if err := json.NewDecoder(body).Decode(&dto); err != nil {
+	if err := json.NewDecoder(body).Decode(&versionDto); err != nil {
 		return nil, err
 	}
 
-	return &dto, nil
+	return &versionDto, nil
 }
 
-func (r *VersionResolver) UnmarshalPullDto(body io.ReadCloser) (*OcpiVersionsDto, error) {
-	response := OcpiVersionsDto{}
+func (r *VersionResolver) UnmarshalPullDto(body io.ReadCloser) (*coreDto.OcpiVersionsDto, error) {
+	response := coreDto.OcpiVersionsDto{}
 
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		return nil, err

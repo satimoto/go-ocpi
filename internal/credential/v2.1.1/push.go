@@ -9,6 +9,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
@@ -59,7 +60,7 @@ func (r *CredentialResolver) GetCredential(rw http.ResponseWriter, request *http
 func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	cred, err := middleware.GetCredentialByToken(r.Repository, ctx, request)
-	dto := CredentialDto{}
+	credentialDto := dto.CredentialDto{}
 
 	if err != nil || !cred.ClientToken.Valid {
 		dbUtil.LogOnError("OCPI088", "Error retrieving credential", err)
@@ -69,7 +70,7 @@ func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *h
 		return
 	}
 
-	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
+	if err := json.NewDecoder(request.Body).Decode(&credentialDto); err != nil {
 		dbUtil.LogOnError("OCPI089", "Error unmarshalling request", err)
 		dbUtil.LogHttpRequest("OCPI089", request.URL.String(), request, true)
 
@@ -77,7 +78,7 @@ func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *h
 		return
 	}
 
-	c, err := r.ReplaceCredential(ctx, cred, &dto)
+	c, err := r.ReplaceCredential(ctx, cred, &credentialDto)
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI090", "Error replacing credential", err)
@@ -88,6 +89,6 @@ func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *h
 		return
 	}
 
-	credentialDto := r.CreateCredentialDto(ctx, *c)
-	render.Render(rw, request, transportation.OcpiSuccess(credentialDto))
+	createCredentialDto := r.CreateCredentialDto(ctx, *c)
+	render.Render(rw, request, transportation.OcpiSuccess(createCredentialDto))
 }

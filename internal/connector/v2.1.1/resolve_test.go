@@ -8,8 +8,8 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
-	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
 	connectorMocks "github.com/satimoto/go-ocpi/internal/connector/v2.1.1/mocks"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
@@ -30,7 +30,7 @@ func TestReplaceConnector(t *testing.T) {
 			Identifier: util.SqlNullString("DE*ABC*1234567"),
 		}
 
-		dto := connector.ConnectorDto{
+		connectorDto := dto.ConnectorDto{
 			Id:          util.NilString("1"),
 			Standard:    &connectorTypeIEC62196T2,
 			Format:      &connectorFormatCABLE,
@@ -41,7 +41,7 @@ func TestReplaceConnector(t *testing.T) {
 			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		connectorResolver.ReplaceConnector(ctx, evse, *dto.Id, &dto)
+		connectorResolver.ReplaceConnector(ctx, evse, *connectorDto.Id, &connectorDto)
 
 		params, _ := mockRepository.GetCreateConnectorMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -83,11 +83,11 @@ func TestReplaceConnector(t *testing.T) {
 		evse := db.Evse{
 			ID: 1,
 		}
-		dto := connector.ConnectorDto{
+		connectorDto := dto.ConnectorDto{
 			TariffID: util.NilString("12"),
 		}
 
-		connectorResolver.ReplaceConnector(ctx, evse, "1", &dto)
+		connectorResolver.ReplaceConnector(ctx, evse, "1", &connectorDto)
 
 		params, _ := mockRepository.GetUpdateConnectorByEvseMockData()
 		paramsJson, _ := json.Marshal(params)

@@ -8,7 +8,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
-	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/util"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 	ocpiToken "github.com/satimoto/go-ocpi/pkg/ocpi/token"
@@ -16,7 +16,7 @@ import (
 
 func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.CreateTokenRequest) (*ocpirpc.CreateTokenResponse, error) {
 	if request != nil {
-		dto := NewCreateTokenDto(request)
+		tokenDto := NewCreateTokenDto(request)
 		tokenAllowed := db.TokenAllowedTypeNOCREDIT
 		authID, err := r.TokenResolver.GenerateAuthID(ctx)
 
@@ -26,23 +26,23 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 			return nil, errors.New("error creating token")
 		}
 
-		dto.AuthID = &authID
-		dto.VisualNumber = &authID
-		dto.Issuer = dbUtil.NilString(os.Getenv("ISSUER"))
+		tokenDto.AuthID = &authID
+		tokenDto.VisualNumber = &authID
+		tokenDto.Issuer = dbUtil.NilString(os.Getenv("ISSUER"))
 
 		if len(request.Allowed) > 0 {
 			tokenAllowed = db.TokenAllowedType(request.Allowed)
 		}
 
 		if len(request.Whitelist) == 0 {
-			dto.Whitelist = NilTokenWhitelistType(db.TokenWhitelistTypeNEVER)
+			tokenDto.Whitelist = NilTokenWhitelistType(db.TokenWhitelistTypeNEVER)
 		}
 
-		t := r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *dto.Uid, dto)
+		t := r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *tokenDto.Uid, tokenDto)
 
 		if t == nil {
 			dbUtil.LogOnError("OCPI280", "Error replacing token", err)
-			log.Printf("OCPI280: Dto=%#v", dto)
+			log.Printf("OCPI280: Dto=%#v", tokenDto)
 			return nil, errors.New("error creating token")
 		}
 
@@ -64,8 +64,8 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.Up
 
 		for _, t := range tokens {
 			if len(request.Uid) == 0 || request.Uid == t.Uid {
-				dto := token.NewTokenDto(t)
-				dto.LastUpdated = dbUtil.NilTime(util.NewTimeUTC())
+				tokenDto := dto.NewTokenDto(t)
+				tokenDto.LastUpdated = dbUtil.NilTime(util.NewTimeUTC())
 
 				tokenAllowed := t.Allowed
 
@@ -74,10 +74,10 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.Up
 				}
 
 				if len(request.Whitelist) > 0 {
-					dto.Whitelist = NilTokenWhitelistType(request.Whitelist)
+					tokenDto.Whitelist = NilTokenWhitelistType(request.Whitelist)
 				}
 
-				r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *dto.Uid, dto)
+				r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *tokenDto.Uid, tokenDto)
 			}
 		}
 

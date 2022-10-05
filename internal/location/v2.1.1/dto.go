@@ -3,71 +3,13 @@ package location
 import (
 	"context"
 	"log"
-	"net/http"
-	"time"
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi/internal/businessdetail"
-	"github.com/satimoto/go-ocpi/internal/displaytext"
-	"github.com/satimoto/go-ocpi/internal/energymix"
-	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi/internal/geolocation"
-	"github.com/satimoto/go-ocpi/internal/image"
-	"github.com/satimoto/go-ocpi/internal/ocpitype"
-	"github.com/satimoto/go-ocpi/internal/openingtime"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
-
-type OcpiLocationsDto struct {
-	Data          []*LocationDto `json:"data,omitempty"`
-	StatusCode    int16          `json:"status_code"`
-	StatusMessage string         `json:"status_message"`
-	Timestamp     ocpitype.Time  `json:"timestamp"`
-}
-
-type LocationDto struct {
-	ID                 *string                           `json:"id"`
-	Type               *db.LocationType                  `json:"type"`
-	Name               *string                           `json:"name,omitempty"`
-	Address            *string                           `json:"address"`
-	City               *string                           `json:"city"`
-	PostalCode         *string                           `json:"postal_code"`
-	Country            *string                           `json:"country"`
-	Coordinates        *geolocation.GeoLocationDto       `json:"coordinates"`
-	RelatedLocations   []*AdditionalGeoLocationDto       `json:"related_locations"`
-	Evses              []*evse.EvseDto                   `json:"evses"`
-	Directions         []*displaytext.DisplayTextDto     `json:"directions"`
-	Facilities         []*string                         `json:"facilities"`
-	Operator           *businessdetail.BusinessDetailDto `json:"operator,omitempty"`
-	Suboperator        *businessdetail.BusinessDetailDto `json:"suboperator,omitempty"`
-	Owner              *businessdetail.BusinessDetailDto `json:"owner,omitempty"`
-	TimeZone           *string                           `json:"time_zone,omitempty"`
-	OpeningTimes       *openingtime.OpeningTimeDto       `json:"opening_times,omitempty"`
-	ChargingWhenClosed *bool                             `json:"charging_when_closed"`
-	Images             []*image.ImageDto                 `json:"images"`
-	EnergyMix          *energymix.EnergyMixDto           `json:"energy_mix"`
-	LastUpdated        *time.Time                        `json:"last_updated"`
-}
-
-func (r *LocationDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewLocationDto(location db.Location) *LocationDto {
-	return &LocationDto{
-		ID:                 &location.Uid,
-		Type:               &location.Type,
-		Name:               util.NilString(location.Name),
-		Address:            &location.Address,
-		City:               &location.City,
-		PostalCode:         &location.PostalCode,
-		Country:            &location.Country,
-		TimeZone:           util.NilString(location.TimeZone),
-		ChargingWhenClosed: &location.ChargingWhenClosed,
-		LastUpdated:        &location.LastUpdated,
-	}
-}
 
 func (r *LocationResolver) CreateFacilityListDto(ctx context.Context, facilities []db.Facility) []*string {
 	list := []*string{}
@@ -79,8 +21,8 @@ func (r *LocationResolver) CreateFacilityListDto(ctx context.Context, facilities
 	return list
 }
 
-func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Location) *LocationDto {
-	response := NewLocationDto(location)
+func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Location) *dto.LocationDto {
+	response := dto.NewLocationDto(location)
 
 	geoLocation, err := r.GeoLocationResolver.Repository.GetGeoLocation(ctx, location.GeoLocationID)
 
@@ -204,25 +146,8 @@ func (r *LocationResolver) CreateLocationListDto(ctx context.Context, locations 
 	return list
 }
 
-type AdditionalGeoLocationDto struct {
-	Latitude  ocpitype.String             `json:"latitude"`
-	Longitude ocpitype.String             `json:"longitude"`
-	Name      *displaytext.DisplayTextDto `json:"name,omitempty"`
-}
-
-func (r *AdditionalGeoLocationDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewAdditionalGeoLocationDto(additionalGeoLocation db.AdditionalGeoLocation) *AdditionalGeoLocationDto {
-	return &AdditionalGeoLocationDto{
-		Latitude:  ocpitype.NewString(additionalGeoLocation.Latitude),
-		Longitude: ocpitype.NewString(additionalGeoLocation.Longitude),
-	}
-}
-
-func (r *LocationResolver) CreateAdditionalGeoLocationDto(ctx context.Context, additionalGeoLocation db.AdditionalGeoLocation) *AdditionalGeoLocationDto {
-	response := NewAdditionalGeoLocationDto(additionalGeoLocation)
+func (r *LocationResolver) CreateAdditionalGeoLocationDto(ctx context.Context, additionalGeoLocation db.AdditionalGeoLocation) *coreDto.AdditionalGeoLocationDto {
+	response := coreDto.NewAdditionalGeoLocationDto(additionalGeoLocation)
 
 	if additionalGeoLocation.DisplayTextID.Valid {
 		displayText, err := r.DisplayTextResolver.Repository.GetDisplayText(ctx, additionalGeoLocation.DisplayTextID.Int64)
@@ -238,8 +163,8 @@ func (r *LocationResolver) CreateAdditionalGeoLocationDto(ctx context.Context, a
 	return response
 }
 
-func (r *LocationResolver) CreateAdditionalGeoLocationListDto(ctx context.Context, additionalGeoLocations []db.AdditionalGeoLocation) []*AdditionalGeoLocationDto {
-	list := []*AdditionalGeoLocationDto{}
+func (r *LocationResolver) CreateAdditionalGeoLocationListDto(ctx context.Context, additionalGeoLocations []db.AdditionalGeoLocation) []*coreDto.AdditionalGeoLocationDto {
+	list := []*coreDto.AdditionalGeoLocationDto{}
 
 	for _, additionalGeoLocation := range additionalGeoLocations {
 		list = append(list, r.CreateAdditionalGeoLocationDto(ctx, additionalGeoLocation))

@@ -3,20 +3,22 @@ package session
 import (
 	"encoding/json"
 	"io"
+
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-func (r *SessionResolver) UnmarshalPushDto(body io.ReadCloser) (*SessionDto, error) {
-	dto := SessionDto{}
+func (r *SessionResolver) UnmarshalPushDto(body io.ReadCloser) (*dto.SessionDto, error) {
+	sessionDto := dto.SessionDto{}
 
-	if err := json.NewDecoder(body).Decode(&dto); err != nil {
+	if err := json.NewDecoder(body).Decode(&sessionDto); err != nil {
 		return nil, err
 	}
 
-	return &dto, nil
+	return &sessionDto, nil
 }
 
-func (r *SessionResolver) UnmarshalPullDto(body io.ReadCloser) (*OcpiSessionsDto, error) {
-	response := OcpiSessionsDto{}
+func (r *SessionResolver) UnmarshalPullDto(body io.ReadCloser) (*dto.OcpiSessionsDto, error) {
+	response := dto.OcpiSessionsDto{}
 
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		return nil, err

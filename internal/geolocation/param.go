@@ -3,11 +3,12 @@ package geolocation
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func NewCreateGeoLocationParams(dto *GeoLocationDto) db.CreateGeoLocationParams {
-	latitudeStr := dto.Latitude.String()
-	longitudeStr := dto.Longitude.String()
+func NewCreateGeoLocationParams(geoLocationDto *coreDto.GeoLocationDto) db.CreateGeoLocationParams {
+	latitudeStr := geoLocationDto.Latitude.String()
+	longitudeStr := geoLocationDto.Longitude.String()
 
 	return db.CreateGeoLocationParams{
 		Latitude:       latitudeStr,
@@ -17,9 +18,9 @@ func NewCreateGeoLocationParams(dto *GeoLocationDto) db.CreateGeoLocationParams 
 	}
 }
 
-func NewUpdateGeoLocationParams(id int64, dto *GeoLocationDto) db.UpdateGeoLocationParams {
-	latitudeStr := dto.Latitude.String()
-	longitudeStr := dto.Longitude.String()
+func NewUpdateGeoLocationParams(id int64, geoLocationDto *coreDto.GeoLocationDto) db.UpdateGeoLocationParams {
+	latitudeStr := geoLocationDto.Latitude.String()
+	longitudeStr := geoLocationDto.Longitude.String()
 
 	return db.UpdateGeoLocationParams{
 		ID:             id,

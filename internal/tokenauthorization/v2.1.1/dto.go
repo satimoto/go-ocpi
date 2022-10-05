@@ -2,32 +2,14 @@ package tokenauthorization
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi/internal/displaytext"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-type AuthorizationInfoDto struct {
-	Allowed         *db.TokenAllowedType        `json:"allowed"`
-	AuthorizationID *string                     `json:"authorization_id"`
-	Location        *LocationReferencesDto      `json:"location,omitempty"`
-	Info            *displaytext.DisplayTextDto `json:"info,omitempty"`
-}
-
-func (r *AuthorizationInfoDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewAuthorizationInfoDto(token db.Token) *AuthorizationInfoDto {
-	return &AuthorizationInfoDto{
-		Allowed: &token.Allowed,
-	}
-}
-
-func (r *TokenAuthorizationResolver) CreateAuthorizationInfoDto(ctx context.Context, token db.Token, tokenAuthorization *db.TokenAuthorization, location *LocationReferencesDto, info *displaytext.DisplayTextDto) *AuthorizationInfoDto {
-	response := NewAuthorizationInfoDto(token)
+func (r *TokenAuthorizationResolver) CreateAuthorizationInfoDto(ctx context.Context, token db.Token, tokenAuthorization *db.TokenAuthorization, location *dto.LocationReferencesDto, info *coreDto.DisplayTextDto) *dto.AuthorizationInfoDto {
+	response := dto.NewAuthorizationInfoDto(token)
 
 	if tokenAuthorization != nil {
 		response.AuthorizationID = &tokenAuthorization.AuthorizationID
@@ -42,20 +24,4 @@ func (r *TokenAuthorizationResolver) CreateAuthorizationInfoDto(ctx context.Cont
 	}
 
 	return response
-}
-
-type LocationReferencesDto struct {
-	LocationID   *string   `json:"location_id"`
-	EvseUids     []*string `json:"evse_uids,omitempty"`
-	ConnectorIds []*string `json:"connector_ids,omitempty"`
-}
-
-func (r *LocationReferencesDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewLocationReferencesDto(locationID string) *LocationReferencesDto {
-	return &LocationReferencesDto{
-		LocationID: util.NilString(locationID),
-	}
 }

@@ -3,18 +3,19 @@ package token
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-func NewCreateTokenParams(dto *TokenDto) db.CreateTokenParams {
+func NewCreateTokenParams(tokenDto *dto.TokenDto) db.CreateTokenParams {
 	return db.CreateTokenParams{
-		Uid:          *dto.Uid,
-		Type:         *dto.Type,
-		AuthID:       *dto.AuthID,
-		VisualNumber: util.SqlNullString(dto.VisualNumber),
-		Issuer:       *dto.Issuer,
-		Valid:        *dto.Valid,
-		Whitelist:    *dto.Whitelist,
-		Language:     util.SqlNullString(dto.Language),
-		LastUpdated:  *dto.LastUpdated,
+		Uid:          *tokenDto.Uid,
+		Type:         *tokenDto.Type,
+		AuthID:       *tokenDto.AuthID,
+		VisualNumber: util.SqlNullString(tokenDto.VisualNumber),
+		Issuer:       *tokenDto.Issuer,
+		Valid:        *tokenDto.Valid,
+		Whitelist:    *tokenDto.Whitelist,
+		Language:     util.SqlNullString(tokenDto.Language),
+		LastUpdated:  *tokenDto.LastUpdated,
 	}
 }

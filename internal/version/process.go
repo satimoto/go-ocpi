@@ -7,16 +7,17 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int64, dto []*VersionDto) []*db.Version {
+func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int64, versionsDto []*coreDto.VersionDto) []*db.Version {
 	versions := []*db.Version{}
 
-	if dto != nil {
+	if versionsDto != nil {
 		r.Repository.DeleteVersions(ctx, credentialID)
 
-		for _, versionDto := range dto {
+		for _, versionDto := range versionsDto {
 			versionParams := NewCreateVersionParams(credentialID, versionDto)
 			version, err := r.Repository.CreateVersion(ctx, versionParams)
 

@@ -6,11 +6,12 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func (r *CalibrationResolver) CreateCalibration(ctx context.Context, dto *CalibrationDto) *db.Calibration {
-	if dto != nil {
-		calibrationParams := NewCreateCalibrationParams(dto)
+func (r *CalibrationResolver) CreateCalibration(ctx context.Context, calibrationDto *coreDto.CalibrationDto) *db.Calibration {
+	if calibrationDto != nil {
+		calibrationParams := NewCreateCalibrationParams(calibrationDto)
 
 		calibration, err := r.Repository.CreateCalibration(ctx, calibrationParams)
 
@@ -20,7 +21,7 @@ func (r *CalibrationResolver) CreateCalibration(ctx context.Context, dto *Calibr
 			return nil
 		}
 
-		r.createCalibrationValues(ctx, &calibration.ID, *dto)
+		r.createCalibrationValues(ctx, &calibration.ID, *calibrationDto)
 
 		return &calibration
 	}
@@ -28,9 +29,9 @@ func (r *CalibrationResolver) CreateCalibration(ctx context.Context, dto *Calibr
 	return nil
 }
 
-func (r *CalibrationResolver) createCalibrationValues(ctx context.Context, calibrationID *int64, dto CalibrationDto) {
+func (r *CalibrationResolver) createCalibrationValues(ctx context.Context, calibrationID *int64, calibrationDto coreDto.CalibrationDto) {
 	if calibrationID != nil {
-		for _, calibrationValue := range dto.SignedValues {
+		for _, calibrationValue := range calibrationDto.SignedValues {
 			calibrationValueParams := NewCreateCalibrationValueParams(*calibrationID, calibrationValue)
 
 			_, err := r.Repository.CreateCalibrationValue(ctx, calibrationValueParams)

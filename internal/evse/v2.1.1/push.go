@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -29,9 +30,9 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 	ctx := request.Context()
 	location := ctx.Value("location").(db.Location)
 	uid := chi.URLParam(request, "evse_id")
-	dto := EvseDto{}
+	evseDto := dto.EvseDto{}
 
-	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
+	if err := json.NewDecoder(request.Body).Decode(&evseDto); err != nil {
 		util.LogOnError("OCPI111", "Error unmarshalling request", err)
 		util.LogHttpRequest("OCPI111", request.URL.String(), request, true)
 
@@ -39,10 +40,10 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 		return
 	}
 
-	evse := r.ReplaceEvse(ctx, location.ID, uid, &dto)
+	evse := r.ReplaceEvse(ctx, location.ID, uid, &evseDto)
 
 	if evse != nil {
-		if dto.Capabilities != nil || dto.Status != nil {
+		if evseDto.Capabilities != nil || evseDto.Status != nil {
 			r.updateLocationAvailability(ctx, evse.ID)
 		}
 

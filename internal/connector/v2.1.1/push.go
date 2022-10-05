@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -29,9 +30,9 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 	ctx := request.Context()
 	evse := ctx.Value("evse").(db.Evse)
 	uid := chi.URLParam(request, "connector_id")
-	dto := ConnectorDto{}
+	connectorDto := dto.ConnectorDto{}
 
-	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
+	if err := json.NewDecoder(request.Body).Decode(&connectorDto); err != nil {
 		util.LogOnError("OCPI082", "Error unmarshalling request", err)
 		util.LogHttpRequest("OCPI082", request.URL.String(), request, true)
 
@@ -39,7 +40,7 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 		return
 	}
 
-	connector := r.ReplaceConnector(ctx, evse, uid, &dto)
+	connector := r.ReplaceConnector(ctx, evse, uid, &connectorDto)
 
 	if connector != nil {
 		updateEvseLastUpdatedParams := db.UpdateEvseLastUpdatedParams{
