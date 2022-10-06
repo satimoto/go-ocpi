@@ -10,7 +10,7 @@ func NewCreateSessionParams(sessionDto *dto.SessionDto) db.CreateSessionParams {
 	return db.CreateSessionParams{
 		Uid:             *sessionDto.ID,
 		AuthorizationID: util.SqlNullString(sessionDto.AuthorizationID),
-		StartDatetime:   *sessionDto.StartDatetime,
+		StartDatetime:   sessionDto.StartDatetime.Time(),
 		EndDatetime:     util.SqlNullTime(sessionDto.EndDatetime),
 		Kwh:             *sessionDto.Kwh,
 		AuthID:          *sessionDto.AuthID,
@@ -19,6 +19,6 @@ func NewCreateSessionParams(sessionDto *dto.SessionDto) db.CreateSessionParams {
 		Currency:        *sessionDto.Currency,
 		TotalCost:       util.SqlNullFloat64(sessionDto.TotalCost),
 		Status:          *sessionDto.Status,
-		LastUpdated:     *sessionDto.LastUpdated,
+		LastUpdated:     sessionDto.LastUpdated.Time(),
 	}
 }

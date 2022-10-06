@@ -43,13 +43,13 @@ func TestCreateCommandReservationDto(t *testing.T) {
 			"token": {
 				"auth_id": "",
 				"issuer": "",
-				"last_updated": "0001-01-01T00:00:00Z",
+				"last_updated": null,
 				"type": "",
 				"uid": "",
 				"valid": false,
 				"whitelist": ""
 			},
-			"expiry_date": "0001-01-01T00:00:00Z",
+			"expiry_date": null,
 			"reservation_id": 0,
 			"location_id": ""
 		}`))
@@ -131,7 +131,7 @@ func TestCreateCommandStartDto(t *testing.T) {
 			"token": {
 				"auth_id": "",
 				"issuer": "",
-				"last_updated": "0001-01-01T00:00:00Z",
+				"last_updated": null,
 				"type": "",
 				"uid": "",
 				"valid": false,

@@ -9,8 +9,8 @@ func NewCreateExceptionalPeriodParams(id int64, periodType db.PeriodType, except
 	return db.CreateExceptionalPeriodParams{
 		OpeningTimeID: id,
 		PeriodType:    periodType,
-		PeriodBegin:   *exceptionalPeriodDto.PeriodBegin,
-		PeriodEnd:     *exceptionalPeriodDto.PeriodEnd,
+		PeriodBegin:   exceptionalPeriodDto.PeriodBegin.Time(),
+		PeriodEnd:     exceptionalPeriodDto.PeriodEnd.Time(),
 	}
 }
 

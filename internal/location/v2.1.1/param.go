@@ -22,7 +22,7 @@ func NewCreateLocationParams(locationDto *dto.LocationDto) db.CreateLocationPara
 		IsRfidCapable:      false,
 		TimeZone:           util.SqlNullString(locationDto.TimeZone),
 		ChargingWhenClosed: util.DefaultBool(locationDto.ChargingWhenClosed, true),
-		LastUpdated:        *locationDto.LastUpdated,
+		LastUpdated:        locationDto.LastUpdated.Time(),
 	}
 }
 

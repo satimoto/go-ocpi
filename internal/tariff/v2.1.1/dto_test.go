@@ -31,7 +31,7 @@ func TestCreateTariffDto(t *testing.T) {
 			"id": "",
 			"currency": "",
 			"elements": [],
-			"last_updated": "0001-01-01T00:00:00Z"
+			"last_updated": null
 		}`))
 	})
 

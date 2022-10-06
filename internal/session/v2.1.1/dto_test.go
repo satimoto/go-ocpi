@@ -28,7 +28,7 @@ func TestCreateSessionDto(t *testing.T) {
 
 		mocks.CompareJson(t, responseJson, []byte(`{
 			"id": "",
-			"start_datetime": "0001-01-01T00:00:00Z",
+			"start_datetime": null,
 			"kwh": 0,
 			"auth_id": "",
 			"auth_method": "",
@@ -36,7 +36,7 @@ func TestCreateSessionDto(t *testing.T) {
 			"currency": "",
 			"charging_periods": [],
 			"status": "",
-			"last_updated": "0001-01-01T00:00:00Z"
+			"last_updated": null
 		}`))
 	})
 

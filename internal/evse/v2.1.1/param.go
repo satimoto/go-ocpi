@@ -5,6 +5,7 @@ import (
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 )
 
 func NewCreateEvseParams(locationID int64, evseDto *dto.EvseDto) db.CreateEvseParams {
@@ -18,14 +19,14 @@ func NewCreateEvseParams(locationID int64, evseDto *dto.EvseDto) db.CreateEvsePa
 		IsRfidCapable:     false,
 		FloorLevel:        dbUtil.SqlNullString(evseDto.FloorLevel),
 		PhysicalReference: dbUtil.SqlNullString(evseDto.PhysicalReference),
-		LastUpdated:       *evseDto.LastUpdated,
+		LastUpdated:       evseDto.LastUpdated.Time(),
 	}
 }
 
 func NewCreateStatusScheduleParams(evseID int64, dto *coreDto.StatusScheduleDto) db.CreateStatusScheduleParams {
 	return db.CreateStatusScheduleParams{
 		EvseID:      evseID,
-		PeriodBegin: *dto.PeriodBegin,
-		PeriodEnd:   dbUtil.SqlNullTime(dto.PeriodEnd),
+		PeriodBegin: dto.PeriodBegin.Time(),
+		PeriodEnd:   dbUtil.SqlNullTime(ocpitype.NilTime(dto.PeriodEnd)),
 	}
 }

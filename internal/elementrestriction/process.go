@@ -43,11 +43,11 @@ func (r *ElementRestrictionResolver) replaceWeekdays(ctx context.Context, elemen
 	r.Repository.UnsetElementRestrictionWeekdays(ctx, elementRestrictionID)
 
 	if weekdays, err := r.Repository.ListWeekdays(ctx); err == nil {
-		filteredWeekdays := []*db.Weekday{}
+		filteredWeekdays := []db.Weekday{}
 
 		for _, weekday := range weekdays {
 			if util.StringsContainString(elementRestrictionDto.DayOfWeek, weekday.Text) {
-				filteredWeekdays = append(filteredWeekdays, &weekday)
+				filteredWeekdays = append(filteredWeekdays, weekday)
 			}
 		}
 

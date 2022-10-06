@@ -2,7 +2,6 @@ package dto
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
@@ -20,8 +19,8 @@ type OcpiCdrsDto struct {
 type CdrDto struct {
 	ID               *string                      `json:"id"`
 	AuthorizationID  *string                      `json:"authorization_id,omitempty"`
-	StartDateTime    *time.Time                   `json:"start_date_time"`
-	StopDateTime     *time.Time                   `json:"stop_date_time,omitempty"`
+	StartDateTime    *ocpitype.Time               `json:"start_date_time"`
+	StopDateTime     *ocpitype.Time               `json:"stop_date_time,omitempty"`
 	AuthID           *string                      `json:"auth_id"`
 	AuthMethod       *db.AuthMethodType           `json:"auth_method"`
 	Location         *LocationDto                 `json:"location"`
@@ -35,7 +34,7 @@ type CdrDto struct {
 	TotalTime        *float64                     `json:"total_time"`
 	TotalParkingTime *float64                     `json:"total_parking_time,omitempty"`
 	Remark           *string                      `json:"remark,omitempty"`
-	LastUpdated      *time.Time                   `json:"last_updated"`
+	LastUpdated      *ocpitype.Time               `json:"last_updated"`
 }
 
 func (r *CdrDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -46,8 +45,8 @@ func NewCdrDto(cdr db.Cdr) *CdrDto {
 	return &CdrDto{
 		ID:               &cdr.Uid,
 		AuthorizationID:  util.NilString(cdr.AuthorizationID),
-		StartDateTime:    &cdr.StartDateTime,
-		StopDateTime:     util.NilTime(cdr.StopDateTime.Time),
+		StartDateTime:    ocpitype.NilOcpiTime(&cdr.StartDateTime),
+		StopDateTime:     ocpitype.NilOcpiTime(&cdr.StopDateTime.Time),
 		AuthID:           &cdr.AuthID,
 		AuthMethod:       &cdr.AuthMethod,
 		MeterID:          util.NilString(cdr.MeterID),
@@ -57,6 +56,6 @@ func NewCdrDto(cdr db.Cdr) *CdrDto {
 		TotalTime:        &cdr.TotalTime,
 		TotalParkingTime: util.NilFloat64(cdr.TotalParkingTime.Float64),
 		Remark:           util.NilString(cdr.Remark),
-		LastUpdated:      &cdr.LastUpdated,
+		LastUpdated:      ocpitype.NilOcpiTime(&cdr.LastUpdated),
 	}
 }

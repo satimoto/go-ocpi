@@ -12,6 +12,7 @@ import (
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	locationMocks "github.com/satimoto/go-ocpi/internal/location/v2.1.1/mocks"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
@@ -39,7 +40,7 @@ func TestReplaceLocation(t *testing.T) {
 				Longitude: "-62.6996",
 			},
 			ChargingWhenClosed: util.NilBool(true),
-			LastUpdated:        util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated:        ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		cred := db.Credential{
@@ -208,7 +209,7 @@ func TestReplaceLocation(t *testing.T) {
 			Status:            &evseStatusRESERVED,
 			PhysicalReference: util.NilString("2"),
 			FloorLevel:        util.NilString("-2"),
-			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated:       ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		})
 
 		locationDto := dto.LocationDto{

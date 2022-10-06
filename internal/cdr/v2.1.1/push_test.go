@@ -247,7 +247,7 @@ func TestCdrRequest(t *testing.T) {
                     }],
                     "last_updated": "2022-04-07T03:09:30Z",
                     "physical_reference": "AL106",
-                    "evse_id": "NL*EVN*E30332*9785",
+                    "evse_id": "NL*EVN*E30332*978",
                     "parking_restrictions": [
                         "EV_ONLY"
                     ]

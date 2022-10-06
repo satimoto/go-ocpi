@@ -40,7 +40,7 @@ func OcpiSuccess(data interface{}) *OcpiResponse {
 		Data:          data,
 		StatusCode:    STATUS_CODE_OK,
 		StatusMessage: "Success",
-		Timestamp:     ocpitype.NewTime(nil),
+		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}
 }
 
@@ -49,7 +49,7 @@ func OcpiClientError(data interface{}, message string) *OcpiResponse {
 		Data:          data,
 		StatusCode:    STATUS_CODE_CLIENT_ERROR,
 		StatusMessage: message,
-		Timestamp:     ocpitype.NewTime(nil),
+		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}
 }
 
@@ -58,7 +58,7 @@ func OcpiErrorMissingParameters(data interface{}) *OcpiResponse {
 		Data:          data,
 		StatusCode:    STATUS_CODE_MISSING_PARAMS,
 		StatusMessage: "Invalid or missing parameters",
-		Timestamp:     ocpitype.NewTime(nil),
+		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}
 }
 
@@ -67,7 +67,7 @@ func OcpiErrorNotEnoughInformation(data interface{}) *OcpiResponse {
 		Data:          data,
 		StatusCode:    STATUS_CODE_NOT_ENOUGH_INFO,
 		StatusMessage: "Not enough information",
-		Timestamp:     ocpitype.NewTime(nil),
+		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}
 }
 
@@ -76,7 +76,7 @@ func OcpiErrorUnknownResource(data interface{}) *OcpiResponse {
 		Data:          data,
 		StatusCode:    STATUS_CODE_UNKNOWN_RESOURCE,
 		StatusMessage: "Unknown resource",
-		Timestamp:     ocpitype.NewTime(nil),
+		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}
 }
 
@@ -85,7 +85,7 @@ func OcpiServerError(data interface{}, message string) *OcpiResponse {
 		Data:          data,
 		StatusCode:    STATUS_CODE_SERVER_ERROR,
 		StatusMessage: message,
-		Timestamp:     ocpitype.NewTime(nil),
+		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}
 }
 
@@ -94,7 +94,7 @@ func OcpiRegistrationError(data interface{}) *OcpiResponse {
 		Data:          data,
 		StatusCode:    STATUS_CODE_REGISTRATION_ERROR,
 		StatusMessage: "Registration error",
-		Timestamp:     ocpitype.NewTime(nil),
+		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}
 }
 
@@ -103,7 +103,7 @@ func OcpiUnsupportedVersion(data interface{}) *OcpiResponse {
 		Data:          data,
 		StatusCode:    STATUS_CODE_UNSUPPRTED_VERSION,
 		StatusMessage: "Unsupported version",
-		Timestamp:     ocpitype.NewTime(nil),
+		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}
 }
 
@@ -112,6 +112,6 @@ func OcpiMissingEndpoints(data interface{}) *OcpiResponse {
 		Data:          data,
 		StatusCode:    STATUS_CODE_MISSING_ENDPOINTS,
 		StatusMessage: "Missing endpoints",
-		Timestamp:     ocpitype.NewTime(nil),
+		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}
 }

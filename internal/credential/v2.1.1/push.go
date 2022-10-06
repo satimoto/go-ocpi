@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
-	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
@@ -46,8 +45,8 @@ func (r *CredentialResolver) DeleteCredential(rw http.ResponseWriter, request *h
 
 func (r *CredentialResolver) GetCredential(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
-	cred := ctx.Value("credential").(db.Credential)
-	dto := r.CreateCredentialDto(ctx, cred)
+	cred := middleware.GetCredential(ctx)
+	dto := r.CreateCredentialDto(ctx, *cred)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
 		dbUtil.LogOnError("OCPI087", "Error rendering response", err)

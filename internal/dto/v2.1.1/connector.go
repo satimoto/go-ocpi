@@ -2,10 +2,10 @@ package dto
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 )
 
 type ConnectorDto struct {
@@ -17,7 +17,7 @@ type ConnectorDto struct {
 	Amperage           *int32              `json:"amperage"`
 	TariffID           *string             `json:"tariff_id,omitempty"`
 	TermsAndConditions *string             `json:"terms_and_conditions,omitempty"`
-	LastUpdated        *time.Time          `json:"last_updated"`
+	LastUpdated        *ocpitype.Time      `json:"last_updated"`
 }
 
 func (r *ConnectorDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -34,6 +34,6 @@ func NewConnectorDto(connector db.Connector) *ConnectorDto {
 		Amperage:           &connector.Amperage,
 		TariffID:           util.NilString(connector.TariffID),
 		TermsAndConditions: util.NilString(connector.TermsAndConditions),
-		LastUpdated:        &connector.LastUpdated,
+		LastUpdated:        ocpitype.NilOcpiTime(&connector.LastUpdated),
 	}
 }

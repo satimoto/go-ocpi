@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
@@ -20,12 +19,12 @@ type OcpiCommandResponseDto struct {
 }
 
 type CommandReservationDto struct {
-	ResponseUrl   *string    `json:"response_url"`
-	Token         *TokenDto  `json:"token"`
-	ExpiryDate    *time.Time `json:"expiry_date"`
-	ReservationID *int64     `json:"reservation_id"`
-	LocationID    *string    `json:"location_id"`
-	EvseUid       *string    `json:"evse_uid,omitempty"`
+	ResponseUrl   *string        `json:"response_url"`
+	Token         *TokenDto      `json:"token"`
+	ExpiryDate    *ocpitype.Time `json:"expiry_date"`
+	ReservationID *int64         `json:"reservation_id"`
+	LocationID    *string        `json:"location_id"`
+	EvseUid       *string        `json:"evse_uid,omitempty"`
 }
 
 func (r *CommandReservationDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -37,7 +36,7 @@ func NewCommandReservationDto(command db.CommandReservation) *CommandReservation
 
 	return &CommandReservationDto{
 		ResponseUrl:   &responseUrl,
-		ExpiryDate:    &command.ExpiryDate,
+		ExpiryDate:    ocpitype.NilOcpiTime(&command.ExpiryDate),
 		ReservationID: &command.ReservationID,
 		LocationID:    &command.LocationID,
 		EvseUid:       util.NilString(command.EvseUid),

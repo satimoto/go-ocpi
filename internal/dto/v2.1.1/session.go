@@ -2,7 +2,6 @@ package dto
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
@@ -20,8 +19,8 @@ type OcpiSessionsDto struct {
 type SessionDto struct {
 	ID              *string                      `json:"id"`
 	AuthorizationID *string                      `json:"authorization_id,omitempty"`
-	StartDatetime   *time.Time                   `json:"start_datetime"`
-	EndDatetime     *time.Time                   `json:"end_datetime,omitempty"`
+	StartDatetime   *ocpitype.Time               `json:"start_datetime"`
+	EndDatetime     *ocpitype.Time               `json:"end_datetime,omitempty"`
 	Kwh             *float64                     `json:"kwh"`
 	AuthID          *string                      `json:"auth_id"`
 	AuthMethod      *db.AuthMethodType           `json:"auth_method"`
@@ -31,7 +30,7 @@ type SessionDto struct {
 	ChargingPeriods []*coreDto.ChargingPeriodDto `json:"charging_periods"`
 	TotalCost       *float64                     `json:"total_cost,omitempty"`
 	Status          *db.SessionStatusType        `json:"status"`
-	LastUpdated     *time.Time                   `json:"last_updated"`
+	LastUpdated     *ocpitype.Time               `json:"last_updated"`
 }
 
 func (r *SessionDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -42,8 +41,8 @@ func NewSessionDto(session db.Session) *SessionDto {
 	return &SessionDto{
 		ID:              &session.Uid,
 		AuthorizationID: util.NilString(session.AuthorizationID),
-		StartDatetime:   &session.StartDatetime,
-		EndDatetime:     util.NilTime(session.EndDatetime.Time),
+		StartDatetime:   ocpitype.NilOcpiTime(&session.StartDatetime),
+		EndDatetime:     ocpitype.NilOcpiTime(&session.EndDatetime.Time),
 		Kwh:             &session.Kwh,
 		AuthID:          &session.AuthID,
 		AuthMethod:      &session.AuthMethod,
@@ -51,6 +50,6 @@ func NewSessionDto(session db.Session) *SessionDto {
 		Currency:        &session.Currency,
 		TotalCost:       util.NilFloat64(session.TotalCost.Float64),
 		Status:          &session.Status,
-		LastUpdated:     &session.LastUpdated,
+		LastUpdated:     ocpitype.NilOcpiTime(&session.LastUpdated),
 	}
 }

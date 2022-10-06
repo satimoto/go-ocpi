@@ -2,14 +2,14 @@ package dto
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 )
 
 type ExceptionalPeriodDto struct {
-	PeriodBegin *time.Time `json:"period_begin"`
-	PeriodEnd   *time.Time `json:"period_end"`
+	PeriodBegin *ocpitype.Time `json:"period_begin"`
+	PeriodEnd   *ocpitype.Time `json:"period_end"`
 }
 
 func (r *ExceptionalPeriodDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -18,16 +18,16 @@ func (r *ExceptionalPeriodDto) Render(writer http.ResponseWriter, request *http.
 
 func NewExceptionalPeriodDto(exceptionalPeriod db.ExceptionalPeriod) *ExceptionalPeriodDto {
 	return &ExceptionalPeriodDto{
-		PeriodBegin: &exceptionalPeriod.PeriodBegin,
-		PeriodEnd:   &exceptionalPeriod.PeriodEnd,
+		PeriodBegin: ocpitype.NilOcpiTime(&exceptionalPeriod.PeriodBegin),
+		PeriodEnd:   ocpitype.NilOcpiTime(&exceptionalPeriod.PeriodEnd),
 	}
 }
 
 type OpeningTimeDto struct {
-	RegularHours        []*RegularHourDto       `json:"regular_hours"`
+	RegularHours        []*RegularHourDto       `json:"regular_hours,omitempty"`
 	Twentyfourseven     bool                    `json:"twentyfourseven"`
-	ExceptionalOpenings []*ExceptionalPeriodDto `json:"exceptional_openings"`
-	ExceptionalClosings []*ExceptionalPeriodDto `json:"exceptional_closings"`
+	ExceptionalOpenings []*ExceptionalPeriodDto `json:"exceptional_openings,omitempty"`
+	ExceptionalClosings []*ExceptionalPeriodDto `json:"exceptional_closings,omitempty"`
 }
 
 func (r *OpeningTimeDto) Render(writer http.ResponseWriter, request *http.Request) error {

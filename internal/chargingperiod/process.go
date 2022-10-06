@@ -11,7 +11,7 @@ import (
 
 func (r *ChargingPeriodResolver) ReplaceChargingPeriod(ctx context.Context, chargingPeriodDto *coreDto.ChargingPeriodDto) *db.ChargingPeriod {
 	if chargingPeriodDto != nil {
-		chargingPeriod, err := r.Repository.CreateChargingPeriod(ctx, *chargingPeriodDto.StartDateTime)
+		chargingPeriod, err := r.Repository.CreateChargingPeriod(ctx, chargingPeriodDto.StartDateTime.Time())
 
 		if err != nil {
 			util.LogOnError("OCPI036", "Error creating charging period", err)

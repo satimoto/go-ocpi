@@ -2,10 +2,10 @@ package dto
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 )
 
 type TokenDto struct {
@@ -17,7 +17,7 @@ type TokenDto struct {
 	Valid        *bool                  `json:"valid"`
 	Whitelist    *db.TokenWhitelistType `json:"whitelist"`
 	Language     *string                `json:"language,omitempty"`
-	LastUpdated  *time.Time             `json:"last_updated"`
+	LastUpdated  *ocpitype.Time         `json:"last_updated"`
 }
 
 func (r *TokenDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -34,6 +34,6 @@ func NewTokenDto(token db.Token) *TokenDto {
 		Valid:        &token.Valid,
 		Whitelist:    &token.Whitelist,
 		Language:     util.NilString(token.Language),
-		LastUpdated:  &token.LastUpdated,
+		LastUpdated:  ocpitype.NilOcpiTime(&token.LastUpdated),
 	}
 }

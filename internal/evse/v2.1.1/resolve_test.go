@@ -11,6 +11,7 @@ import (
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	evseMocks "github.com/satimoto/go-ocpi/internal/evse/v2.1.1/mocks"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
@@ -29,7 +30,7 @@ func TestReplaceEvse(t *testing.T) {
 			Status:            &evseStatusRESERVED,
 			PhysicalReference: util.NilString("2"),
 			FloorLevel:        util.NilString("-2"),
-			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated:       ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		evseResolver.ReplaceEvse(ctx, 1, *evseDto.Uid, &evseDto)
@@ -85,7 +86,7 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseDto := dto.EvseDto{
 			Status:      &evseStatusAVAILABLE,
-			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		evseResolver.ReplaceEvse(ctx, 1, "1", &evseDto)
@@ -154,12 +155,12 @@ func TestReplaceEvse(t *testing.T) {
 		connectorsDto = append(connectorsDto, &dto.ConnectorDto{
 			Id:          util.NilString("1"),
 			TariffID:    util.NilString("12"),
-			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		})
 
 		evseDto := dto.EvseDto{
 			Connectors:  connectorsDto,
-			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		evseResolver.ReplaceEvse(ctx, 1, "1", &evseDto)
@@ -236,7 +237,7 @@ func TestReplaceEvse(t *testing.T) {
 				Latitude:  "31.3434",
 				Longitude: "-62.6996",
 			},
-			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		evseResolver.ReplaceEvse(ctx, 1, "1", &evseDto)

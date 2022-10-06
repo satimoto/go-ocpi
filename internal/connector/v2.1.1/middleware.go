@@ -19,7 +19,7 @@ func (r *ConnectorResolver) ConnectorContext(syncService *sync.SyncService) func
 			requestCtx := request.Context()
 
 			if connectorID := chi.URLParam(request, "connector_id"); connectorID != "" {
-				evse := requestCtx.Value("evse").(*db.Evse)
+				evse := requestCtx.Value("evse").(db.Evse)
 
 				connector, err := r.Repository.GetConnectorByEvse(requestCtx, db.GetConnectorByEvseParams{
 					EvseID: evse.ID,
