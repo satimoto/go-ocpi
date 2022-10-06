@@ -20,7 +20,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			evseParams := param.NewUpdateEvseByUidParams(evse)
 
 			if evseDto.Coordinates != nil {
-				geoLocationID := dbUtil.SqlNullInt64(evse.GeoLocationID)
+				geoLocationID := evse.GeoLocationID
 				geometry := r.GeoLocationResolver.ReplaceGeoLocation(ctx, &geoLocationID, evseDto.Coordinates)
 
 				if geometry != nil {
@@ -44,7 +44,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			}
 
 			if evseDto.LastUpdated != nil {
-				evseParams.LastUpdated = *evseDto.LastUpdated
+				evseParams.LastUpdated = evseDto.LastUpdated.Time()
 			}
 
 			if evseDto.PhysicalReference != nil {
@@ -56,7 +56,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			}
 
 			if evseDto.Status != nil && evseDto.LastUpdated != nil {
-				evseStatusPeriodParams := param.NewCreateEvseStatusPeriodParams(evse, *evseDto.LastUpdated)
+				evseStatusPeriodParams := param.NewCreateEvseStatusPeriodParams(evse, evseDto.LastUpdated.Time())
 				_, err := r.Repository.CreateEvseStatusPeriod(ctx, evseStatusPeriodParams)
 
 				if err != nil {

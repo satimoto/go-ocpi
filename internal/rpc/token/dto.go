@@ -5,17 +5,20 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 	"github.com/satimoto/go-ocpi/internal/util"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
 func NewCreateTokenDto(input *ocpirpc.CreateTokenRequest) *dto.TokenDto {
+	lastUpdated := util.NewTimeUTC()
+
 	return &dto.TokenDto{
 		Uid:         dbUtil.NilString(uuid.NewString()),
 		Type:        NilTokenType(input.Type),
 		Valid:       dbUtil.NilBool(true),
 		Whitelist:   NilTokenWhitelistType(input.Whitelist),
-		LastUpdated: dbUtil.NilTime(util.NewTimeUTC()),
+		LastUpdated: ocpitype.NilOcpiTime(&lastUpdated),
 	}
 }
 

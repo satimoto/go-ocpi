@@ -46,7 +46,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 			}
 
 			if connectorDto.LastUpdated != nil {
-				connectorParams.LastUpdated = *connectorDto.LastUpdated
+				connectorParams.LastUpdated = connectorDto.LastUpdated.Time()
 			}
 
 			connectorParams.Identifier = dbUtil.SqlNullString(GetConnectorIdentifier(evse, connectorDto))

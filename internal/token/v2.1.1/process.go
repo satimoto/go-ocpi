@@ -135,7 +135,7 @@ func (r *TokenResolver) ReplaceToken(ctx context.Context, userId int64, tokenAll
 			}
 
 			if tokenDto.LastUpdated != nil {
-				tokenParams.LastUpdated = *tokenDto.LastUpdated
+				tokenParams.LastUpdated = tokenDto.LastUpdated.Time()
 			}
 
 			if tokenDto.Type != nil {

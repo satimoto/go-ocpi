@@ -2,13 +2,13 @@ package dto
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 )
 
 type ChargingPeriodDto struct {
-	StartDateTime *time.Time                    `json:"start_date_time"`
+	StartDateTime *ocpitype.Time                `json:"start_date_time"`
 	Dimensions    []*ChargingPeriodDimensionDto `json:"dimensions"`
 }
 
@@ -18,7 +18,7 @@ func (r *ChargingPeriodDto) Render(writer http.ResponseWriter, request *http.Req
 
 func NewChargingPeriodDto(chargingPeriod db.ChargingPeriod) *ChargingPeriodDto {
 	return &ChargingPeriodDto{
-		StartDateTime: &chargingPeriod.StartDateTime,
+		StartDateTime: ocpitype.NilOcpiTime(&chargingPeriod.StartDateTime),
 	}
 }
 

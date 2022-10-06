@@ -13,6 +13,6 @@ func NewCreateTariffParams(tariffDto *dto.TariffDto) db.CreateTariffParams {
 		PartyID:      util.SqlNullString(tariffDto.PartyID),
 		Currency:     *tariffDto.Currency,
 		TariffAltUrl: util.SqlNullString(tariffDto.TariffAltUrl),
-		LastUpdated:  *tariffDto.LastUpdated,
+		LastUpdated:  tariffDto.LastUpdated.Time(),
 	}
 }

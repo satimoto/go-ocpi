@@ -49,7 +49,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			}
 
 			if sessionDto.LastUpdated != nil {
-				sessionParams.LastUpdated = *sessionDto.LastUpdated
+				sessionParams.LastUpdated = sessionDto.LastUpdated.Time()
 			}
 
 			if sessionDto.MeterID != nil {
@@ -62,7 +62,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			}
 
 			if sessionDto.StartDatetime != nil {
-				sessionParams.StartDatetime = *sessionDto.StartDatetime
+				sessionParams.StartDatetime = sessionDto.StartDatetime.Time()
 			}
 
 			if sessionDto.TotalCost != nil {

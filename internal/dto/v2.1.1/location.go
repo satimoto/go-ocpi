@@ -2,7 +2,6 @@ package dto
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
@@ -26,19 +25,19 @@ type LocationDto struct {
 	PostalCode         *string                             `json:"postal_code"`
 	Country            *string                             `json:"country"`
 	Coordinates        *coreDto.GeoLocationDto             `json:"coordinates"`
-	RelatedLocations   []*coreDto.AdditionalGeoLocationDto `json:"related_locations"`
-	Evses              []*EvseDto                          `json:"evses"`
-	Directions         []*coreDto.DisplayTextDto           `json:"directions"`
-	Facilities         []*string                           `json:"facilities"`
+	RelatedLocations   []*coreDto.AdditionalGeoLocationDto `json:"related_locations,omitempty"`
+	Evses              []*EvseDto                          `json:"evses,omitempty"`
+	Directions         []*coreDto.DisplayTextDto           `json:"directions,omitempty"`
+	Facilities         []*string                           `json:"facilities,omitempty"`
 	Operator           *coreDto.BusinessDetailDto          `json:"operator,omitempty"`
 	Suboperator        *coreDto.BusinessDetailDto          `json:"suboperator,omitempty"`
 	Owner              *coreDto.BusinessDetailDto          `json:"owner,omitempty"`
 	TimeZone           *string                             `json:"time_zone,omitempty"`
 	OpeningTimes       *coreDto.OpeningTimeDto             `json:"opening_times,omitempty"`
 	ChargingWhenClosed *bool                               `json:"charging_when_closed"`
-	Images             []*coreDto.ImageDto                 `json:"images"`
-	EnergyMix          *coreDto.EnergyMixDto               `json:"energy_mix"`
-	LastUpdated        *time.Time                          `json:"last_updated"`
+	Images             []*coreDto.ImageDto                 `json:"images,omitempty"`
+	EnergyMix          *coreDto.EnergyMixDto               `json:"energy_mix,omitempty"`
+	LastUpdated        *ocpitype.Time                      `json:"last_updated"`
 }
 
 func (r *LocationDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -56,6 +55,6 @@ func NewLocationDto(location db.Location) *LocationDto {
 		Country:            &location.Country,
 		TimeZone:           util.NilString(location.TimeZone),
 		ChargingWhenClosed: &location.ChargingWhenClosed,
-		LastUpdated:        &location.LastUpdated,
+		LastUpdated:        ocpitype.NilOcpiTime(&location.LastUpdated),
 	}
 }

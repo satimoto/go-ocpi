@@ -26,7 +26,7 @@ func (r *LocationResolver) ReplaceLocation(ctx context.Context, credential db.Cr
 func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, locationDto *dto.LocationDto) *db.Location {
 	if locationDto != nil {
 		location, err := r.Repository.GetLocationByUid(ctx, uid)
-		geoLocationID := util.SqlNullInt64(util.NilInt64(location.GeoLocationID))
+		geoLocationID := util.SqlNullZeroInt64(location.GeoLocationID)
 		energyMixID := location.EnergyMixID
 		openingTimeID := location.OpeningTimeID
 		operatorID := location.OperatorID
@@ -91,7 +91,7 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			}
 
 			if locationDto.LastUpdated != nil {
-				locationParams.LastUpdated = *locationDto.LastUpdated
+				locationParams.LastUpdated = locationDto.LastUpdated.Time()
 			}
 
 			if locationDto.PostalCode != nil {

@@ -16,6 +16,6 @@ func NewCreateTokenParams(tokenDto *dto.TokenDto) db.CreateTokenParams {
 		Valid:        *tokenDto.Valid,
 		Whitelist:    *tokenDto.Whitelist,
 		Language:     util.SqlNullString(tokenDto.Language),
-		LastUpdated:  *tokenDto.LastUpdated,
+		LastUpdated:  tokenDto.LastUpdated.Time(),
 	}
 }

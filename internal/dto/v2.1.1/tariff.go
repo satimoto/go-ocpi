@@ -2,7 +2,6 @@ package dto
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
@@ -27,7 +26,7 @@ type TariffDto struct {
 	Elements      []*coreDto.ElementDto         `json:"elements"`
 	EnergyMix     *coreDto.EnergyMixDto         `json:"energy_mix,omitempty"`
 	Restriction   *coreDto.TariffRestrictionDto `json:"restriction,omitempty"`
-	LastUpdated   *time.Time                    `json:"last_updated"`
+	LastUpdated   *ocpitype.Time                `json:"last_updated"`
 }
 
 func (r *TariffDto) Render(writer http.ResponseWriter, request *http.Request) error {
@@ -39,6 +38,6 @@ func NewTariffDto(tariff db.Tariff) *TariffDto {
 		ID:           &tariff.Uid,
 		Currency:     &tariff.Currency,
 		TariffAltUrl: util.NilString(tariff.TariffAltUrl),
-		LastUpdated:  &tariff.LastUpdated,
+		LastUpdated:  ocpitype.NilOcpiTime(&tariff.LastUpdated),
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 	"github.com/satimoto/go-ocpi/internal/util"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 	ocpiToken "github.com/satimoto/go-ocpi/pkg/ocpi/token"
@@ -64,8 +65,9 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.Up
 
 		for _, t := range tokens {
 			if len(request.Uid) == 0 || request.Uid == t.Uid {
+				lastUpdated := util.NewTimeUTC()
 				tokenDto := dto.NewTokenDto(t)
-				tokenDto.LastUpdated = dbUtil.NilTime(util.NewTimeUTC())
+				tokenDto.LastUpdated = ocpitype.NilOcpiTime(&lastUpdated)
 
 				tokenAllowed := t.Allowed
 

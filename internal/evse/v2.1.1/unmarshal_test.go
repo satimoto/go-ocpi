@@ -14,12 +14,7 @@ func TestEvseUnmarshal(t *testing.T) {
 		request := []byte(`{
 			"uid": null,
 			"status": null,
-			"status_schedule": null,
-			"capabilities": null,
 			"connectors": null,
-			"directions": null,
-			"parking_restrictions": null,
-			"images": null,
 			"last_updated": null
 		}`)
 
@@ -47,13 +42,9 @@ func TestEvseUnmarshal(t *testing.T) {
 				"period_begin": "2018-12-16T11:00:02Z",
 				"status": "AVAILABLE"
 			}],
-			"capabilities": [],
 			"connectors": [],
 			"physical_reference": "2",
 			"floor_level": "-2",
-			"directions": [],
-			"parking_restrictions": [],
-			"images": [],
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
@@ -69,12 +60,8 @@ func TestEvseUnmarshal(t *testing.T) {
 			"uid": "3257",
 			"evse_id": "BE-BEC-E041503002",
 			"status": "RESERVED",
-			"status_schedule": [],
 			"capabilities": ["RESERVABLE"],
 			"connectors": [],
-			"directions": [],
-			"parking_restrictions": [],
-			"images": [],
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
@@ -90,8 +77,6 @@ func TestEvseUnmarshal(t *testing.T) {
 			"uid": "3256",
 			"evse_id": "BE-BEC-E041503001",
 			"status": "AVAILABLE",
-			"status_schedule": [],
-			"capabilities": [],
 			"connectors": [{
 				"id": "1",
 				"standard": "IEC_62196_T2",
@@ -113,9 +98,6 @@ func TestEvseUnmarshal(t *testing.T) {
 			}],
 			"physical_reference": "1",
 			"floor_level": "-1",
-			"directions": [],
-			"parking_restrictions": [],
-			"images": [],
 			"last_updated": "2015-06-28T08:12:01Z"
 		}`)
 

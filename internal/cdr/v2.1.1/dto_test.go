@@ -30,7 +30,7 @@ func TestCreateCdrDto(t *testing.T) {
 
 		mocks.CompareJson(t, responseJson, []byte(`{
 			"id": "",
-			"start_date_time": "0001-01-01T00:00:00Z",
+			"start_date_time": null,
 			"auth_id": "",
 			"auth_method": "",
 			"location": null,
@@ -40,7 +40,7 @@ func TestCreateCdrDto(t *testing.T) {
 			"total_cost": 0,
 			"total_energy": 0,
 			"total_time": 0,
-			"last_updated": "0001-01-01T00:00:00Z"
+			"last_updated": null
 		}`))
 	})
 

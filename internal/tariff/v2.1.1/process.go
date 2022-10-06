@@ -45,7 +45,7 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 			}
 
 			if tariffDto.LastUpdated != nil {
-				tariffParams.LastUpdated = *tariffDto.LastUpdated
+				tariffParams.LastUpdated = tariffDto.LastUpdated.Time()
 			}
 
 			if tariffDto.TariffAltUrl != nil {

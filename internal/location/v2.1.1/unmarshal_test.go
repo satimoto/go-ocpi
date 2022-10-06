@@ -19,13 +19,7 @@ func TestLocationUnmarshal(t *testing.T) {
 			"postal_code": null,
 			"country": null,
 			"coordinates": null,
-			"related_locations": null,
-			"evses": null,
-			"directions": null,
-			"facilities": null,
 			"charging_when_closed": null,
-			"images": null,
-			"energy_mix": null,
 			"last_updated": null
 		}`)
 
@@ -46,7 +40,6 @@ func TestLocationUnmarshal(t *testing.T) {
 			"postal_code": "9000",
 			"country": "BEL",
 			"coordinates": null,
-			"related_locations": [],
 			"evses": [{
 				"uid": "3257",
 				"evse_id": "BE-BEC-E041503002",
@@ -85,19 +78,12 @@ func TestLocationUnmarshal(t *testing.T) {
 				}],
 				"physical_reference": "2",
 				"floor_level": "-2",
-				"directions": [],
-				"parking_restrictions": [],
-				"images": [],
 				"last_updated": "2015-06-29T20:39:09Z"
 			}],
-			"directions": [],
 			"operator": {
 				"name": "BeCharged"
 			},
-			"facilities": [],
 			"charging_when_closed": false,
-			"images": [],
-			"energy_mix": null,
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
@@ -118,8 +104,6 @@ func TestLocationUnmarshal(t *testing.T) {
 			"postal_code": "9000",
 			"country": "BEL",
 			"coordinates": null,
-			"related_locations": [],
-			"evses": [],
 			"directions": [{
 				"text": "Go Left",
 				"language": "en"
@@ -129,8 +113,6 @@ func TestLocationUnmarshal(t *testing.T) {
 			}],
 			"facilities": ["BUS_STOP", "TAXI_STAND", "TRAIN_STATION"],
 			"charging_when_closed": true,
-			"images": [],
-			"energy_mix": null,
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
@@ -165,9 +147,6 @@ func TestLocationUnmarshal(t *testing.T) {
 					"text": "Bloemenspeciaalzaak Bergmans (Store)"
 				}
 			}],
-			"evses": [],
-			"directions": [],
-			"facilities": [],
 			"charging_when_closed": true,
 			"images": [{
 				"url": "https://business.com/logo.png",
@@ -181,7 +160,6 @@ func TestLocationUnmarshal(t *testing.T) {
 				"width": 180,
 				"height": 180
 			}],
-			"energy_mix": null,
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 

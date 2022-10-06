@@ -10,6 +10,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	connectorMocks "github.com/satimoto/go-ocpi/internal/connector/v2.1.1/mocks"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
@@ -38,7 +39,7 @@ func TestReplaceConnector(t *testing.T) {
 			Voltage:     util.NilInt32(220),
 			Amperage:    util.NilInt32(16),
 			TariffID:    util.NilString("11"),
-			LastUpdated: util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		connectorResolver.ReplaceConnector(ctx, evse, *connectorDto.Id, &connectorDto)
