@@ -27,6 +27,6 @@ func NewService(repositoryService *db.RepositoryService, ocpiRequester *transpor
 	return &SyncService{
 		Repository:           repo,
 		CredentialRepository: credential.NewRepository(repositoryService),
-		VersionResolver:      version.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionResolver:      version.NewResolver(repositoryService, ocpiRequester),
 	}
 }

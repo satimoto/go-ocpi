@@ -27,21 +27,17 @@ type CdrResolver struct {
 	VersionDetailResolver  *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *CdrResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CdrResolver {
+func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CdrResolver {
 	return &CdrResolver{
 		Repository:             cdr.NewRepository(repositoryService),
 		OcpiRequester:          ocpiRequester,
 		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
-		LocationResolver:       location.NewResolver(repositoryService),
+		LocationResolver:       location.NewResolver(repositoryService, ocpiRequester),
 		NodeRepository:         node.NewRepository(repositoryService),
 		SessionRepository:      session.NewRepository(repositoryService),
-		TariffResolver:         tariff.NewResolver(repositoryService),
+		TariffResolver:         tariff.NewResolver(repositoryService, ocpiRequester),
 		TokenRepository:        token.NewRepository(repositoryService),
-		VersionDetailResolver:  versiondetail.NewResolver(repositoryService),
+		VersionDetailResolver:  versiondetail.NewResolver(repositoryService, ocpiRequester),
 	}
 }

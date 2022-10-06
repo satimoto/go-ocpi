@@ -21,11 +21,7 @@ type TariffResolver struct {
 	VersionDetailResolver     *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *TariffResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *TariffResolver {
+func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *TariffResolver {
 	return &TariffResolver{
 		Repository:                tariff.NewRepository(repositoryService),
 		OcpiRequester:             ocpiRequester,
@@ -33,6 +29,6 @@ func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiReques
 		ElementResolver:           element.NewResolver(repositoryService),
 		EnergyMixResolver:         energymix.NewResolver(repositoryService),
 		TariffRestrictionResolver: tariffrestriction.NewResolver(repositoryService),
-		VersionDetailResolver:     versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionDetailResolver:     versiondetail.NewResolver(repositoryService, ocpiRequester),
 	}
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func (rs *RestService) mountLocations() *chi.Mux {
-	locationResolver := location.NewResolver(rs.RepositoryService)
+	locationResolver := location.NewResolver(rs.RepositoryService, rs.OcpiRequester)
 	rs.SyncService.AddHandler(version.VERSION_2_1_1, locationResolver)
 
 	router := chi.NewRouter()

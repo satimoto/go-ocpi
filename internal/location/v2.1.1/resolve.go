@@ -29,11 +29,7 @@ type LocationResolver struct {
 	VersionDetailResolver  *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *LocationResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *LocationResolver {
+func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *LocationResolver {
 	return &LocationResolver{
 		Repository:             location.NewRepository(repositoryService),
 		OcpiRequester:          ocpiRequester,
@@ -44,7 +40,7 @@ func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiReques
 		GeoLocationResolver:    geolocation.NewResolver(repositoryService),
 		ImageResolver:          image.NewResolver(repositoryService),
 		OpeningTimeResolver:    openingtime.NewResolver(repositoryService),
-		TariffResolver:         tariff.NewResolverWithServices(repositoryService, ocpiRequester),
-		VersionDetailResolver:  versiondetail.NewResolver(repositoryService),
+		TariffResolver:         tariff.NewResolver(repositoryService, ocpiRequester),
+		VersionDetailResolver:  versiondetail.NewResolver(repositoryService, ocpiRequester),
 	}
 }

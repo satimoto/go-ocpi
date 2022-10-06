@@ -7,7 +7,7 @@ import (
 )
 
 func (rs *RestService) mountVersions() *chi.Mux {
-	versionResolver := version.NewResolver(rs.RepositoryService)
+	versionResolver := version.NewResolver(rs.RepositoryService, rs.OcpiRequester)
 	router := chi.NewRouter()
 
 	router.Use(middleware.Logger)

@@ -15,15 +15,11 @@ type CommandResolver struct {
 	VersionDetailResolver *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *CommandResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CommandResolver {
+func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *CommandResolver {
 	return &CommandResolver{
 		Repository:            command.NewRepository(repositoryService),
 		OcpiRequester:         ocpiRequester,
-		TokenResolver:         token.NewResolver(repositoryService),
-		VersionDetailResolver: versiondetail.NewResolver(repositoryService),
+		TokenResolver:         token.NewResolver(repositoryService, ocpiRequester),
+		VersionDetailResolver: versiondetail.NewResolver(repositoryService, ocpiRequester),
 	}
 }

@@ -94,7 +94,7 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 			r.ReplaceCdrs(ctx, credential, dto.Data)
 			offset += limit
 
-			if len(dto.Data) < limit {
+			if limit == 0 || len(dto.Data) < limit {
 				break
 			}
 		}

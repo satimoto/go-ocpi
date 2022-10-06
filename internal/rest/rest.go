@@ -50,8 +50,6 @@ func (rs *RestService) StartRest(shutdownCtx context.Context, waitGroup *sync.Wa
 	rs.waitGroup = waitGroup
 	waitGroup.Add(1)
 
-	rs.SyncService.StartService(rs.shutdownCtx, rs.waitGroup)
-
 	rs.Server = &http.Server{
 		Addr:    fmt.Sprintf(":%s", os.Getenv("REST_PORT")),
 		Handler: rs.handler(),
