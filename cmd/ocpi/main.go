@@ -59,6 +59,8 @@ func main() {
 	rpcService := rpc.NewRpc(repositoryService, syncService, ocpiRequester)
 	rpcService.StartRpc(shutdownCtx, waitGroup)
 
+	syncService.StartService(shutdownCtx, waitGroup)
+
 	sigtermChan := make(chan os.Signal)
 	signal.Notify(sigtermChan, syscall.SIGINT, syscall.SIGTERM)
 

@@ -7,7 +7,7 @@ import (
 )
 
 func (rs *RestService) mountCdrs() *chi.Mux {
-	cdrResolver := cdr.NewResolver(rs.RepositoryService)
+	cdrResolver := cdr.NewResolver(rs.RepositoryService, rs.OcpiRequester)
 	rs.SyncService.AddHandler(version.VERSION_2_1_1, cdrResolver)
 
 	router := chi.NewRouter()

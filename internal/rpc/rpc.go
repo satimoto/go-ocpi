@@ -44,7 +44,7 @@ func NewRpc(repositoryService *db.RepositoryService, syncService *ocpiSync.SyncS
 		RpcCommandResolver:    command.NewResolver(repositoryService, syncService, ocpiRequester),
 		RpcCredentialResolver: credential.NewResolver(repositoryService, syncService, ocpiRequester),
 		RpcResolver:           rpc.NewResolver(repositoryService),
-		RpcTokenResolver:      token.NewResolver(repositoryService),
+		RpcTokenResolver:      token.NewResolver(repositoryService, ocpiRequester),
 	}
 }
 

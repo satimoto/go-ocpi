@@ -95,7 +95,7 @@ func (r *SessionResolver) SyncByIdentifier(ctx context.Context, credential db.Cr
 			r.ReplaceSessions(ctx, credential, dto.Data)
 			offset += limit
 
-			if len(dto.Data) < limit {
+			if limit == 0 || len(dto.Data) < limit {
 				break
 			}
 		}

@@ -11,11 +11,7 @@ type VersionDetailResolver struct {
 	OcpiRequester *transportation.OcpiRequester
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *VersionDetailResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *VersionDetailResolver {
+func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *VersionDetailResolver {
 	return &VersionDetailResolver{
 		Repository:    versiondetail.NewRepository(repositoryService),
 		OcpiRequester: ocpiRequester,

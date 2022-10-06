@@ -23,19 +23,15 @@ type SessionResolver struct {
 	VersionDetailResolver        *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *SessionResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *SessionResolver {
+func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *SessionResolver {
 	return &SessionResolver{
 		Repository:                   session.NewRepository(repositoryService),
 		OcpiRequester:                ocpiRequester,
 		ChargingPeriodResolver:       chargingperiod.NewResolver(repositoryService),
-		LocationResolver:             location.NewResolverWithServices(repositoryService, ocpiRequester),
+		LocationResolver:             location.NewResolver(repositoryService, ocpiRequester),
 		NodeRepository:               node.NewRepository(repositoryService),
 		TokenRepository:              token.NewRepository(repositoryService),
 		TokenAuthorizationRepository: tokenauthorization.NewRepository(repositoryService),
-		VersionDetailResolver:        versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionDetailResolver:        versiondetail.NewResolver(repositoryService, ocpiRequester),
 	}
 }

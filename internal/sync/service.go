@@ -21,7 +21,7 @@ func (r *SyncService) startLoop() {
 	for {
 		ctx := context.Background()
 		
-		if credentials, err := r.CredentialRepository.ListCredentials(ctx); err != nil {
+		if credentials, err := r.CredentialRepository.ListCredentials(ctx); err == nil {
 			updatedDate := time.Now().UTC()
 
 			for _, credential := range credentials {

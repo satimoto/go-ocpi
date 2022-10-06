@@ -7,7 +7,7 @@ import (
 )
 
 func (rs *RestService) mountTariffs() *chi.Mux {
-	tariffResolver := tariff.NewResolver(rs.RepositoryService)
+	tariffResolver := tariff.NewResolver(rs.RepositoryService, rs.OcpiRequester)
 	rs.SyncService.AddHandler(version.VERSION_2_1_1, tariffResolver)
 
 	router := chi.NewRouter()

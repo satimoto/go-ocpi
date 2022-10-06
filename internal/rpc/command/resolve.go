@@ -21,10 +21,10 @@ type RpcCommandResolver struct {
 
 func NewResolver(repositoryService *db.RepositoryService, syncService *sync.SyncService, ocpiRequester *transportation.OcpiRequester) *RpcCommandResolver {
 	return &RpcCommandResolver{
-		CommandResolver:    command.NewResolverWithServices(repositoryService, ocpiRequester),
+		CommandResolver:    command.NewResolver(repositoryService, ocpiRequester),
 		CredentialResolver: credential.NewResolver(repositoryService, syncService, ocpiRequester),
-		LocationResolver:   location.NewResolverWithServices(repositoryService, ocpiRequester),
-		SessionResolver:    session.NewResolverWithServices(repositoryService, ocpiRequester),
-		TokenResolver:      token.NewResolverWithServices(repositoryService, ocpiRequester),
+		LocationResolver:   location.NewResolver(repositoryService, ocpiRequester),
+		SessionResolver:    session.NewResolver(repositoryService, ocpiRequester),
+		TokenResolver:      token.NewResolver(repositoryService, ocpiRequester),
 	}
 }

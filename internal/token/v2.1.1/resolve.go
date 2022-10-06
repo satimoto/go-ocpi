@@ -15,15 +15,11 @@ type TokenResolver struct {
 	VersionDetailResolver      *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService) *TokenResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *TokenResolver {
+func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *TokenResolver {
 	return &TokenResolver{
 		Repository:                 token.NewRepository(repositoryService),
 		OcpiRequester:              ocpiRequester,
 		TokenAuthorizationResolver: tokenauthorization.NewResolver(repositoryService),
-		VersionDetailResolver:      versiondetail.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionDetailResolver:      versiondetail.NewResolver(repositoryService, ocpiRequester),
 	}
 }

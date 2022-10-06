@@ -87,7 +87,7 @@ func (r *TariffResolver) SyncByIdentifier(ctx context.Context, credential db.Cre
 			r.ReplaceTariffsByIdentifier(ctx, credential, countryCode, partyID, nil, dto.Data)
 			offset += limit
 
-			if len(dto.Data) < limit {
+			if limit == 0 || len(dto.Data) < limit {
 				break
 			}
 		}
