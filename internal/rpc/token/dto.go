@@ -14,12 +14,20 @@ func NewCreateTokenDto(input *ocpirpc.CreateTokenRequest) *dto.TokenDto {
 	lastUpdated := util.NewTimeUTC()
 
 	return &dto.TokenDto{
-		Uid:         dbUtil.NilString(uuid.NewString()),
+		Uid:         NilUid(input.Uid),
 		Type:        NilTokenType(input.Type),
 		Valid:       dbUtil.NilBool(true),
 		Whitelist:   NilTokenWhitelistType(input.Whitelist),
 		LastUpdated: ocpitype.NilOcpiTime(&lastUpdated),
 	}
+}
+
+func NilUid(uid string) *string {
+	if len(uid) > 0 {
+		return &uid
+	}
+
+	return dbUtil.NilString(uuid.NewString())
 }
 
 func NilTokenType(i interface{}) *db.TokenType {
