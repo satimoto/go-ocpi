@@ -108,19 +108,11 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			r.replaceTariffs(ctx, credential, countryCode, partyID, &cdr.ID, cdrDto)
 		}
 
-		node, err := r.NodeRepository.GetNodeByUserID(ctx, cdr.UserID)
-
-		if err != nil {
-			util.LogOnError("OCPI025", "Error retrieving node", err)
-			log.Printf("OCPI025: UserID=%v", cdr.UserID)
-			return &cdr
-		}
-
 		// If cdr received before session is completed, set status to completed
 		if cdr.AuthorizationID.Valid {
 			if session, err := r.SessionRepository.GetSessionByAuthorizationID(ctx, cdr.AuthorizationID.String); err == nil {
 				sessionParams := param.NewUpdateSessionByUidParams(session)
-				sessionParams.Status = db.SessionStatusTypeCOMPLETED
+				sessionParams.Status = db.SessionStatusTypeINVOICED
 
 				_, err = r.SessionRepository.UpdateSessionByUid(ctx, sessionParams)
 
@@ -129,6 +121,15 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 					log.Printf("OCPI283: Params=%#v", sessionParams)
 				}
 			}
+		}
+
+		// Get users node
+		node, err := r.NodeRepository.GetNodeByUserID(ctx, cdr.UserID)
+
+		if err != nil {
+			util.LogOnError("OCPI025", "Error retrieving node", err)
+			log.Printf("OCPI025: UserID=%v", cdr.UserID)
+			return &cdr
 		}
 
 		// TODO: Handle failed RPC call more robustly

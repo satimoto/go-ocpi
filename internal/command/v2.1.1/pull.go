@@ -47,7 +47,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	}
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-	commandDto := dto.NewCommandReservationDto(command)
+	commandDto := r.CreateCommandReservationDto(ctx, command)
 	dtoBytes, err := json.Marshal(commandDto)
 
 	if err != nil {
@@ -79,6 +79,11 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 		dbUtil.LogHttpRequest("OCPI048", requestUrl.String(), response.Request, true)
 		dbUtil.LogHttpResponse("OCPI048", requestUrl.String(), response, true)
 		log.Printf("OCPI048: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
+
+		updateCommandReservationParams := param.NewUpdateCommandReservationParams(command)
+		updateCommandReservationParams.Status = db.CommandResponseTypeREJECTED
+		r.Repository.UpdateCommandReservation(ctx, updateCommandReservationParams)
+
 		return nil, errors.New("error requesting reservation")
 	}
 
@@ -122,7 +127,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	}
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-	commandDto := dto.NewCommandStartDto(command)
+	commandDto := r.CreateCommandStartDto(ctx, command)
 	dtoBytes, err := json.Marshal(commandDto)
 
 	if err != nil {
@@ -154,6 +159,11 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		dbUtil.LogHttpRequest("OCPI055", requestUrl.String(), response.Request, true)
 		dbUtil.LogHttpResponse("OCPI055", requestUrl.String(), response, true)
 		log.Printf("OCPI055: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
+
+		updateCommandStartParams := param.NewUpdateCommandStartParams(command)
+		updateCommandStartParams.Status = db.CommandResponseTypeREJECTED
+		r.Repository.UpdateCommandStart(ctx, updateCommandStartParams)
+
 		return nil, errors.New("error starting reservation")
 	}
 
@@ -197,7 +207,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	}
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-	commandDto := dto.NewCommandStopDto(command)
+	commandDto := r.CreateCommandStopDto(ctx, command)
 	dtoBytes, err := json.Marshal(commandDto)
 
 	if err != nil {
@@ -229,6 +239,11 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 		dbUtil.LogHttpRequest("OCPI063", requestUrl.String(), response.Request, true)
 		dbUtil.LogHttpResponse("OCPI063", requestUrl.String(), response, true)
 		log.Printf("OCPI063: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
+
+		updateCommandStopParams := param.NewUpdateCommandStopParams(command)
+		updateCommandStopParams.Status = db.CommandResponseTypeREJECTED
+		r.Repository.UpdateCommandStop(ctx, updateCommandStopParams)
+
 		return nil, errors.New("error stopping reservation")
 	}
 
@@ -272,7 +287,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 	}
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-	commandDto := dto.NewCommandUnlockDto(command)
+	commandDto := r.CreateCommandUnlockDto(ctx, command)
 	dtoBytes, err := json.Marshal(commandDto)
 
 	if err != nil {
@@ -304,6 +319,11 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		dbUtil.LogHttpRequest("OCPI070", requestUrl.String(), response.Request, true)
 		dbUtil.LogHttpResponse("OCPI070", requestUrl.String(), response, true)
 		log.Printf("OCPI070: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
+
+		updateCommandUnlockParams := param.NewUpdateCommandUnlockParams(command)
+		updateCommandUnlockParams.Status = db.CommandResponseTypeREJECTED
+		r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams)
+
 		return nil, errors.New("error unlocking reservation")
 	}
 
