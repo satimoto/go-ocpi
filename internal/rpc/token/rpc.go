@@ -33,6 +33,15 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 
 		if len(request.Allowed) > 0 {
 			tokenAllowed = db.TokenAllowedType(request.Allowed)
+		} else {
+			getTokenByUserIDParams := db.GetTokenByUserIDParams{
+				UserID: request.UserId,
+				Type: db.TokenTypeOTHER,
+			}
+	
+			if t, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, getTokenByUserIDParams); err == nil {
+				tokenAllowed = t.Allowed
+			}	
 		}
 
 		if len(request.Whitelist) == 0 {
