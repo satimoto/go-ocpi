@@ -1,6 +1,7 @@
 package tokenauthorization
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -13,11 +14,12 @@ func (r *TokenAuthorizationResolver) AuthorizeToken(rw http.ResponseWriter, requ
 	token := ctx.Value("token").(db.Token)
 	locationReferencesDto, err := r.UnmarshalLocationReferencesDto(request.Body)
 
-	if err != nil {
+	if err != nil && err != io.EOF {
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 		return
 	}
 
+	// TODO: we should reject an authorization to an unknown location/evse/connector
 	tokenAuthorization, err := r.CreateTokenAuthorization(ctx, token, locationReferencesDto)
 
 	if err != nil {

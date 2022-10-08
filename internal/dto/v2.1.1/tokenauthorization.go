@@ -26,7 +26,7 @@ func NewAuthorizationInfoDto(token db.Token) *AuthorizationInfoDto {
 }
 
 type LocationReferencesDto struct {
-	LocationID   *string   `json:"location_id"`
+	LocationID   *string   `json:"location_id,omitempty"`
 	EvseUids     []*string `json:"evse_uids,omitempty"`
 	ConnectorIds []*string `json:"connector_ids,omitempty"`
 }

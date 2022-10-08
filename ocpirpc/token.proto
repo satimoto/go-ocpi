@@ -22,8 +22,9 @@ message CreateTokenResponse {
   string uid = 2;
   string type = 3;
   string auth_id = 4;
-  string allowed = 5;
-  string whitelist = 6;
+  string visual_number = 5;
+  string allowed = 6;
+  string whitelist = 7;
 }
 
 message UpdateTokensRequest {
