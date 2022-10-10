@@ -55,7 +55,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 				evseParams.Status = *evseDto.Status
 			}
 
-			if evseDto.Status != nil && evseDto.LastUpdated != nil {
+			if evseDto.Status != nil && evseDto.LastUpdated != nil && evseDto.Status != &evse.Status {
 				evseStatusPeriodParams := param.NewCreateEvseStatusPeriodParams(evse, evseDto.LastUpdated.Time())
 				_, err := r.Repository.CreateEvseStatusPeriod(ctx, evseStatusPeriodParams)
 
