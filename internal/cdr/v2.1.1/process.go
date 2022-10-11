@@ -112,7 +112,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 		if cdr.AuthorizationID.Valid {
 			if session, err := r.SessionRepository.GetSessionByAuthorizationID(ctx, cdr.AuthorizationID.String); err == nil {
 				sessionParams := param.NewUpdateSessionByUidParams(session)
-				sessionParams.Status = db.SessionStatusTypeINVOICED
+				sessionParams.Status = db.SessionStatusTypeCOMPLETED
 
 				_, err = r.SessionRepository.UpdateSessionByUid(ctx, sessionParams)
 
