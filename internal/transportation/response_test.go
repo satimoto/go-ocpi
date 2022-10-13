@@ -54,7 +54,7 @@ func TestOcpiResponse(t *testing.T) {
 		marshalledOcpiResponse := []byte(`{
 			"status_code": 1000,
 			"status_message": "Success",
-			"timestamp": "2015-06-29T20:39:09"
+			"timestamp": "2015-06-29T20:39:09Z"
 		}`)
 
 		readerCloser := io.NopCloser(strings.NewReader(string(marshalledOcpiResponse)))
