@@ -2,6 +2,7 @@ package tokenauthorization
 
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/node"
 	"github.com/satimoto/go-datastore/pkg/tokenauthorization"
 	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
 	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
@@ -11,6 +12,7 @@ type TokenAuthorizationResolver struct {
 	Repository        tokenauthorization.TokenAuthorizationRepository
 	ConnectorResolver *connector.ConnectorResolver
 	EvseResolver      *evse.EvseResolver
+	NodeRepository    node.NodeRepository
 }
 
 func NewResolver(repositoryService *db.RepositoryService) *TokenAuthorizationResolver {
@@ -18,5 +20,6 @@ func NewResolver(repositoryService *db.RepositoryService) *TokenAuthorizationRes
 		Repository:        tokenauthorization.NewRepository(repositoryService),
 		ConnectorResolver: connector.NewResolver(repositoryService),
 		EvseResolver:      evse.NewResolver(repositoryService),
+		NodeRepository:    node.NewRepository(repositoryService),
 	}
 }

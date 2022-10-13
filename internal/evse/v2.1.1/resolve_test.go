@@ -192,6 +192,7 @@ func TestReplaceEvse(t *testing.T) {
 			"standard": "IEC_62196_T2",
 			"format": "CABLE",
 			"powerType": "AC_3_PHASE",
+			"publish": true,
 			"voltage": 220,
 			"amperage": 16,
 			"wattage": 10560,

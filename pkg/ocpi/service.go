@@ -28,16 +28,19 @@ type Ocpi interface {
 
 	CreateToken(ctx context.Context, in *ocpirpc.CreateTokenRequest, opts ...grpc.CallOption) (*ocpirpc.CreateTokenResponse, error)
 	UpdateTokens(ctx context.Context, in *ocpirpc.UpdateTokensRequest, opts ...grpc.CallOption) (*ocpirpc.UpdateTokensResponse, error)
+
+	TokenAuthorizationCreated(ctx context.Context, in *ocpirpc.TokenAuthorizationCreatedRequest, opts ...grpc.CallOption) (*ocpirpc.TokenAuthorizationCreatedResponse, error)
 }
 
 type OcpiService struct {
-	clientConn       *grpc.ClientConn
-	commandClient    *ocpirpc.CommandServiceClient
-	cdrClient        *ocpirpc.CdrServiceClient
-	credentialClient *ocpirpc.CredentialServiceClient
-	rpcClient        *ocpirpc.RpcServiceClient
-	sessionClient    *ocpirpc.SessionServiceClient
-	tokenClient      *ocpirpc.TokenServiceClient
+	clientConn               *grpc.ClientConn
+	commandClient            *ocpirpc.CommandServiceClient
+	cdrClient                *ocpirpc.CdrServiceClient
+	credentialClient         *ocpirpc.CredentialServiceClient
+	rpcClient                *ocpirpc.RpcServiceClient
+	sessionClient            *ocpirpc.SessionServiceClient
+	tokenClient              *ocpirpc.TokenServiceClient
+	tokenAuthorizationClient *ocpirpc.TokenAuthorizationServiceClient
 }
 
 func NewService(address string) Ocpi {

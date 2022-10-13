@@ -140,10 +140,10 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 				log.Printf("OCPI166: Params=%#v", sessionParams)
 				return nil
 			}
-		}
 
-		if sessionDto.AuthorizationID != nil {
-			r.replaceTokenAuthorization(ctx, countryCode, partyID, sessionDto)
+			if sessionDto.AuthorizationID != nil {
+				r.replaceTokenAuthorization(ctx, countryCode, partyID, sessionDto)
+			}	
 		}
 
 		if sessionDto.ChargingPeriods != nil {
@@ -222,6 +222,17 @@ func (r *SessionResolver) replaceChargingPeriods(ctx context.Context, sessionID 
 }
 
 func (r *SessionResolver) replaceTokenAuthorization(ctx context.Context, countryCode *string, partyID *string, sessionDto *dto.SessionDto) {
-	tokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(*sessionDto.AuthorizationID, countryCode, partyID)
+	tokenAuthorization, err := r.TokenAuthorizationRepository.GetTokenAuthorizationByAuthorizationID(ctx, *sessionDto.AuthorizationID)
+
+	if err != nil {
+		util.LogOnError("OCPI209", "Error retrieving token authorization", err)
+		log.Printf("OCPI209: AuthorizationID=%v", *sessionDto.AuthorizationID)
+		return
+	}
+
+	tokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(tokenAuthorization)
+	tokenAuthorizationParams.CountryCode = util.SqlNullString(countryCode)
+	tokenAuthorizationParams.PartyID = util.SqlNullString(partyID)
+
 	r.TokenAuthorizationRepository.UpdateTokenAuthorizationByAuthorizationID(ctx, tokenAuthorizationParams)
 }

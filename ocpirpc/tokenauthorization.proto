@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package tokenauthorization;
+
+option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
+
+service TokenAuthorizationService {
+  rpc TokenAuthorizationCreated(TokenAuthorizationCreatedRequest) returns (TokenAuthorizationCreatedResponse);
+};
+
+message TokenAuthorizationCreatedRequest { string authorization_id = 1; };
+
+message TokenAuthorizationCreatedResponse {};

@@ -10,10 +10,13 @@ import (
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/pkg/ocpi"
+	ocpiToken "github.com/satimoto/go-ocpi/pkg/ocpi/token"
 )
 
 func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, locationReferencesDto *dto.LocationReferencesDto) (*db.TokenAuthorization, error) {
 	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
+	tokenAuthorizationParams.Authorized = token.Type == db.TokenTypeOTHER
 	tokenAuthorizationParams.SigningKey = r.createTokenAuthorizationSigningKey()
 
 	if locationReferencesDto != nil {
@@ -29,6 +32,28 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 	}
 
 	r.createTokenAuthorizationRelations(ctx, tokenAuthorization.ID, locationReferencesDto)
+
+	if !tokenAuthorization.Authorized {
+		node, err := r.NodeRepository.GetNodeByUserID(ctx, token.UserID)
+
+		if err != nil {
+			util.LogOnError("OCPI285", "Error retrieving node", err)
+			log.Printf("OCPI285: UserID=%v", token.UserID)
+			return &tokenAuthorization, nil
+		}
+
+		// TODO: Handle failed RPC call more robustly
+		ocpiService := ocpi.NewService(node.LspAddr)
+		tokenAuthorizationCreatedRequest := ocpiToken.NewTokenAuthorizationCreatedRequest(tokenAuthorization)
+		tokenAuthorizationCreatedResponse, err := ocpiService.TokenAuthorizationCreated(ctx, tokenAuthorizationCreatedRequest)
+
+		if err != nil {
+			util.LogOnError("OCPI286", "Error calling RPC service", err)
+			log.Printf("OCPI286: Request=%#v, Response=%#v", tokenAuthorizationCreatedRequest, tokenAuthorizationCreatedResponse)
+		}
+
+		// TODO: Cancel a session that is not authorized by the application
+	}
 
 	return &tokenAuthorization, nil
 }
