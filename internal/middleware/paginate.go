@@ -72,7 +72,7 @@ func GetLimit(ctx context.Context, defaultValue int64) int64 {
 	limit := ctx.Value("limit")
 
 	if limit != nil {
-		return limit.(int64)
+		return int64(limit.(int))
 	}
 
 	return defaultValue
@@ -82,7 +82,7 @@ func GetOffset(ctx context.Context, defaultValue int64) int64 {
 	limit := ctx.Value("offset")
 
 	if limit != nil {
-		return limit.(int64)
+		return int64(limit.(int))
 	}
 
 	return defaultValue

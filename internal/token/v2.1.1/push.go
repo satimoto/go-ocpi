@@ -2,7 +2,6 @@ package token
 
 import (
 	"log"
-	"math"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -17,7 +16,7 @@ func (r *TokenResolver) ListTokens(rw http.ResponseWriter, request *http.Request
 	listTokensParams := db.ListTokensParams{
 		FilterDateFrom: middleware.GetDateFrom(ctx, ""),
 		FilterDateTo:   middleware.GetDateTo(ctx, ""),
-		FilterLimit:    middleware.GetLimit(ctx, math.MaxInt64),
+		FilterLimit:    middleware.GetLimit(ctx, 1000),
 		FilterOffset:   middleware.GetOffset(ctx, 0),
 	}
 	tokens, err := r.Repository.ListTokens(ctx, listTokensParams)
