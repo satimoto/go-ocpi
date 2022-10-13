@@ -8,7 +8,7 @@ import (
 )
 
 func (r *SyncService) StartService(shutdownCtx context.Context, waitGroup *sync.WaitGroup) {
-	log.Printf("Starting up Sync Service")
+	log.Printf("Starting Sync Service")
 	r.shutdownCtx = shutdownCtx
 	r.waitGroup = waitGroup
 

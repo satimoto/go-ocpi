@@ -44,7 +44,7 @@ func (r *SessionResolver) UpdateSession(rw http.ResponseWriter, request *http.Re
 	session := r.ReplaceSessionByIdentifier(ctx, *cred, &countryCode, &partyID, uid, dto)
 
 	if session == nil {
-		log.Print("OCPI177", "Error replacing cdr")
+		log.Print("OCPI177", "Error replacing session")
 		util.LogHttpRequest("OCPI177", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiErrorMissingParameters(nil))

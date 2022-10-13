@@ -28,8 +28,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 		cdr, err := r.Repository.GetCdrByUid(ctx, uid)
 
 		if err == nil {
-			util.LogOnError("OCPI019", "Error cdr exists", err)
-			log.Printf("OCPI019: Uid=%v", uid)
+			log.Printf("Ignoring existing cdr %v", uid)
 			return nil
 		}
 
