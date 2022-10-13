@@ -56,7 +56,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 				sessionParams.MeterID = util.SqlNullString(sessionDto.MeterID)
 			}
 
-			if sessionDto.Status != nil && session.Status != sessionParams.Status {
+			if sessionDto.Status != nil && session.Status != *sessionDto.Status {
 				statusChanged = true
 				sessionParams.Status = *sessionDto.Status
 			}
