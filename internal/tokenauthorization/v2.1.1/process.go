@@ -51,8 +51,6 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 			util.LogOnError("OCPI286", "Error calling RPC service", err)
 			log.Printf("OCPI286: Request=%#v, Response=%#v", tokenAuthorizationCreatedRequest, tokenAuthorizationCreatedResponse)
 		}
-
-		// TODO: Cancel a session that is not authorized by the application
 	}
 
 	return &tokenAuthorization, nil

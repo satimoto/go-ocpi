@@ -9,11 +9,12 @@ import (
 
 func NewCreateCommandReservationParams(token db.Token, expiryDate time.Time, location db.Location, evseUid *string) db.CreateCommandReservationParams {
 	return db.CreateCommandReservationParams{
-		Status:     db.CommandResponseTypeREQUESTED,
-		TokenID:    token.ID,
-		ExpiryDate: expiryDate,
-		LocationID: location.Uid,
-		EvseUid:    util.SqlNullString(evseUid),
+		Status:      db.CommandResponseTypeREQUESTED,
+		TokenID:     token.ID,
+		ExpiryDate:  expiryDate,
+		LocationID:  location.Uid,
+		EvseUid:     util.SqlNullString(evseUid),
+		LastUpdated: time.Now().UTC(),
 	}
 }
 
@@ -23,6 +24,7 @@ func NewCreateCommandStartParams(tokenAuthorization db.TokenAuthorization, evseU
 		Status:          db.CommandResponseTypeREQUESTED,
 		TokenID:         tokenAuthorization.TokenID,
 		EvseUid:         util.SqlNullString(evseUid),
+		LastUpdated:     time.Now().UTC(),
 	}
 
 	if tokenAuthorization.LocationID.Valid {
@@ -34,8 +36,9 @@ func NewCreateCommandStartParams(tokenAuthorization db.TokenAuthorization, evseU
 
 func NewCreateCommandStopParams(sessionID string) db.CreateCommandStopParams {
 	return db.CreateCommandStopParams{
-		Status:    db.CommandResponseTypeREQUESTED,
-		SessionID: sessionID,
+		Status:      db.CommandResponseTypeREQUESTED,
+		SessionID:   sessionID,
+		LastUpdated: time.Now().UTC(),
 	}
 }
 
@@ -45,5 +48,6 @@ func NewCreateCommandUnlockParams(location db.Location, evseUid string, connecto
 		LocationID:  location.Uid,
 		EvseUid:     evseUid,
 		ConnectorID: connectorID,
+		LastUpdated: time.Now().UTC(),
 	}
 }
