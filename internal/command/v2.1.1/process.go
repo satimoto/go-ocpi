@@ -3,6 +3,7 @@ package command
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
@@ -14,6 +15,7 @@ func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command 
 	if commandResponseDto != nil {
 		commandParams := param.NewUpdateCommandReservationParams(command)
 		commandParams.Status = *commandResponseDto.Result
+		commandParams.LastUpdated = time.Now().UTC()
 
 		_, err := r.Repository.UpdateCommandReservation(ctx, commandParams)
 
@@ -28,6 +30,7 @@ func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.Com
 	if commandResponseDto != nil {
 		commandParams := param.NewUpdateCommandStartParams(command)
 		commandParams.Status = *commandResponseDto.Result
+		commandParams.LastUpdated = time.Now().UTC()
 
 		_, err := r.Repository.UpdateCommandStart(ctx, commandParams)
 
@@ -42,6 +45,7 @@ func (r *CommandResolver) UpdateCommandStop(ctx context.Context, command db.Comm
 	if commandResponseDto != nil {
 		commandParams := param.NewUpdateCommandStopParams(command)
 		commandParams.Status = *commandResponseDto.Result
+		commandParams.LastUpdated = time.Now().UTC()
 
 		_, err := r.Repository.UpdateCommandStop(ctx, commandParams)
 
@@ -56,6 +60,7 @@ func (r *CommandResolver) UpdateCommandUnlock(ctx context.Context, command db.Co
 	if commandResponseDto != nil {
 		commandParams := param.NewUpdateCommandUnlockParams(command)
 		commandParams.Status = *commandResponseDto.Result
+		commandParams.LastUpdated = time.Now().UTC()
 
 		_, err := r.Repository.UpdateCommandUnlock(ctx, commandParams)
 
