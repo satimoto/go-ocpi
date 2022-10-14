@@ -13,7 +13,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/nsf/jsondiff v0.0.0-20210926074059-1e845ec5d249
 	github.com/prometheus/client_golang v1.12.1
-	github.com/satimoto/go-datastore v0.3.1-0.20221014143853-d61c8487db0a
+	github.com/satimoto/go-datastore v0.3.1-0.20221014172535-5cb6fc2609b6
 	google.golang.org/grpc v1.46.0
 )
 
