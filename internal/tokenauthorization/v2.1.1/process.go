@@ -97,13 +97,6 @@ func (r *TokenAuthorizationResolver) createTokenAuthorizationRelations(ctx conte
 	}
 }
 
-func (r *TokenAuthorizationResolver) CreateTokenAuthorizationVerificationKey(tokenAuthorization db.TokenAuthorization) ([]byte, error) {
-	privateKey := secp.PrivKeyFromBytes(tokenAuthorization.SigningKey)
-	publicKey := privateKey.PubKey()
-
-	return publicKey.SerializeCompressed(), nil
-}
-
 func (r *TokenAuthorizationResolver) createTokenAuthorizationSigningKey() []byte {
 	var privateKey *secp.PrivateKey
 	var err error
