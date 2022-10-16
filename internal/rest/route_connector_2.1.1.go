@@ -12,7 +12,7 @@ func (rs *RestService) mountConnectors() *chi.Mux {
 	router.Route("/{connector_id}", func(connectorRouter chi.Router) {
 		connectorRouter.Put("/", connectorResolver.UpdateConnector)
 
-		connectorContextRouter := connectorRouter.With(connectorResolver.ConnectorContext(rs.SyncService))
+		connectorContextRouter := connectorRouter.With(connectorResolver.ConnectorContext(rs.ServiceResolver.SyncService))
 		connectorContextRouter.Get("/", connectorResolver.GetConnector)
 		connectorContextRouter.Patch("/", connectorResolver.UpdateConnector)
 	})

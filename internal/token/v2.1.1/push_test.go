@@ -12,6 +12,8 @@ import (
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/middleware"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
 	tokenMocks "github.com/satimoto/go-ocpi/internal/token/v2.1.1/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
@@ -36,7 +38,11 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Empty list tokens request", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -58,7 +64,11 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("List tokens request", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -105,7 +115,11 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -125,7 +139,11 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Invalid authorize", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -146,7 +164,11 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Authorize", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -184,7 +206,11 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Authorize with location references", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -227,7 +253,11 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Authorize with location references", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -271,7 +301,11 @@ func TestTokenRequest(t *testing.T) {
 	t.Run("Authorize with location and evid references", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
 

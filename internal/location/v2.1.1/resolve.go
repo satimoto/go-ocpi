@@ -10,6 +10,7 @@ import (
 	"github.com/satimoto/go-ocpi/internal/geolocation"
 	"github.com/satimoto/go-ocpi/internal/image"
 	"github.com/satimoto/go-ocpi/internal/openingtime"
+	"github.com/satimoto/go-ocpi/internal/service"
 	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/versiondetail"
@@ -17,7 +18,7 @@ import (
 
 type LocationResolver struct {
 	Repository             location.LocationRepository
-	OcpiRequester          *transportation.OcpiRequester
+	OcpiService            *transportation.OcpiService
 	BusinessDetailResolver *businessdetail.BusinessDetailResolver
 	DisplayTextResolver    *displaytext.DisplayTextResolver
 	EnergyMixResolver      *energymix.EnergyMixResolver
@@ -29,10 +30,10 @@ type LocationResolver struct {
 	VersionDetailResolver  *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *LocationResolver {
+func NewResolver(repositoryService *db.RepositoryService, services *service.ServiceResolver) *LocationResolver {
 	return &LocationResolver{
 		Repository:             location.NewRepository(repositoryService),
-		OcpiRequester:          ocpiRequester,
+		OcpiService:            services.OcpiService,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		DisplayTextResolver:    displaytext.NewResolver(repositoryService),
 		EnergyMixResolver:      energymix.NewResolver(repositoryService),
@@ -40,7 +41,7 @@ func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transpo
 		GeoLocationResolver:    geolocation.NewResolver(repositoryService),
 		ImageResolver:          image.NewResolver(repositoryService),
 		OpeningTimeResolver:    openingtime.NewResolver(repositoryService),
-		TariffResolver:         tariff.NewResolver(repositoryService, ocpiRequester),
-		VersionDetailResolver:  versiondetail.NewResolver(repositoryService, ocpiRequester),
+		TariffResolver:         tariff.NewResolver(repositoryService, services),
+		VersionDetailResolver:  versiondetail.NewResolver(repositoryService, services),
 	}
 }

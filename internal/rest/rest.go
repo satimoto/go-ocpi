@@ -17,8 +17,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
-	ocpiSync "github.com/satimoto/go-ocpi/internal/sync"
-	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/service"
 )
 
 type Rest interface {
@@ -27,18 +26,16 @@ type Rest interface {
 
 type RestService struct {
 	RepositoryService *db.RepositoryService
-	OcpiRequester     *transportation.OcpiRequester
-	SyncService       *ocpiSync.SyncService
+	ServiceResolver   *service.ServiceResolver
 	Server            *http.Server
 	shutdownCtx       context.Context
 	waitGroup         *sync.WaitGroup
 }
 
-func NewRest(repositoryService *db.RepositoryService, syncService *ocpiSync.SyncService, ocpiRequester *transportation.OcpiRequester) Rest {
+func NewRest(repositoryService *db.RepositoryService, services *service.ServiceResolver) Rest {
 	restService := &RestService{
 		RepositoryService: repositoryService,
-		OcpiRequester:     ocpiRequester,
-		SyncService:       syncService,
+		ServiceResolver:   services,
 	}
 
 	return restService

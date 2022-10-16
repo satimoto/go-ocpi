@@ -56,7 +56,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	}
 
 	util.AppendPath(requestUrl, "RESERVE_NOW")
-	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
+	response, err := r.OcpiService.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI046", "Error making request", err)
@@ -136,7 +136,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	}
 
 	util.AppendPath(requestUrl, "START_SESSION")
-	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
+	response, err := r.OcpiService.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI053", "Error making request", err)
@@ -216,7 +216,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	}
 
 	util.AppendPath(requestUrl, "STOP_SESSION")
-	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
+	response, err := r.OcpiService.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI060", "Error making request", err)
@@ -296,7 +296,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 	}
 
 	util.AppendPath(requestUrl, "UNLOCK_CONNECTOR")
-	response, err := r.OcpiRequester.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
+	response, err := r.OcpiService.Do(http.MethodPost, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI068", "Error making request", err)

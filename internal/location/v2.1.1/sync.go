@@ -48,7 +48,7 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 		query.Set("offset", fmt.Sprintf("%d", offset))
 		requestUrl.RawQuery = query.Encode()
 
-		response, err := r.OcpiRequester.Do(http.MethodGet, requestUrl.String(), header, nil)
+		response, err := r.OcpiService.Do(http.MethodGet, requestUrl.String(), header, nil)
 
 		if err != nil {
 			util.LogOnError("OCPI127", "Error making request", err)

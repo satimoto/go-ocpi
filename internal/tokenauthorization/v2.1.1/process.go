@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 	"log"
+	"time"
 
 	secp "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
-	"github.com/satimoto/go-ocpi/pkg/ocpi"
-	ocpiToken "github.com/satimoto/go-ocpi/pkg/ocpi/token"
 )
 
 func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, locationReferencesDto *dto.LocationReferencesDto) (*db.TokenAuthorization, error) {
@@ -33,23 +32,41 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 
 	r.createTokenAuthorizationRelations(ctx, tokenAuthorization.ID, locationReferencesDto)
 
-	if !tokenAuthorization.Authorized {
-		node, err := r.NodeRepository.GetNodeByUserID(ctx, token.UserID)
+	if !tokenAuthorizationParams.Authorized {
+		// Token authentication is not authorized because its initiated
+		// by an RFID card. The request needs to be forwarded to the user's
+		// device, which then responds if it is authorized or not.
+		// If there is a timeout in waiting for the response, the token
+		// authorize request is rejected.
+		asyncChan := r.AsyncService.Add(tokenAuthorizationParams.AuthorizationID)
+
+		user, err := r.UserRepository.GetUser(ctx, token.UserID)
 
 		if err != nil {
 			util.LogOnError("OCPI285", "Error retrieving node", err)
 			log.Printf("OCPI285: UserID=%v", token.UserID)
-			return &tokenAuthorization, nil
+			return nil, nil
 		}
 
-		// TODO: Handle failed RPC call more robustly
-		ocpiService := ocpi.NewService(node.LspAddr)
-		tokenAuthorizationCreatedRequest := ocpiToken.NewTokenAuthorizationCreatedRequest(tokenAuthorization)
-		tokenAuthorizationCreatedResponse, err := ocpiService.TokenAuthorizationCreated(ctx, tokenAuthorizationCreatedRequest)
+		r.SendNotification(user, tokenAuthorizationParams.AuthorizationID)
+
+		select {
+		case asyncResult := <-asyncChan:
+			if !asyncResult.Bool {
+				return nil, nil
+			}
+		case <-time.After(55 * time.Second):
+			return nil, nil
+		}
+
+		updateTokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(tokenAuthorization)
+		updateTokenAuthorizationParams.Authorized = true
+
+		r.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationParams)
 
 		if err != nil {
-			util.LogOnError("OCPI286", "Error calling RPC service", err)
-			log.Printf("OCPI286: Request=%#v, Response=%#v", tokenAuthorizationCreatedRequest, tokenAuthorizationCreatedResponse)
+			util.LogOnError("OCPI287", "Error updating token authorization", err)
+			log.Printf("OCPI287: Params=%#v", updateTokenAuthorizationParams)
 		}
 	}
 

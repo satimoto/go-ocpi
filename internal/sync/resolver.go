@@ -21,12 +21,12 @@ type SyncService struct {
 	waitGroup            *sync.WaitGroup
 }
 
-func NewService(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *SyncService {
+func NewService(repositoryService *db.RepositoryService, ocpiService *transportation.OcpiService) *SyncService {
 	repo := SyncRepository(repositoryService)
 
 	return &SyncService{
 		Repository:           repo,
 		CredentialRepository: credential.NewRepository(repositoryService),
-		VersionResolver:      version.NewResolver(repositoryService, ocpiRequester),
+		VersionResolver:      version.NewResolver(repositoryService, ocpiService),
 	}
 }

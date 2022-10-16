@@ -11,6 +11,8 @@ import (
 
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	versionDetailMocks "github.com/satimoto/go-ocpi/internal/versiondetail/mocks"
@@ -26,7 +28,11 @@ func TestPullVersionEndpoints(t *testing.T) {
 	t.Run("Success request", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionDetailResolver := versionDetailMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		versionDetailResolver := versionDetailMocks.NewResolver(mockRepository, mockServices)
 
 		bodyBytes := `{
 			"data": {

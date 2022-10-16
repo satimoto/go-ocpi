@@ -12,7 +12,9 @@ import (
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	locationMocks "github.com/satimoto/go-ocpi/internal/location/v2.1.1/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
 	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
@@ -23,7 +25,11 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Create Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 
@@ -100,7 +106,11 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Update Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := geom.NewPoint("31.3434", "-62.6996")
@@ -176,7 +186,11 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Update Location with Evses", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := geom.NewPoint("31.3434", "-62.6996")

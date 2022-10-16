@@ -83,6 +83,10 @@ variable "env_issuer" {
   description = "The environment variable to set the issuer"
 }
 
+variable "env_fcm_api_key" {
+  description = "The environment variable to set the FCM API key"
+}
+
 variable "env_rpc_port" {
   description = "The environment variable to set the RPC port"
 }

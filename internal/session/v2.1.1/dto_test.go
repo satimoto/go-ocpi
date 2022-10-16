@@ -8,6 +8,8 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	sessionMocks "github.com/satimoto/go-ocpi/internal/session/v2.1.1/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
@@ -19,7 +21,11 @@ func TestCreateSessionDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		sessionResolver := sessionMocks.NewResolver(mockRepository, mockServices)
 
 		sess := db.Session{}
 
@@ -43,7 +49,11 @@ func TestCreateSessionDto(t *testing.T) {
 	t.Run("Simple", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		sessionResolver := sessionMocks.NewResolver(mockRepository, mockServices)
 
 		sess := db.Session{
 			Uid:           "SESSION0001",
@@ -76,7 +86,11 @@ func TestCreateSessionDto(t *testing.T) {
 	t.Run("With charge periods", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		sessionResolver := sessionMocks.NewResolver(mockRepository, mockServices)
 
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{

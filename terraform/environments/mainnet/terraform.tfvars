@@ -40,6 +40,8 @@ env_party_id = "BTC"
 
 env_issuer = "Satimoto"
 
+env_fcm_api_key = "AAAA3ZJBhzw:APA91bHCxjgYChy0QnDfUihevkVyni_klXxH5GkVLdHAdcjgnWbSAxnpeP9b0GmMiUTPbStB8uAzNw147CPUWbbBlCMUDiFOCMp9Mqp9YGNZhYHTiv0AMSV3BAAmWn6_vQraENT4CTQ8"
+
 env_rpc_port = 50000
 
 env_shutdown_timeout = 20

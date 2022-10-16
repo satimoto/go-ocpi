@@ -35,7 +35,7 @@ func (r *VersionDetailResolver) ReplaceVersionEndpoints(ctx context.Context, ver
 }
 
 func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url string, header transportation.OcpiRequestHeader, versionID int64) []*db.VersionEndpoint {
-	response, err := r.OcpiRequester.Do(http.MethodGet, url, header, nil)
+	response, err := r.OcpiService.Do(http.MethodGet, url, header, nil)
 
 	if err != nil {
 		util.LogOnError("OCPI217", "Error making request", err)

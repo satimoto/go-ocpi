@@ -14,6 +14,7 @@ import (
 	"github.com/satimoto/go-ocpi/internal/rpc/credential"
 	"github.com/satimoto/go-ocpi/internal/rpc/rpc"
 	"github.com/satimoto/go-ocpi/internal/rpc/token"
+	"github.com/satimoto/go-ocpi/internal/service"
 	ocpiSync "github.com/satimoto/go-ocpi/internal/sync"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/ocpirpc"
@@ -26,7 +27,7 @@ type Rpc interface {
 
 type RpcService struct {
 	RepositoryService     *db.RepositoryService
-	OcpiRequester         *transportation.OcpiRequester
+	OcpiService           *transportation.OcpiService
 	SyncService           *ocpiSync.SyncService
 	Server                *grpc.Server
 	RpcCommandResolver    *command.RpcCommandResolver
@@ -35,16 +36,16 @@ type RpcService struct {
 	RpcTokenResolver      *token.RpcTokenResolver
 }
 
-func NewRpc(repositoryService *db.RepositoryService, syncService *ocpiSync.SyncService, ocpiRequester *transportation.OcpiRequester) Rpc {
+func NewRpc(repositoryService *db.RepositoryService, services *service.ServiceResolver) Rpc {
 	return &RpcService{
 		RepositoryService:     repositoryService,
-		OcpiRequester:         ocpiRequester,
-		SyncService:           syncService,
+		OcpiService:           services.OcpiService,
+		SyncService:           services.SyncService,
 		Server:                grpc.NewServer(),
-		RpcCommandResolver:    command.NewResolver(repositoryService, syncService, ocpiRequester),
-		RpcCredentialResolver: credential.NewResolver(repositoryService, syncService, ocpiRequester),
+		RpcCommandResolver:    command.NewResolver(repositoryService, services),
+		RpcCredentialResolver: credential.NewResolver(repositoryService, services),
 		RpcResolver:           rpc.NewResolver(repositoryService),
-		RpcTokenResolver:      token.NewResolver(repositoryService, ocpiRequester),
+		RpcTokenResolver:      token.NewResolver(repositoryService, services),
 	}
 }
 

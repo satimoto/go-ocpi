@@ -89,7 +89,7 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		}
 
 		header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
-		response, err := r.OcpiRequester.Do(http.MethodDelete, versionEndpoint.Url, header, nil)
+		response, err := r.OcpiService.Do(http.MethodDelete, versionEndpoint.Url, header, nil)
 
 		if err != nil {
 			dbUtil.LogOnError("OCPI013", "Error sending delete request", err)

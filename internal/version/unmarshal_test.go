@@ -24,7 +24,7 @@ func TestUnmarshalResponse(t *testing.T) {
 	t.Run("Success response", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolver(mockRepository, transportationMocks.NewOcpiService(mockHTTPRequester))
 
 		dto := versionResolver.CreateVersionListDto(ctx)
 		response := transportation.OcpiSuccess(dto)
@@ -43,7 +43,7 @@ func TestUnmarshalResponse(t *testing.T) {
 	t.Run("Error response", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolver(mockRepository, transportationMocks.NewOcpiService(mockHTTPRequester))
 
 		response := transportation.OcpiRegistrationError(nil)
 		responseJson, _ := json.Marshal(response)

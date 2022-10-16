@@ -6,7 +6,7 @@ import (
 )
 
 func (rs *RestService) mountVersionDetails() *chi.Mux {
-	versionDetailResolver := versiondetail.NewResolver(rs.RepositoryService, rs.OcpiRequester)
+	versionDetailResolver := versiondetail.NewResolver(rs.RepositoryService, rs.ServiceResolver)
 	router := chi.NewRouter()
 
 	router.Use(rs.CredentialContextByToken)

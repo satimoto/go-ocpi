@@ -6,6 +6,7 @@ import (
 	"github.com/satimoto/go-ocpi/internal/displaytext"
 	"github.com/satimoto/go-ocpi/internal/element"
 	"github.com/satimoto/go-ocpi/internal/energymix"
+	"github.com/satimoto/go-ocpi/internal/service"
 	"github.com/satimoto/go-ocpi/internal/tariffrestriction"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/versiondetail"
@@ -13,7 +14,7 @@ import (
 
 type TariffResolver struct {
 	Repository                tariff.TariffRepository
-	OcpiRequester             *transportation.OcpiRequester
+	OcpiService               *transportation.OcpiService
 	DisplayTextResolver       *displaytext.DisplayTextResolver
 	ElementResolver           *element.ElementResolver
 	EnergyMixResolver         *energymix.EnergyMixResolver
@@ -21,14 +22,14 @@ type TariffResolver struct {
 	VersionDetailResolver     *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *TariffResolver {
+func NewResolver(repositoryService *db.RepositoryService, services *service.ServiceResolver) *TariffResolver {
 	return &TariffResolver{
 		Repository:                tariff.NewRepository(repositoryService),
-		OcpiRequester:             ocpiRequester,
+		OcpiService:               services.OcpiService,
 		DisplayTextResolver:       displaytext.NewResolver(repositoryService),
 		ElementResolver:           element.NewResolver(repositoryService),
 		EnergyMixResolver:         energymix.NewResolver(repositoryService),
 		TariffRestrictionResolver: tariffrestriction.NewResolver(repositoryService),
-		VersionDetailResolver:     versiondetail.NewResolver(repositoryService, ocpiRequester),
+		VersionDetailResolver:     versiondetail.NewResolver(repositoryService, services),
 	}
 }

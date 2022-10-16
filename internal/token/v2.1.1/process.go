@@ -87,7 +87,7 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 			}
 
 			util.AppendPath(requestUrl, fmt.Sprintf("%s/%s/%s", countryCode, partyID, uid))
-			response, err := r.OcpiRequester.Do(httpMethod, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
+			response, err := r.OcpiService.Do(httpMethod, requestUrl.String(), header, bytes.NewBuffer(dtoBytes))
 
 			if err != nil {
 				dbUtil.LogOnError("OCPI199", "Error making request", err)

@@ -8,12 +8,12 @@ import (
 	version "github.com/satimoto/go-ocpi/internal/version/mocks"
 )
 
-func NewService(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *sync.SyncService {
+func NewService(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiService) *sync.SyncService {
 	repo := sync.SyncRepository(repositoryService)
 
 	return &sync.SyncService{
 		Repository:           repo,
 		CredentialRepository: credential.NewRepository(repositoryService),
-		VersionResolver:      version.NewResolverWithServices(repositoryService, ocpiRequester),
+		VersionResolver:      version.NewResolver(repositoryService, ocpiRequester),
 	}
 }

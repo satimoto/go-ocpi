@@ -6,7 +6,7 @@ import (
 )
 
 func (rs *RestService) mountCommands() *chi.Mux {
-	commandResolver := command.NewResolver(rs.RepositoryService, rs.OcpiRequester)
+	commandResolver := command.NewResolver(rs.RepositoryService, rs.ServiceResolver)
 	router := chi.NewRouter()
 	router.Use(rs.CredentialContextByToken)
 

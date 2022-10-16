@@ -5,9 +5,14 @@ package tokenauthorization;
 option go_package = "github.com/satimoto/go-ocpi/ocpirpc";
 
 service TokenAuthorizationService {
-  rpc TokenAuthorizationCreated(TokenAuthorizationCreatedRequest) returns (TokenAuthorizationCreatedResponse);
+    rpc UpdateTokenAuthorization(UpdateTokenAuthorizationRequest) returns (UpdateTokenAuthorizationResponse);
 };
 
-message TokenAuthorizationCreatedRequest { string authorization_id = 1; };
+message UpdateTokenAuthorizationRequest {
+    string authorization_id = 1;
+    bool authorize = 2;
+};
 
-message TokenAuthorizationCreatedResponse {};
+message UpdateTokenAuthorizationResponse {
+    bool ok = 1;
+};

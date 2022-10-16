@@ -12,7 +12,7 @@ func (rs *RestService) mountEvses() *chi.Mux {
 	router.Route("/{evse_id}", func(evseRouter chi.Router) {
 		evseRouter.Put("/", evseResolver.UpdateEvse)
 
-		evseContextRouter := evseRouter.With(evseResolver.EvseContext(rs.SyncService))
+		evseContextRouter := evseRouter.With(evseResolver.EvseContext(rs.ServiceResolver.SyncService))
 		evseContextRouter.Get("/", evseResolver.GetEvse)
 		evseContextRouter.Patch("/", evseResolver.UpdateEvse)
 
