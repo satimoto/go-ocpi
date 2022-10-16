@@ -14,6 +14,29 @@ import (
 )
 
 func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, locationReferencesDto *dto.LocationReferencesDto) (*db.TokenAuthorization, error) {
+	if token.Type == db.TokenTypeRFID {
+		// Check if user is restricted, has a node and has been active
+		user, err := r.UserRepository.GetUserByTokenID(ctx, token.UserID)
+
+		if err != nil {
+			util.LogOnError("OCPI288", "Error retrieving user", err)
+			log.Printf("OCPI288: UserID=%v", token.UserID)
+			return nil, nil
+		}
+
+		if user.IsRestricted || !user.NodeID.Valid || !user.LastActiveDate.Valid {
+			return nil, errors.New("Please fund your Satimoto application and try again")
+		}
+
+		// Check if the use has been active in the last 5 days
+		fiveDaysAgo := time.Now().Add(time.Hour * 24 * -5)
+
+		if fiveDaysAgo.After(user.LastActiveDate.Time) {
+			// TODO: Send a notification
+			return nil, errors.New("Please open your Satimoto application and try again")
+		} 
+	}
+	
 	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
 	tokenAuthorizationParams.Authorized = token.Type == db.TokenTypeOTHER
 	tokenAuthorizationParams.SigningKey = r.createTokenAuthorizationSigningKey()
@@ -27,7 +50,7 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 	if err != nil {
 		util.LogOnError("OCPI206", "Error creating token authorization", err)
 		log.Printf("OCPI206: Params=%#v", tokenAuthorizationParams)
-		return nil, errors.New("error creating token authorization")
+		return nil, errors.New("Authorization error")
 	}
 
 	r.createTokenAuthorizationRelations(ctx, tokenAuthorization.ID, locationReferencesDto)
@@ -43,7 +66,7 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		user, err := r.UserRepository.GetUser(ctx, token.UserID)
 
 		if err != nil {
-			util.LogOnError("OCPI285", "Error retrieving node", err)
+			util.LogOnError("OCPI285", "Error retrieving user", err)
 			log.Printf("OCPI285: UserID=%v", token.UserID)
 			return nil, nil
 		}
@@ -56,13 +79,13 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 			r.AsyncService.Remove(tokenAuthorizationParams.AuthorizationID)
 
 			if !asyncResult.Bool {
-				return nil, nil
+				return nil, errors.New("Please fund your Satimoto application and try again")
 			}
 		case <-time.After(55 * time.Second):
 			log.Printf("Token authorization timeout: %v", tokenAuthorizationParams.AuthorizationID)
 			r.AsyncService.Remove(tokenAuthorizationParams.AuthorizationID)
-			
-			return nil, nil
+
+			return nil, errors.New("Authorization timeout")
 		}
 
 		updateTokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(tokenAuthorization)

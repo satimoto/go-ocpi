@@ -9,20 +9,23 @@ import (
 )
 
 func (r *TokenAuthorizationResolver) CreateAuthorizationInfoDto(ctx context.Context, token db.Token, tokenAuthorization *db.TokenAuthorization, location *dto.LocationReferencesDto, info *coreDto.DisplayTextDto) *dto.AuthorizationInfoDto {
+	response := dto.NewAuthorizationInfoDto(token.Allowed)
+
+	if info != nil {
+		response.Info = info
+	}
+
+	if location != nil {
+		response.Location = location
+	}
+
 	if tokenAuthorization != nil {
-		response := dto.NewAuthorizationInfoDto(token.Allowed)
 		response.AuthorizationID = &tokenAuthorization.AuthorizationID
-	
-		if location != nil {
-			response.Location = location
-		}
-	
-		if info != nil {
-			response.Info = info
-		}
-	
+
 		return response
 	}
 
-	return dto.NewAuthorizationInfoDto(db.TokenAllowedTypeNOTALLOWED)
+	response.Allowed = db.TokenAllowedTypeNOTALLOWED
+
+	return response
 }
