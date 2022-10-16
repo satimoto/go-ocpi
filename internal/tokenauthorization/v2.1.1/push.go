@@ -6,30 +6,39 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func (r *TokenAuthorizationResolver) AuthorizeToken(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	token := ctx.Value("token").(db.Token)
-	locationReferencesDto, err := r.UnmarshalLocationReferencesDto(request.Body)
+	authorizationInfoDto := dto.NewAuthorizationInfoDto(token.Allowed)
 
-	if err != nil && err != io.EOF {
-		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
-		return
+	if token.Allowed == db.TokenAllowedTypeALLOWED {
+		locationReferencesDto, err := r.UnmarshalLocationReferencesDto(request.Body)
+
+		if err != nil && err != io.EOF {
+			render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
+			return
+		}
+
+		// TODO: we should reject an authorization to an unknown location/evse/connector
+		tokenAuthorization, err := r.CreateTokenAuthorization(ctx, token, locationReferencesDto)
+		var displayText *coreDto.DisplayTextDto
+
+		if err != nil {
+			displayText = &coreDto.DisplayTextDto{
+				Language: "en",
+				Text: err.Error(),
+			}
+		}
+
+		authorizationInfoDto = r.CreateAuthorizationInfoDto(ctx, token, tokenAuthorization, locationReferencesDto, displayText)
 	}
 
-	// TODO: we should reject an authorization to an unknown location/evse/connector
-	tokenAuthorization, err := r.CreateTokenAuthorization(ctx, token, locationReferencesDto)
-
-	if err != nil {
-		render.Render(rw, request, transportation.OcpiErrorNotEnoughInformation(nil))
-		return
-	}
-
-	dto := r.CreateAuthorizationInfoDto(ctx, token, tokenAuthorization, locationReferencesDto, nil)
-
-	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
+	if err := render.Render(rw, request, transportation.OcpiSuccess(authorizationInfoDto)); err != nil {
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
 }
