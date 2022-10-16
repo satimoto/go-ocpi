@@ -15,8 +15,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/rest"
 	"github.com/satimoto/go-ocpi/internal/rpc"
-	ocpiSync "github.com/satimoto/go-ocpi/internal/sync"
-	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/service"
 )
 
 var (
@@ -50,16 +49,15 @@ func main() {
 	waitGroup := &sync.WaitGroup{}
 
 	repositoryService := db.NewRepositoryService(database)
-	ocpiRequester := transportation.NewOcpiRequester()
-	syncService := ocpiSync.NewService(repositoryService, ocpiRequester)
+	services := service.NewService(repositoryService)
 
-	restService := rest.NewRest(repositoryService, syncService, ocpiRequester)
+	restService := rest.NewRest(repositoryService, services)
 	restService.StartRest(shutdownCtx, waitGroup)
 
-	rpcService := rpc.NewRpc(repositoryService, syncService, ocpiRequester)
+	rpcService := rpc.NewRpc(repositoryService, services)
 	rpcService.StartRpc(shutdownCtx, waitGroup)
 
-	syncService.StartService(shutdownCtx, waitGroup)
+	services.SyncService.StartService(shutdownCtx, waitGroup)
 
 	sigtermChan := make(chan os.Signal)
 	signal.Notify(sigtermChan, syscall.SIGINT, syscall.SIGTERM)

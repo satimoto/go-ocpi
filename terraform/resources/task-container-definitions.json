@@ -63,6 +63,10 @@
         "value": "${env_db_name}"
       },
       {
+        "name": "FCM_API_KEY",
+        "value": "${env_fcm_api_key}"
+      },
+      {
         "name": "REST_PORT",
         "value": "${env_rest_port}"
       },

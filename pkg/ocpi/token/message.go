@@ -5,12 +5,6 @@ import (
 	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
-func NewTokenAuthorizationCreatedRequest(tokenAuthorization db.TokenAuthorization) *ocpirpc.TokenAuthorizationCreatedRequest {
-	return &ocpirpc.TokenAuthorizationCreatedRequest{
-		AuthorizationId: tokenAuthorization.AuthorizationID,
-	}
-}
-
 func NewCreateTokenResponse(token db.Token) *ocpirpc.CreateTokenResponse {
 	return &ocpirpc.CreateTokenResponse{
 		Id:           token.ID,

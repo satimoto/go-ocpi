@@ -7,13 +7,13 @@ import (
 )
 
 type VersionResolver struct {
-	Repository    version.VersionRepository
-	OcpiRequester *transportation.OcpiRequester
+	Repository  version.VersionRepository
+	OcpiService *transportation.OcpiService
 }
 
-func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *VersionResolver {
+func NewResolver(repositoryService *db.RepositoryService, ocpiService *transportation.OcpiService) *VersionResolver {
 	return &VersionResolver{
-		Repository:    version.NewRepository(repositoryService),
-		OcpiRequester: ocpiRequester,
+		Repository:  version.NewRepository(repositoryService),
+		OcpiService: ocpiService,
 	}
 }

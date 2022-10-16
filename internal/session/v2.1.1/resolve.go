@@ -8,13 +8,14 @@ import (
 	"github.com/satimoto/go-datastore/pkg/tokenauthorization"
 	"github.com/satimoto/go-ocpi/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/service"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/versiondetail"
 )
 
 type SessionResolver struct {
 	Repository                   session.SessionRepository
-	OcpiRequester                *transportation.OcpiRequester
+	OcpiService                  *transportation.OcpiService
 	ChargingPeriodResolver       *chargingperiod.ChargingPeriodResolver
 	LocationResolver             *location.LocationResolver
 	NodeRepository               node.NodeRepository
@@ -23,15 +24,15 @@ type SessionResolver struct {
 	VersionDetailResolver        *versiondetail.VersionDetailResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService, ocpiRequester *transportation.OcpiRequester) *SessionResolver {
+func NewResolver(repositoryService *db.RepositoryService, services *service.ServiceResolver) *SessionResolver {
 	return &SessionResolver{
 		Repository:                   session.NewRepository(repositoryService),
-		OcpiRequester:                ocpiRequester,
+		OcpiService:                  services.OcpiService,
 		ChargingPeriodResolver:       chargingperiod.NewResolver(repositoryService),
-		LocationResolver:             location.NewResolver(repositoryService, ocpiRequester),
+		LocationResolver:             location.NewResolver(repositoryService, services),
 		NodeRepository:               node.NewRepository(repositoryService),
 		TokenRepository:              token.NewRepository(repositoryService),
 		TokenAuthorizationRepository: tokenauthorization.NewRepository(repositoryService),
-		VersionDetailResolver:        versiondetail.NewResolver(repositoryService, ocpiRequester),
+		VersionDetailResolver:        versiondetail.NewResolver(repositoryService, services),
 	}
 }

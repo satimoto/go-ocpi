@@ -14,6 +14,8 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	command "github.com/satimoto/go-ocpi/internal/command/v2.1.1"
 	commandMocks "github.com/satimoto/go-ocpi/internal/command/v2.1.1/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
@@ -48,7 +50,11 @@ func TestCommandReservationRequest(t *testing.T) {
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -68,7 +74,11 @@ func TestCommandReservationRequest(t *testing.T) {
 	t.Run("Invalid command", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -91,7 +101,11 @@ func TestCommandReservationRequest(t *testing.T) {
 	t.Run("Accept command reservation", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -118,12 +132,12 @@ func TestCommandReservationRequest(t *testing.T) {
 		commandParams, err := mockRepository.GetUpdateCommandReservationMockData()
 		paramsJson, _ := json.Marshal(commandParams)
 
-		mocks.CompareJson(t, paramsJson, []byte(`{
+		mocks.CompareJsonWithDifference(t, paramsJson, []byte(`{
 			"id": 1,
 			"status": "ACCEPTED",
 			"expiryDate": "2015-06-29T20:39:09Z",
 			"evseUid": {"String": "", "Valid": false}
-		}`))
+		}`), jsondiff.SupersetMatch)
 
 		mocks.CompareJsonWithDifference(t, responseRecorder.Body.Bytes(), []byte(`{
 			"status_code": 1000,
@@ -136,7 +150,11 @@ func TestCommandStartRequest(t *testing.T) {
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -156,7 +174,11 @@ func TestCommandStartRequest(t *testing.T) {
 	t.Run("Invalid command", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -179,7 +201,11 @@ func TestCommandStartRequest(t *testing.T) {
 	t.Run("Accept command start", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -204,10 +230,10 @@ func TestCommandStartRequest(t *testing.T) {
 		commandParams, err := mockRepository.GetUpdateCommandStartMockData()
 		paramsJson, _ := json.Marshal(commandParams)
 
-		mocks.CompareJson(t, paramsJson, []byte(`{
+		mocks.CompareJsonWithDifference(t, paramsJson, []byte(`{
 			"id": 1,
 			"status": "ACCEPTED"
-		}`))
+		}`), jsondiff.SupersetMatch)
 
 		mocks.CompareJsonWithDifference(t, responseRecorder.Body.Bytes(), []byte(`{
 			"status_code": 1000,
@@ -220,7 +246,11 @@ func TestCommandStopRequest(t *testing.T) {
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -240,7 +270,11 @@ func TestCommandStopRequest(t *testing.T) {
 	t.Run("Invalid command", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -263,7 +297,11 @@ func TestCommandStopRequest(t *testing.T) {
 	t.Run("Accept command stop", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -287,10 +325,10 @@ func TestCommandStopRequest(t *testing.T) {
 		commandParams, err := mockRepository.GetUpdateCommandStopMockData()
 		paramsJson, _ := json.Marshal(commandParams)
 
-		mocks.CompareJson(t, paramsJson, []byte(`{
+		mocks.CompareJsonWithDifference(t, paramsJson, []byte(`{
 			"id": 1,
 			"status": "ACCEPTED"
-		}`))
+		}`), jsondiff.SupersetMatch)
 
 		mocks.CompareJsonWithDifference(t, responseRecorder.Body.Bytes(), []byte(`{
 			"status_code": 1000,
@@ -303,7 +341,11 @@ func TestCommandUnlockRequest(t *testing.T) {
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -323,7 +365,11 @@ func TestCommandUnlockRequest(t *testing.T) {
 	t.Run("Invalid command", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -346,7 +392,11 @@ func TestCommandUnlockRequest(t *testing.T) {
 	t.Run("Accept command unlock", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -372,10 +422,10 @@ func TestCommandUnlockRequest(t *testing.T) {
 		commandParams, err := mockRepository.GetUpdateCommandUnlockMockData()
 		paramsJson, _ := json.Marshal(commandParams)
 
-		mocks.CompareJson(t, paramsJson, []byte(`{
+		mocks.CompareJsonWithDifference(t, paramsJson, []byte(`{
 			"id": 1,
 			"status": "ACCEPTED"
-		}`))
+		}`), jsondiff.SupersetMatch)
 
 		mocks.CompareJsonWithDifference(t, responseRecorder.Body.Bytes(), []byte(`{
 			"status_code": 1000,

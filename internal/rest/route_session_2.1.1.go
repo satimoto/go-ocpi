@@ -7,8 +7,8 @@ import (
 )
 
 func (rs *RestService) mountSessions() *chi.Mux {
-	sessionResolver := session.NewResolver(rs.RepositoryService, rs.OcpiRequester)
-	rs.SyncService.AddHandler(version.VERSION_2_1_1, sessionResolver)
+	sessionResolver := session.NewResolver(rs.RepositoryService, rs.ServiceResolver)
+	rs.ServiceResolver.SyncService.AddHandler(version.VERSION_2_1_1, sessionResolver)
 
 	router := chi.NewRouter()
 	router.Use(rs.CredentialContextByToken)

@@ -36,7 +36,7 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 		return nil, transportation.OcpiRegistrationError(nil)
 	}
 
-	response, err := r.OcpiRequester.Do(httpMethod, versionEndpoint.Url, header, bytes.NewBuffer(dtoBytes))
+	response, err := r.OcpiService.Do(httpMethod, versionEndpoint.Url, header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
 		dbUtil.LogOnError("OCPI266", "Error making request", err)

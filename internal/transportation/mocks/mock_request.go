@@ -5,8 +5,8 @@ import (
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
-func NewOcpiRequester(requester *mocks.MockHTTPRequester) *transportation.OcpiRequester {
-	return &transportation.OcpiRequester{
+func NewOcpiService(requester *mocks.MockHTTPRequester) *transportation.OcpiService {
+	return &transportation.OcpiService{
 		HTTPRequester: requester,
 	}
 }

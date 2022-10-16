@@ -7,8 +7,8 @@ import (
 	"google.golang.org/grpc"
 )
 
-func (s *OcpiService) TokenAuthorizationCreated(ctx context.Context, in *ocpirpc.TokenAuthorizationCreatedRequest, opts ...grpc.CallOption) (*ocpirpc.TokenAuthorizationCreatedResponse, error) {
-	return s.getTokenAuthorizationClient().TokenAuthorizationCreated(ctx, in, opts...)
+func (s *OcpiService) UpdateTokenAuthorization(ctx context.Context, in *ocpirpc.UpdateTokenAuthorizationRequest, opts ...grpc.CallOption) (*ocpirpc.UpdateTokenAuthorizationResponse, error) {
+	return s.getTokenAuthorizationClient().UpdateTokenAuthorization(ctx, in, opts...)
 }
 
 func (s *OcpiService) getTokenAuthorizationClient() ocpirpc.TokenAuthorizationServiceClient {

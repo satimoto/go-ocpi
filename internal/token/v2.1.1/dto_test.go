@@ -11,6 +11,8 @@ import (
 	tokenMocks "github.com/satimoto/go-ocpi/internal/token/v2.1.1/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 )
 
 func TestCreateTokenDto(t *testing.T) {
@@ -19,7 +21,11 @@ func TestCreateTokenDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 
 		loc := db.Token{}
 
@@ -40,7 +46,11 @@ func TestCreateTokenDto(t *testing.T) {
 	t.Run("Basic token", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 
 		tok := db.Token{
 			Uid:         "TOKEN00001",
@@ -70,7 +80,11 @@ func TestCreateTokenDto(t *testing.T) {
 	t.Run("With visual number and language", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 
 		tok := db.Token{
 			Uid:          "TOKEN00001",
@@ -102,7 +116,11 @@ func TestCreateTokenDto(t *testing.T) {
 	t.Run("With visual number and language", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tokenResolver := tokenMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 
 		tok := db.Token{
 			Uid:          "TOKEN00001",

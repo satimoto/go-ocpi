@@ -29,7 +29,7 @@ type Ocpi interface {
 	CreateToken(ctx context.Context, in *ocpirpc.CreateTokenRequest, opts ...grpc.CallOption) (*ocpirpc.CreateTokenResponse, error)
 	UpdateTokens(ctx context.Context, in *ocpirpc.UpdateTokensRequest, opts ...grpc.CallOption) (*ocpirpc.UpdateTokensResponse, error)
 
-	TokenAuthorizationCreated(ctx context.Context, in *ocpirpc.TokenAuthorizationCreatedRequest, opts ...grpc.CallOption) (*ocpirpc.TokenAuthorizationCreatedResponse, error)
+	UpdateTokenAuthorization(ctx context.Context, in *ocpirpc.UpdateTokenAuthorizationRequest, opts ...grpc.CallOption) (*ocpirpc.UpdateTokenAuthorizationResponse, error)
 }
 
 type OcpiService struct {

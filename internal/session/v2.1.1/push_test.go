@@ -13,6 +13,8 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	session "github.com/satimoto/go-ocpi/internal/session/v2.1.1"
 	sessionMocks "github.com/satimoto/go-ocpi/internal/session/v2.1.1/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
@@ -37,7 +39,11 @@ func TestSessionRequest(t *testing.T) {
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		sessionResolver := sessionMocks.NewResolver(mockRepository, mockServices)
 		sessionRoutes := setupRoutes(sessionResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -57,7 +63,11 @@ func TestSessionRequest(t *testing.T) {
 	t.Run("Get pending session", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		sessionResolver := sessionMocks.NewResolver(mockRepository, mockServices)
 		sessionRoutes := setupRoutes(sessionResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -102,7 +112,11 @@ func TestSessionRequest(t *testing.T) {
 	t.Run("Get active session", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		sessionResolver := sessionMocks.NewResolver(mockRepository, mockServices)
 		sessionRoutes := setupRoutes(sessionResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -173,7 +187,11 @@ func TestSessionRequest(t *testing.T) {
 	t.Run("Patch pending session", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		sessionResolver := sessionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		sessionResolver := sessionMocks.NewResolver(mockRepository, mockServices)
 		sessionRoutes := setupRoutes(sessionResolver)
 		responseRecorder := httptest.NewRecorder()
 

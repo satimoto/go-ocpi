@@ -35,7 +35,7 @@ func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int6
 }
 
 func (r *VersionResolver) PullVersions(ctx context.Context, url string, header transportation.OcpiRequestHeader, credentialID int64) []*db.Version {
-	response, err := r.OcpiRequester.Do(http.MethodGet, url, header, nil)
+	response, err := r.OcpiService.Do(http.MethodGet, url, header, nil)
 
 	if err != nil {
 		util.LogOnError("OCPI212", "Error making request", err)

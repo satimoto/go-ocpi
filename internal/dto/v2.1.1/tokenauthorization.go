@@ -9,7 +9,7 @@ import (
 )
 
 type AuthorizationInfoDto struct {
-	Allowed         *db.TokenAllowedType    `json:"allowed"`
+	Allowed         db.TokenAllowedType     `json:"allowed"`
 	AuthorizationID *string                 `json:"authorization_id"`
 	Location        *LocationReferencesDto  `json:"location,omitempty"`
 	Info            *coreDto.DisplayTextDto `json:"info,omitempty"`
@@ -19,9 +19,9 @@ func (r *AuthorizationInfoDto) Render(writer http.ResponseWriter, request *http.
 	return nil
 }
 
-func NewAuthorizationInfoDto(token db.Token) *AuthorizationInfoDto {
+func NewAuthorizationInfoDto(allowed db.TokenAllowedType) *AuthorizationInfoDto {
 	return &AuthorizationInfoDto{
-		Allowed: &token.Allowed,
+		Allowed: allowed,
 	}
 }
 

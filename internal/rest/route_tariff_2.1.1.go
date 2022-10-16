@@ -7,8 +7,8 @@ import (
 )
 
 func (rs *RestService) mountTariffs() *chi.Mux {
-	tariffResolver := tariff.NewResolver(rs.RepositoryService, rs.OcpiRequester)
-	rs.SyncService.AddHandler(version.VERSION_2_1_1, tariffResolver)
+	tariffResolver := tariff.NewResolver(rs.RepositoryService, rs.ServiceResolver)
+	rs.ServiceResolver.SyncService.AddHandler(version.VERSION_2_1_1, tariffResolver)
 
 	router := chi.NewRouter()
 	router.Use(rs.CredentialContextByToken)
@@ -16,7 +16,7 @@ func (rs *RestService) mountTariffs() *chi.Mux {
 	router.Route("/{country_code}/{party_id}/{tariff_id}", func(tariffRouter chi.Router) {
 		tariffRouter.Put("/", tariffResolver.UpdateTariff)
 
-		tariffContextRouter := tariffRouter.With(tariffResolver.TariffContext(rs.SyncService))
+		tariffContextRouter := tariffRouter.With(tariffResolver.TariffContext(rs.ServiceResolver.SyncService))
 		tariffContextRouter.Get("/", tariffResolver.GetTariff)
 		tariffContextRouter.Delete("/", tariffResolver.DeleteTariff)
 		tariffContextRouter.Patch("/", tariffResolver.UpdateTariff)

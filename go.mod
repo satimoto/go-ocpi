@@ -19,6 +19,7 @@ require (
 
 require (
 	github.com/99designs/gqlgen v0.17.2 // indirect
+	github.com/appleboy/go-fcm v0.1.5
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0

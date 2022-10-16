@@ -99,6 +99,7 @@ module "service-ocpi" {
     env_db_pass            = data.aws_ssm_parameter.satimoto_db_password.value
     env_db_host            = "${data.terraform_remote_state.infrastructure.outputs.rds_cluster_endpoint}:${data.terraform_remote_state.infrastructure.outputs.rds_cluster_port}"
     env_db_name            = "satimoto"
+    env_fcm_api_key        = var.env_fcm_api_key
     env_rest_port          = var.service_container_port
     env_rpc_port           = var.env_rpc_port
     env_shutdown_timeout   = var.env_shutdown_timeout

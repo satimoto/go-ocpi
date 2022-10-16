@@ -5,8 +5,7 @@ import (
 	"github.com/satimoto/go-ocpi/internal/businessdetail"
 	"github.com/satimoto/go-ocpi/internal/credential"
 	"github.com/satimoto/go-ocpi/internal/image"
-	"github.com/satimoto/go-ocpi/internal/sync"
-	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/service"
 )
 
 type RpcCredentialResolver struct {
@@ -15,10 +14,10 @@ type RpcCredentialResolver struct {
 	ImageResolver          *image.ImageResolver
 }
 
-func NewResolver(repositoryService *db.RepositoryService, syncService *sync.SyncService, ocpiRequester *transportation.OcpiRequester) *RpcCredentialResolver {
+func NewResolver(repositoryService *db.RepositoryService, services *service.ServiceResolver) *RpcCredentialResolver {
 	return &RpcCredentialResolver{
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
-		CredentialResolver:     credential.NewResolver(repositoryService, syncService, ocpiRequester),
+		CredentialResolver:     credential.NewResolver(repositoryService, services),
 		ImageResolver:          image.NewResolver(repositoryService),
 	}
 }
