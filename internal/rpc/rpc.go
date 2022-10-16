@@ -14,6 +14,7 @@ import (
 	"github.com/satimoto/go-ocpi/internal/rpc/credential"
 	"github.com/satimoto/go-ocpi/internal/rpc/rpc"
 	"github.com/satimoto/go-ocpi/internal/rpc/token"
+	"github.com/satimoto/go-ocpi/internal/rpc/tokenauthorization"
 	"github.com/satimoto/go-ocpi/internal/service"
 	ocpiSync "github.com/satimoto/go-ocpi/internal/sync"
 	"github.com/satimoto/go-ocpi/internal/transportation"
@@ -26,26 +27,28 @@ type Rpc interface {
 }
 
 type RpcService struct {
-	RepositoryService     *db.RepositoryService
-	OcpiService           *transportation.OcpiService
-	SyncService           *ocpiSync.SyncService
-	Server                *grpc.Server
-	RpcCommandResolver    *command.RpcCommandResolver
-	RpcCredentialResolver *credential.RpcCredentialResolver
-	RpcResolver           *rpc.RpcResolver
-	RpcTokenResolver      *token.RpcTokenResolver
+	RepositoryService             *db.RepositoryService
+	OcpiService                   *transportation.OcpiService
+	SyncService                   *ocpiSync.SyncService
+	Server                        *grpc.Server
+	RpcCommandResolver            *command.RpcCommandResolver
+	RpcCredentialResolver         *credential.RpcCredentialResolver
+	RpcResolver                   *rpc.RpcResolver
+	RpcTokenResolver              *token.RpcTokenResolver
+	RpcTokenAuthorizationResolver *tokenauthorization.RpcTokenAuthorizationResolver
 }
 
 func NewRpc(repositoryService *db.RepositoryService, services *service.ServiceResolver) Rpc {
 	return &RpcService{
-		RepositoryService:     repositoryService,
-		OcpiService:           services.OcpiService,
-		SyncService:           services.SyncService,
-		Server:                grpc.NewServer(),
-		RpcCommandResolver:    command.NewResolver(repositoryService, services),
-		RpcCredentialResolver: credential.NewResolver(repositoryService, services),
-		RpcResolver:           rpc.NewResolver(repositoryService),
-		RpcTokenResolver:      token.NewResolver(repositoryService, services),
+		RepositoryService:             repositoryService,
+		OcpiService:                   services.OcpiService,
+		SyncService:                   services.SyncService,
+		Server:                        grpc.NewServer(),
+		RpcCommandResolver:            command.NewResolver(repositoryService, services),
+		RpcCredentialResolver:         credential.NewResolver(repositoryService, services),
+		RpcResolver:                   rpc.NewResolver(repositoryService),
+		RpcTokenResolver:              token.NewResolver(repositoryService, services),
+		RpcTokenAuthorizationResolver: tokenauthorization.NewResolver(repositoryService, services),
 	}
 }
 
@@ -74,6 +77,7 @@ func (rs *RpcService) listenAndServe() {
 	ocpirpc.RegisterCredentialServiceServer(rs.Server, rs.RpcCredentialResolver)
 	ocpirpc.RegisterRpcServiceServer(rs.Server, rs.RpcResolver)
 	ocpirpc.RegisterTokenServiceServer(rs.Server, rs.RpcTokenResolver)
+	ocpirpc.RegisterTokenAuthorizationServiceServer(rs.Server, rs.RpcTokenAuthorizationResolver)
 
 	err = rs.Server.Serve(listener)
 
