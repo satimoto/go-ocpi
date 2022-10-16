@@ -10,7 +10,7 @@ type RpcTokenRepository interface{}
 
 type RpcTokenResolver struct {
 	Repository RpcTokenRepository
-	*token.TokenResolver
+	TokenResolver *token.TokenResolver
 }
 
 func NewResolver(repositoryService *db.RepositoryService, services *service.ServiceResolver) *RpcTokenResolver {

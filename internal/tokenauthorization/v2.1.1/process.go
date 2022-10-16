@@ -52,10 +52,16 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 
 		select {
 		case asyncResult := <-asyncChan:
+			log.Printf("Token authorization received: %v", tokenAuthorizationParams.AuthorizationID)
+			r.AsyncService.Remove(tokenAuthorizationParams.AuthorizationID)
+
 			if !asyncResult.Bool {
 				return nil, nil
 			}
 		case <-time.After(55 * time.Second):
+			log.Printf("Token authorization timeout: %v", tokenAuthorizationParams.AuthorizationID)
+			r.AsyncService.Remove(tokenAuthorizationParams.AuthorizationID)
+			
 			return nil, nil
 		}
 
