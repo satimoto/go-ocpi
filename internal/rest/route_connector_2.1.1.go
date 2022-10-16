@@ -1,13 +1,18 @@
 package rest
 
 import (
+	"time"
+
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
 )
 
 func (rs *RestService) mountConnectors() *chi.Mux {
 	connectorResolver := connector.NewResolver(rs.RepositoryService)
+
 	router := chi.NewRouter()
+	router.Use(middleware.Timeout(30 * time.Second))
 
 	router.Route("/{connector_id}", func(connectorRouter chi.Router) {
 		connectorRouter.Put("/", connectorResolver.UpdateConnector)

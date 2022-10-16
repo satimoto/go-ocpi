@@ -10,7 +10,7 @@ import (
 
 type AuthorizationInfoDto struct {
 	Allowed         db.TokenAllowedType     `json:"allowed"`
-	AuthorizationID *string                 `json:"authorization_id"`
+	AuthorizationID *string                 `json:"authorization_id,omitempty"`
 	Location        *LocationReferencesDto  `json:"location,omitempty"`
 	Info            *coreDto.DisplayTextDto `json:"info,omitempty"`
 }

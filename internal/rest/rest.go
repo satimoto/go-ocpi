@@ -90,7 +90,6 @@ func (rs *RestService) handler() *chi.Mux {
 
 	// Set middleware
 	router.Use(render.SetContentType(render.ContentTypeJSON), middleware.RedirectSlashes, middleware.Recoverer)
-	router.Use(middleware.Timeout(30 * time.Second))
 	router.Use(chiprometheus.NewMiddleware("ocpi"))
 
 	router.Use(cors.Handler(cors.Options{
