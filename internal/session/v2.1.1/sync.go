@@ -14,7 +14,8 @@ import (
 )
 
 func (r *SessionResolver) SyncByIdentifier(ctx context.Context, credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string) {
-	log.Printf("Sync sessions Url=%v LastUpdated=%v CountryCode=%v PartyID=%v", credential.Url, lastUpdated, countryCode, partyID)
+	log.Printf("Sync sessions Url=%v LastUpdated=%v CountryCode=%v PartyID=%v",
+		credential.Url, lastUpdated, util.DefaultString(countryCode, ""), util.DefaultString(partyID, ""))
 	limit, offset, retries := 500, 0, 0
 	identifier := "sessions"
 

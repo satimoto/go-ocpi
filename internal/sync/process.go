@@ -13,7 +13,8 @@ func (r *SyncService) SynchronizeCredential(credential db.Credential, lastUpdate
 	if credential.VersionID.Valid {
 		ctx := context.Background()
 
-		log.Printf("Sync credential Url=%v LastUpdated=%v CountryCode=%v PartyID=%v", credential.Url, lastUpdated, countryCode, partyID)
+		log.Printf("Sync credential Url=%v LastUpdated=%v CountryCode=%v PartyID=%v",
+			credential.Url, lastUpdated, util.DefaultString(countryCode, ""), util.DefaultString(partyID, ""))
 		version, err := r.VersionResolver.Repository.GetVersion(ctx, credential.VersionID.Int64)
 
 		if err != nil {
