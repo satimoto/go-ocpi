@@ -39,7 +39,13 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 				return nil, transportation.OcpiRegistrationError(nil)
 			}
 
-			if pushedCredential, err := r.PushCredential(ctx, http.MethodPost, *version, registeredCredential); err == nil {
+			httpMethod := http.MethodPost
+
+			if credential.ServerToken.Valid {
+				httpMethod = http.MethodPut
+			}
+
+			if pushedCredential, err := r.PushCredential(ctx, httpMethod, *version, registeredCredential); err == nil {
 				go r.SyncService.SynchronizeCredential(*pushedCredential, nil, nil, nil)
 
 				return pushedCredential, nil
@@ -54,7 +60,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 
 func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod string, version db.Version, credential db.Credential) (*db.Credential, error) {
 	if version.Version == ocpiVersion.VERSION_2_1_1 {
-		return r.CredentialResolver_2_1_1.PushCredential(ctx, http.MethodPost, credential)
+		return r.CredentialResolver_2_1_1.PushCredential(ctx, httpMethod, credential)
 	}
 
 	return nil, transportation.OcpiUnsupportedVersion(nil)
