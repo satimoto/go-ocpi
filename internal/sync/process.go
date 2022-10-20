@@ -9,7 +9,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 )
 
-func (r *SyncService) SynchronizeCredential(credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string) {
+func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync bool, lastUpdated *time.Time, countryCode *string, partyID *string) {
 	if credential.VersionID.Valid {
 		ctx := context.Background()
 
@@ -25,7 +25,7 @@ func (r *SyncService) SynchronizeCredential(credential db.Credential, lastUpdate
 
 		for _, syncerHandler := range r.syncerHandlers {
 			if syncerHandler.Version == version.Version {
-				syncerHandler.Syncer.SyncByIdentifier(ctx, credential, lastUpdated, countryCode, partyID)
+				syncerHandler.Syncer.SyncByIdentifier(ctx, credential, fullSync, lastUpdated, countryCode, partyID)
 			}
 		}
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 type Syncer interface {
-	SyncByIdentifier(ctx context.Context, credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string)
+	SyncByIdentifier(ctx context.Context, credential db.Credential, fullSync bool, lastUpdated *time.Time, countryCode *string, partyID *string)
 }
 
 type SyncerHandler struct {
