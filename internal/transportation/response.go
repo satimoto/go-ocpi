@@ -27,7 +27,11 @@ type OcpiResponse struct {
 }
 
 func (response *OcpiResponse) Render(writer http.ResponseWriter, request *http.Request) error {
-	render.Status(request, 200)
+	if response.StatusCode == STATUS_CODE_UNKNOWN_RESOURCE {
+		render.Status(request, 404)
+	} else {
+		render.Status(request, 200)
+	}
 	return nil
 }
 
