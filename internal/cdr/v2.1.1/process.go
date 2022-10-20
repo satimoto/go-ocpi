@@ -29,7 +29,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 
 		if err == nil {
 			log.Printf("Ignoring existing cdr %v", uid)
-			return nil
+			return &cdr
 		}
 
 		cdrParams := NewCreateCdrParams(cdrDto)
@@ -122,24 +122,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			}
 		}
 
-		// Get users node
-		node, err := r.NodeRepository.GetNodeByUserID(ctx, cdr.UserID)
-
-		if err != nil {
-			util.LogOnError("OCPI025", "Error retrieving node", err)
-			log.Printf("OCPI025: UserID=%v", cdr.UserID)
-			return &cdr
-		}
-
-		// TODO: Handle failed RPC call more robustly
-		ocpiService := ocpi.NewService(node.LspAddr)
-		cdrCreatedRequest := ocpiCdr.NewCdrCreatedRequest(cdr)
-		cdrCreatedResponse, err := ocpiService.CdrCreated(ctx, cdrCreatedRequest)
-
-		if err != nil {
-			util.LogOnError("OCPI026", "Error calling RPC service", err)
-			log.Printf("OCPI026: Request=%#v, Response=%#v", cdrCreatedRequest, cdrCreatedResponse)
-		}
+		go r.sendOcpiRequest(cdr)
 
 		return &cdr
 	}
@@ -181,5 +164,26 @@ func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, cd
 func (r *CdrResolver) replaceTariffs(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrID *int64, cdrDto *dto.CdrDto) {
 	for _, tariffDto := range cdrDto.Tariffs {
 		r.TariffResolver.ReplaceTariffByIdentifier(ctx, credential, countryCode, partyID, *tariffDto.ID, cdrID, tariffDto)
+	}
+}
+
+func (r *CdrResolver) sendOcpiRequest(cdr db.Cdr) {
+	ctx := context.Background()
+
+	// TODO: Handle failed RPC call more robustly
+	node, err := r.NodeRepository.GetNodeByUserID(ctx, cdr.UserID)
+
+	if err != nil {
+		util.LogOnError("OCPI025", "Error retrieving node", err)
+		log.Printf("OCPI025: UserID=%v", cdr.UserID)
+	}
+
+	ocpiService := ocpi.NewService(node.LspAddr)
+	cdrCreatedRequest := ocpiCdr.NewCdrCreatedRequest(cdr)
+	cdrCreatedResponse, err := ocpiService.CdrCreated(ctx, cdrCreatedRequest)
+
+	if err != nil {
+		util.LogOnError("OCPI026", "Error calling RPC service", err)
+		log.Printf("OCPI026: Request=%#v, Response=%#v", cdrCreatedRequest, cdrCreatedResponse)
 	}
 }
