@@ -13,7 +13,7 @@ import (
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *SessionResolver) SyncByIdentifier(ctx context.Context, credential db.Credential, lastUpdated *time.Time, countryCode *string, partyID *string) {
+func (r *SessionResolver) SyncByIdentifier(ctx context.Context, credential db.Credential, fullSync bool, lastUpdated *time.Time, countryCode *string, partyID *string) {
 	log.Printf("Sync sessions Url=%v LastUpdated=%v CountryCode=%v PartyID=%v",
 		credential.Url, lastUpdated, util.DefaultString(countryCode, ""), util.DefaultString(partyID, ""))
 	limit, offset, retries := 500, 0, 0
@@ -38,18 +38,23 @@ func (r *SessionResolver) SyncByIdentifier(ctx context.Context, credential db.Cr
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, countryCode, partyID)
 	query := requestUrl.Query()
 
-	if session, err := r.GetLastSessionByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
-		query.Set("date_from", session.LastUpdated.Format(time.RFC3339))
-	} else {
-		oneMonthAgo := time.Now().UTC().Add(time.Hour * 24 * -30)
-
-		if credential.IsHub && (lastUpdated == nil || lastUpdated.Before(oneMonthAgo)) {
+	if lastUpdated == nil {
+		if session, err := r.GetLastSessionByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
+			lastUpdated = &session.LastUpdated
+		} else if credential.IsHub {
+			oneMonthAgo := time.Now().Add(time.Hour * 24 * -30)
 			lastUpdated = &oneMonthAgo
 		}
+	}
 
-		if lastUpdated != nil {
-			query.Set("date_from", lastUpdated.Format(time.RFC3339))
+	if lastUpdated != nil {
+		oneMonthFromLastUpdated := lastUpdated.Add(time.Hour * 24 * 30)
+
+		if credential.IsHub && oneMonthFromLastUpdated.Before(time.Now()) {
+			query.Set("date_to", oneMonthFromLastUpdated.Format(time.RFC3339))
 		}
+
+		query.Set("date_from", lastUpdated.Format(time.RFC3339))
 	}
 
 	for {
