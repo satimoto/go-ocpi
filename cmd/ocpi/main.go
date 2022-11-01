@@ -13,6 +13,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	"github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/rest"
 	"github.com/satimoto/go-ocpi/internal/rpc"
 	"github.com/satimoto/go-ocpi/internal/service"
@@ -50,6 +51,9 @@ func main() {
 
 	repositoryService := db.NewRepositoryService(database)
 	services := service.NewService(repositoryService)
+	
+	metricService := metric.NewMetric()
+	metricService.StartMetric(shutdownCtx, waitGroup)
 
 	restService := rest.NewRest(repositoryService, services)
 	restService.StartRest(shutdownCtx, waitGroup)
