@@ -14,7 +14,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/service"
@@ -102,7 +101,6 @@ func (rs *RestService) handler() *chi.Mux {
 	// Add routes
 	router.Mount("/", rs.mountVersions())
 	router.Mount("/health", rs.mountHealth())
-	router.Mount("/metrics", promhttp.Handler())
 	router.Mount("/2.1.1", rs.mount211())
 
 	return router

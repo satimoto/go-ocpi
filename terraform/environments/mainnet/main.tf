@@ -101,6 +101,7 @@ module "service-ocpi" {
     region                 = var.region
     service_name           = var.service_name
     service_container_port = var.service_container_port
+    service_metric_port    = var.service_metric_port
     rpc_container_port     = var.env_rpc_port
     task_network_mode      = var.task_network_mode
     env_api_domain         = "https://${var.subdomain_name}.${data.terraform_remote_state.infrastructure.outputs.route53_zone_name}"
@@ -113,6 +114,7 @@ module "service-ocpi" {
     env_db_host            = "${data.terraform_remote_state.infrastructure.outputs.rds_cluster_endpoint}:${data.terraform_remote_state.infrastructure.outputs.rds_cluster_port}"
     env_db_name            = "satimoto"
     env_fcm_api_key        = var.env_fcm_api_key
+    env_metric_port        = var.service_metric_port
     env_rest_port          = var.service_container_port
     env_rpc_port           = var.env_rpc_port
     env_shutdown_timeout   = var.env_shutdown_timeout
