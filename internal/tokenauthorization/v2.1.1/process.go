@@ -16,7 +16,7 @@ import (
 func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, locationReferencesDto *dto.LocationReferencesDto) (*db.TokenAuthorization, error) {
 	if token.Type == db.TokenTypeRFID {
 		// Check if user is restricted, has a node and has been active
-		user, err := r.UserRepository.GetUserByTokenID(ctx, token.UserID)
+		user, err := r.UserRepository.GetUserByTokenID(ctx, token.ID)
 
 		if err != nil {
 			util.LogOnError("OCPI288", "Error retrieving user", err)
