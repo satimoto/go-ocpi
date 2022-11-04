@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/async"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
@@ -16,7 +16,7 @@ func (r *RpcTokenAuthorizationResolver) UpdateTokenAuthorization(ctx context.Con
 		tokenAuthorization, err := r.TokenAuthorizationRepository.GetTokenAuthorizationByAuthorizationID(ctx, request.AuthorizationId)
 
 		if err != nil {
-			util.LogOnError("OCPI289", "Error retrieving token authorization", err)
+			metrics.RecordError("OCPI289", "Error retrieving token authorization", err)
 			log.Printf("OCPI289: Request=%#v", request)
 			return &ocpirpc.UpdateTokenAuthorizationResponse{Ok: false}, nil
 		}
@@ -24,7 +24,7 @@ func (r *RpcTokenAuthorizationResolver) UpdateTokenAuthorization(ctx context.Con
 		token, err := r.TokenRepository.GetToken(ctx, tokenAuthorization.TokenID)
 
 		if err != nil {
-			util.LogOnError("OCPI290", "Error retrieving token", err)
+			metrics.RecordError("OCPI290", "Error retrieving token", err)
 			log.Printf("OCPI290: TokenID=%v", tokenAuthorization.TokenID)
 			return &ocpirpc.UpdateTokenAuthorizationResponse{Ok: false}, nil
 		}
@@ -49,7 +49,7 @@ func (r *RpcTokenAuthorizationResolver) UpdateTokenAuthorization(ctx context.Con
 			_, err := r.TokenAuthorizationRepository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationParams)
 
 			if err != nil {
-				util.LogOnError("OCPI291", "Error updating token authorization", err)
+				metrics.RecordError("OCPI291", "Error updating token authorization", err)
 				log.Printf("OCPI291: Params=%#v", updateTokenAuthorizationParams)
 				return &ocpirpc.UpdateTokenAuthorizationResponse{Ok: false}, nil
 			}

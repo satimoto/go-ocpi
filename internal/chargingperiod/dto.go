@@ -5,21 +5,21 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	"github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *ChargingPeriodResolver) CreateChargingPeriodDto(ctx context.Context, chargingPeriod db.ChargingPeriod) *coreDto.ChargingPeriodDto {
 	response := coreDto.NewChargingPeriodDto(chargingPeriod)
 
 	chargingPeriodDimensions, err := r.Repository.ListChargingPeriodDimensions(ctx, chargingPeriod.ID)
-	
+
 	if err != nil {
-		util.LogOnError("OCPI223", "Error listing charging period dimensions", err)
+		metrics.RecordError("OCPI223", "Error listing charging period dimensions", err)
 		log.Printf("OCPI223: CalibrationID=%v", chargingPeriod.ID)
 		return response
 	}
-	
+
 	response.Dimensions = r.CreateChargingPeriodDimensionListDto(ctx, chargingPeriodDimensions)
 
 	return response
@@ -31,7 +31,7 @@ func (r *ChargingPeriodResolver) CreateChargingPeriodListDto(ctx context.Context
 	for _, chargingPeriod := range chargingPeriods {
 		list = append(list, r.CreateChargingPeriodDto(ctx, chargingPeriod))
 	}
-	
+
 	return list
 }
 

@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *TariffResolver) CreateTariffDto(ctx context.Context, tariff db.Tariff) *dto.TariffDto {
@@ -15,7 +15,7 @@ func (r *TariffResolver) CreateTariffDto(ctx context.Context, tariff db.Tariff) 
 	tariffAltTexts, err := r.Repository.ListTariffAltTexts(ctx, tariff.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI256", "Error listing tariff alt texts", err)
+		metrics.RecordError("OCPI256", "Error listing tariff alt texts", err)
 		log.Printf("OCPI256: TariffID=%v", tariff.ID)
 	} else {
 		response.TariffAltText = r.DisplayTextResolver.CreateDisplayTextListDto(ctx, tariffAltTexts)
@@ -24,7 +24,7 @@ func (r *TariffResolver) CreateTariffDto(ctx context.Context, tariff db.Tariff) 
 	elements, err := r.ElementResolver.Repository.ListElements(ctx, tariff.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI257", "Error listing elements", err)
+		metrics.RecordError("OCPI257", "Error listing elements", err)
 		log.Printf("OCPI257: TariffID=%v", tariff.ID)
 	} else {
 		response.Elements = r.ElementResolver.CreateElementListDto(ctx, elements)
@@ -34,7 +34,7 @@ func (r *TariffResolver) CreateTariffDto(ctx context.Context, tariff db.Tariff) 
 		energyMix, err := r.EnergyMixResolver.Repository.GetEnergyMix(ctx, tariff.EnergyMixID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI258", "Error retrieving energy mix", err)
+			metrics.RecordError("OCPI258", "Error retrieving energy mix", err)
 			log.Printf("OCPI258: EnergyMixID=%#v", tariff.EnergyMixID)
 		} else {
 			response.EnergyMix = r.EnergyMixResolver.CreateEnergyMixDto(ctx, energyMix)
@@ -45,7 +45,7 @@ func (r *TariffResolver) CreateTariffDto(ctx context.Context, tariff db.Tariff) 
 		tariffRestriction, err := r.TariffRestrictionResolver.Repository.GetTariffRestriction(ctx, tariff.TariffRestrictionID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI259", "Error retrieving tariff restriction", err)
+			metrics.RecordError("OCPI259", "Error retrieving tariff restriction", err)
 			log.Printf("OCPI259: TariffRestrictionID=%#v", tariff.TariffRestrictionID)
 		} else {
 			response.Restriction = r.TariffRestrictionResolver.CreateTariffRestrictionDto(ctx, tariffRestriction)

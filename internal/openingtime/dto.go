@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *OpeningTimeResolver) CreateExceptionalPeriodDto(ctx context.Context, exceptionalPeriod db.ExceptionalPeriod) *coreDto.ExceptionalPeriodDto {
@@ -29,16 +29,16 @@ func (r *OpeningTimeResolver) CreateOpeningTimeDto(ctx context.Context, openingT
 	regularHours, err := r.Repository.ListRegularHours(ctx, openingTime.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI249", "Error listing regular hours", err)
+		metrics.RecordError("OCPI249", "Error listing regular hours", err)
 		log.Printf("OCPI249: OpeningTimeID=%v", openingTime.ID)
 	} else {
 		response.RegularHours = r.CreateRegularHourListDto(ctx, regularHours)
 	}
 
 	exceptionalOpenings, err := r.Repository.ListExceptionalOpeningPeriods(ctx, openingTime.ID)
-	
+
 	if err != nil {
-		util.LogOnError("OCPI250", "Error listing exceptional opening periods", err)
+		metrics.RecordError("OCPI250", "Error listing exceptional opening periods", err)
 		log.Printf("OCPI250: OpeningTimeID=%v", openingTime.ID)
 	} else {
 		response.ExceptionalOpenings = r.CreateExceptionalPeriodListDto(ctx, exceptionalOpenings)
@@ -47,7 +47,7 @@ func (r *OpeningTimeResolver) CreateOpeningTimeDto(ctx context.Context, openingT
 	exceptionalClosings, err := r.Repository.ListExceptionalClosingPeriods(ctx, openingTime.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI251", "Error listing exceptional closing periods", err)
+		metrics.RecordError("OCPI251", "Error listing exceptional closing periods", err)
 		log.Printf("OCPI251: OpeningTimeID=%v", openingTime.ID)
 	} else {
 		response.ExceptionalClosings = r.CreateExceptionalPeriodListDto(ctx, exceptionalClosings)
@@ -62,7 +62,7 @@ func (r *OpeningTimeResolver) CreateRegularHourDto(ctx context.Context, regularH
 
 func (r *OpeningTimeResolver) CreateRegularHourListDto(ctx context.Context, regularHours []db.RegularHour) []*coreDto.RegularHourDto {
 	list := []*coreDto.RegularHourDto{}
-	
+
 	for _, regularHour := range regularHours {
 		list = append(list, r.CreateRegularHourDto(ctx, regularHour))
 	}

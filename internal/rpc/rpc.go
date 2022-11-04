@@ -10,6 +10,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/rpc/command"
 	"github.com/satimoto/go-ocpi/internal/rpc/credential"
 	"github.com/satimoto/go-ocpi/internal/rpc/rpc"
@@ -82,7 +83,7 @@ func (rs *RpcService) listenAndServe() {
 	err = rs.Server.Serve(listener)
 
 	if err != nil {
-		util.LogOnError("OCPI278", "Error in Rpc service", err)
+		metrics.RecordError("OCPI278", "Error in Rpc service", err)
 	}
 }
 

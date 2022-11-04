@@ -10,6 +10,7 @@ import (
 	"github.com/satimoto/go-ocpi/internal/displaytext"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/image"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid string, evseDto *dto.EvseDto) *db.Evse {
@@ -60,15 +61,18 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 				_, err := r.Repository.CreateEvseStatusPeriod(ctx, evseStatusPeriodParams)
 
 				if err != nil {
-					dbUtil.LogOnError("OCPI275", "Error creating evse status period", err)
+					metrics.RecordError("OCPI275", "Error creating evse status period", err)
 					log.Printf("OCPI275: Params=%#v", evseStatusPeriodParams)
 				}
+
+				metricEvsesStatus.WithLabelValues(string(evse.Status)).Dec()
+				metricEvsesStatus.WithLabelValues(string(*evseDto.Status)).Inc()
 			}
 
 			updatedEvse, err := r.Repository.UpdateEvseByUid(ctx, evseParams)
 
 			if err != nil {
-				dbUtil.LogOnError("OCPI099", "Error updating evse", err)
+				metrics.RecordError("OCPI099", "Error updating evse", err)
 				log.Printf("OCPI099: Params=%#v", evseParams)
 				return nil
 			}
@@ -95,10 +99,14 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			evse, err = r.Repository.CreateEvse(ctx, evseParams)
 
 			if err != nil {
-				dbUtil.LogOnError("OCPI100", "Error creating evse", err)
+				metrics.RecordError("OCPI100", "Error creating evse", err)
 				log.Printf("OCPI100: Params=%#v", evseParams)
 				return nil
 			}
+
+			// Metrics: Increment total evses
+			metricEvsesTotal.Inc()
+			metricEvsesStatus.WithLabelValues(string(evse.Status)).Inc()
 		}
 
 		if evseDto.Capabilities != nil {
@@ -153,9 +161,12 @@ func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, evseD
 				_, err := r.Repository.UpdateEvseByUid(ctx, evseParams)
 
 				if err != nil {
-					dbUtil.LogOnError("OCPI101", "Error updating evse", err)
+					metrics.RecordError("OCPI101", "Error updating evse", err)
 					log.Printf("OCPI101: Params=%#v", evseParams)
 				}
+
+				metricEvsesStatus.WithLabelValues(string(evse.Status)).Dec()
+				metricEvsesStatus.WithLabelValues(string(db.EvseStatusREMOVED)).Inc()
 			}
 		}
 
@@ -183,7 +194,7 @@ func (r *EvseResolver) replaceCapabilities(ctx context.Context, evseID int64, ev
 			err := r.Repository.SetEvseCapability(ctx, setEvseCapabilityParams)
 
 			if err != nil {
-				dbUtil.LogOnError("OCPI102", "Error setting evse capability", err)
+				metrics.RecordError("OCPI102", "Error setting evse capability", err)
 				log.Printf("OCPI102: Params=%#v", setEvseCapabilityParams)
 			}
 		}
@@ -202,7 +213,7 @@ func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, evse
 		displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams)
 
 		if err != nil {
-			dbUtil.LogOnError("OCPI103", "Error creating display text", err)
+			metrics.RecordError("OCPI103", "Error creating display text", err)
 			log.Printf("OCPI103: Params=%#v", displayTextParams)
 			continue
 		}
@@ -214,7 +225,7 @@ func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, evse
 		err = r.Repository.SetEvseDirection(ctx, setEvseDirectionParams)
 
 		if err != nil {
-			dbUtil.LogOnError("OCPI104", "Error setting evse direction", err)
+			metrics.RecordError("OCPI104", "Error setting evse direction", err)
 			log.Printf("OCPI104: Params=%#v", setEvseDirectionParams)
 		}
 	}
@@ -234,7 +245,7 @@ func (r *EvseResolver) replaceImages(ctx context.Context, evseID int64, evseDto 
 			err := r.Repository.SetEvseImage(ctx, setEvseImageParams)
 
 			if err != nil {
-				dbUtil.LogOnError("OCPI106", "Error setting evse image", err)
+				metrics.RecordError("OCPI106", "Error setting evse image", err)
 				log.Printf("OCPI106: Params=%#v", setEvseImageParams)
 			}
 		}
@@ -261,7 +272,7 @@ func (r *EvseResolver) replaceParkingRestrictions(ctx context.Context, evseID in
 			err := r.Repository.SetEvseParkingRestriction(ctx, setEvseParkingRestrictionParams)
 
 			if err != nil {
-				dbUtil.LogOnError("OCPI107", "Error setting evse parking restriction", err)
+				metrics.RecordError("OCPI107", "Error setting evse parking restriction", err)
 				log.Printf("OCPI107: Params=%#v", setEvseParkingRestrictionParams)
 			}
 		}
@@ -276,7 +287,7 @@ func (r *EvseResolver) replaceStatusSchedule(ctx context.Context, evseID int64, 
 		_, err := r.Repository.CreateStatusSchedule(ctx, statusScheduleParams)
 
 		if err != nil {
-			dbUtil.LogOnError("OCPI108", "Error creating status schedule", err)
+			metrics.RecordError("OCPI108", "Error creating status schedule", err)
 			log.Printf("OCPI108: Params=%#v", statusScheduleParams)
 		}
 	}
@@ -306,7 +317,7 @@ func (r *EvseResolver) updateLocationAvailability(ctx context.Context, locationI
 		err := r.Repository.UpdateLocationAvailability(ctx, updateLocationAvailabilityParams)
 
 		if err != nil {
-			dbUtil.LogOnError("OCPI109", "Error updating location availability", err)
+			metrics.RecordError("OCPI109", "Error updating location availability", err)
 			log.Printf("OCPI109: Params=%#v", updateLocationAvailabilityParams)
 		}
 	}

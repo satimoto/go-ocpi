@@ -11,6 +11,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, locationReferencesDto *dto.LocationReferencesDto) (*db.TokenAuthorization, error) {
@@ -19,7 +20,7 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		user, err := r.UserRepository.GetUserByTokenID(ctx, token.ID)
 
 		if err != nil {
-			util.LogOnError("OCPI288", "Error retrieving user", err)
+			metrics.RecordError("OCPI288", "Error retrieving user", err)
 			log.Printf("OCPI288: UserID=%v", token.UserID)
 			return nil, nil
 		}
@@ -34,9 +35,9 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		if fiveDaysAgo.After(user.LastActiveDate.Time) {
 			// TODO: Send a notification
 			return nil, errors.New("Please open your Satimoto application and try again")
-		} 
+		}
 	}
-	
+
 	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
 	tokenAuthorizationParams.Authorized = token.Type == db.TokenTypeOTHER
 	tokenAuthorizationParams.SigningKey = r.createTokenAuthorizationSigningKey()
@@ -48,7 +49,7 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 	tokenAuthorization, err := r.Repository.CreateTokenAuthorization(ctx, tokenAuthorizationParams)
 
 	if err != nil {
-		util.LogOnError("OCPI206", "Error creating token authorization", err)
+		metrics.RecordError("OCPI206", "Error creating token authorization", err)
 		log.Printf("OCPI206: Params=%#v", tokenAuthorizationParams)
 		return nil, errors.New("Authorization error")
 	}
@@ -66,7 +67,7 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		user, err := r.UserRepository.GetUser(ctx, token.UserID)
 
 		if err != nil {
-			util.LogOnError("OCPI285", "Error retrieving user", err)
+			metrics.RecordError("OCPI285", "Error retrieving user", err)
 			log.Printf("OCPI285: UserID=%v", token.UserID)
 			return nil, nil
 		}
@@ -94,7 +95,7 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		r.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationParams)
 
 		if err != nil {
-			util.LogOnError("OCPI287", "Error updating token authorization", err)
+			metrics.RecordError("OCPI287", "Error updating token authorization", err)
 			log.Printf("OCPI287: Params=%#v", updateTokenAuthorizationParams)
 		}
 	}
@@ -114,7 +115,7 @@ func (r *TokenAuthorizationResolver) createTokenAuthorizationRelations(ctx conte
 				err = r.Repository.SetTokenAuthorizationEvse(ctx, setTokenAuthorizationEvseParams)
 
 				if err != nil {
-					util.LogOnError("OCPI207", "Error setting token authorization evse", err)
+					metrics.RecordError("OCPI207", "Error setting token authorization evse", err)
 					log.Printf("OCPI207: Params=%#v", setTokenAuthorizationEvseParams)
 				}
 
@@ -133,7 +134,7 @@ func (r *TokenAuthorizationResolver) createTokenAuthorizationRelations(ctx conte
 						err = r.Repository.SetTokenAuthorizationConnector(ctx, setTokenAuthorizationConnectorParams)
 
 						if err != nil {
-							util.LogOnError("OCPI208", "Error setting token authorization connector", err)
+							metrics.RecordError("OCPI208", "Error setting token authorization connector", err)
 							log.Printf("OCPI208: Params=%#v", setTokenAuthorizationConnectorParams)
 						}
 					}

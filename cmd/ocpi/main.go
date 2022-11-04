@@ -52,8 +52,8 @@ func main() {
 	repositoryService := db.NewRepositoryService(database)
 	services := service.NewService(repositoryService)
 	
-	metricService := metric.NewMetric()
-	metricService.StartMetric(shutdownCtx, waitGroup)
+	metricsService := metrics.NewMetrics()
+	metricsService.StartMetrics(shutdownCtx, waitGroup)
 
 	restService := rest.NewRest(repositoryService, services)
 	restService.StartRest(shutdownCtx, waitGroup)

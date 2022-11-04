@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/version"
@@ -20,7 +21,7 @@ func (r *CdrResolver) GetCdr(rw http.ResponseWriter, request *http.Request) {
 	dto := r.CreateCdrDto(ctx, cdr)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
-		util.LogOnError("OCPI033", "Error rendering response", err)
+		metrics.RecordError("OCPI033", "Error rendering response", err)
 		util.LogHttpRequest("OCPI033", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
@@ -33,7 +34,7 @@ func (r *CdrResolver) PostCdr(rw http.ResponseWriter, request *http.Request) {
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		util.LogOnError("OCPI034", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI034", "Error unmarshalling request", err)
 		util.LogHttpRequest("OCPI034", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

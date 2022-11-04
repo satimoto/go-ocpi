@@ -7,8 +7,8 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
-	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command db.CommandReservation, commandResponseDto *dto.CommandResponseDto) {
@@ -20,7 +20,7 @@ func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command 
 		_, err := r.Repository.UpdateCommandReservation(ctx, commandParams)
 
 		if err != nil {
-			util.LogOnError("OCPI038", "Error updating command reservation", err)
+			metrics.RecordError("OCPI038", "Error updating command reservation", err)
 			log.Printf("OCPI038: Params=%#v", commandParams)
 		}
 	}
@@ -35,7 +35,7 @@ func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.Com
 		_, err := r.Repository.UpdateCommandStart(ctx, commandParams)
 
 		if err != nil {
-			util.LogOnError("OCPI039", "Error updating command start", err)
+			metrics.RecordError("OCPI039", "Error updating command start", err)
 			log.Printf("OCPI039: Params=%#v", commandParams)
 		}
 	}
@@ -50,7 +50,7 @@ func (r *CommandResolver) UpdateCommandStop(ctx context.Context, command db.Comm
 		_, err := r.Repository.UpdateCommandStop(ctx, commandParams)
 
 		if err != nil {
-			util.LogOnError("OCPI040", "Error updating command stop", err)
+			metrics.RecordError("OCPI040", "Error updating command stop", err)
 			log.Printf("OCPI040: Params=%#v", commandParams)
 		}
 	}
@@ -65,7 +65,7 @@ func (r *CommandResolver) UpdateCommandUnlock(ctx context.Context, command db.Co
 		_, err := r.Repository.UpdateCommandUnlock(ctx, commandParams)
 
 		if err != nil {
-			util.LogOnError("OCPI041", "Error updating command unlock", err)
+			metrics.RecordError("OCPI041", "Error updating command unlock", err)
 			log.Printf("OCPI041: Params=%#v", commandParams)
 		}
 	}

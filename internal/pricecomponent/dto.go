@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *PriceComponentResolver) CreatePriceComponentDto(ctx context.Context, priceComponent db.PriceComponent) *coreDto.PriceComponentDto {
@@ -16,7 +16,7 @@ func (r *PriceComponentResolver) CreatePriceComponentDto(ctx context.Context, pr
 		priceComponentRounding, err := r.Repository.GetPriceComponentRounding(ctx, priceComponent.PriceRoundingID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI252", "Error retrieving price rounding", err)
+			metrics.RecordError("OCPI252", "Error retrieving price rounding", err)
 			log.Printf("OCPI252: PriceRoundingID=%#v", priceComponent.PriceRoundingID)
 		} else {	
 			response.PriceRound = r.CreatePriceComponentRoundingDto(ctx, priceComponentRounding)
@@ -27,7 +27,7 @@ func (r *PriceComponentResolver) CreatePriceComponentDto(ctx context.Context, pr
 		priceComponentRounding, err := r.Repository.GetPriceComponentRounding(ctx, priceComponent.StepRoundingID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI253", "Error retrieving step rounding", err)
+			metrics.RecordError("OCPI253", "Error retrieving step rounding", err)
 			log.Printf("OCPI253: StepRoundingID=%#v", priceComponent.StepRoundingID)
 		} else {	
 			response.StepRound = r.CreatePriceComponentRoundingDto(ctx, priceComponentRounding)

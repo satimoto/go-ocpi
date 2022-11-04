@@ -10,6 +10,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -22,7 +23,7 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
-		util.LogOnError("OCPI125", "Error retrieving version endpoint", err)
+		metrics.RecordError("OCPI125", "Error retrieving version endpoint", err)
 		log.Printf("OCPI125: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return
 	}
@@ -30,7 +31,7 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 	requestUrl, err := url.Parse(versionEndpoint.Url)
 
 	if err != nil {
-		util.LogOnError("OCPI126", "Error parsing url", err)
+		metrics.RecordError("OCPI126", "Error parsing url", err)
 		log.Printf("OCPI126: Url=%v", versionEndpoint.Url)
 		return
 	}
@@ -54,7 +55,7 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 		response, err := r.OcpiService.Do(http.MethodGet, requestUrl.String(), header, nil)
 
 		if err != nil {
-			util.LogOnError("OCPI127", "Error making request", err)
+			metrics.RecordError("OCPI127", "Error making request", err)
 			log.Printf("OCPI127: Method=%v, Url=%v, Header=%#v", http.MethodGet, requestUrl.String(), header)
 			retries++
 
@@ -69,7 +70,7 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 		defer response.Body.Close()
 
 		if err != nil {
-			util.LogOnError("OCPI128", "Error unmarshalling response", err)
+			metrics.RecordError("OCPI128", "Error unmarshalling response", err)
 			util.LogHttpResponse("OCPI128", requestUrl.String(), response, true)
 			break
 		}
@@ -77,7 +78,7 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 		limit = transportation.GetXLimitHeader(response, limit)
 
 		if dto.StatusCode != transportation.STATUS_CODE_OK {
-			util.LogOnError("OCPI129", "Error response failure", err)
+			metrics.RecordError("OCPI129", "Error response failure", err)
 			util.LogHttpRequest("OCPI129", versionEndpoint.Url, response.Request, true)
 			util.LogHttpResponse("OCPI129", requestUrl.String(), response, true)
 			log.Printf("OCPI129: StatusCode=%v, StatusMessage=%v", dto.StatusCode, dto.StatusMessage)

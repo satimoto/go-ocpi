@@ -9,6 +9,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/displaytext"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, tariffDto *dto.TariffDto) *db.Tariff {
@@ -55,7 +56,7 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 			updatedTariff, err := r.Repository.UpdateTariffByUid(ctx, tariffParams)
 
 			if err != nil {
-				util.LogOnError("OCPI178", "Error updating tariff", err)
+				metrics.RecordError("OCPI178", "Error updating tariff", err)
 				log.Printf("OCPI178: Params=%#v", tariffParams)
 				return nil
 			}
@@ -79,7 +80,7 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 			tariff, err = r.Repository.CreateTariff(ctx, tariffParams)
 
 			if err != nil {
-				util.LogOnError("OCPI179", "Error creating tariff", err)
+				metrics.RecordError("OCPI179", "Error creating tariff", err)
 				log.Printf("OCPI179: Params=%#v", tariffParams)
 				return nil
 			}
@@ -113,7 +114,7 @@ func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int6
 		displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams)
 
 		if err != nil {
-			util.LogOnError("OCPI180", "Error creating display text", err)
+			metrics.RecordError("OCPI180", "Error creating display text", err)
 			log.Printf("OCPI180: Params=%#v", displayTextParams)
 		}
 
@@ -124,7 +125,7 @@ func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int6
 		err = r.Repository.SetTariffAltText(ctx, setTariffAltTextParams)
 
 		if err != nil {
-			util.LogOnError("OCPI181", "Error setting tariff alt text", err)
+			metrics.RecordError("OCPI181", "Error setting tariff alt text", err)
 			log.Printf("OCPI181: Params=%#v", setTariffAltTextParams)
 		}
 	}

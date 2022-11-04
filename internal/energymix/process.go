@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *EnergyMixResolver) ReplaceEnergyMix(ctx context.Context, id *sql.NullInt64, energyMixDto *coreDto.EnergyMixDto) {
@@ -16,7 +16,7 @@ func (r *EnergyMixResolver) ReplaceEnergyMix(ctx context.Context, id *sql.NullIn
 			_, err := r.Repository.UpdateEnergyMix(ctx, energyMixParams)
 
 			if err != nil {
-				util.LogOnError("OCPI096", "Error updating energy mix", err)
+				metrics.RecordError("OCPI096", "Error updating energy mix", err)
 				log.Printf("OCPI096: Params=%#v", energyMixParams)
 			}
 		} else {
@@ -24,7 +24,7 @@ func (r *EnergyMixResolver) ReplaceEnergyMix(ctx context.Context, id *sql.NullIn
 			energyMix, err := r.Repository.CreateEnergyMix(ctx, energyMixParams)
 
 			if err != nil {
-				util.LogOnError("OCPI095", "Error creating energy mix", err)
+				metrics.RecordError("OCPI095", "Error creating energy mix", err)
 				log.Printf("OCPI095: Params=%#v", energyMixParams)
 				return
 			}
@@ -45,7 +45,7 @@ func (r *EnergyMixResolver) ReplaceEnergySources(ctx context.Context, energyMixI
 		_, err := r.Repository.CreateEnergySource(ctx, energySourceParams)
 
 		if err != nil {
-			util.LogOnError("OCPI097", "Error creating energy source", err)
+			metrics.RecordError("OCPI097", "Error creating energy source", err)
 			log.Printf("OCPI097: Params=%#v", energySourceParams)
 		}
 	}
@@ -59,7 +59,7 @@ func (r *EnergyMixResolver) ReplaceEnvironmentalImpacts(ctx context.Context, ene
 		_, err := r.Repository.CreateEnvironmentalImpact(ctx, environImpactParams)
 
 		if err != nil {
-			util.LogOnError("OCPI098", "Error creating environmental impact", err)
+			metrics.RecordError("OCPI098", "Error creating environmental impact", err)
 			log.Printf("OCPI098: Params=%#v", environImpactParams)
 		}
 	}

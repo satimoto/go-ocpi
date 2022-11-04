@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
@@ -40,7 +41,7 @@ func (r *TokenResolver) ListTokens(rw http.ResponseWriter, request *http.Request
 	tokens, err := r.Repository.ListTokens(ctx, listTokensParams)
 
 	if err != nil {
-		util.LogOnError("OCPI204", "Error listing tokens", err)
+		metrics.RecordError("OCPI204", "Error listing tokens", err)
 		log.Printf("OCPI204: Params=%#v", listTokensParams)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
@@ -74,7 +75,7 @@ func (r *TokenResolver) ListTokens(rw http.ResponseWriter, request *http.Request
 	}
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
-		util.LogOnError("OCPI205", "Error rendering response", err)
+		metrics.RecordError("OCPI205", "Error rendering response", err)
 		util.LogHttpRequest("OCPI205", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/geom"
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.NullInt64, geoLocationDto *coreDto.GeoLocationDto) *geom.Geometry4326 {
@@ -17,7 +17,7 @@ func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.Nu
 			_, err := r.Repository.UpdateGeoLocation(ctx, updateGeoLocationParams)
 
 			if err != nil {
-				util.LogOnError("OCPI114", "Error updating geolocation", err)
+				metrics.RecordError("OCPI114", "Error updating geolocation", err)
 				log.Printf("OCPI114: Params=%#v", updateGeoLocationParams)
 				return nil
 			}
@@ -26,7 +26,7 @@ func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.Nu
 			geoLocation, err := r.Repository.CreateGeoLocation(ctx, createGeoLocationParams)
 
 			if err != nil {
-				util.LogOnError("OCPI115", "Error creating geolocation", err)
+				metrics.RecordError("OCPI115", "Error creating geolocation", err)
 				log.Printf("OCPI115: Params=%#v", createGeoLocationParams)
 				return nil
 			}
@@ -37,7 +37,7 @@ func (r *GeoLocationResolver) ReplaceGeoLocation(ctx context.Context, id *sql.Nu
 		point, err := geom.NewPoint(geoLocationDto.Longitude.String(), geoLocationDto.Latitude.String())
 
 		if err != nil {
-			util.LogOnError("OCPI116", "Error creating geom point", err)
+			metrics.RecordError("OCPI116", "Error creating geom point", err)
 			log.Printf("OCPI116: Dto=%#v", geoLocationDto)
 			return nil
 		}
