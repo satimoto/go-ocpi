@@ -8,6 +8,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elementID int64, tariff db.Tariff, priceComponentsDto []*coreDto.PriceComponentDto) {
@@ -31,7 +32,7 @@ func (r *PriceComponentResolver) CreatePriceComponents(ctx context.Context, elem
 		_, err := r.Repository.CreatePriceComponent(ctx, priceComponentParams)
 
 		if err != nil {
-			util.LogOnError("OCPI138", "Error creating price component", err)
+			metrics.RecordError("OCPI138", "Error creating price component", err)
 			log.Printf("OCPI138: Params=%#v", priceComponentParams)
 		}
 	}
@@ -43,7 +44,7 @@ func (r *PriceComponentResolver) createPriceComponentRounding(ctx context.Contex
 		priceComponentRounding, err := r.Repository.CreatePriceComponentRounding(ctx, priceComponentRoundingParams)
 
 		if err != nil {
-			util.LogOnError("OCPI139", "Error creating price component rounding", err)
+			metrics.RecordError("OCPI139", "Error creating price component rounding", err)
 			log.Printf("OCPI139: Params=%#v", priceComponentRoundingParams)
 			return
 		}

@@ -8,6 +8,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -22,7 +23,7 @@ func (r *VersionDetailResolver) ReplaceVersionEndpoints(ctx context.Context, ver
 			endpoint, err := r.Repository.CreateVersionEndpoint(ctx, endpointParams)
 
 			if err != nil {
-				util.LogOnError("OCPI216", "Error creating version endpoint", err)
+				metrics.RecordError("OCPI216", "Error creating version endpoint", err)
 				log.Printf("OCPI216: Params=%#v", endpointParams)
 				continue
 			}
@@ -38,7 +39,7 @@ func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url st
 	response, err := r.OcpiService.Do(http.MethodGet, url, header, nil)
 
 	if err != nil {
-		util.LogOnError("OCPI217", "Error making request", err)
+		metrics.RecordError("OCPI217", "Error making request", err)
 		log.Printf("OCPI217: Method=%v, Url=%v, Header=%#v", http.MethodGet, url, header)
 		return []*db.VersionEndpoint{}
 	}
@@ -47,13 +48,13 @@ func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url st
 	defer response.Body.Close()
 
 	if err != nil {
-		util.LogOnError("OCPI218", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI218", "Error unmarshalling response", err)
 		util.LogHttpResponse("OCPI218", url, response, true)
 		return []*db.VersionEndpoint{}
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
-		util.LogOnError("OCPI219", "Error response failure", err)
+		metrics.RecordError("OCPI219", "Error response failure", err)
 		util.LogHttpRequest("OCPI219", url, response.Request, true)
 		util.LogHttpResponse("OCPI219", url, response, true)
 		log.Printf("OCPI219: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)

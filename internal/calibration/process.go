@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *CalibrationResolver) CreateCalibration(ctx context.Context, calibrationDto *coreDto.CalibrationDto) *db.Calibration {
@@ -16,7 +16,7 @@ func (r *CalibrationResolver) CreateCalibration(ctx context.Context, calibration
 		calibration, err := r.Repository.CreateCalibration(ctx, calibrationParams)
 
 		if err != nil {
-			util.LogOnError("OCPI017", "Error creating calibration", err)
+			metrics.RecordError("OCPI017", "Error creating calibration", err)
 			log.Printf("OCPI017: Params=%#v", calibrationParams)
 			return nil
 		}
@@ -37,7 +37,7 @@ func (r *CalibrationResolver) createCalibrationValues(ctx context.Context, calib
 			_, err := r.Repository.CreateCalibrationValue(ctx, calibrationValueParams)
 
 			if err != nil {
-				util.LogOnError("OCPI018", "Error creating calibration value", err)
+				metrics.RecordError("OCPI018", "Error creating calibration value", err)
 				log.Printf("OCPI018: Params=%#v", calibrationValueParams)
 			}
 		}

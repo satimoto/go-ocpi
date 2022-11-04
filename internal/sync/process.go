@@ -7,6 +7,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync bool, lastUpdated *time.Time, countryCode *string, partyID *string) {
@@ -18,7 +19,7 @@ func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync b
 		version, err := r.VersionResolver.Repository.GetVersion(ctx, credential.VersionID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI270", "Error retrieving credential version", err)
+			metrics.RecordError("OCPI270", "Error retrieving credential version", err)
 			log.Printf("OCPI270: CredentialID=%v, VersionID=%v", credential.ID, credential.VersionID)
 			return
 		}

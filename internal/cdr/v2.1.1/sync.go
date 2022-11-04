@@ -10,6 +10,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -22,7 +23,7 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
-		util.LogOnError("OCPI028", "Error retrieving version endpoint", err)
+		metrics.RecordError("OCPI028", "Error retrieving version endpoint", err)
 		log.Printf("OCPI028: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return
 	}
@@ -30,7 +31,7 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 	requestUrl, err := url.Parse(versionEndpoint.Url)
 
 	if err != nil {
-		util.LogOnError("OCPI029", "Error parsing url", err)
+		metrics.RecordError("OCPI029", "Error parsing url", err)
 		log.Printf("OCPI029: Url=%v", versionEndpoint.Url)
 		return
 	}
@@ -65,7 +66,7 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 		response, err := r.OcpiService.Do(http.MethodGet, requestUrl.String(), header, nil)
 
 		if err != nil {
-			util.LogOnError("OCPI030", "Error making request", err)
+			metrics.RecordError("OCPI030", "Error making request", err)
 			log.Printf("OCPI030: Method=%v, Url=%v, Header=%#v", http.MethodGet, requestUrl.String(), header)
 			retries++
 
@@ -80,7 +81,7 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 		defer response.Body.Close()
 
 		if err != nil {
-			util.LogOnError("OCPI031", "Error unmarshalling response", err)
+			metrics.RecordError("OCPI031", "Error unmarshalling response", err)
 			util.LogHttpResponse("OCPI031", requestUrl.String(), response, true)
 			break
 		}
@@ -88,7 +89,7 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 		limit = transportation.GetXLimitHeader(response, limit)
 
 		if dto.StatusCode != transportation.STATUS_CODE_OK {
-			util.LogOnError("OCPI032", "Error response failure", err)
+			metrics.RecordError("OCPI032", "Error response failure", err)
 			util.LogHttpRequest("OCPI032", requestUrl.String(), response.Request, true)
 			util.LogHttpResponse("OCPI032", requestUrl.String(), response, true)
 			break

@@ -8,6 +8,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/util"
 )
 
@@ -55,7 +56,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 			updatedConnector, err := r.Repository.UpdateConnectorByEvse(ctx, connectorParams)
 
 			if err != nil {
-				dbUtil.LogOnError("OCPI079", "Error updating connector", err)
+				metrics.RecordError("OCPI079", "Error updating connector", err)
 				log.Printf("OCPI079: Params=%#v", connectorParams)
 				return nil
 			}
@@ -66,10 +67,12 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 			connector, err = r.Repository.CreateConnector(ctx, connectorParams)
 
 			if err != nil {
-				dbUtil.LogOnError("OCPI080", "Error creating connector", err)
+				metrics.RecordError("OCPI080", "Error creating connector", err)
 				log.Printf("OCPI080: Params=%#v", connectorParams)
 				return nil
 			}
+
+			metricConnectorsTotal.Inc()
 		}
 
 		return &connector
@@ -100,7 +103,7 @@ func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evse db.Evse,
 				_, err := r.Repository.UpdateConnectorByEvse(ctx, connectorParams)
 
 				if err != nil {
-					dbUtil.LogOnError("OCPI113", "Error updating connector", err)
+					metrics.RecordError("OCPI113", "Error updating connector", err)
 					log.Printf("OCPI113: Params=%#v", connectorParams)
 				}
 			}

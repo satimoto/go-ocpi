@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *OpeningTimeResolver) ReplaceOpeningTime(ctx context.Context, id *sql.NullInt64, openingTimeDto *coreDto.OpeningTimeDto) {
@@ -17,7 +17,7 @@ func (r *OpeningTimeResolver) ReplaceOpeningTime(ctx context.Context, id *sql.Nu
 			_, err := r.Repository.UpdateOpeningTime(ctx, openingTimeParams)
 
 			if err != nil {
-				util.LogOnError("OCPI134", "Error updating opening time", err)
+				metrics.RecordError("OCPI134", "Error updating opening time", err)
 				log.Printf("OCPI134: Params=%#v", openingTimeParams)
 				return
 			}
@@ -25,7 +25,7 @@ func (r *OpeningTimeResolver) ReplaceOpeningTime(ctx context.Context, id *sql.Nu
 			openingTime, err := r.Repository.CreateOpeningTime(ctx, openingTimeDto.Twentyfourseven)
 
 			if err != nil {
-				util.LogOnError("OCPI133", "Error creating opening time", err)
+				metrics.RecordError("OCPI133", "Error creating opening time", err)
 				log.Printf("OCPI133: Dto=%#v", openingTimeDto)
 				return
 			}
@@ -47,7 +47,7 @@ func (r *OpeningTimeResolver) ReplaceExceptionalClosingPeriods(ctx context.Conte
 		_, err := r.Repository.CreateExceptionalPeriod(ctx, exceptionalClosingParams)
 
 		if err != nil {
-			util.LogOnError("OCPI135", "Error creating exceptional closing period", err)
+			metrics.RecordError("OCPI135", "Error creating exceptional closing period", err)
 			log.Printf("OCPI135: Params=%#v", exceptionalClosingParams)
 		}
 	}
@@ -61,7 +61,7 @@ func (r *OpeningTimeResolver) ReplaceExceptionalOpeningPeriods(ctx context.Conte
 		_, err := r.Repository.CreateExceptionalPeriod(ctx, exceptionalOpeningParams)
 
 		if err != nil {
-			util.LogOnError("OCPI136", "Error creating exceptional opening period", err)
+			metrics.RecordError("OCPI136", "Error creating exceptional opening period", err)
 			log.Printf("OCPI136: Params=%#v", exceptionalOpeningParams)
 		}
 	}
@@ -75,7 +75,7 @@ func (r *OpeningTimeResolver) ReplaceRegularHours(ctx context.Context, openingTi
 		_, err := r.Repository.CreateRegularHour(ctx, regularHourParams)
 
 		if err != nil {
-			util.LogOnError("OCPI137", "Error creating exceptional opening period", err)
+			metrics.RecordError("OCPI137", "Error creating exceptional opening period", err)
 			log.Printf("OCPI137: Params=%#v", regularHourParams)
 		}
 	}

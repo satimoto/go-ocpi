@@ -9,6 +9,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/pkg/ocpi"
 	ocpiCdr "github.com/satimoto/go-ocpi/pkg/ocpi/cdr"
 )
@@ -41,7 +42,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			token, err := r.TokenRepository.GetTokenByAuthID(ctx, *cdrDto.AuthID)
 
 			if err != nil {
-				util.LogOnError("OCPI020", "Error retrieving token", err)
+				metrics.RecordError("OCPI020", "Error retrieving token", err)
 				log.Printf("OCPI020: AuthID=%v", *cdrDto.AuthID)
 				return nil
 			}
@@ -54,7 +55,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, *cdrDto.Location.ID)
 
 			if err != nil {
-				util.LogOnError("OCPI021", "Error retrieving location", err)
+				metrics.RecordError("OCPI021", "Error retrieving location", err)
 				log.Printf("OCPI021: Uid=%v", *cdrDto.Location.ID)
 			} else {
 				cdrParams.LocationID = location.ID
@@ -64,7 +65,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			evse, err := r.LocationResolver.EvseResolver.Repository.GetEvseByUid(ctx, *evseDto.Uid)
 
 			if err != nil {
-				util.LogOnError("OCPI022", "Error retrieving evse", err)
+				metrics.RecordError("OCPI022", "Error retrieving evse", err)
 				log.Printf("OCPI022: Uid=%v", *evseDto.Uid)
 			} else {
 				cdrParams.EvseID = evse.ID
@@ -78,7 +79,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 			connector, err := r.LocationResolver.EvseResolver.ConnectorResolver.Repository.GetConnectorByEvse(ctx, connectorParams)
 
 			if err != nil {
-				util.LogOnError("OCPI023", "Error retrieving connector", err)
+				metrics.RecordError("OCPI023", "Error retrieving connector", err)
 				log.Printf("OCPI023: Params=%#v", connectorParams)
 			} else {
 				cdrParams.ConnectorID = connector.ID
@@ -94,7 +95,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 		cdr, err = r.Repository.CreateCdr(ctx, cdrParams)
 
 		if err != nil {
-			util.LogOnError("OCPI024", "Error creating cdr", err)
+			metrics.RecordError("OCPI024", "Error creating cdr", err)
 			log.Printf("OCPI024: Params=%#v", cdrParams)
 			return nil
 		}
@@ -116,11 +117,14 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 				_, err = r.SessionRepository.UpdateSessionByUid(ctx, sessionParams)
 
 				if err != nil {
-					util.LogOnError("OCPI283", "Error updating session", err)
+					metrics.RecordError("OCPI283", "Error updating session", err)
 					log.Printf("OCPI283: Params=%#v", sessionParams)
 				}
 			}
 		}
+
+		// Metrics
+		metricCdrsTotal.Inc()
 
 		go r.sendOcpiRequest(cdr)
 
@@ -154,7 +158,7 @@ func (r *CdrResolver) createChargingPeriods(ctx context.Context, cdrID int64, cd
 			err := r.Repository.SetCdrChargingPeriod(ctx, setCdrChargingPeriodParams)
 
 			if err != nil {
-				util.LogOnError("OCPI027", "Error setting cdr charging period", err)
+				metrics.RecordError("OCPI027", "Error setting cdr charging period", err)
 				log.Printf("OCPI027: Params=%#v", setCdrChargingPeriodParams)
 			}
 		}
@@ -174,7 +178,7 @@ func (r *CdrResolver) sendOcpiRequest(cdr db.Cdr) {
 	node, err := r.NodeRepository.GetNodeByUserID(ctx, cdr.UserID)
 
 	if err != nil {
-		util.LogOnError("OCPI025", "Error retrieving node", err)
+		metrics.RecordError("OCPI025", "Error retrieving node", err)
 		log.Printf("OCPI025: UserID=%v", cdr.UserID)
 	}
 
@@ -183,7 +187,7 @@ func (r *CdrResolver) sendOcpiRequest(cdr db.Cdr) {
 	cdrCreatedResponse, err := ocpiService.CdrCreated(ctx, cdrCreatedRequest)
 
 	if err != nil {
-		util.LogOnError("OCPI026", "Error calling RPC service", err)
+		metrics.RecordError("OCPI026", "Error calling RPC service", err)
 		log.Printf("OCPI026: Request=%#v, Response=%#v", cdrCreatedRequest, cdrCreatedResponse)
 	}
 }

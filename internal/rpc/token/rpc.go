@@ -9,6 +9,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/ocpitype"
 	"github.com/satimoto/go-ocpi/internal/util"
 	"github.com/satimoto/go-ocpi/ocpirpc"
@@ -22,7 +23,7 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 		authID, err := r.TokenResolver.GenerateAuthID(ctx)
 
 		if err != nil {
-			dbUtil.LogOnError("OCPI279", "Error generating AuthID", err)
+			metrics.RecordError("OCPI279", "Error generating AuthID", err)
 			log.Printf("OCPI279: Request=%#v", request)
 			return nil, errors.New("error creating token")
 		}
@@ -36,12 +37,12 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 		} else {
 			getTokenByUserIDParams := db.GetTokenByUserIDParams{
 				UserID: request.UserId,
-				Type: db.TokenTypeOTHER,
+				Type:   db.TokenTypeOTHER,
 			}
-	
+
 			if t, err := r.TokenResolver.Repository.GetTokenByUserID(ctx, getTokenByUserIDParams); err == nil {
 				tokenAllowed = t.Allowed
-			}	
+			}
 		}
 
 		if len(request.Whitelist) == 0 {
@@ -51,7 +52,7 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 		t := r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *tokenDto.Uid, tokenDto)
 
 		if t == nil {
-			dbUtil.LogOnError("OCPI280", "Error replacing token", err)
+			metrics.RecordError("OCPI280", "Error replacing token", err)
 			log.Printf("OCPI280: Dto=%#v", tokenDto)
 			return nil, errors.New("error creating token")
 		}
@@ -67,7 +68,7 @@ func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.Up
 		tokens, err := r.TokenResolver.Repository.ListTokensByUserID(ctx, request.UserId)
 
 		if err != nil {
-			dbUtil.LogOnError("OCPI281", "Error listing tokens", err)
+			metrics.RecordError("OCPI281", "Error listing tokens", err)
 			log.Printf("OCPI281: Request=%#v", request)
 			return nil, errors.New("error updating tokens")
 		}

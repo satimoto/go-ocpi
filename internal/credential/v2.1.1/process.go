@@ -11,6 +11,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
 	ocpiVersion "github.com/satimoto/go-ocpi/internal/version"
@@ -21,7 +22,7 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
-		dbUtil.LogOnError("OCPI264", "Error retrieving verion endpoint", err)
+		metrics.RecordError("OCPI264", "Error retrieving verion endpoint", err)
 		log.Printf("OCPI264: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
 		return nil, transportation.OcpiRegistrationError(nil)
 	}
@@ -31,7 +32,7 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 	dtoBytes, err := json.Marshal(dto)
 
 	if err != nil {
-		dbUtil.LogOnError("OCPI265", "Error marshalling dto", err)
+		metrics.RecordError("OCPI265", "Error marshalling dto", err)
 		log.Printf("OCPI265: Dto=%#v", dto)
 		return nil, transportation.OcpiRegistrationError(nil)
 	}
@@ -39,7 +40,7 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 	response, err := r.OcpiService.Do(httpMethod, versionEndpoint.Url, header, bytes.NewBuffer(dtoBytes))
 
 	if err != nil {
-		dbUtil.LogOnError("OCPI266", "Error making request", err)
+		metrics.RecordError("OCPI266", "Error making request", err)
 		log.Printf("OCPI266: Method=%v, Url=%v, Header=%#v", httpMethod, versionEndpoint.Url, header)
 		return nil, transportation.OcpiRegistrationError(nil)
 	}
@@ -48,13 +49,13 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 	defer response.Body.Close()
 
 	if err != nil {
-		dbUtil.LogOnError("OCPI267", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI267", "Error unmarshalling response", err)
 		dbUtil.LogHttpResponse("OCPI267", versionEndpoint.Url, response, true)
 		return nil, transportation.OcpiRegistrationError(nil)
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
-		dbUtil.LogOnError("OCPI268", "Error response failure", err)
+		metrics.RecordError("OCPI268", "Error response failure", err)
 		dbUtil.LogHttpRequest("OCPI268", versionEndpoint.Url, response.Request, true)
 		dbUtil.LogHttpResponse("OCPI268", versionEndpoint.Url, response, true)
 		log.Printf("OCPI268: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
@@ -84,7 +85,7 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 	cred, err := r.Repository.UpdateCredential(ctx, updateCredentialParams)
 
 	if err != nil {
-		dbUtil.LogOnError("OCPI269", "Error updating credential", err)
+		metrics.RecordError("OCPI269", "Error updating credential", err)
 		log.Printf("OCPI269: Params=%#v", updateCredentialParams)
 		return nil, transportation.OcpiRegistrationError(nil)
 	}
@@ -143,7 +144,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 			cred, err := r.Repository.UpdateCredential(ctx, updateCredentialParams)
 
 			if err != nil {
-				dbUtil.LogOnError("OCPI263", "Error updating credential", err)
+				metrics.RecordError("OCPI263", "Error updating credential", err)
 				log.Printf("OCPI263: Params=%#v", updateCredentialParams)
 				return nil, transportation.OcpiRegistrationError(nil)
 			}

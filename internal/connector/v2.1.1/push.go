@@ -10,6 +10,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -19,7 +20,7 @@ func (r *ConnectorResolver) GetConnector(rw http.ResponseWriter, request *http.R
 	dto := r.CreateConnectorDto(ctx, connector)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
-		util.LogOnError("OCPI081", "Error rendering response", err)
+		metrics.RecordError("OCPI081", "Error rendering response", err)
 		util.LogHttpRequest("OCPI081", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
@@ -33,7 +34,7 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 	connectorDto := dto.ConnectorDto{}
 
 	if err := json.NewDecoder(request.Body).Decode(&connectorDto); err != nil {
-		util.LogOnError("OCPI082", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI082", "Error unmarshalling request", err)
 		util.LogHttpRequest("OCPI082", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
@@ -50,7 +51,7 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 		err := r.Repository.UpdateEvseLastUpdated(ctx, updateEvseLastUpdatedParams)
 
 		if err != nil {
-			util.LogOnError("OCPI083", "Error updating evse", err)
+			metrics.RecordError("OCPI083", "Error updating evse", err)
 			log.Printf("OCPI083: Params=%#v", updateEvseLastUpdatedParams)
 
 			render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
@@ -64,7 +65,7 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 		err = r.Repository.UpdateLocationLastUpdated(ctx, updateLocationLastUpdatedParams)
 
 		if err != nil {
-			util.LogOnError("OCPI084", "Error updating location", err)
+			metrics.RecordError("OCPI084", "Error updating location", err)
 			log.Printf("OCPI084: Params=%#v", updateEvseLastUpdatedParams)
 
 			render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

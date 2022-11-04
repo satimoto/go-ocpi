@@ -8,15 +8,15 @@ import (
 )
 
 const (
-	STATUS_CODE_OK                 = 1000
-	STATUS_CODE_CLIENT_ERROR       = 2000
-	STATUS_CODE_MISSING_PARAMS     = 2001
-	STATUS_CODE_NOT_ENOUGH_INFO    = 2002
-	STATUS_CODE_UNKNOWN_RESOURCE   = 2003
-	STATUS_CODE_SERVER_ERROR       = 3000
-	STATUS_CODE_REGISTRATION_ERROR = 3001
-	STATUS_CODE_UNSUPPRTED_VERSION = 3002
-	STATUS_CODE_MISSING_ENDPOINTS  = 3003
+	STATUS_CODE_OK                  = 1000
+	STATUS_CODE_CLIENT_ERROR        = 2000
+	STATUS_CODE_MISSING_PARAMS      = 2001
+	STATUS_CODE_NOT_ENOUGH_INFO     = 2002
+	STATUS_CODE_UNKNOWN_RESOURCE    = 2003
+	STATUS_CODE_SERVER_ERROR        = 3000
+	STATUS_CODE_REGISTRATION_ERROR  = 3001
+	STATUS_CODE_UNSUPPORTED_VERSION = 3002
+	STATUS_CODE_MISSING_ENDPOINTS   = 3003
 )
 
 type OcpiResponse struct {
@@ -105,7 +105,7 @@ func OcpiRegistrationError(data interface{}) *OcpiResponse {
 func OcpiUnsupportedVersion(data interface{}) *OcpiResponse {
 	return &OcpiResponse{
 		Data:          data,
-		StatusCode:    STATUS_CODE_UNSUPPRTED_VERSION,
+		StatusCode:    STATUS_CODE_UNSUPPORTED_VERSION,
 		StatusMessage: "Unsupported version",
 		Timestamp:     ocpitype.NewOcpiTime(nil),
 	}

@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *EnergyMixResolver) CreateEnergyMixDto(ctx context.Context, energyMix db.EnergyMix) *coreDto.EnergyMixDto {
@@ -15,7 +15,7 @@ func (r *EnergyMixResolver) CreateEnergyMixDto(ctx context.Context, energyMix db
 	energySources, err := r.Repository.ListEnergySources(ctx, energyMix.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI229", "Error listing energy sources", err)
+		metrics.RecordError("OCPI229", "Error listing energy sources", err)
 		log.Printf("OCPI229: EnergyMixID=%v", energyMix.ID)
 	} else {
 		response.EnergySources = r.CreateEnergySourceListDto(ctx, energySources)
@@ -24,7 +24,7 @@ func (r *EnergyMixResolver) CreateEnergyMixDto(ctx context.Context, energyMix db
 	environImpacts, err := r.Repository.ListEnvironmentalImpacts(ctx, energyMix.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI230", "Error listing environmental impacts", err)
+		metrics.RecordError("OCPI230", "Error listing environmental impacts", err)
 		log.Printf("OCPI230: EnergyMixID=%v", energyMix.ID)
 	} else {
 		response.EnvironImpact = r.CreateEnvironmentalImpactListDto(ctx, environImpacts)

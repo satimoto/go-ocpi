@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *CommandResolver) CreateCommandReservationDto(ctx context.Context, command db.CommandReservation) *dto.CommandReservationDto {
@@ -15,7 +15,7 @@ func (r *CommandResolver) CreateCommandReservationDto(ctx context.Context, comma
 	token, err := r.TokenResolver.Repository.GetToken(ctx, command.TokenID)
 
 	if err != nil {
-		util.LogOnError("OCPI224", "Error retrieving token", err)
+		metrics.RecordError("OCPI224", "Error retrieving token", err)
 		log.Printf("OCPI224: TokenID=%v", command.TokenID)
 		return response
 	}
@@ -31,7 +31,7 @@ func (r *CommandResolver) CreateCommandStartDto(ctx context.Context, command db.
 	token, err := r.TokenResolver.Repository.GetToken(ctx, command.TokenID)
 
 	if err != nil {
-		util.LogOnError("OCPI225", "Error retrieving token", err)
+		metrics.RecordError("OCPI225", "Error retrieving token", err)
 		log.Printf("OCPI225: TokenID=%v", command.TokenID)
 		return response
 	}

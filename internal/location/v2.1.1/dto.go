@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *LocationResolver) CreateFacilityListDto(ctx context.Context, facilities []db.Facility) []*string {
@@ -27,7 +27,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 	geoLocation, err := r.GeoLocationResolver.Repository.GetGeoLocation(ctx, location.GeoLocationID)
 
 	if err != nil {
-		util.LogOnError("OCPI238", "Error retrieving geolocation", err)
+		metrics.RecordError("OCPI238", "Error retrieving geolocation", err)
 		log.Printf("OCPI238: GeoLocationID=%v", location.GeoLocationID)
 	} else {
 		response.Coordinates = r.GeoLocationResolver.CreateGeoLocationDto(ctx, geoLocation)
@@ -36,7 +36,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 	additionalGeoLocations, err := r.Repository.ListAdditionalGeoLocations(ctx, location.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI239", "Error listing additional geo locations", err)
+		metrics.RecordError("OCPI239", "Error listing additional geo locations", err)
 		log.Printf("OCPI239: LocationID=%v", location.ID)
 	} else {
 		response.RelatedLocations = r.CreateAdditionalGeoLocationListDto(ctx, additionalGeoLocations)
@@ -45,7 +45,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 	evses, err := r.Repository.ListEvses(ctx, location.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI240", "Error listing evses", err)
+		metrics.RecordError("OCPI240", "Error listing evses", err)
 		log.Printf("OCPI240: LocationID=%v", location.ID)
 	} else {
 		response.Evses = r.EvseResolver.CreateEvseListDto(ctx, evses)
@@ -54,7 +54,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 	directions, err := r.Repository.ListLocationDirections(ctx, location.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI241", "Error listing location directions", err)
+		metrics.RecordError("OCPI241", "Error listing location directions", err)
 		log.Printf("OCPI241: LocationID=%v", location.ID)
 	} else {
 		response.Directions = r.DisplayTextResolver.CreateDisplayTextListDto(ctx, directions)
@@ -63,7 +63,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 	facilities, err := r.Repository.ListLocationFacilities(ctx, location.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI242", "Error listing location facilities", err)
+		metrics.RecordError("OCPI242", "Error listing location facilities", err)
 		log.Printf("OCPI242: LocationID=%v", location.ID)
 	} else {
 		response.Facilities = r.CreateFacilityListDto(ctx, facilities)
@@ -73,7 +73,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		energyMix, err := r.EnergyMixResolver.Repository.GetEnergyMix(ctx, location.EnergyMixID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI243", "Error retrieving energy mix", err)
+			metrics.RecordError("OCPI243", "Error retrieving energy mix", err)
 			log.Printf("OCPI243: EnergyMixID=%#v", location.EnergyMixID)
 		} else {
 			response.EnergyMix = r.EnergyMixResolver.CreateEnergyMixDto(ctx, energyMix)
@@ -84,7 +84,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		operator, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.OperatorID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI244", "Error retrieving operator business detail", err)
+			metrics.RecordError("OCPI244", "Error retrieving operator business detail", err)
 			log.Printf("OCPI244: OperatorID=%#v", location.OperatorID)
 		} else {
 			response.Operator = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, operator)
@@ -95,7 +95,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		suboperator, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.SuboperatorID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI245", "Error retrieving suboperator business detail", err)
+			metrics.RecordError("OCPI245", "Error retrieving suboperator business detail", err)
 			log.Printf("OCPI245: SuboperatorID=%#v", location.SuboperatorID)
 		} else {
 			response.Suboperator = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, suboperator)
@@ -106,7 +106,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		owner, err := r.BusinessDetailResolver.Repository.GetBusinessDetail(ctx, location.OwnerID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI246", "Error retrieving owner business detail", err)
+			metrics.RecordError("OCPI246", "Error retrieving owner business detail", err)
 			log.Printf("OCPI246: OwnerID=%#v", location.OwnerID)
 		} else {
 			response.Owner = r.BusinessDetailResolver.CreateBusinessDetailDto(ctx, owner)
@@ -117,7 +117,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 		openingTime, err := r.OpeningTimeResolver.Repository.GetOpeningTime(ctx, location.OpeningTimeID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI247", "Error retrieving opening time", err)
+			metrics.RecordError("OCPI247", "Error retrieving opening time", err)
 			log.Printf("OCPI247: OpeningTimeID=%#v", location.OpeningTimeID)
 		} else {
 			response.OpeningTimes = r.OpeningTimeResolver.CreateOpeningTimeDto(ctx, openingTime)
@@ -127,7 +127,7 @@ func (r *LocationResolver) CreateLocationDto(ctx context.Context, location db.Lo
 	images, err := r.Repository.ListLocationImages(ctx, location.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI248", "Error listing location images", err)
+		metrics.RecordError("OCPI248", "Error listing location images", err)
 		log.Printf("OCPI248: LocationID=%v", location.ID)
 	} else {
 		response.Images = r.ImageResolver.CreateImageListDto(ctx, images)
@@ -153,7 +153,7 @@ func (r *LocationResolver) CreateAdditionalGeoLocationDto(ctx context.Context, a
 		displayText, err := r.DisplayTextResolver.Repository.GetDisplayText(ctx, additionalGeoLocation.DisplayTextID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI271", "Error retrieving display text", err)
+			metrics.RecordError("OCPI271", "Error retrieving display text", err)
 			log.Printf("OCPI271: LocationID=%v, DisplayTextID=%v", additionalGeoLocation.LocationID, additionalGeoLocation.DisplayTextID.Int64)
 		} else {
 			response.Name = r.DisplayTextResolver.CreateDisplayTextDto(ctx, displayText)

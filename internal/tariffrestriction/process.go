@@ -8,6 +8,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *TariffRestrictionResolver) ReplaceTariffByIdentifierRestriction(ctx context.Context, id *sql.NullInt64, tariffRestrictionDto *coreDto.TariffRestrictionDto) {
@@ -17,20 +18,20 @@ func (r *TariffRestrictionResolver) ReplaceTariffByIdentifierRestriction(ctx con
 			_, err := r.Repository.UpdateTariffRestriction(ctx, tariffRestrictionParams)
 
 			if err != nil {
-				util.LogOnError("OCPI192", "Error updating tariff restriction", err)
+				metrics.RecordError("OCPI192", "Error updating tariff restriction", err)
 				log.Printf("OCPI192: Params=%#v", tariffRestrictionParams)
 				return
 			}
 		} else {
 			tariffRestrictionParams := NewCreateTariffRestrictionParams(tariffRestrictionDto)
 			tariffRestriction, err := r.Repository.CreateTariffRestriction(ctx, tariffRestrictionParams)
-				
+
 			if err != nil {
-				util.LogOnError("OCPI191", "Error creating tariff restriction", err)
+				metrics.RecordError("OCPI191", "Error creating tariff restriction", err)
 				log.Printf("OCPI191: Params=%#v", tariffRestrictionParams)
 				return
 			}
-	
+
 			id.Scan(tariffRestriction.ID)
 		}
 
@@ -60,7 +61,7 @@ func (r *TariffRestrictionResolver) replaceWeekdays(ctx context.Context, tariffR
 			err := r.Repository.SetTariffRestrictionWeekday(ctx, setTariffRestrictionWeekdayParams)
 
 			if err != nil {
-				util.LogOnError("OCPI193", "Error setting tariff restriction weekday", err)
+				metrics.RecordError("OCPI193", "Error setting tariff restriction weekday", err)
 				log.Printf("OCPI193: Params=%#v", setTariffRestrictionWeekdayParams)
 			}
 		}

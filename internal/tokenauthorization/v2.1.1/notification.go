@@ -5,13 +5,13 @@ import (
 
 	"github.com/appleboy/go-fcm"
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/notification"
 )
 
 func (r *TokenAuthorizationResolver) SendNotification(user db.User, authorizationID string) {
 	dto := notification.CreateTokenAuthorizeNotificationDto(authorizationID)
-	
+
 	r.sendNotification(user, dto)
 }
 
@@ -26,7 +26,7 @@ func (r *TokenAuthorizationResolver) sendNotification(user db.User, data notific
 
 	if err != nil {
 		// TODO: Cancel session?
-		util.LogOnError("OCPI286", "Error sending notification", err)
+		metrics.RecordError("OCPI286", "Error sending notification", err)
 		log.Printf("OCPI286: Message=%v", message)
 	}
 }

@@ -16,6 +16,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/service"
 )
 
@@ -68,7 +69,7 @@ func (rs *RestService) listenAndServe() {
 	err := rs.Server.ListenAndServe()
 
 	if err != nil && err != http.ErrServerClosed {
-		util.LogOnError("OCPI276", "Error in Rest service", err)
+		metrics.RecordError("OCPI276", "Error in Rest service", err)
 	}
 }
 
@@ -80,7 +81,7 @@ func (rs *RestService) shutdown() {
 	err := rs.Server.Shutdown(ctx)
 
 	if err != nil {
-		util.LogOnError("OCPI277", "Error shutting down Rest service", err)
+		metrics.RecordError("OCPI277", "Error shutting down Rest service", err)
 	}
 }
 

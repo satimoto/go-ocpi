@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *SessionResolver) CreateSessionDto(ctx context.Context, session db.Session) *dto.SessionDto {
@@ -16,7 +16,7 @@ func (r *SessionResolver) CreateSessionDto(ctx context.Context, session db.Sessi
 	chargingPeriods, err := r.Repository.ListSessionChargingPeriods(ctx, session.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI254", "Error listing session charging periods", err)
+		metrics.RecordError("OCPI254", "Error listing session charging periods", err)
 		log.Printf("OCPI254: SessionID=%v", session.ID)
 	} else {
 		response.ChargingPeriods = r.ChargingPeriodResolver.CreateChargingPeriodListDto(ctx, chargingPeriods)
@@ -25,7 +25,7 @@ func (r *SessionResolver) CreateSessionDto(ctx context.Context, session db.Sessi
 	location, err := r.LocationResolver.Repository.GetLocation(ctx, session.LocationID)
 
 	if err != nil {
-		util.LogOnError("OCPI255", "Error listing session charging periods", err)
+		metrics.RecordError("OCPI255", "Error listing session charging periods", err)
 		log.Printf("OCPI255: LocationID=%v", session.LocationID)
 	} else {
 		response.Location = r.LocationResolver.CreateLocationDto(ctx, location)

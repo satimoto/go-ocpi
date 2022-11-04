@@ -11,6 +11,7 @@ import (
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/image"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *LocationResolver) ReplaceLocation(ctx context.Context, credential db.Credential, uid string, locationDto *dto.LocationDto) *db.Location {
@@ -113,7 +114,7 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			updatedLocation, err := r.Repository.UpdateLocationByUid(ctx, locationParams)
 
 			if err != nil {
-				util.LogOnError("OCPI117", "Error updating location", err)
+				metrics.RecordError("OCPI117", "Error updating location", err)
 				log.Printf("OCPI117: Params=%#v", locationParams)
 				return nil
 			}
@@ -135,10 +136,12 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			location, err = r.Repository.CreateLocation(ctx, locationParams)
 
 			if err != nil {
-				util.LogOnError("OCPI118", "Error creating location", err)
+				metrics.RecordError("OCPI118", "Error creating location", err)
 				log.Printf("OCPI118: Params=%#v", locationParams)
 				return nil
 			}
+
+			metricLocationsTotal.Inc()
 		}
 
 		if locationDto.Directions != nil {
@@ -193,7 +196,7 @@ func (r *LocationResolver) replaceDirections(ctx context.Context, locationID int
 			err := r.Repository.SetLocationDirection(ctx, setLocationDirectionParams)
 
 			if err != nil {
-				util.LogOnError("OCPI119", "Error setting location direction", err)
+				metrics.RecordError("OCPI119", "Error setting location direction", err)
 				log.Printf("OCPI119: Params=%#v", setLocationDirectionParams)
 			}
 		}
@@ -224,7 +227,7 @@ func (r *LocationResolver) replaceFacilities(ctx context.Context, locationID int
 			err := r.Repository.SetLocationFacility(ctx, setLocationFacilityParams)
 
 			if err != nil {
-				util.LogOnError("OCPI120", "Error setting location facility", err)
+				metrics.RecordError("OCPI120", "Error setting location facility", err)
 				log.Printf("OCPI120: Params=%#v", setLocationFacilityParams)
 			}
 		}
@@ -239,7 +242,7 @@ func (r *LocationResolver) replaceImages(ctx context.Context, locationID int64, 
 		image, err := r.ImageResolver.Repository.CreateImage(ctx, imageParams)
 
 		if err != nil {
-			util.LogOnError("OCPI121", "Error creating image", err)
+			metrics.RecordError("OCPI121", "Error creating image", err)
 			log.Printf("OCPI121: Params=%#v", imageParams)
 			continue
 		}
@@ -251,7 +254,7 @@ func (r *LocationResolver) replaceImages(ctx context.Context, locationID int64, 
 		err = r.Repository.SetLocationImage(ctx, setLocationImageParams)
 
 		if err != nil {
-			util.LogOnError("OCPI122", "Error setting location image", err)
+			metrics.RecordError("OCPI122", "Error setting location image", err)
 			log.Printf("OCPI122: Params=%#v", setLocationImageParams)
 		}
 
@@ -269,7 +272,7 @@ func (r *LocationResolver) replaceRelatedLocations(ctx context.Context, location
 			displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams)
 
 			if err != nil {
-				util.LogOnError("OCPI123", "Error creating display text", err)
+				metrics.RecordError("OCPI123", "Error creating display text", err)
 				log.Printf("OCPI123: LocationID=%v, Params=%#v", locationID, displayTextParams)
 				continue
 			}
@@ -280,7 +283,7 @@ func (r *LocationResolver) replaceRelatedLocations(ctx context.Context, location
 		_, err := r.Repository.CreateAdditionalGeoLocation(ctx, additionalGeoLocationParams)
 
 		if err != nil {
-			util.LogOnError("OCPI124", "Error creating additional geo location", err)
+			metrics.RecordError("OCPI124", "Error creating additional geo location", err)
 			log.Printf("OCPI124: Params=%#v", additionalGeoLocationParams)
 		}
 	}

@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	"github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *CalibrationResolver) CreateCalibrationDto(ctx context.Context, calibration db.Calibration) *coreDto.CalibrationDto {
@@ -15,7 +15,7 @@ func (r *CalibrationResolver) CreateCalibrationDto(ctx context.Context, calibrat
 	calibrationValues, err := r.Repository.ListCalibrationValues(ctx, calibration.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI222", "Error retrieving image", err)
+		metrics.RecordError("OCPI222", "Error retrieving image", err)
 		log.Printf("OCPI222: CalibrationID=%v", calibration.ID)
 		return response
 	}
