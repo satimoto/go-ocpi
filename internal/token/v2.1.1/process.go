@@ -96,10 +96,12 @@ func (r *TokenResolver) PushToken(ctx context.Context, httpMethod string, uid st
 						response, pullDto, err = r.sendRequest(requestUrl, http.MethodPut, header, dtoBytes)
 					}
 
-					metrics.RecordError("OCPI201", "Error response failure", err)
-					dbUtil.LogHttpRequest("OCPI201", requestUrl.String(), response.Request, true)
-					dbUtil.LogHttpResponse("OCPI201", requestUrl.String(), response, true)
-					log.Printf("OCPI201: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
+					if response != nil && pullDto != nil && pullDto.StatusCode != transportation.STATUS_CODE_OK {
+						metrics.RecordError("OCPI201", "Error response failure", err)
+						dbUtil.LogHttpRequest("OCPI201", requestUrl.String(), response.Request, true)
+						dbUtil.LogHttpResponse("OCPI201", requestUrl.String(), response, true)
+						log.Printf("OCPI201: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)
+					}
 				}
 
 				response.Body.Close()
