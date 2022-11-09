@@ -88,10 +88,13 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 		retries = 0
 
 		if dto.StatusCode == transportation.STATUS_CODE_OK {
+			count := len(dto.Data)
+
+			log.Printf("Page limit=%v offset=%v count=%v", limit, offset, count)
 			r.ReplaceLocations(ctx, credential, dto.Data)
 			offset += limit
 
-			if limit == 0 || len(dto.Data) < limit {
+			if limit == 0 || count == 0 || count < limit {
 				break
 			}
 		}
