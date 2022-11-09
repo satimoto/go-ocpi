@@ -98,10 +98,13 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 		retries = 0
 
 		if dto.StatusCode == transportation.STATUS_CODE_OK {
+			count := len(dto.Data)
+
+			log.Printf("Page limit=%v offset=%v count=%v", limit, offset, count)
 			r.ReplaceCdrs(ctx, credential, dto.Data)
 			offset += limit
 
-			if limit == 0 || len(dto.Data) < limit {
+			if limit == 0 || count == 0 || count < limit {
 				break
 			}
 		}
