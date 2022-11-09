@@ -19,6 +19,7 @@ type SyncService struct {
 	syncerHandlers       []*SyncerHandler
 	shutdownCtx          context.Context
 	waitGroup            *sync.WaitGroup
+	activeSyncs          map[string]bool
 }
 
 func NewService(repositoryService *db.RepositoryService, ocpiService *transportation.OcpiService) *SyncService {
@@ -28,5 +29,6 @@ func NewService(repositoryService *db.RepositoryService, ocpiService *transporta
 		Repository:           repo,
 		CredentialRepository: credential.NewRepository(repositoryService),
 		VersionResolver:      version.NewResolver(repositoryService, ocpiService),
+		activeSyncs:          make(map[string]bool),
 	}
 }
