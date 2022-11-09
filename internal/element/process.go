@@ -26,7 +26,7 @@ func (r *ElementResolver) ReplaceElements(ctx context.Context, tariff db.Tariff,
 				elementParams.ElementRestrictionID = restrictionID
 			}
 
-			element, err := r.Repository.CreateElement(ctx, elementParams)
+			ele, err := r.Repository.CreateElement(ctx, elementParams)
 
 			if err != nil {
 				metrics.RecordError("OCPI091", "Error creating element", err)
@@ -34,7 +34,7 @@ func (r *ElementResolver) ReplaceElements(ctx context.Context, tariff db.Tariff,
 				continue
 			}
 
-			r.PriceComponentResolver.CreatePriceComponents(ctx, element.ID, tariff, elementDto.PriceComponents)
+			r.PriceComponentResolver.CreatePriceComponents(ctx, ele.ID, tariff, elementDto.PriceComponents)
 		}
 	}
 }
