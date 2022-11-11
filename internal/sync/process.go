@@ -37,7 +37,8 @@ func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync b
 
 			for _, syncerHandler := range r.syncerHandlers {
 				if syncerHandler.Version == version.Version &&
-					(countryCode == nil || syncerHandler.Identifier == coreLocation.IDENTIFIER || syncerHandler.Identifier == coreTariff.IDENTIFIER) {
+					(countryCode == nil || syncerHandler.Identifier == coreLocation.IDENTIFIER || 
+						(syncerHandler.Identifier == coreTariff.IDENTIFIER && len(r.activeSyncs) == 1)) {
 					syncerHandler.Syncer.SyncByIdentifier(ctx, credential, fullSync, lastUpdated, countryCode, partyID)
 				}
 			}
