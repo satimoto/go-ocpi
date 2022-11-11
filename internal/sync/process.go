@@ -36,10 +36,17 @@ func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync b
 			}
 
 			for _, syncerHandler := range r.syncerHandlers {
-				if syncerHandler.Version == version.Version &&
-					(countryCode == nil || syncerHandler.Identifier == coreLocation.IDENTIFIER || 
-						(syncerHandler.Identifier == coreTariff.IDENTIFIER && len(r.activeSyncs) == 1)) {
-					syncerHandler.Syncer.SyncByIdentifier(ctx, credential, fullSync, lastUpdated, countryCode, partyID)
+				if syncerHandler.Version == version.Version {
+					if countryCode == nil || syncerHandler.Identifier == coreLocation.IDENTIFIER || syncerHandler.Identifier == coreTariff.IDENTIFIER {
+						if syncerHandler.Identifier == coreTariff.IDENTIFIER && !r.tariffsSyncing {
+							// Only sync tariffs one at a time
+							r.tariffsSyncing = true
+							syncerHandler.Syncer.SyncByIdentifier(ctx, credential, fullSync, lastUpdated, countryCode, partyID)
+							r.tariffsSyncing = false
+						} else if syncerHandler.Identifier != coreTariff.IDENTIFIER {
+							syncerHandler.Syncer.SyncByIdentifier(ctx, credential, fullSync, lastUpdated, countryCode, partyID)
+						}
+					}
 				}
 			}
 
