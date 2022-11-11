@@ -81,13 +81,15 @@ func (r *HtbService) updateConnectors(ctx context.Context) {
 			continue
 		}
 
+		tariffID := util.SqlNullString(nil)
+
+		if priceInformation.Conditions != nil && priceInformation.Conditions.Rate != nil {
+			tariffID = util.SqlNullString(fmt.Sprintf(TARIFF_UID_TEMPLATE, priceInformation.Conditions.Rate))
+		}
+
 		for _, connector := range connectors {
 			connectorParams := param.NewUpdateConnectorByEvseParams(connector)
-			connectorParams.TariffID = util.SqlNullString(nil)
-
-			if priceInformation.Conditions != nil && priceInformation.Conditions.Rate != nil {
-				connectorParams.TariffID = util.SqlNullString(priceInformation.Conditions.Rate)
-			}
+			connectorParams.TariffID = tariffID
 
 			if connector.TariffID.String != connectorParams.TariffID.String {
 				_, err = r.ConnectorRepository.UpdateConnectorByEvse(ctx, connectorParams)
