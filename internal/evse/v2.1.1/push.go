@@ -34,7 +34,7 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 	evseDto := dto.EvseDto{}
 
 	if err := json.NewDecoder(request.Body).Decode(&evseDto); err != nil {
-		metrics.RecordError("OCPI111", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI111", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI111", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

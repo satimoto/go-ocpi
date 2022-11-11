@@ -13,15 +13,17 @@ type Syncer interface {
 }
 
 type SyncerHandler struct {
-	Version string
-	Syncer  Syncer
+	Version    string
+	Identifier string
+	Syncer     Syncer
 }
 
-func (r *SyncService) AddHandler(version string, syncer Syncer) {
+func (r *SyncService) AddHandler(version, identifier string, syncer Syncer) {
 	log.Printf("Added sync handler for %v", version)
 
 	r.syncerHandlers = append(r.syncerHandlers, &SyncerHandler{
 		Version: version,
+		Identifier: identifier,
 		Syncer:  syncer,
 	})
 }

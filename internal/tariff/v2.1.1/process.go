@@ -26,7 +26,7 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 			r.TariffRestrictionResolver.ReplaceTariffByIdentifierRestriction(ctx, &tariffRestrictionID, tariffDto.Restriction)
 		}
 
-		if err == nil {
+		if err == nil && cdrID == nil {
 			tariffParams := param.NewUpdateTariffByUidParams(tariff)
 			tariffParams.CountryCode = util.SqlNullString(countryCode)
 			tariffParams.PartyID = util.SqlNullString(partyID)

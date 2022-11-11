@@ -48,7 +48,7 @@ func (r *VersionDetailResolver) PullVersionEndpoints(ctx context.Context, url st
 	defer response.Body.Close()
 
 	if err != nil {
-		metrics.RecordError("OCPI218", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI218", "Error unmarshaling response", err)
 		util.LogHttpResponse("OCPI218", url, response, true)
 		return []*db.VersionEndpoint{}
 	}

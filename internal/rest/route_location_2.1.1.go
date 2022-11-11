@@ -5,13 +5,14 @@ import (
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	coreLocation "github.com/satimoto/go-ocpi/internal/location"
 	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/version"
 )
 
 func (rs *RestService) mountLocations() *chi.Mux {
 	locationResolver := location.NewResolver(rs.RepositoryService, rs.ServiceResolver)
-	rs.ServiceResolver.SyncService.AddHandler(version.VERSION_2_1_1, locationResolver)
+	rs.ServiceResolver.SyncService.AddHandler(version.VERSION_2_1_1, coreLocation.IDENTIFIER, locationResolver)
 
 	router := chi.NewRouter()
 	router.Use(middleware.Timeout(30 * time.Second))

@@ -34,7 +34,7 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 	connectorDto := dto.ConnectorDto{}
 
 	if err := json.NewDecoder(request.Body).Decode(&connectorDto); err != nil {
-		metrics.RecordError("OCPI082", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI082", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI082", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
