@@ -84,7 +84,7 @@ func (r *HtbService) updateConnectors(ctx context.Context) {
 		tariffID := util.SqlNullString(nil)
 
 		if priceInformation.Conditions != nil && priceInformation.Conditions.Rate != nil {
-			tariffID = util.SqlNullString(fmt.Sprintf(TARIFF_UID_TEMPLATE, priceInformation.Conditions.Rate))
+			tariffID = util.SqlNullString(fmt.Sprintf(TARIFF_UID_TEMPLATE, *priceInformation.Conditions.Rate))
 		}
 
 		for _, connector := range connectors {
