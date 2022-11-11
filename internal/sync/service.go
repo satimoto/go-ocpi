@@ -9,18 +9,19 @@ import (
 
 func (r *SyncService) StartService(shutdownCtx context.Context, waitGroup *sync.WaitGroup) {
 	log.Printf("Starting Sync Service")
+	r.HtbService.StartService(shutdownCtx, waitGroup)
 	r.shutdownCtx = shutdownCtx
 	r.waitGroup = waitGroup
+
 
 	go r.startLoop()
 }
 
 func (r *SyncService) startLoop() {
-	lastUpdated := time.Now().UTC().Add(time.Hour * -24)
+	lastUpdated := time.Now().UTC().Add(time.Hour * -1)
 
 	for {
 		ctx := context.Background()
-
 		
 		if credentials, err := r.CredentialRepository.ListCredentials(ctx); err == nil {
 			updatedDate := time.Now().UTC()
