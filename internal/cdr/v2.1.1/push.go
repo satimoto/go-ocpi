@@ -34,7 +34,7 @@ func (r *CdrResolver) PostCdr(rw http.ResponseWriter, request *http.Request) {
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI034", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI034", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI034", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

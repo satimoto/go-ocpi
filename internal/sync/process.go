@@ -8,7 +8,9 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreLocation "github.com/satimoto/go-ocpi/internal/location"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
+	coreTariff "github.com/satimoto/go-ocpi/internal/tariff"
 )
 
 func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync bool, lastUpdated *time.Time, countryCode *string, partyID *string) {
@@ -34,7 +36,8 @@ func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync b
 			}
 
 			for _, syncerHandler := range r.syncerHandlers {
-				if syncerHandler.Version == version.Version {
+				if syncerHandler.Version == version.Version &&
+					(countryCode == nil || syncerHandler.Identifier == coreLocation.IDENTIFIER || syncerHandler.Identifier == coreTariff.IDENTIFIER) {
 					syncerHandler.Syncer.SyncByIdentifier(ctx, credential, fullSync, lastUpdated, countryCode, partyID)
 				}
 			}

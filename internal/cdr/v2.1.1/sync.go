@@ -10,6 +10,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreCdr "github.com/satimoto/go-ocpi/internal/cdr"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
@@ -18,13 +19,12 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 	log.Printf("Sync cdrs Url=%v LastUpdated=%v CountryCode=%v PartyID=%v",
 		credential.Url, lastUpdated, util.DefaultString(countryCode, ""), util.DefaultString(partyID, ""))
 	limit, offset, retries := 500, 0, 0
-	identifier := "cdrs"
 
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, coreCdr.IDENTIFIER, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		metrics.RecordError("OCPI028", "Error retrieving version endpoint", err)
-		log.Printf("OCPI028: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
+		log.Printf("OCPI028: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, coreCdr.IDENTIFIER)
 		return
 	}
 
@@ -81,7 +81,7 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 		defer response.Body.Close()
 
 		if err != nil {
-			metrics.RecordError("OCPI031", "Error unmarshalling response", err)
+			metrics.RecordError("OCPI031", "Error unmarshaling response", err)
 			util.LogHttpResponse("OCPI031", requestUrl.String(), response, true)
 			break
 		}

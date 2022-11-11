@@ -10,7 +10,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
-	"github.com/satimoto/go-ocpi/internal/metric"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
 	ocpiVersion "github.com/satimoto/go-ocpi/internal/version"
@@ -108,9 +108,9 @@ func (r *CredentialResolver) UnregisterCredential(ctx context.Context, credentia
 		responseDto, err := transportation.UnmarshalResponseDto(response.Body)
 
 		if err != nil {
-			metrics.RecordError("OCPI014", "Error unmarshalling response", err)
+			metrics.RecordError("OCPI014", "Error unmarshaling response", err)
 			dbUtil.LogHttpResponse("OCPI014", versionEndpoint.Url, response, true)
-			return nil, errors.New("error unmarshalling response")
+			return nil, errors.New("error unmarshaling response")
 		}
 
 		if responseDto.StatusCode != transportation.STATUS_CODE_OK {

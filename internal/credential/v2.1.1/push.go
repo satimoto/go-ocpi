@@ -78,7 +78,7 @@ func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *h
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI089", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI089", "Error unmarshaling request", err)
 		dbUtil.LogHttpRequest("OCPI089", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

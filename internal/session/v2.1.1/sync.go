@@ -11,6 +11,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
+	coreSession "github.com/satimoto/go-ocpi/internal/session"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -18,13 +19,12 @@ func (r *SessionResolver) SyncByIdentifier(ctx context.Context, credential db.Cr
 	log.Printf("Sync sessions Url=%v LastUpdated=%v CountryCode=%v PartyID=%v",
 		credential.Url, lastUpdated, util.DefaultString(countryCode, ""), util.DefaultString(partyID, ""))
 	limit, offset, retries := 500, 0, 0
-	identifier := "sessions"
 
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, coreSession.IDENTIFIER, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		metrics.RecordError("OCPI170", "Error retrieving version endpoint", err)
-		log.Printf("OCPI170: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
+		log.Printf("OCPI170: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, coreSession.IDENTIFIER)
 		return
 	}
 
@@ -81,7 +81,7 @@ func (r *SessionResolver) SyncByIdentifier(ctx context.Context, credential db.Cr
 		defer response.Body.Close()
 
 		if err != nil {
-			metrics.RecordError("OCPI173", "Error unmarshalling response", err)
+			metrics.RecordError("OCPI173", "Error unmarshaling response", err)
 			util.LogHttpResponse("OCPI173", requestUrl.String(), response, true)
 			break
 		}

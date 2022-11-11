@@ -10,6 +10,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreLocation "github.com/satimoto/go-ocpi/internal/location"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
@@ -18,13 +19,12 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 	log.Printf("Sync locations Url=%v LastUpdated=%v CountryCode=%v PartyID=%v",
 		credential.Url, lastUpdated, util.DefaultString(countryCode, ""), util.DefaultString(partyID, ""))
 	limit, offset, retries := 500, 0, 0
-	identifier := "locations"
 
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, coreLocation.IDENTIFIER, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		metrics.RecordError("OCPI125", "Error retrieving version endpoint", err)
-		log.Printf("OCPI125: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
+		log.Printf("OCPI125: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, coreLocation.IDENTIFIER)
 		return
 	}
 
@@ -70,7 +70,7 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 		defer response.Body.Close()
 
 		if err != nil {
-			metrics.RecordError("OCPI128", "Error unmarshalling response", err)
+			metrics.RecordError("OCPI128", "Error unmarshaling response", err)
 			util.LogHttpResponse("OCPI128", requestUrl.String(), response, true)
 			break
 		}

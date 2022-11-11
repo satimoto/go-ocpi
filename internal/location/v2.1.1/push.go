@@ -34,7 +34,7 @@ func (r *LocationResolver) UpdateLocation(rw http.ResponseWriter, request *http.
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI131", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI131", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI131", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

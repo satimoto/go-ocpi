@@ -11,6 +11,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
+	coreTariff "github.com/satimoto/go-ocpi/internal/tariff"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -18,13 +19,12 @@ func (r *TariffResolver) SyncByIdentifier(ctx context.Context, credential db.Cre
 	log.Printf("Sync tariffs Url=%v LastUpdated=%v CountryCode=%v PartyID=%v",
 		credential.Url, lastUpdated, util.DefaultString(countryCode, ""), util.DefaultString(partyID, ""))
 	limit, offset, retries := 500, 0, 0
-	identifier := "tariffs"
 
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, coreTariff.IDENTIFIER, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
 		metrics.RecordError("OCPI182", "Error retrieving version endpoint", err)
-		log.Printf("OCPI182: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
+		log.Printf("OCPI182: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, coreTariff.IDENTIFIER)
 		return
 	}
 
@@ -70,7 +70,7 @@ func (r *TariffResolver) SyncByIdentifier(ctx context.Context, credential db.Cre
 		response.Body.Close()
 
 		if err != nil {
-			metrics.RecordError("OCPI185", "Error unmarshalling response", err)
+			metrics.RecordError("OCPI185", "Error unmarshaling response", err)
 			util.LogHttpResponse("OCPI185", requestUrl.String(), response, true)
 			break
 		}

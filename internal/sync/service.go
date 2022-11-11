@@ -20,12 +20,17 @@ func (r *SyncService) startLoop() {
 
 	for {
 		ctx := context.Background()
+
 		
 		if credentials, err := r.CredentialRepository.ListCredentials(ctx); err == nil {
 			updatedDate := time.Now().UTC()
 
 			for _, credential := range credentials {
 				if credential.ClientToken.Valid {
+					if credential.CountryCode == "FR" && credential.PartyID == "007" {
+						r.HtbService.Run(ctx, credential, lastUpdated)
+					}
+
 					r.SynchronizeCredential(credential, false, &lastUpdated, nil, nil)
 				}
 			}

@@ -50,7 +50,7 @@ func (r *TariffResolver) UpdateTariff(rw http.ResponseWriter, request *http.Requ
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI189", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI189", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI189", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

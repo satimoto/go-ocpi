@@ -11,7 +11,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
-	"github.com/satimoto/go-ocpi/internal/metric"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
 	ocpiVersion "github.com/satimoto/go-ocpi/internal/version"
@@ -49,7 +49,7 @@ func (r *CredentialResolver) PushCredential(ctx context.Context, httpMethod stri
 	defer response.Body.Close()
 
 	if err != nil {
-		metrics.RecordError("OCPI267", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI267", "Error unmarshaling response", err)
 		dbUtil.LogHttpResponse("OCPI267", versionEndpoint.Url, response, true)
 		return nil, transportation.OcpiRegistrationError(nil)
 	}

@@ -264,8 +264,8 @@ func TestUnregisterCredential(t *testing.T) {
 
 		_, err := credentialResolver.UnregisterCredential(ctx, credential)
 
-		if err == nil || err.Error() != "error unmarshalling response" {
-			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error unmarshalling response")
+		if err == nil || err.Error() != "error unmarshaling response" {
+			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error unmarshaling response")
 		}
 	})
 

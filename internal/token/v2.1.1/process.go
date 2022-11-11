@@ -122,7 +122,7 @@ func (r *TokenResolver) sendRequest(requestUrl *url.URL, httpMethod string, head
 	pullDto, err := transportation.UnmarshalResponseDto(response.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI200", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI200", "Error unmarshaling response", err)
 		dbUtil.LogHttpResponse("OCPI200", requestUrl.String(), response, true)
 		return response, nil, err
 	}

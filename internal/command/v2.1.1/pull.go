@@ -69,7 +69,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 	defer response.Body.Close()
 
 	if err != nil {
-		metrics.RecordError("OCPI047", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI047", "Error unmarshaling response", err)
 		dbUtil.LogHttpResponse("OCPI047", requestUrl.String(), response, true)
 		return nil, errors.New("error requesting reservation")
 	}
@@ -149,7 +149,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	pullDto, err := r.UnmarshalPullDto(response.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI054", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI054", "Error unmarshaling response", err)
 		dbUtil.LogHttpResponse("OCPI054", requestUrl.String(), response, true)
 		return nil, errors.New("error starting reservation")
 	}
@@ -229,7 +229,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	pullDto, err := r.UnmarshalPullDto(response.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI061", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI061", "Error unmarshaling response", err)
 		dbUtil.LogHttpResponse("OCPI062", requestUrl.String(), response, true)
 		return nil, errors.New("error stopping reservation")
 	}
@@ -309,7 +309,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 	pullDto, err := r.UnmarshalPullDto(response.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI069", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI069", "Error unmarshaling response", err)
 		dbUtil.LogHttpResponse("OCPI069", requestUrl.String(), response, true)
 		return nil, errors.New("error unlocking reservation")
 	}

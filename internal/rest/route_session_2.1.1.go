@@ -5,13 +5,14 @@ import (
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	coreSession "github.com/satimoto/go-ocpi/internal/session"
 	session "github.com/satimoto/go-ocpi/internal/session/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/version"
 )
 
 func (rs *RestService) mountSessions() *chi.Mux {
 	sessionResolver := session.NewResolver(rs.RepositoryService, rs.ServiceResolver)
-	rs.ServiceResolver.SyncService.AddHandler(version.VERSION_2_1_1, sessionResolver)
+	rs.ServiceResolver.SyncService.AddHandler(version.VERSION_2_1_1, coreSession.IDENTIFIER, sessionResolver)
 
 	router := chi.NewRouter()
 	router.Use(middleware.Timeout(30 * time.Second))

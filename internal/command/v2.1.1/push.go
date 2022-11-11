@@ -17,7 +17,7 @@ func (r *CommandResolver) PostCommandReservationResponse(rw http.ResponseWriter,
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI071", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI071", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI071", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
@@ -40,7 +40,7 @@ func (r *CommandResolver) PostCommandStartResponse(rw http.ResponseWriter, reque
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI073", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI073", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI073", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
@@ -63,7 +63,7 @@ func (r *CommandResolver) PostCommandStopResponse(rw http.ResponseWriter, reques
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI075", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI075", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI075", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
@@ -86,7 +86,7 @@ func (r *CommandResolver) PostCommandUnlockResponse(rw http.ResponseWriter, requ
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI077", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI077", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI077", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

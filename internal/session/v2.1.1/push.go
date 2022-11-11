@@ -35,7 +35,7 @@ func (r *SessionResolver) UpdateSession(rw http.ResponseWriter, request *http.Re
 	dto, err := r.UnmarshalPushDto(request.Body)
 
 	if err != nil {
-		metrics.RecordError("OCPI176", "Error unmarshalling request", err)
+		metrics.RecordError("OCPI176", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI176", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
