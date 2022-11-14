@@ -62,8 +62,6 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		// device, which then responds if it is authorized or not.
 		// If there is a timeout in waiting for the response, the token
 		// authorize request is rejected.
-		asyncChan := r.AsyncService.Add(tokenAuthorizationParams.AuthorizationID)
-
 		user, err := r.UserRepository.GetUser(ctx, token.UserID)
 
 		if err != nil {
@@ -72,6 +70,11 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 			return nil, nil
 		}
 
+		if !user.DeviceToken.Valid {
+			return nil, errors.New("Please enable notifications in your Satimoto application")
+		}
+
+		asyncChan := r.AsyncService.Add(tokenAuthorizationParams.AuthorizationID)
 		r.SendNotification(user, tokenAuthorizationParams.AuthorizationID)
 
 		select {

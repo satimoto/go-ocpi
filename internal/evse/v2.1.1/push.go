@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
@@ -44,14 +45,16 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 	evse := r.ReplaceEvse(ctx, location.ID, uid, &evseDto)
 
 	if evse != nil {
+		updateLocationLastUpdatedParams := param.NewUpdateLocationLastUpdatedParams(location)
+
 		if evseDto.Capabilities != nil || evseDto.Status != nil {
-			r.updateLocationAvailability(ctx, evse.ID)
+			if locationAvailabilityParams, err := r.updateLocationAvailability(ctx, evse.ID); err == nil {
+				updateLocationLastUpdatedParams = locationAvailabilityParams
+			}
 		}
 
-		updateLocationLastUpdatedParams := db.UpdateLocationLastUpdatedParams{
-			ID:          location.ID,
-			LastUpdated: evse.LastUpdated,
-		}
+		updateLocationLastUpdatedParams.LastUpdated = evse.LastUpdated
+
 		err := r.Repository.UpdateLocationLastUpdated(ctx, updateLocationLastUpdatedParams)
 
 		if err != nil {

@@ -17,7 +17,7 @@ func (r *TokenAuthorizationResolver) SendNotification(user db.User, authorizatio
 
 func (r *TokenAuthorizationResolver) sendNotification(user db.User, data notification.NotificationDto) {
 	message := &fcm.Message{
-		To:               user.DeviceToken,
+		To:               user.DeviceToken.String,
 		ContentAvailable: true,
 		Data:             data,
 	}

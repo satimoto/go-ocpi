@@ -293,32 +293,38 @@ func (r *EvseResolver) replaceStatusSchedule(ctx context.Context, evseID int64, 
 	}
 }
 
-func (r *EvseResolver) updateLocationAvailability(ctx context.Context, locationID int64) {
-	updateLocationAvailabilityParams := param.NewUpdateLocationAvailabilityParams(locationID)
+func (r *EvseResolver) updateLocationAvailability(ctx context.Context, locationID int64) (db.UpdateLocationLastUpdatedParams, error) {
+	updateLocationAvailabilityParams := db.UpdateLocationLastUpdatedParams{
+		AvailableEvses:  0,
+		TotalEvses:      0,
+		IsRemoteCapable: false,
+		IsRfidCapable:   false,
+	}
 
-	if evses, err := r.Repository.ListEvses(ctx, locationID); err == nil {
-		for _, evse := range evses {
-			if evse.Status != db.EvseStatusREMOVED {
-				updateLocationAvailabilityParams.TotalEvses++
+	evses, err := r.Repository.ListEvses(ctx, locationID)
 
-				if evse.Status == db.EvseStatusAVAILABLE {
-					updateLocationAvailabilityParams.AvailableEvses++
-				}
+	if err != nil {
+		metrics.RecordError("OCPI109", "Error listing evses", err)
+		log.Printf("OCPI109: LocationID=%#v", locationID)
+		return updateLocationAvailabilityParams, err
+	}
 
-				if evse.IsRemoteCapable {
-					updateLocationAvailabilityParams.IsRemoteCapable = true
-				}
-				if evse.IsRfidCapable {
-					updateLocationAvailabilityParams.IsRfidCapable = true
-				}
+	for _, evse := range evses {
+		if evse.Status != db.EvseStatusREMOVED {
+			updateLocationAvailabilityParams.TotalEvses++
+
+			if evse.Status == db.EvseStatusAVAILABLE {
+				updateLocationAvailabilityParams.AvailableEvses++
+			}
+
+			if evse.IsRemoteCapable {
+				updateLocationAvailabilityParams.IsRemoteCapable = true
+			}
+			if evse.IsRfidCapable {
+				updateLocationAvailabilityParams.IsRfidCapable = true
 			}
 		}
-
-		err := r.Repository.UpdateLocationAvailability(ctx, updateLocationAvailabilityParams)
-
-		if err != nil {
-			metrics.RecordError("OCPI109", "Error updating location availability", err)
-			log.Printf("OCPI109: Params=%#v", updateLocationAvailabilityParams)
-		}
 	}
+
+	return updateLocationAvailabilityParams, nil
 }

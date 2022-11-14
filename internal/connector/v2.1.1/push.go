@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
@@ -29,6 +30,7 @@ func (r *ConnectorResolver) GetConnector(rw http.ResponseWriter, request *http.R
 
 func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	location := ctx.Value("location").(db.Location)
 	evse := ctx.Value("evse").(db.Evse)
 	uid := chi.URLParam(request, "connector_id")
 	connectorDto := dto.ConnectorDto{}
@@ -58,10 +60,9 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 			return
 		}
 
-		updateLocationLastUpdatedParams := db.UpdateLocationLastUpdatedParams{
-			ID:          evse.LocationID,
-			LastUpdated: connector.LastUpdated,
-		}
+		updateLocationLastUpdatedParams := param.NewUpdateLocationLastUpdatedParams(location)
+		updateEvseLastUpdatedParams.LastUpdated = connector.LastUpdated
+
 		err = r.Repository.UpdateLocationLastUpdated(ctx, updateLocationLastUpdatedParams)
 
 		if err != nil {
