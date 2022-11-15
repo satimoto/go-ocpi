@@ -3,6 +3,7 @@ package evse_test
 import (
 	"context"
 	"encoding/json"
+	"os"
 	"testing"
 
 	"github.com/satimoto/go-datastore/pkg/db"
@@ -18,6 +19,9 @@ import (
 func TestReplaceEvse(t *testing.T) {
 	ctx := context.Background()
 
+	os.Setenv("RECORD_EVSE_STATUS_PERIODS", "true")
+	defer os.Unsetenv("RECORD_EVSE_STATUS_PERIODS")
+	
 	t.Run("Create Evse", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		evseResolver := evseMocks.NewResolver(mockRepository)

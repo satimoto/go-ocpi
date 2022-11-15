@@ -94,6 +94,10 @@ variable "env_rpc_port" {
   description = "The environment variable to set the RPC port"
 }
 
+variable "env_record_evse_status_periods" {
+  description = "The environment variable to set if EVSE status periods are recorded"
+}
+
 variable "env_shutdown_timeout" {
   description = "The environment variable to set the shutdown timeout"
 }
