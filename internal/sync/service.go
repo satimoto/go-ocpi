@@ -13,14 +13,38 @@ func (r *SyncService) StartService(shutdownCtx context.Context, waitGroup *sync.
 	r.shutdownCtx = shutdownCtx
 	r.waitGroup = waitGroup
 
-
 	go r.startLoop()
 }
 
 func (r *SyncService) startLoop() {
-	lastUpdated := time.Now().UTC().Add(time.Hour * -1)
+	timeNow := time.Now().UTC()
+	lastUpdated := time.Date(
+		timeNow.Year(),
+		timeNow.Month(),
+		timeNow.Day(),
+		0,
+		10,
+		0,
+		0,
+		timeNow.Location())
+	startTime := lastUpdated.Add(time.Hour * 24)
+
+	if lastUpdated.After(timeNow) {
+		startTime = lastUpdated
+		lastUpdated = startTime.Add(time.Hour * -24)
+	}
+
+	waitDuration := startTime.Sub(timeNow)
 
 	for {
+		select {
+		case <-r.shutdownCtx.Done():
+			log.Printf("Shutting down Sync Service")
+			return
+		case <-time.After(waitDuration):
+		}
+
+		waitDuration = time.Hour * 24
 		ctx := context.Background()
 
 		if credentials, err := r.CredentialRepository.ListCredentials(ctx); err == nil {
@@ -37,14 +61,6 @@ func (r *SyncService) startLoop() {
 			}
 
 			lastUpdated = updatedDate
-		}
-
-		select {
-		case <-r.shutdownCtx.Done():
-			log.Printf("Shutting down Sync Service")
-			return
-		case <-time.After(time.Hour * 24):
-			continue
 		}
 	}
 }
