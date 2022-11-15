@@ -46,4 +46,6 @@ env_fcm_api_key = "AAAA3ZJBhzw:APA91bHCxjgYChy0QnDfUihevkVyni_klXxH5GkVLdHAdcjgn
 
 env_rpc_port = 50000
 
+env_record_evse_status_periods = false
+
 env_shutdown_timeout = 20

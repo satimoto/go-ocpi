@@ -57,12 +57,14 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 			}
 
 			if evseDto.Status != nil && evseDto.LastUpdated != nil && evseDto.Status != &evse.Status {
-				evseStatusPeriodParams := param.NewCreateEvseStatusPeriodParams(evse, evseDto.LastUpdated.Time())
-				_, err := r.Repository.CreateEvseStatusPeriod(ctx, evseStatusPeriodParams)
+				if r.RecordEvseStatusPeriods {
+					evseStatusPeriodParams := param.NewCreateEvseStatusPeriodParams(evse, evseDto.LastUpdated.Time())
+					_, err := r.Repository.CreateEvseStatusPeriod(ctx, evseStatusPeriodParams)
 
-				if err != nil {
-					metrics.RecordError("OCPI275", "Error creating evse status period", err)
-					log.Printf("OCPI275: Params=%#v", evseStatusPeriodParams)
+					if err != nil {
+						metrics.RecordError("OCPI275", "Error creating evse status period", err)
+						log.Printf("OCPI275: Params=%#v", evseStatusPeriodParams)
+					}
 				}
 
 				metricEvsesStatus.WithLabelValues(string(evse.Status)).Dec()

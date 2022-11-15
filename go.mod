@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/edjumacator/chi-prometheus v0.0.0-20181210190628-e076595e3e86
 	github.com/go-chi/chi v1.5.4
-	github.com/go-chi/chi/v5 v5.0.4
+	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/cors v1.2.0
 	github.com/go-chi/render v1.0.1
 	github.com/golang/protobuf v1.5.2
@@ -13,9 +13,11 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/nsf/jsondiff v0.0.0-20210926074059-1e845ec5d249
 	github.com/prometheus/client_golang v1.13.1
-	github.com/satimoto/go-datastore v0.3.1-0.20221114075353-14deb7511161
-	google.golang.org/grpc v1.46.0
+	github.com/satimoto/go-datastore v0.3.1-0.20221115192605-8191c3490242
+	google.golang.org/grpc v1.47.0
 )
+
+require github.com/satimoto/go-lsp v0.2.1-0.20221115190646-b981e98c7ba4 // indirect
 
 require (
 	github.com/99designs/gqlgen v0.17.2 // indirect
@@ -33,7 +35,7 @@ require (
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/genproto v0.0.0-20200825200019-8632dd797987 // indirect
+	google.golang.org/genproto v0.0.0-20210828152312-66f60bf46e71 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

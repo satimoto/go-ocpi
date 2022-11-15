@@ -83,6 +83,10 @@
         "value": "${env_rpc_port}"
       },
       {
+        "name": "RECORD_EVSE_STATUS_PERIODS",
+        "value": "${env_record_evse_status_periods}"
+      },
+      {
         "name": "SHUTDOWN_TIMEOUT",
         "value": "${env_shutdown_timeout}"
       }
