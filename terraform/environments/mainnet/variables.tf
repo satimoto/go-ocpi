@@ -102,3 +102,7 @@ variable "env_record_evse_status_periods" {
 variable "env_shutdown_timeout" {
   description = "The environment variable to set the shutdown timeout"
 }
+
+variable "env_token_authorization_timeout" {
+  description = "The environment variable to set the token authorization timeout"
+}

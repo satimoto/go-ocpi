@@ -83,6 +83,18 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 				log.Printf("OCPI023: Params=%#v", connectorParams)
 			} else {
 				cdrParams.ConnectorID = connector.ID
+
+				if (cdrDto.Tariffs == nil || len(cdrDto.Tariffs) == 0) && connector.TariffID.Valid {
+					connectorTariff, err := r.TariffResolver.Repository.GetTariffByUid(ctx, connector.TariffID.String)
+
+					if err != nil {
+						metrics.RecordError("OCPI301", "Error getting connector tariff", err)
+						log.Printf("OCPI301: ConnectorID=%v, Params=%#v", connector.ID, connector.TariffID)
+					} else {
+						tariffDo := r.TariffResolver.CreateTariffDto(ctx, connectorTariff)
+						cdrDto.Tariffs = []*dto.TariffDto{tariffDo}
+					}
+				}
 			}
 		}
 

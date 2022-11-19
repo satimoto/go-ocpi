@@ -76,6 +76,7 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 
 		asyncChan := r.AsyncService.Add(tokenAuthorizationParams.AuthorizationID)
 		r.SendNotification(user, tokenAuthorizationParams.AuthorizationID)
+		timeout := util.GetEnvInt32("TOKEN_AUTHORIZATION_TIMEOUT", 5)
 
 		select {
 		case asyncResult := <-asyncChan:
@@ -85,7 +86,7 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 			if !asyncResult.Bool {
 				return nil, errors.New("Please fund your Satimoto application and try again")
 			}
-		case <-time.After(55 * time.Second):
+		case <-time.After(time.Duration(timeout) * time.Second):
 			log.Printf("Token authorization timeout: %v", tokenAuthorizationParams.AuthorizationID)
 			r.AsyncService.Remove(tokenAuthorizationParams.AuthorizationID)
 
