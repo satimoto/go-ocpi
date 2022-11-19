@@ -49,3 +49,5 @@ env_rpc_port = 50000
 env_record_evse_status_periods = false
 
 env_shutdown_timeout = 20
+
+env_token_authorization_timeout = 5

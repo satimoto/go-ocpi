@@ -89,6 +89,10 @@
       {
         "name": "SHUTDOWN_TIMEOUT",
         "value": "${env_shutdown_timeout}"
+      },
+      {
+        "name": "TOKEN_AUTHORIZATION_TIMEOUT",
+        "value": "${env_token_authorization_timeout}"
       }
     ]
   }

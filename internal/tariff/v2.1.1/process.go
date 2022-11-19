@@ -14,7 +14,13 @@ import (
 
 func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, tariffDto *dto.TariffDto) *db.Tariff {
 	if tariffDto != nil {
-		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
+		var tariff db.Tariff
+		var err error 
+
+		if cdrID == nil {
+			tariff, err = r.Repository.GetTariffByUid(ctx, uid)
+		}
+
 		energyMixID := util.SqlNullZeroInt64(tariff.EnergyMixID)
 		tariffRestrictionID := util.SqlNullZeroInt64(tariff.TariffRestrictionID)
 
