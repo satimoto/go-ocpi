@@ -42,12 +42,15 @@ message StartSessionResponse {
   string evse_uid = 6;
 };
 
-message StopSessionRequest { string session_uid = 1; };
+message StopSessionRequest {
+  string authorizationId = 1;
+};
 
 message StopSessionResponse {
   int64 id = 1;
   string status = 2;
-  string session_uid = 3;
+  string authorizationId = 3;
+  string session_uid = 4;
 };
 
 message UnlockConnectorRequest {

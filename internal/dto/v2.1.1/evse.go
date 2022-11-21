@@ -9,6 +9,13 @@ import (
 	"github.com/satimoto/go-ocpi/internal/ocpitype"
 )
 
+type OcpiEvseDto struct {
+	Data          *EvseDto      `json:"data,omitempty"`
+	StatusCode    int16         `json:"status_code"`
+	StatusMessage string        `json:"status_message"`
+	Timestamp     ocpitype.Time `json:"timestamp"`
+}
+
 type EvseDto struct {
 	Uid                 *string                      `json:"uid"`
 	EvseID              *string                      `json:"evse_id,omitempty"`
