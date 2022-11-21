@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
@@ -155,39 +156,60 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 
 func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.StopSessionRequest) (*ocpirpc.StopSessionResponse, error) {
 	if input != nil {
-		session, err := r.SessionResolver.Repository.GetSessionByUid(ctx, input.SessionUid)
+		if tokenAuthorization, err := r.TokenResolver.TokenAuthorizationResolver.Repository.GetTokenAuthorizationByAuthorizationID(ctx, input.AuthorizationId); err == nil {
+			updateTokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(tokenAuthorization)
+			updateTokenAuthorizationParams.Authorized = false
 
-		if err != nil {
-			metrics.RecordError("OCPI153", "Error retrieving session", err)
-			log.Printf("OCPI153: SessionUid=%v", input.SessionUid)
-			return nil, errors.New("session not found")
+			_, err := r.TokenResolver.TokenAuthorizationResolver.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationParams)
+
+			if err != nil {
+				metrics.RecordError("OCPI153", "Error updating token authorization", err)
+				log.Printf("OCPI153: Params=%#v", updateTokenAuthorizationParams)
+			}
 		}
 
-		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, session.CredentialID)
+		if session, err := r.SessionResolver.Repository.GetSessionByAuthorizationID(ctx, input.AuthorizationId); err == nil {
+			if session.Status == db.SessionStatusTypePENDING {
+				updateSessionByUidParams := param.NewUpdateSessionByUidParams(session)
+				updateSessionByUidParams.Status = db.SessionStatusTypeINVALID
 
-		if err != nil {
-			metrics.RecordError("OCPI154", "Error retrieving credential", err)
-			log.Printf("OCPI154: CredentialID=%v", session.CredentialID)
-			return nil, errors.New("credential not found")
+				if _, err := r.SessionResolver.Repository.UpdateSessionByUid(ctx, updateSessionByUidParams); err != nil {
+					metrics.RecordError("OCPI309", "Error updating session", err)
+					log.Printf("OCPI309: Params=%#v", updateSessionByUidParams)	
+				}
+			}
+
+			credential, err := r.CredentialResolver.Repository.GetCredential(ctx, session.CredentialID)
+
+			if err != nil {
+				metrics.RecordError("OCPI154", "Error retrieving credential", err)
+				log.Printf("OCPI154: CredentialID=%v", session.CredentialID)
+				return nil, errors.New("credential not found")
+			}
+	
+			if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
+				metrics.RecordError("OCPI155", "Error invalid credential", err)
+				log.Printf("OCPI155: CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
+				return nil, errors.New("invalid credential token")
+			}
+	
+			command, err := r.CommandResolver.StopSession(ctx, credential, session.Uid)
+	
+			if err != nil {
+				metrics.RecordError("OCPI156", "Error requesting stop", err)
+				log.Printf("OCPI156: Input=%#v", input)
+				return nil, errors.New("error stopping session")
+			}
+
+			stopResponse := ocpiCommand.NewCommandStopResponse(*command)
+
+			return stopResponse, nil
 		}
 
-		if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
-			metrics.RecordError("OCPI155", "Error invalid credential", err)
-			log.Printf("OCPI155: CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
-			return nil, errors.New("invalid credential token")
-		}
-
-		command, err := r.CommandResolver.StopSession(ctx, credential, input.SessionUid)
-
-		if err != nil {
-			metrics.RecordError("OCPI156", "Error requesting stop", err)
-			log.Printf("OCPI156: Input=%#v", input)
-			return nil, errors.New("error stopping session")
-		}
-
-		stopResponse := ocpiCommand.NewCommandStopResponse(*command)
-
-		return stopResponse, nil
+		return &ocpirpc.StopSessionResponse{
+			Status: string(db.CommandResponseTypeACCEPTED),
+			AuthorizationId: input.AuthorizationId,
+		}, nil
 	}
 
 	return nil, errors.New("missing request")
