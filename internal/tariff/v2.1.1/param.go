@@ -8,11 +8,12 @@ import (
 
 func NewCreateTariffParams(tariffDto *dto.TariffDto) db.CreateTariffParams {
 	return db.CreateTariffParams{
-		Uid:          *tariffDto.ID,
-		CountryCode:  util.SqlNullString(tariffDto.CountryCode),
-		PartyID:      util.SqlNullString(tariffDto.PartyID),
-		Currency:     *tariffDto.Currency,
-		TariffAltUrl: util.SqlNullString(tariffDto.TariffAltUrl),
-		LastUpdated:  tariffDto.LastUpdated.Time(),
+		Uid:                      *tariffDto.ID,
+		CountryCode:              util.SqlNullString(tariffDto.CountryCode),
+		PartyID:                  util.SqlNullString(tariffDto.PartyID),
+		Currency:                 *tariffDto.Currency,
+		TariffAltUrl:             util.SqlNullString(tariffDto.TariffAltUrl),
+		IsIntermediateCdrCapable: true,
+		LastUpdated:              tariffDto.LastUpdated.Time(),
 	}
 }

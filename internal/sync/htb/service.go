@@ -129,10 +129,11 @@ func (r *HtbService) updateTariff(ctx context.Context, credential db.Credential,
 	if err != nil {
 		// Create the tariff
 		tariffParams := db.CreateTariffParams{
-			Uid:          tariffUid,
-			CredentialID: credential.ID,
-			Currency:     htbTariff.Currency,
-			LastUpdated:  time.Now().UTC(),
+			Uid:                      tariffUid,
+			CredentialID:             credential.ID,
+			Currency:                 htbTariff.Currency,
+			IsIntermediateCdrCapable: false,
+			LastUpdated:              time.Now().UTC(),
 		}
 
 		tariff, err = r.TariffRepository.CreateTariff(ctx, tariffParams)
