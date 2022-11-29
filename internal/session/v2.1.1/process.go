@@ -63,7 +63,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 				sessionParams.MeterID = util.SqlNullString(sessionDto.MeterID)
 			}
 
-			if sessionDto.Status != nil && session.Status != *sessionDto.Status {
+			if sessionDto.Status != nil && session.Status != db.SessionStatusTypeINVOICED && session.Status != *sessionDto.Status {
 				if session.Status == db.SessionStatusTypeINVALID && *sessionDto.Status == db.SessionStatusTypeACTIVE {
 					// Session has already been set to INVALID
 					log.Printf("Session is already INVALID, not setting it to %v", *sessionDto.Status)
