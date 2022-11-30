@@ -47,7 +47,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 			}
 
 			if pushedCredential, err := r.PushCredential(ctx, httpMethod, *version, registeredCredential); err == nil {
-				go r.SyncService.SynchronizeCredential(*pushedCredential, true, nil, nil, nil)
+				go r.SyncService.SynchronizeCredential(*pushedCredential, true, true, nil, nil, nil)
 
 				return pushedCredential, nil
 			}

@@ -13,7 +13,7 @@ import (
 	coreTariff "github.com/satimoto/go-ocpi/internal/tariff"
 )
 
-func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync bool, lastUpdated *time.Time, countryCode *string, partyID *string) {
+func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync, withTariffs bool, lastUpdated *time.Time, countryCode *string, partyID *string) {
 	if credential.VersionID.Valid {
 		activeSyncsKey := fmt.Sprintf("%s*%s", credential.CountryCode, credential.PartyID)
 
@@ -38,7 +38,7 @@ func (r *SyncService) SynchronizeCredential(credential db.Credential, fullSync b
 			for _, syncerHandler := range r.syncerHandlers {
 				if syncerHandler.Version == version.Version {
 					if countryCode == nil || syncerHandler.Identifier == coreLocation.IDENTIFIER || syncerHandler.Identifier == coreTariff.IDENTIFIER {
-						if syncerHandler.Identifier == coreTariff.IDENTIFIER && !r.tariffsSyncing {
+						if withTariffs && syncerHandler.Identifier == coreTariff.IDENTIFIER && !r.tariffsSyncing {
 							// Only sync tariffs one at a time
 							r.tariffsSyncing = true
 							syncerHandler.Syncer.SyncByIdentifier(ctx, credential, fullSync, lastUpdated, countryCode, partyID)
