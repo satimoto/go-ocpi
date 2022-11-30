@@ -153,7 +153,7 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 		}
 
 		if locationDto.Evses != nil {
-			r.replaceEvses(ctx, location.ID, locationDto)
+			r.replaceEvses(ctx, location, locationDto)
 		}
 
 		if locationDto.Images != nil {
@@ -203,8 +203,8 @@ func (r *LocationResolver) replaceDirections(ctx context.Context, locationID int
 	}
 }
 
-func (r *LocationResolver) replaceEvses(ctx context.Context, locationID int64, locationDto *dto.LocationDto) {
-	r.EvseResolver.ReplaceEvses(ctx, locationID, locationDto.Evses)
+func (r *LocationResolver) replaceEvses(ctx context.Context, location db.Location, locationDto *dto.LocationDto) {
+	r.EvseResolver.ReplaceEvses(ctx, location, locationDto.Evses)
 }
 
 func (r *LocationResolver) replaceFacilities(ctx context.Context, locationID int64, locationDto *dto.LocationDto) {

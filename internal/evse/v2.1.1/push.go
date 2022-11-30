@@ -48,7 +48,7 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 		updateLocationLastUpdatedParams := param.NewUpdateLocationLastUpdatedParams(location)
 
 		if evseDto.Capabilities != nil || evseDto.Status != nil {
-			if locationAvailabilityParams, err := r.updateLocationAvailability(ctx, location.ID); err == nil {
+			if locationAvailabilityParams, err := r.updateLocationAvailability(ctx, location); err == nil {
 				updateLocationLastUpdatedParams = locationAvailabilityParams
 			}
 		}
