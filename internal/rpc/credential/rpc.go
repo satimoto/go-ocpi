@@ -85,12 +85,13 @@ func (r *RpcCredentialResolver) SyncCredential(ctx context.Context, request *ocp
 		lastUpdated := util.ParseTime(request.FromDate, nil)
 		countryCode := util.NilString(request.CountryCode)
 		partyID := util.NilString(request.PartyId)
+		withTariffs := request.WithTariffs
 
 		if lastUpdated != nil {
 			fullSync = false
 		}
 
-		go r.CredentialResolver.SyncService.SynchronizeCredential(credential, fullSync, lastUpdated, countryCode, partyID)
+		go r.CredentialResolver.SyncService.SynchronizeCredential(credential, fullSync, withTariffs, lastUpdated, countryCode, partyID)
 
 		return &ocpirpc.SyncCredentialResponse{Id: credential.ID}, nil
 	}

@@ -56,7 +56,7 @@ func (r *SyncService) startLoop() {
 						r.HtbService.Run(ctx, credential, lastUpdated)
 					}
 
-					r.SynchronizeCredential(credential, false, &lastUpdated, nil, nil)
+					r.SynchronizeCredential(credential, false, true, &lastUpdated, nil, nil)
 				}
 			}
 

@@ -32,7 +32,7 @@ func (r *EvseResolver) EvseContext(syncService *sync.SyncService) func(http.Hand
 				partyID := util.NilString(chi.URLParam(request, "party_id"))
 				credential := middleware.GetCredential(requestCtx)
 
-				go syncService.SynchronizeCredential(*credential, true, nil, countryCode, partyID)
+				go syncService.SynchronizeCredential(*credential, true, true, nil, countryCode, partyID)
 			}
 
 			render.Render(rw, request, transportation.OcpiErrorUnknownResource(nil))

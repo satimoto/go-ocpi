@@ -149,7 +149,7 @@ func (r *CredentialResolver) RegisterCredential(ctx context.Context, credential 
 				return nil, transportation.OcpiRegistrationError(nil)
 			}
 
-			go r.SyncService.SynchronizeCredential(cred, true, nil, nil, nil)
+			go r.SyncService.SynchronizeCredential(cred, true, true, nil, nil, nil)
 
 			return &cred, nil
 		} else {

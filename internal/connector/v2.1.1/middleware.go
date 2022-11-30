@@ -38,7 +38,7 @@ func (r *ConnectorResolver) ConnectorContext(syncService *sync.SyncService) func
 				partyID := util.NilString(chi.URLParam(request, "party_id"))
 				credential := middleware.GetCredential(requestCtx)
 
-				go syncService.SynchronizeCredential(*credential, true, nil, countryCode, partyID)
+				go syncService.SynchronizeCredential(*credential, true, true, nil, countryCode, partyID)
 			}
 
 			render.Render(rw, request, transportation.OcpiErrorUnknownResource(nil))
