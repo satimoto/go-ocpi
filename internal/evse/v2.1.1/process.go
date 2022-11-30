@@ -141,9 +141,9 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 	return nil
 }
 
-func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, evseDto []*dto.EvseDto) {
+func (r *EvseResolver) ReplaceEvses(ctx context.Context, location db.Location, evseDto []*dto.EvseDto) {
 	if evseDto != nil {
-		if evses, err := r.Repository.ListEvses(ctx, locationID); err == nil {
+		if evses, err := r.Repository.ListEvses(ctx, location.ID); err == nil {
 			evseMap := make(map[string]db.Evse)
 
 			for _, evse := range evses {
@@ -152,7 +152,7 @@ func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, evseD
 
 			for _, evse := range evseDto {
 				if evse.Uid != nil {
-					r.ReplaceEvse(ctx, locationID, *evse.Uid, evse)
+					r.ReplaceEvse(ctx, location.ID, *evse.Uid, evse)
 					delete(evseMap, *evse.Uid)
 				}
 			}
@@ -172,7 +172,9 @@ func (r *EvseResolver) ReplaceEvses(ctx context.Context, locationID int64, evseD
 			}
 		}
 
-		r.updateLocationAvailability(ctx, locationID)
+		if updateLocationLastUpdatedParams, err := r.updateLocationAvailability(ctx, location); err == nil {
+			r.Repository.UpdateLocationLastUpdated(ctx, updateLocationLastUpdatedParams)
+		}
 	}
 }
 
@@ -295,19 +297,20 @@ func (r *EvseResolver) replaceStatusSchedule(ctx context.Context, evseID int64, 
 	}
 }
 
-func (r *EvseResolver) updateLocationAvailability(ctx context.Context, locationID int64) (db.UpdateLocationLastUpdatedParams, error) {
+func (r *EvseResolver) updateLocationAvailability(ctx context.Context, location db.Location) (db.UpdateLocationLastUpdatedParams, error) {
 	updateLocationAvailabilityParams := db.UpdateLocationLastUpdatedParams{
 		AvailableEvses:  0,
 		TotalEvses:      0,
 		IsRemoteCapable: false,
 		IsRfidCapable:   false,
+		LastUpdated:     location.LastUpdated,
 	}
 
-	evses, err := r.Repository.ListEvses(ctx, locationID)
+	evses, err := r.Repository.ListEvses(ctx, location.ID)
 
 	if err != nil {
 		metrics.RecordError("OCPI109", "Error listing evses", err)
-		log.Printf("OCPI109: LocationID=%#v", locationID)
+		log.Printf("OCPI109: LocationID=%#v", location.ID)
 		return updateLocationAvailabilityParams, err
 	}
 
