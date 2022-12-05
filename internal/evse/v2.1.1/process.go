@@ -13,7 +13,7 @@ import (
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
-func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid string, evseDto *dto.EvseDto) *db.Evse {
+func (r *EvseResolver) ReplaceEvse(ctx context.Context, credential db.Credential, location db.Location, uid string, evseDto *dto.EvseDto) *db.Evse {
 	if evseDto != nil {
 		evse, err := r.Repository.GetEvseByUid(ctx, uid)
 
@@ -81,7 +81,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 
 			evse = updatedEvse
 		} else {
-			evseParams := NewCreateEvseParams(locationID, evseDto)
+			evseParams := NewCreateEvseParams(location.ID, evseDto)
 
 			if evseDto.Coordinates != nil {
 				geoLocationID := dbUtil.SqlNullInt64(nil)
@@ -116,7 +116,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 		}
 
 		if evseDto.Connectors != nil {
-			r.replaceConnectors(ctx, evse, evseDto)
+			r.replaceConnectors(ctx, credential, location, evse, evseDto)
 		}
 
 		if evseDto.Directions != nil {
@@ -141,7 +141,7 @@ func (r *EvseResolver) ReplaceEvse(ctx context.Context, locationID int64, uid st
 	return nil
 }
 
-func (r *EvseResolver) ReplaceEvses(ctx context.Context, location db.Location, evseDto []*dto.EvseDto) {
+func (r *EvseResolver) ReplaceEvses(ctx context.Context, credential db.Credential, location db.Location, evseDto []*dto.EvseDto) {
 	if evseDto != nil {
 		if evses, err := r.Repository.ListEvses(ctx, location.ID); err == nil {
 			evseMap := make(map[string]db.Evse)
@@ -152,7 +152,7 @@ func (r *EvseResolver) ReplaceEvses(ctx context.Context, location db.Location, e
 
 			for _, evse := range evseDto {
 				if evse.Uid != nil {
-					r.ReplaceEvse(ctx, location.ID, *evse.Uid, evse)
+					r.ReplaceEvse(ctx, credential, location, *evse.Uid, evse)
 					delete(evseMap, *evse.Uid)
 				}
 			}
@@ -205,8 +205,8 @@ func (r *EvseResolver) replaceCapabilities(ctx context.Context, evseID int64, ev
 	}
 }
 
-func (r *EvseResolver) replaceConnectors(ctx context.Context, evse db.Evse, evseDto *dto.EvseDto) {
-	r.ConnectorResolver.ReplaceConnectors(ctx, evse, evseDto.Connectors)
+func (r *EvseResolver) replaceConnectors(ctx context.Context, credential db.Credential, location db.Location, evse db.Evse, evseDto *dto.EvseDto) {
+	r.ConnectorResolver.ReplaceConnectors(ctx, credential, location, evse, evseDto.Connectors)
 }
 
 func (r *EvseResolver) replaceDirections(ctx context.Context, evseID int64, evseDto *dto.EvseDto) {

@@ -3,6 +3,7 @@ package location
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/location"
+	"github.com/satimoto/go-datastore/pkg/party"
 	"github.com/satimoto/go-ocpi/internal/businessdetail"
 	"github.com/satimoto/go-ocpi/internal/displaytext"
 	"github.com/satimoto/go-ocpi/internal/energymix"
@@ -26,6 +27,7 @@ type LocationResolver struct {
 	GeoLocationResolver    *geolocation.GeoLocationResolver
 	ImageResolver          *image.ImageResolver
 	OpeningTimeResolver    *openingtime.OpeningTimeResolver
+	PartyRepository        party.PartyRepository
 	TariffResolver         *tariff.TariffResolver
 	VersionDetailResolver  *versiondetail.VersionDetailResolver
 }
@@ -41,6 +43,7 @@ func NewResolver(repositoryService *db.RepositoryService, services *service.Serv
 		GeoLocationResolver:    geolocation.NewResolver(repositoryService),
 		ImageResolver:          image.NewResolver(repositoryService),
 		OpeningTimeResolver:    openingtime.NewResolver(repositoryService),
+		PartyRepository:        party.NewRepository(repositoryService),
 		TariffResolver:         tariff.NewResolver(repositoryService, services),
 		VersionDetailResolver:  versiondetail.NewResolver(repositoryService, services),
 	}
