@@ -12,6 +12,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
+	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -30,6 +31,7 @@ func (r *EvseResolver) GetEvse(rw http.ResponseWriter, request *http.Request) {
 
 func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	cred := middleware.GetCredential(ctx)
 	location := ctx.Value("location").(db.Location)
 	uid := chi.URLParam(request, "evse_id")
 	evseDto := dto.EvseDto{}
@@ -42,7 +44,7 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 		return
 	}
 
-	evse := r.ReplaceEvse(ctx, location.ID, uid, &evseDto)
+	evse := r.ReplaceEvse(ctx, *cred, location, uid, &evseDto)
 
 	if evse != nil {
 		updateLocationLastUpdatedParams := param.NewUpdateLocationLastUpdatedParams(location)

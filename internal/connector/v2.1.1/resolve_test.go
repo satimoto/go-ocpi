@@ -25,6 +25,16 @@ func TestReplaceConnector(t *testing.T) {
 		connectorFormatCABLE := db.ConnectorFormatCABLE
 		powerTypeAC3PHASE := db.PowerTypeAC3PHASE
 
+		cred := db.Credential{
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
+		}
+
+		location := db.Location{
+			ID: 1,
+		}
+
 		evse := db.Evse{
 			ID:         1,
 			EvseID:     util.SqlNullString("DE-ABC-1234567"),
@@ -42,7 +52,7 @@ func TestReplaceConnector(t *testing.T) {
 			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		connectorResolver.ReplaceConnector(ctx, evse, *connectorDto.Id, &connectorDto)
+		connectorResolver.ReplaceConnector(ctx, cred, location, evse, *connectorDto.Id, &connectorDto)
 
 		params, _ := mockRepository.GetCreateConnectorMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -82,6 +92,16 @@ func TestReplaceConnector(t *testing.T) {
 			},
 		})
 
+		cred := db.Credential{
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
+		}
+
+		location := db.Location{
+			ID: 1,
+		}
+
 		evse := db.Evse{
 			ID: 1,
 		}
@@ -89,7 +109,7 @@ func TestReplaceConnector(t *testing.T) {
 			TariffID: util.NilString("12"),
 		}
 
-		connectorResolver.ReplaceConnector(ctx, evse, "1", &connectorDto)
+		connectorResolver.ReplaceConnector(ctx, cred, location, evse, "1", &connectorDto)
 
 		params, _ := mockRepository.GetUpdateConnectorByEvseMockData()
 		paramsJson, _ := json.Marshal(params)

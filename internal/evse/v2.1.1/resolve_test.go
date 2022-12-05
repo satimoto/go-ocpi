@@ -28,6 +28,16 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseStatusRESERVED := db.EvseStatusRESERVED
 
+		cred := db.Credential{
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
+		}
+
+		location := db.Location{
+			ID: 1,
+		}
+
 		evseDto := dto.EvseDto{
 			Uid:               util.NilString("3257"),
 			EvseID:            util.NilString("BE-BEC-E041503002"),
@@ -37,7 +47,7 @@ func TestReplaceEvse(t *testing.T) {
 			LastUpdated:       ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, *evseDto.Uid, &evseDto)
+		evseResolver.ReplaceEvse(ctx, cred, location, *evseDto.Uid, &evseDto)
 
 		createEvseParams, _ := mockRepository.GetCreateEvseMockData()
 		createEvseParamsJson, _ := json.Marshal(createEvseParams)
@@ -88,12 +98,22 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseStatusAVAILABLE := db.EvseStatusAVAILABLE
 
+		cred := db.Credential{
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
+		}
+
+		location := db.Location{
+			ID: 1,
+		}
+
 		evseDto := dto.EvseDto{
 			Status:      &evseStatusAVAILABLE,
 			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, "1", &evseDto)
+		evseResolver.ReplaceEvse(ctx, cred, location, "1", &evseDto)
 
 		params, _ := mockRepository.GetUpdateEvseByUidMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -162,12 +182,22 @@ func TestReplaceEvse(t *testing.T) {
 			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		})
 
+		cred := db.Credential{
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
+		}
+
+		location := db.Location{
+			ID: 1,
+		}
+
 		evseDto := dto.EvseDto{
 			Connectors:  connectorsDto,
 			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, "1", &evseDto)
+		evseResolver.ReplaceEvse(ctx, cred, location, "1", &evseDto)
 
 		params, _ := mockRepository.GetUpdateEvseByUidMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -236,6 +266,16 @@ func TestReplaceEvse(t *testing.T) {
 
 		evseStatusAVAILABLE := db.EvseStatusAVAILABLE
 
+		cred := db.Credential{
+			ID:          1,
+			CountryCode: "FR",
+			PartyID:     "GER",
+		}
+
+		location := db.Location{
+			ID: 1,
+		}
+
 		evseDto := dto.EvseDto{
 			Status: &evseStatusAVAILABLE,
 			Coordinates: &coreDto.GeoLocationDto{
@@ -245,7 +285,7 @@ func TestReplaceEvse(t *testing.T) {
 			LastUpdated: ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
-		evseResolver.ReplaceEvse(ctx, 1, "1", &evseDto)
+		evseResolver.ReplaceEvse(ctx, cred, location, "1", &evseDto)
 
 		params, _ := mockRepository.GetUpdateEvseByUidMockData()
 		paramsJson, _ := json.Marshal(params)

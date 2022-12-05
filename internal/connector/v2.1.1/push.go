@@ -12,6 +12,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
+	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -30,6 +31,7 @@ func (r *ConnectorResolver) GetConnector(rw http.ResponseWriter, request *http.R
 
 func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	cred := middleware.GetCredential(ctx)
 	location := ctx.Value("location").(db.Location)
 	evse := ctx.Value("evse").(db.Evse)
 	uid := chi.URLParam(request, "connector_id")
@@ -43,7 +45,7 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 		return
 	}
 
-	connector := r.ReplaceConnector(ctx, evse, uid, &connectorDto)
+	connector := r.ReplaceConnector(ctx, *cred, location, evse, uid, &connectorDto)
 
 	if connector != nil {
 		updateEvseLastUpdatedParams := db.UpdateEvseLastUpdatedParams{

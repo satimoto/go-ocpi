@@ -121,6 +121,20 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 
 			location = updatedLocation
 		} else {
+			isIntermediateCdrCapable := false
+			publish := false
+
+			getPartyByCredentialParams := db.GetPartyByCredentialParams{
+				CredentialID: credential.ID,
+				CountryCode: util.DefaultString(countryCode, credential.CountryCode),
+				PartyID: util.DefaultString(partyID, credential.PartyID),
+			}
+
+			if party, err := r.PartyRepository.GetPartyByCredential(ctx, getPartyByCredentialParams); err == nil {
+				isIntermediateCdrCapable = party.IsIntermediateCdrCapable
+				publish = party.PublishLocation
+			}
+
 			locationParams := NewCreateLocationParams(locationDto)
 			locationParams.CredentialID = credential.ID
 			locationParams.CountryCode = util.SqlNullString(countryCode)
@@ -132,6 +146,8 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			locationParams.OperatorID = operatorID
 			locationParams.OwnerID = ownerID
 			locationParams.SuboperatorID = suboperatorID
+			locationParams.IsIntermediateCdrCapable = isIntermediateCdrCapable
+			locationParams.Publish = publish
 
 			location, err = r.Repository.CreateLocation(ctx, locationParams)
 
@@ -153,7 +169,7 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 		}
 
 		if locationDto.Evses != nil {
-			r.replaceEvses(ctx, location, locationDto)
+			r.replaceEvses(ctx, credential, location, locationDto)
 		}
 
 		if locationDto.Images != nil {
@@ -203,8 +219,8 @@ func (r *LocationResolver) replaceDirections(ctx context.Context, locationID int
 	}
 }
 
-func (r *LocationResolver) replaceEvses(ctx context.Context, location db.Location, locationDto *dto.LocationDto) {
-	r.EvseResolver.ReplaceEvses(ctx, location, locationDto.Evses)
+func (r *LocationResolver) replaceEvses(ctx context.Context, credential db.Credential, location db.Location, locationDto *dto.LocationDto) {
+	r.EvseResolver.ReplaceEvses(ctx, credential, location, locationDto.Evses)
 }
 
 func (r *LocationResolver) replaceFacilities(ctx context.Context, locationID int64, locationDto *dto.LocationDto) {

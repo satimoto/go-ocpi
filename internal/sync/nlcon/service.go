@@ -89,6 +89,7 @@ func (r *NlConService) updateConnectors(ctx context.Context, credential db.Crede
 
 			for _, connector := range connectors {
 				connectorParams := param.NewUpdateConnectorByEvseParams(connector)
+				connectorParams.Publish = true
 				connectorParams.TariffID = util.SqlNullString(tariff.Uid)
 
 				if connector.TariffID.String != connectorParams.TariffID.String {
@@ -113,11 +114,10 @@ func (r *NlConService) updateTariff(ctx context.Context, credential db.Credentia
 		tariffUid := fmt.Sprintf(TARIFF_UID_TEMPLATE, nlConTariffDto.TariffName)
 
 		tariffParams := db.CreateTariffParams{
-			Uid:                      tariffUid,
-			CredentialID:             credential.ID,
-			Currency:                 "EUR",
-			IsIntermediateCdrCapable: true,
-			LastUpdated:              time.Now().UTC(),
+			Uid:          tariffUid,
+			CredentialID: credential.ID,
+			Currency:     "EUR",
+			LastUpdated:  time.Now().UTC(),
 		}
 
 		tariff, err = r.TariffRepository.CreateTariff(ctx, tariffParams)

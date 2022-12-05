@@ -12,8 +12,22 @@ import (
 	"github.com/satimoto/go-ocpi/internal/util"
 )
 
-func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, uid string, connectorDto *dto.ConnectorDto) *db.Connector {
+func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, credential db.Credential, location db.Location, evse db.Evse, uid string, connectorDto *dto.ConnectorDto) *db.Connector {
 	if connectorDto != nil {
+		publish := connectorDto.TariffID != nil
+
+		if !publish {
+			getPartyByCredentialParams := db.GetPartyByCredentialParams{
+				CredentialID: credential.ID,
+				CountryCode:  dbUtil.DefaultString(location.CountryCode, credential.CountryCode),
+				PartyID:      dbUtil.DefaultString(location.PartyID, credential.PartyID),
+			}
+
+			if party, err := r.PartyRepository.GetPartyByCredential(ctx, getPartyByCredentialParams); err == nil {
+				publish = party.PublishNullTariff
+			}
+		}
+
 		connector, err := r.Repository.GetConnectorByEvse(ctx, db.GetConnectorByEvseParams{
 			EvseID: evse.ID,
 			Uid:    uid,
@@ -51,7 +65,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 			}
 
 			connectorParams.Identifier = dbUtil.SqlNullString(GetConnectorIdentifier(evse, connectorDto))
-			connectorParams.Publish = true
+			connectorParams.Publish = publish
 			connectorParams.Wattage = util.CalculateWattage(connectorParams.PowerType, connectorParams.Voltage, connectorParams.Amperage)
 			updatedConnector, err := r.Repository.UpdateConnectorByEvse(ctx, connectorParams)
 
@@ -64,6 +78,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 			connector = updatedConnector
 		} else {
 			connectorParams := NewCreateConnectorParams(evse, connectorDto)
+			connectorParams.Publish = publish
 			connector, err = r.Repository.CreateConnector(ctx, connectorParams)
 
 			if err != nil {
@@ -81,7 +96,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, evse db.Evse, 
 	return nil
 }
 
-func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evse db.Evse, connectorsDto []*dto.ConnectorDto) {
+func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, credential db.Credential, location db.Location, evse db.Evse, connectorsDto []*dto.ConnectorDto) {
 	if connectorsDto != nil {
 		if connectors, err := r.Repository.ListConnectors(ctx, evse.ID); err == nil {
 			connectorMap := make(map[string]db.Connector)
@@ -92,7 +107,7 @@ func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, evse db.Evse,
 
 			for _, connectorDto := range connectorsDto {
 				if connectorDto.Id != nil {
-					r.ReplaceConnector(ctx, evse, *connectorDto.Id, connectorDto)
+					r.ReplaceConnector(ctx, credential, location, evse, *connectorDto.Id, connectorDto)
 					delete(connectorMap, *connectorDto.Id)
 				}
 			}
