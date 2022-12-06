@@ -123,6 +123,7 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 		// If cdr received before session is completed, set status to completed
 		if cdr.AuthorizationID.Valid {
 			if session, err := r.SessionRepository.GetSessionByAuthorizationID(ctx, cdr.AuthorizationID.String); err == nil {
+				// The session exists, set it to completed
 				sessionParams := param.NewUpdateSessionByUidParams(session)
 				sessionParams.Status = db.SessionStatusTypeCOMPLETED
 
@@ -131,6 +132,36 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 				if err != nil {
 					metrics.RecordError("OCPI283", "Error updating session", err)
 					log.Printf("OCPI283: Params=%#v", sessionParams)
+				}
+			} else {
+				// A session was never received for this cdr, create it
+				createSessionParams := db.CreateSessionParams{
+					Uid:             cdr.Uid,
+					CredentialID:    cdr.CredentialID,
+					CountryCode:     cdr.CountryCode,
+					PartyID:         cdr.PartyID,
+					AuthorizationID: cdr.AuthorizationID,
+					StartDatetime:   cdr.StartDateTime,
+					EndDatetime:     cdr.StopDateTime,
+					Kwh:             cdr.TotalEnergy,
+					AuthID:          cdr.AuthID,
+					AuthMethod:      cdr.AuthMethod,
+					UserID:          cdr.UserID,
+					TokenID:         cdr.TokenID,
+					LocationID:      cdr.LocationID,
+					EvseID:          cdr.EvseID,
+					ConnectorID:     cdr.ConnectorID,
+					Currency:        cdr.Currency,
+					TotalCost:       util.SqlNullFloat64(cdr.TotalCost),
+					Status:          db.SessionStatusTypeCOMPLETED,
+					LastUpdated:     cdr.LastUpdated,
+				}
+
+				_, err = r.SessionRepository.CreateSession(ctx, createSessionParams)
+
+				if err != nil {
+					metrics.RecordError("OCPI316", "Error creating session", err)
+					log.Printf("OCPI316: Params=%#v", createSessionParams)
 				}
 			}
 		}
