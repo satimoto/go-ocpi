@@ -20,7 +20,7 @@ func NewCreateConnectorParams(evse db.Evse, connectorDto *dto.ConnectorDto) db.C
 		Wattage:            util.CalculateWattage(*connectorDto.PowerType, *connectorDto.Voltage, *connectorDto.Amperage),
 		TariffID:           dbUtil.SqlNullString(connectorDto.TariffID),
 		TermsAndConditions: dbUtil.SqlNullString(connectorDto.TermsAndConditions),
-		Publish:            true,
+		IsPublished:        true,
 		LastUpdated:        connectorDto.LastUpdated.Time(),
 	}
 }
