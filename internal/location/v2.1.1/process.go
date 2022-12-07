@@ -147,7 +147,7 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			locationParams.OwnerID = ownerID
 			locationParams.SuboperatorID = suboperatorID
 			locationParams.IsIntermediateCdrCapable = isIntermediateCdrCapable
-			locationParams.Publish = publish
+			locationParams.IsPublished = publish
 
 			location, err = r.Repository.CreateLocation(ctx, locationParams)
 

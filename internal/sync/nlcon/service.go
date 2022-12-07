@@ -89,7 +89,7 @@ func (r *NlConService) updateConnectors(ctx context.Context, credential db.Crede
 
 			for _, connector := range connectors {
 				connectorParams := param.NewUpdateConnectorByEvseParams(connector)
-				connectorParams.Publish = true
+				connectorParams.IsPublished = true
 				connectorParams.TariffID = util.SqlNullString(tariff.Uid)
 
 				if connector.TariffID.String != connectorParams.TariffID.String {

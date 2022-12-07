@@ -65,7 +65,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, credential db.
 			}
 
 			connectorParams.Identifier = dbUtil.SqlNullString(GetConnectorIdentifier(evse, connectorDto))
-			connectorParams.Publish = publish
+			connectorParams.IsPublished = publish
 			connectorParams.Wattage = util.CalculateWattage(connectorParams.PowerType, connectorParams.Voltage, connectorParams.Amperage)
 			updatedConnector, err := r.Repository.UpdateConnectorByEvse(ctx, connectorParams)
 
@@ -78,7 +78,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, credential db.
 			connector = updatedConnector
 		} else {
 			connectorParams := NewCreateConnectorParams(evse, connectorDto)
-			connectorParams.Publish = publish
+			connectorParams.IsPublished = publish
 			connector, err = r.Repository.CreateConnector(ctx, connectorParams)
 
 			if err != nil {
@@ -114,7 +114,7 @@ func (r *ConnectorResolver) ReplaceConnectors(ctx context.Context, credential db
 
 			for _, connector := range connectorMap {
 				connectorParams := param.NewUpdateConnectorByEvseParams(connector)
-				connectorParams.Publish = false
+				connectorParams.IsRemoved = true
 				_, err := r.Repository.UpdateConnectorByEvse(ctx, connectorParams)
 
 				if err != nil {
