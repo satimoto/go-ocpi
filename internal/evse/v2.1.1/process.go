@@ -299,12 +299,13 @@ func (r *EvseResolver) replaceStatusSchedule(ctx context.Context, evseID int64, 
 
 func (r *EvseResolver) updateLocationAvailability(ctx context.Context, location db.Location) (db.UpdateLocationLastUpdatedParams, error) {
 	updateLocationAvailabilityParams := db.UpdateLocationLastUpdatedParams{
-		ID:              location.ID,
-		AvailableEvses:  0,
-		TotalEvses:      0,
-		IsRemoteCapable: false,
-		IsRfidCapable:   false,
-		LastUpdated:     location.LastUpdated,
+		ID:                       location.ID,
+		AvailableEvses:           0,
+		TotalEvses:               0,
+		IsIntermediateCdrCapable: location.IsIntermediateCdrCapable,
+		IsRemoteCapable:          false,
+		IsRfidCapable:            false,
+		LastUpdated:              location.LastUpdated,
 	}
 
 	evses, err := r.Repository.ListEvses(ctx, location.ID)
