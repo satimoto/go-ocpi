@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -84,7 +85,8 @@ func (r *HtbService) updateConnectors(ctx context.Context) {
 		tariffID := util.SqlNullString(nil)
 
 		if priceInformation.Conditions != nil && priceInformation.Conditions.Rate != nil {
-			tariffID = util.SqlNullString(fmt.Sprintf(TARIFF_UID_TEMPLATE, *priceInformation.Conditions.Rate))
+			rate := strings.Replace(*priceInformation.Conditions.Rate, " ", "_", -1)
+			tariffID = util.SqlNullString(fmt.Sprintf(TARIFF_UID_TEMPLATE, rate))
 		}
 
 		for _, connector := range connectors {
@@ -124,7 +126,7 @@ func (r *HtbService) updateHtbTariffs(ctx context.Context, credential db.Credent
 }
 
 func (r *HtbService) updateTariff(ctx context.Context, credential db.Credential, htbTariff db.HtbTariff) {
-	tariffUid := fmt.Sprintf(TARIFF_UID_TEMPLATE, htbTariff.Name)
+	tariffUid := fmt.Sprintf(TARIFF_UID_TEMPLATE, strings.Replace(htbTariff.Name, " ", "_", -1))
 	tariff, err := r.TariffRepository.GetTariffByUid(ctx, tariffUid)
 
 	if err != nil {
