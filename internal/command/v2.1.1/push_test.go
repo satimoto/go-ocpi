@@ -54,6 +54,8 @@ func TestCommandReservationRequest(t *testing.T) {
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
 
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
+
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
@@ -77,6 +79,8 @@ func TestCommandReservationRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
@@ -105,6 +109,8 @@ func TestCommandReservationRequest(t *testing.T) {
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
 
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
+
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
@@ -129,7 +135,7 @@ func TestCommandReservationRequest(t *testing.T) {
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
 
-		commandParams, err := mockRepository.GetUpdateCommandReservationMockData()
+		commandParams, _ := mockRepository.GetUpdateCommandReservationMockData()
 		paramsJson, _ := json.Marshal(commandParams)
 
 		mocks.CompareJsonWithDifference(t, paramsJson, []byte(`{
@@ -154,6 +160,8 @@ func TestCommandStartRequest(t *testing.T) {
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
 
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
+
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
@@ -177,6 +185,8 @@ func TestCommandStartRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
@@ -205,6 +215,8 @@ func TestCommandStartRequest(t *testing.T) {
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
 
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
+
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
@@ -227,7 +239,7 @@ func TestCommandStartRequest(t *testing.T) {
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
 
-		commandParams, err := mockRepository.GetUpdateCommandStartMockData()
+		commandParams, _ := mockRepository.GetUpdateCommandStartMockData()
 		paramsJson, _ := json.Marshal(commandParams)
 
 		mocks.CompareJsonWithDifference(t, paramsJson, []byte(`{
@@ -249,6 +261,8 @@ func TestCommandStopRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
@@ -273,6 +287,8 @@ func TestCommandStopRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
@@ -301,6 +317,8 @@ func TestCommandStopRequest(t *testing.T) {
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
 
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
+
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
@@ -322,7 +340,7 @@ func TestCommandStopRequest(t *testing.T) {
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
 
-		commandParams, err := mockRepository.GetUpdateCommandStopMockData()
+		commandParams, _ := mockRepository.GetUpdateCommandStopMockData()
 		paramsJson, _ := json.Marshal(commandParams)
 
 		mocks.CompareJsonWithDifference(t, paramsJson, []byte(`{
@@ -344,6 +362,8 @@ func TestCommandUnlockRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
@@ -368,6 +388,8 @@ func TestCommandUnlockRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
@@ -396,6 +418,8 @@ func TestCommandUnlockRequest(t *testing.T) {
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
 
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
+
 		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 		commandRoutes := setupRoutes(commandResolver)
 		responseRecorder := httptest.NewRecorder()
@@ -419,7 +443,7 @@ func TestCommandUnlockRequest(t *testing.T) {
 
 		commandRoutes.ServeHTTP(responseRecorder, request)
 
-		commandParams, err := mockRepository.GetUpdateCommandUnlockMockData()
+		commandParams, _ := mockRepository.GetUpdateCommandUnlockMockData()
 		paramsJson, _ := json.Marshal(commandParams)
 
 		mocks.CompareJsonWithDifference(t, paramsJson, []byte(`{

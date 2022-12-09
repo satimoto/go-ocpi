@@ -36,8 +36,19 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 		sessionCreated := false
 		statusChanged := false
 
+		if err != nil && sessionDto.AuthorizationID != nil {
+			// Check there is no existing session with the same AuthorizationID
+			// This would have been created if no session was initially received
+			session, err = r.Repository.GetSessionByAuthorizationID(ctx, *sessionDto.AuthorizationID)
+			sessionDto.ID = &uid
+		}
+
 		if err == nil {
 			sessionParams := param.NewUpdateSessionByUidParams(session)
+
+			if sessionDto.ID != nil {
+				sessionParams.Uid = *sessionDto.ID
+			}
 
 			if sessionDto.AuthMethod != nil {
 				sessionParams.AuthMethod = *sessionDto.AuthMethod
@@ -178,7 +189,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 		go r.sendOcpiRequest(session, sessionCreated, statusChanged)
 
 		if sessionCreated && session.Status == db.SessionStatusTypePENDING {
-			go r.waitForEvseStatus(credential, session.LocationID, session.EvseID, db.EvseStatusCHARGING, session.ID, session.Status, db.SessionStatusTypeACTIVE, 150)
+			go r.waitForEvseStatus(credential, session.LocationID, session.EvseID, db.EvseStatusCHARGING, session, session.Status, db.SessionStatusTypeACTIVE, 150)
 		}
 
 		return &session
@@ -243,6 +254,7 @@ func (r *SessionResolver) sendOcpiRequest(session db.Session, sessionCreated, st
 	if err != nil {
 		metrics.RecordError("OCPI167", "Error retrieving node", err)
 		log.Printf("OCPI167: UserID=%v", session.UserID)
+		return
 	}
 
 	// TODO: Handle failed RPC call more robustly
@@ -267,7 +279,7 @@ func (r *SessionResolver) sendOcpiRequest(session db.Session, sessionCreated, st
 	}
 }
 
-func (r *SessionResolver) waitForEvseStatus(credential db.Credential, locationID, evseID int64, evseStatus db.EvseStatus, sessionID int64, sessionFromStatus db.SessionStatusType, sessionToStatus db.SessionStatusType, timeoutSeconds int) {
+func (r *SessionResolver) waitForEvseStatus(credential db.Credential, locationID, evseID int64, evseStatus db.EvseStatus, sess db.Session, sessionFromStatus db.SessionStatusType, sessionToStatus db.SessionStatusType, timeoutSeconds int) {
 	ctx := context.Background()
 	deadline := time.Now().Add(time.Duration(timeoutSeconds) * time.Second)
 	log.Printf("Waiting for Evse status change to %v over %v seconds: LocationID=%v, EvseID=%v", evseStatus, timeoutSeconds, locationID, evseID)
@@ -307,12 +319,23 @@ func (r *SessionResolver) waitForEvseStatus(credential db.Credential, locationID
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 
+waitLoop:
 	for {
 		time.Sleep(10 * time.Second)
 
 		if time.Now().After(deadline) {
-			log.Printf("Stopped waiting for Evse status change: LocationID=%v, EvseID=%v", locationID, evseID)
-			break
+			log.Printf("Timeout. Stopped waiting for Evse status change: LocationID=%v, EvseID=%v", locationID, evseID)
+			break waitLoop
+		}
+
+		if sess.AuthorizationID.Valid {
+			tokenAuthorization, err := r.TokenAuthorizationRepository.GetTokenAuthorizationByAuthorizationID(ctx, sess.AuthorizationID.String)
+
+			if err != nil && !tokenAuthorization.Authorized {
+				// Token authorization has been unauthorized
+				log.Printf("Unauthorized. Stop waiting for Evse status change: LocationID=%v, EvseID=%v", locationID, evseID)
+				break waitLoop
+			}
 		}
 
 		response, err := r.OcpiService.Do(http.MethodGet, requestUrl.String(), header, nil)
@@ -338,25 +361,25 @@ func (r *SessionResolver) waitForEvseStatus(credential db.Credential, locationID
 			log.Printf("Evse status is %v: LocationID=%v, EvseID=%v", responseEvseStatus, locationID, evseID)
 
 			if responseEvseStatus == evseStatus {
-				session, err := r.Repository.GetSession(ctx, sessionID)
+				updatedSession, err := r.Repository.GetSession(ctx, sess.ID)
 
 				if err != nil {
 					metrics.RecordError("OCPI308", "Error getting session", err)
-					log.Printf("OCPI308: SessionID=%v", sessionID)
+					log.Printf("OCPI308: SessionID=%v", sess.ID)
 					continue
 				}
 
-				if session.Status == sessionFromStatus {
-					log.Printf("Manually updating session status to %v: SessionUid=%v", sessionToStatus, session.Uid)
+				if updatedSession.Status == sessionFromStatus {
+					log.Printf("Manually updating session status to %v: SessionUid=%v", sessionToStatus, updatedSession.Uid)
 
 					sessionDto := dto.SessionDto{
 						Status: &sessionToStatus,
 					}
 
-					r.ReplaceSessionByIdentifier(ctx, credential, util.NilString(session.CountryCode), util.NilString(session.PartyID), session.Uid, &sessionDto)
+					r.ReplaceSessionByIdentifier(ctx, credential, util.NilString(updatedSession.CountryCode), util.NilString(updatedSession.PartyID), updatedSession.Uid, &sessionDto)
 				}
 
-				break
+				break waitLoop
 			}
 		}
 	}
