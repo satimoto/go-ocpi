@@ -32,11 +32,26 @@ func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.Com
 		commandParams.Status = *commandResponseDto.Result
 		commandParams.LastUpdated = time.Now().UTC()
 
-		_, err := r.Repository.UpdateCommandStart(ctx, commandParams)
+		updatedCommand, err := r.Repository.UpdateCommandStart(ctx, commandParams)
 
 		if err != nil {
 			metrics.RecordError("OCPI039", "Error updating command start", err)
 			log.Printf("OCPI039: Params=%#v", commandParams)
+		}
+
+		if updatedCommand.Status == db.CommandResponseTypeREJECTED && updatedCommand.AuthorizationID.Valid {
+			// Update the rejected commands token authorization
+			updateTokenAuthorizationByAuthorizationIDParams := db.UpdateTokenAuthorizationByAuthorizationIDParams{
+				AuthorizationID: updatedCommand.AuthorizationID.String,
+				Authorized: false,
+			}
+
+			_, err := r.TokenResolver.TokenAuthorizationResolver.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationByAuthorizationIDParams)
+
+			if err != nil {
+				metrics.RecordError("OCPI325", "Error updating token authorization", err)
+				log.Printf("OCPI325: Params=%#v", updateTokenAuthorizationByAuthorizationIDParams)
+			}	
 		}
 	}
 }

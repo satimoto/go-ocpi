@@ -122,7 +122,7 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 			locationReferencesDto.EvseUids = []*string{&input.EvseUid}
 		}
 
-		tokenAuthorization, err := r.TokenResolver.TokenAuthorizationResolver.CreateTokenAuthorization(ctx, token, locationReferencesDto)
+		tokenAuthorization, err := r.TokenResolver.TokenAuthorizationResolver.CreateTokenAuthorization(ctx, credential, token, locationReferencesDto)
 
 		if err != nil {
 			metrics.RecordError("OCPI151", "Error creating token authorization", err)

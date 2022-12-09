@@ -3,6 +3,7 @@ package mocks
 import (
 	mocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	locationMocks "github.com/satimoto/go-datastore/pkg/location/mocks"
+	party "github.com/satimoto/go-datastore/pkg/party/mocks"
 	businessdetail "github.com/satimoto/go-ocpi/internal/businessdetail/mocks"
 	displaytext "github.com/satimoto/go-ocpi/internal/displaytext/mocks"
 	energymix "github.com/satimoto/go-ocpi/internal/energymix/mocks"
@@ -21,12 +22,13 @@ func NewResolver(repositoryService *mocks.MockRepositoryService, services *servi
 		Repository:             locationMocks.NewRepository(repositoryService),
 		OcpiService:            services.OcpiService,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
+		DisplayTextResolver:    displaytext.NewResolver(repositoryService),
 		EnergyMixResolver:      energymix.NewResolver(repositoryService),
 		EvseResolver:           evse.NewResolver(repositoryService),
-		DisplayTextResolver:    displaytext.NewResolver(repositoryService),
 		GeoLocationResolver:    geolocation.NewResolver(repositoryService),
 		ImageResolver:          image.NewResolver(repositoryService),
 		OpeningTimeResolver:    openingtime.NewResolver(repositoryService),
+		PartyRepository:        party.NewRepository(repositoryService),
 		TariffResolver:         tariff.NewResolver(repositoryService, services),
 		VersionDetailResolver:  versiondetail.NewResolver(repositoryService, services),
 	}

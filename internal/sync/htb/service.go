@@ -90,8 +90,9 @@ func (r *HtbService) updateConnectors(ctx context.Context) {
 		for _, connector := range connectors {
 			connectorParams := param.NewUpdateConnectorByEvseParams(connector)
 			connectorParams.TariffID = tariffID
+			connectorParams.IsPublished = tariffID.Valid
 
-			if connector.TariffID.String != connectorParams.TariffID.String {
+			if connector.TariffID.String != connectorParams.TariffID.String || connector.IsPublished != connectorParams.IsPublished {
 				_, err = r.ConnectorRepository.UpdateConnectorByEvse(ctx, connectorParams)
 
 				if err != nil {

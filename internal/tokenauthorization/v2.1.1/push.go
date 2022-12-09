@@ -8,11 +8,13 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
 func (r *TokenAuthorizationResolver) AuthorizeToken(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	cred := middleware.GetCredential(ctx)
 	token := ctx.Value("token").(db.Token)
 	authorizationInfoDto := dto.NewAuthorizationInfoDto(token.Allowed)
 
@@ -25,7 +27,7 @@ func (r *TokenAuthorizationResolver) AuthorizeToken(rw http.ResponseWriter, requ
 		}
 
 		// TODO: we should reject an authorization to an unknown location/evse/connector
-		tokenAuthorization, err := r.CreateTokenAuthorization(ctx, token, locationReferencesDto)
+		tokenAuthorization, err := r.CreateTokenAuthorization(ctx, *cred, token, locationReferencesDto)
 		var displayText *coreDto.DisplayTextDto
 
 		if err != nil {
