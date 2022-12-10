@@ -38,6 +38,10 @@ func (r *TokenAuthorizationResolver) AuthorizeToken(rw http.ResponseWriter, requ
 		}
 
 		authorizationInfoDto = r.CreateAuthorizationInfoDto(ctx, token, tokenAuthorization, locationReferencesDto, displayText)
+
+		if tokenAuthorization != nil && tokenAuthorization.Authorized {
+			go r.waitForEvsesStatus(*cred, token, *tokenAuthorization, locationReferencesDto, db.EvseStatusCHARGING, 150)
+		}
 	}
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(authorizationInfoDto)); err != nil {

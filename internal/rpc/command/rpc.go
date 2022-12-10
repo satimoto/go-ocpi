@@ -156,6 +156,11 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 
 func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.StopSessionRequest) (*ocpirpc.StopSessionResponse, error) {
 	if input != nil {
+		defaultResponse := ocpirpc.StopSessionResponse{
+			Status: string(db.CommandResponseTypeACCEPTED),
+			AuthorizationId: input.AuthorizationId,
+		}
+
 		if tokenAuthorization, err := r.TokenResolver.TokenAuthorizationResolver.Repository.GetTokenAuthorizationByAuthorizationID(ctx, input.AuthorizationId); err == nil {
 			updateTokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(tokenAuthorization)
 			updateTokenAuthorizationParams.Authorized = false
@@ -169,6 +174,19 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 		}
 
 		if session, err := r.SessionResolver.Repository.GetSessionByAuthorizationID(ctx, input.AuthorizationId); err == nil {
+			if session.Uid == session.AuthorizationID.String {
+				// This was a manually created session
+				updateSessionByUidParams := param.NewUpdateSessionByUidParams(session)
+				updateSessionByUidParams.Status = db.SessionStatusTypeINVALID
+
+				if _, err := r.SessionResolver.Repository.UpdateSessionByUid(ctx, updateSessionByUidParams); err != nil {
+					metrics.RecordError("OCPI309", "Error updating session", err)
+					log.Printf("OCPI309: Params=%#v", updateSessionByUidParams)	
+				}
+
+				return &defaultResponse, nil
+			}
+
 			if session.Status == db.SessionStatusTypePENDING {
 				updateSessionByUidParams := param.NewUpdateSessionByUidParams(session)
 				updateSessionByUidParams.Status = db.SessionStatusTypeINVALID
@@ -206,10 +224,7 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 			return stopResponse, nil
 		}
 
-		return &ocpirpc.StopSessionResponse{
-			Status: string(db.CommandResponseTypeACCEPTED),
-			AuthorizationId: input.AuthorizationId,
-		}, nil
+		return &defaultResponse, nil
 	}
 
 	return nil, errors.New("missing request")

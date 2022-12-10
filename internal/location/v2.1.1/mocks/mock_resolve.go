@@ -24,7 +24,7 @@ func NewResolver(repositoryService *mocks.MockRepositoryService, services *servi
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
 		DisplayTextResolver:    displaytext.NewResolver(repositoryService),
 		EnergyMixResolver:      energymix.NewResolver(repositoryService),
-		EvseResolver:           evse.NewResolver(repositoryService),
+		EvseResolver:           evse.NewResolver(repositoryService, services),
 		GeoLocationResolver:    geolocation.NewResolver(repositoryService),
 		ImageResolver:          image.NewResolver(repositoryService),
 		OpeningTimeResolver:    openingtime.NewResolver(repositoryService),

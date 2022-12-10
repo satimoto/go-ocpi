@@ -26,7 +26,7 @@ func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command 
 	}
 }
 
-func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.CommandStart, commandResponseDto *dto.CommandResponseDto) {
+func (r *CommandResolver) UpdateCommandStart(ctx context.Context, credential db.Credential, command db.CommandStart, commandResponseDto *dto.CommandResponseDto) {
 	if commandResponseDto != nil {
 		commandParams := param.NewUpdateCommandStartParams(command)
 		commandParams.Status = *commandResponseDto.Result
@@ -39,19 +39,8 @@ func (r *CommandResolver) UpdateCommandStart(ctx context.Context, command db.Com
 			log.Printf("OCPI039: Params=%#v", commandParams)
 		}
 
-		if updatedCommand.Status == db.CommandResponseTypeREJECTED && updatedCommand.AuthorizationID.Valid {
-			// Update the rejected commands token authorization
-			updateTokenAuthorizationByAuthorizationIDParams := db.UpdateTokenAuthorizationByAuthorizationIDParams{
-				AuthorizationID: updatedCommand.AuthorizationID.String,
-				Authorized: false,
-			}
-
-			_, err := r.TokenResolver.TokenAuthorizationResolver.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationByAuthorizationIDParams)
-
-			if err != nil {
-				metrics.RecordError("OCPI325", "Error updating token authorization", err)
-				log.Printf("OCPI325: Params=%#v", updateTokenAuthorizationByAuthorizationIDParams)
-			}	
+		if updatedCommand.Status == db.CommandResponseTypeACCEPTED && updatedCommand.AuthorizationID.Valid {
+			go r.waitForEvseStatus(credential, updatedCommand)
 		}
 	}
 }
@@ -83,5 +72,33 @@ func (r *CommandResolver) UpdateCommandUnlock(ctx context.Context, command db.Co
 			metrics.RecordError("OCPI041", "Error updating command unlock", err)
 			log.Printf("OCPI041: Params=%#v", commandParams)
 		}
+	}
+}
+
+func (r *CommandResolver) waitForEvseStatus(credential db.Credential, command db.CommandStart) {
+	ctx := context.Background()
+	token, err := r.TokenResolver.Repository.GetToken(ctx, command.TokenID)
+
+	if err != nil {
+		metrics.RecordError("OCPI325", "Error getting token", err)
+		log.Printf("OCPI325: CommandID=%v, TokenID=%v", command.ID, command.TokenID)
+		return
+	}
+
+	tokenAuthorization, err := r.TokenResolver.TokenAuthorizationResolver.Repository.GetTokenAuthorizationByAuthorizationID(ctx, command.AuthorizationID.String)
+
+	if err != nil {
+		metrics.RecordError("OCPI326", "Error updating command start", err)
+		log.Printf("OCPI326: CommandID=%v, AuthorizationID=%#v", command.ID, command.AuthorizationID)
+		return
+	}
+
+	if command.EvseUid.Valid {
+		cancelCtx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		r.EvseResolver.WaitForEvseStatus(credential, token, tokenAuthorization, command.LocationID, command.EvseUid.String, db.EvseStatusCHARGING, cancelCtx, cancel, 150)
+
+		<-cancelCtx.Done()
 	}
 }
