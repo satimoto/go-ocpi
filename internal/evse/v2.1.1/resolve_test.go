@@ -12,7 +12,10 @@ import (
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	evseMocks "github.com/satimoto/go-ocpi/internal/evse/v2.1.1/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
 	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
@@ -24,7 +27,12 @@ func TestReplaceEvse(t *testing.T) {
 	
 	t.Run("Create Evse", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		evseResolver := evseMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		evseResolver := evseMocks.NewResolver(mockRepository, mockServices)
 
 		evseStatusRESERVED := db.EvseStatusRESERVED
 
@@ -80,7 +88,12 @@ func TestReplaceEvse(t *testing.T) {
 
 	t.Run("Update Evse", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		evseResolver := evseMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		evseResolver := evseMocks.NewResolver(mockRepository, mockServices)
 
 		mockRepository.SetGetEvseByUidMockData(dbMocks.EvseMockData{
 			Evse: db.Evse{
@@ -145,7 +158,12 @@ func TestReplaceEvse(t *testing.T) {
 
 	t.Run("Update Evse with Connectors", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		evseResolver := evseMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		evseResolver := evseMocks.NewResolver(mockRepository, mockServices)
 
 		mockRepository.SetGetEvseByUidMockData(dbMocks.EvseMockData{
 			Evse: db.Evse{
@@ -249,7 +267,12 @@ func TestReplaceEvse(t *testing.T) {
 
 	t.Run("Update Evse with Coordinates", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		evseResolver := evseMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		evseResolver := evseMocks.NewResolver(mockRepository, mockServices)
 
 		mockRepository.SetGetEvseByUidMockData(dbMocks.EvseMockData{
 			Evse: db.Evse{

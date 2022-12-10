@@ -22,7 +22,7 @@ func NewResolver(repositoryService *mocks.MockRepositoryService, services *servi
 		AsyncService:          services.AsyncService,
 		NotificationService:   services.NotificationService,
 		ConnectorResolver:     connector.NewResolver(repositoryService),
-		EvseResolver:          evse.NewResolver(repositoryService),
+		EvseResolver:          evse.NewResolver(repositoryService, services),
 		LocationRepository:    location.NewRepository(repositoryService),
 		NodeRepository:        node.NewRepository(repositoryService),
 		SessionRepository:     session.NewRepository(repositoryService),

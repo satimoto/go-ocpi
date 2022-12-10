@@ -151,7 +151,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 	if err != nil {
 		metrics.RecordError("OCPI054", "Error unmarshaling response", err)
 		dbUtil.LogHttpResponse("OCPI054", requestUrl.String(), response, true)
-		return nil, errors.New("error starting reservation")
+		return nil, errors.New("error starting session")
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
@@ -164,7 +164,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		updateCommandStartParams.Status = db.CommandResponseTypeREJECTED
 		r.Repository.UpdateCommandStart(ctx, updateCommandStartParams)
 
-		return nil, errors.New("error starting reservation")
+		return nil, errors.New("error starting session")
 	}
 
 	if pullDto.Data.Result != nil && *pullDto.Data.Result != db.CommandResponseTypeACCEPTED {
@@ -201,7 +201,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	command, err := r.Repository.CreateCommandStop(ctx, createCommandStopParams)
 
 	if err != nil {
-		metrics.RecordError("OCPI058", "Error creating command reservation", err)
+		metrics.RecordError("OCPI058", "Error creating command stop", err)
 		log.Printf("OCPI058: Params=%#v", createCommandStopParams)
 		return nil, errors.New("error stopping session")
 	}
@@ -231,7 +231,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 	if err != nil {
 		metrics.RecordError("OCPI061", "Error unmarshaling response", err)
 		dbUtil.LogHttpResponse("OCPI062", requestUrl.String(), response, true)
-		return nil, errors.New("error stopping reservation")
+		return nil, errors.New("error stopping session")
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
@@ -242,9 +242,16 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 
 		updateCommandStopParams := param.NewUpdateCommandStopParams(command)
 		updateCommandStopParams.Status = db.CommandResponseTypeREJECTED
-		r.Repository.UpdateCommandStop(ctx, updateCommandStopParams)
 
-		return nil, errors.New("error stopping reservation")
+		if pullDto.StatusMessage == "Session unknown" {
+			updateCommandStopParams.Status = db.CommandResponseTypeUNKNOWNSESSION
+		}
+
+		if command, err := r.Repository.UpdateCommandStop(ctx, updateCommandStopParams); err == nil {
+			return &command, nil
+		}
+
+		return nil, errors.New("error stopping session")
 	}
 
 	if pullDto.Data.Result != nil && *pullDto.Data.Result != db.CommandResponseTypeACCEPTED {
@@ -311,7 +318,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 	if err != nil {
 		metrics.RecordError("OCPI069", "Error unmarshaling response", err)
 		dbUtil.LogHttpResponse("OCPI069", requestUrl.String(), response, true)
-		return nil, errors.New("error unlocking reservation")
+		return nil, errors.New("error unlocking connector")
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
@@ -324,7 +331,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		updateCommandUnlockParams.Status = db.CommandResponseTypeREJECTED
 		r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams)
 
-		return nil, errors.New("error unlocking reservation")
+		return nil, errors.New("error unlocking connector")
 	}
 
 	if pullDto.Data.Result != nil && *pullDto.Data.Result != db.CommandResponseTypeACCEPTED {

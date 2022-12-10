@@ -8,6 +8,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
+	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -36,6 +37,7 @@ func (r *CommandResolver) PostCommandReservationResponse(rw http.ResponseWriter,
 
 func (r *CommandResolver) PostCommandStartResponse(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	cred := middleware.GetCredential(ctx)
 	command := ctx.Value("command").(db.CommandStart)
 	dto, err := r.UnmarshalPushDto(request.Body)
 
@@ -47,7 +49,7 @@ func (r *CommandResolver) PostCommandStartResponse(rw http.ResponseWriter, reque
 		return
 	}
 
-	r.UpdateCommandStart(ctx, command, dto)
+	r.UpdateCommandStart(ctx, *cred, command, dto)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(nil)); err != nil {
 		log.Print("OCPI074", "Error updating start command")

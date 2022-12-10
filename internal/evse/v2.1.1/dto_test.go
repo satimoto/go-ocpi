@@ -10,6 +10,9 @@ import (
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
 	evseMocks "github.com/satimoto/go-ocpi/internal/evse/v2.1.1/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
+	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
@@ -18,7 +21,12 @@ func TestCreateCapabilityListDto(t *testing.T) {
 
 	t.Run("Test", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		evseResolver := evseMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		evseResolver := evseMocks.NewResolver(mockRepository, mockServices)
 
 		capabilities := []db.Capability{}
 		capabilities = append(capabilities, db.Capability{Text: "Test1", Description: "Test"})
@@ -37,7 +45,12 @@ func TestCreateEvseDto(t *testing.T) {
 
 	t.Run("With Status Schedules", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		evseResolver := evseMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		evseResolver := evseMocks.NewResolver(mockRepository, mockServices)
 
 		statusSchedules := []db.StatusSchedule{}
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
@@ -93,7 +106,12 @@ func TestCreateEvseDto(t *testing.T) {
 
 	t.Run("With Capabilities", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		evseResolver := evseMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		evseResolver := evseMocks.NewResolver(mockRepository, mockServices)
 
 		capabilities := []db.Capability{}
 		capabilities = append(capabilities, db.Capability{
@@ -123,7 +141,12 @@ func TestCreateEvseDto(t *testing.T) {
 
 	t.Run("With Connectors", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		evseResolver := evseMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		evseResolver := evseMocks.NewResolver(mockRepository, mockServices)
 
 		connectors := []db.Connector{}
 		connectors = append(connectors, db.Connector{
@@ -191,7 +214,12 @@ func TestCreateEvseDto(t *testing.T) {
 
 	t.Run("With Images", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
-		evseResolver := evseMocks.NewResolver(mockRepository)
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		evseResolver := evseMocks.NewResolver(mockRepository, mockServices)
 
 		images := []db.Image{}
 		images = append(images, db.Image{
