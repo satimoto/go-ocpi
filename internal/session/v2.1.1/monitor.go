@@ -153,6 +153,15 @@ waitLoop:
 			break waitLoop
 		}
 
+		if updatedSession, err := r.Repository.GetSession(ctx, sess.ID); err == nil {
+			sess = updatedSession
+		}
+
+		if sess.Status != sessionFromStatus {
+			log.Printf("Session. Stop waiting for Evse status change: LocationID=%v, EvseID=%v", locationID, evseID)
+			break waitLoop
+		}
+
 		if sess.AuthorizationID.Valid {
 			tokenAuthorization, err := r.TokenAuthorizationRepository.GetTokenAuthorizationByAuthorizationID(ctx, sess.AuthorizationID.String)
 
@@ -186,23 +195,13 @@ waitLoop:
 			log.Printf("Evse status is %v: LocationID=%v, EvseID=%v", responseEvseStatus, locationID, evseID)
 
 			if responseEvseStatus == evseStatus {
-				updatedSession, err := r.Repository.GetSession(ctx, sess.ID)
+				log.Printf("Manually updating session status to %v: SessionUid=%v", sessionToStatus, sess.Uid)
 
-				if err != nil {
-					metrics.RecordError("OCPI308", "Error getting session", err)
-					log.Printf("OCPI308: SessionID=%v", sess.ID)
-					continue
+				sessionDto := dto.SessionDto{
+					Status: &sessionToStatus,
 				}
 
-				if updatedSession.Status == sessionFromStatus {
-					log.Printf("Manually updating session status to %v: SessionUid=%v", sessionToStatus, updatedSession.Uid)
-
-					sessionDto := dto.SessionDto{
-						Status: &sessionToStatus,
-					}
-
-					r.ReplaceSessionByIdentifier(ctx, credential, util.NilString(updatedSession.CountryCode), util.NilString(updatedSession.PartyID), updatedSession.Uid, &sessionDto)
-				}
+				r.ReplaceSessionByIdentifier(ctx, credential, util.NilString(sess.CountryCode), util.NilString(sess.PartyID), sess.Uid, &sessionDto)
 
 				break waitLoop
 			}
