@@ -192,20 +192,24 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		updateCommandStartParams := param.NewUpdateCommandStartParams(command)
 		updateCommandStartParams.Status = db.CommandResponseTypeREJECTED
 
-		if updatedCommand, err := r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err == nil  {
-			return &updatedCommand, nil
+		if _, err := r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err != nil {
+			metrics.RecordError("OCPI308", "Error updating command start", err)
+			dbUtil.LogHttpResponse("OCPI308", requestUrl.String(), response, true)
 		}
 
-		return nil, errors.New("error starting session")
+		return nil, errors.New("charge point unresponsive")
 	}
 
 	if pullDto.Data.Result != nil && *pullDto.Data.Result != db.CommandResponseTypeACCEPTED {
 		updateCommandStartParams := param.NewUpdateCommandStartParams(command)
 		updateCommandStartParams.Status = *pullDto.Data.Result
 
-		if updatedCommand, err := r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err == nil {
-			return &updatedCommand, nil
+		if _, err := r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err != nil {
+			metrics.RecordError("OCPI330", "Error updating command start", err)
+			dbUtil.LogHttpResponse("OCPI330", requestUrl.String(), response, true)
 		}
+
+		return nil, errors.New("could not start charge")
 	}
 
 	select {
@@ -217,7 +221,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 
 		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
 			log.Printf("Start command response: %v", command.Status)
-			return nil, errors.New("could not start")
+			return nil, errors.New("could not start charge")
 		}
 	case <-time.After(90 * time.Second):
 		log.Printf("Start command response timeout: %v", asyncKey)
@@ -325,7 +329,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 
 		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
 			log.Printf("Stop command response: %v", command.Status)
-			return nil, errors.New("could not stop")
+			return nil, errors.New("could not stop charge")
 		}
 	case <-time.After(90 * time.Second):
 		log.Printf("Stop command response timeout: %v", asyncKey)
