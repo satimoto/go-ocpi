@@ -18,6 +18,7 @@ func NewResolver(repositoryService *mocks.MockRepositoryService, services *servi
 	return &session.SessionResolver{
 		Repository:                   sessionMocks.NewRepository(repositoryService),
 		OcpiService:                  services.OcpiService,
+		AsyncService:                 services.AsyncService,
 		ChargingPeriodResolver:       chargingperiod.NewResolver(repositoryService),
 		CommandResolver:              command.NewResolver(repositoryService, services),
 		LocationResolver:             location.NewResolver(repositoryService, services),

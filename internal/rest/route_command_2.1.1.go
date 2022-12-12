@@ -12,7 +12,7 @@ func (rs *RestService) mountCommands() *chi.Mux {
 	commandResolver := command.NewResolver(rs.RepositoryService, rs.ServiceResolver)
 
 	router := chi.NewRouter()
-	router.Use(middleware.Timeout(30 * time.Second))
+	router.Use(middleware.Timeout(120 * time.Second))
 	router.Use(rs.CredentialContextByToken)
 
 	router.Route("/RESERVE_NOW/{command_id}", func(commandRouter chi.Router) {

@@ -2,11 +2,14 @@ package command
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
+	"github.com/satimoto/go-ocpi/internal/async"
+	coreCommand "github.com/satimoto/go-ocpi/internal/command"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
@@ -17,12 +20,21 @@ func (r *CommandResolver) UpdateCommandReservation(ctx context.Context, command 
 		commandParams.Status = *commandResponseDto.Result
 		commandParams.LastUpdated = time.Now().UTC()
 
-		_, err := r.Repository.UpdateCommandReservation(ctx, commandParams)
+		updatedCommand, err := r.Repository.UpdateCommandReservation(ctx, commandParams)
 
 		if err != nil {
 			metrics.RecordError("OCPI038", "Error updating command reservation", err)
 			log.Printf("OCPI038: Params=%#v", commandParams)
 		}
+
+		statusAccepted := updatedCommand.Status == db.CommandResponseTypeACCEPTED
+		asyncKey := fmt.Sprintf(coreCommand.RESERVE_NOW_ASYNC_KEY, updatedCommand.ID)
+		asyncResult := async.AsyncResult{
+			String: string(updatedCommand.Status),
+			Bool:   statusAccepted,
+		}
+
+		r.AsyncService.Set(asyncKey, asyncResult)
 	}
 }
 
@@ -39,7 +51,16 @@ func (r *CommandResolver) UpdateCommandStart(ctx context.Context, credential db.
 			log.Printf("OCPI039: Params=%#v", commandParams)
 		}
 
-		if updatedCommand.Status == db.CommandResponseTypeACCEPTED && updatedCommand.AuthorizationID.Valid {
+		statusAccepted := updatedCommand.Status == db.CommandResponseTypeACCEPTED
+		asyncKey := fmt.Sprintf(coreCommand.START_COMMAND_ASYNC_KEY, updatedCommand.ID)
+		asyncResult := async.AsyncResult{
+			String: string(updatedCommand.Status),
+			Bool:   statusAccepted,
+		}
+
+		r.AsyncService.Set(asyncKey, asyncResult)
+
+		if statusAccepted && updatedCommand.AuthorizationID.Valid {
 			go r.waitForEvseStatus(credential, updatedCommand)
 		}
 	}
@@ -51,12 +72,21 @@ func (r *CommandResolver) UpdateCommandStop(ctx context.Context, command db.Comm
 		commandParams.Status = *commandResponseDto.Result
 		commandParams.LastUpdated = time.Now().UTC()
 
-		_, err := r.Repository.UpdateCommandStop(ctx, commandParams)
+		updatedCommand, err := r.Repository.UpdateCommandStop(ctx, commandParams)
 
 		if err != nil {
 			metrics.RecordError("OCPI040", "Error updating command stop", err)
 			log.Printf("OCPI040: Params=%#v", commandParams)
 		}
+
+		statusAccepted := updatedCommand.Status == db.CommandResponseTypeACCEPTED
+		asyncKey := fmt.Sprintf(coreCommand.STOP_COMMAND_ASYNC_KEY, updatedCommand.ID)
+		asyncResult := async.AsyncResult{
+			String: string(updatedCommand.Status),
+			Bool:   statusAccepted,
+		}
+
+		r.AsyncService.Set(asyncKey, asyncResult)
 	}
 }
 
@@ -66,12 +96,21 @@ func (r *CommandResolver) UpdateCommandUnlock(ctx context.Context, command db.Co
 		commandParams.Status = *commandResponseDto.Result
 		commandParams.LastUpdated = time.Now().UTC()
 
-		_, err := r.Repository.UpdateCommandUnlock(ctx, commandParams)
+		updatedCommand, err := r.Repository.UpdateCommandUnlock(ctx, commandParams)
 
 		if err != nil {
 			metrics.RecordError("OCPI041", "Error updating command unlock", err)
 			log.Printf("OCPI041: Params=%#v", commandParams)
 		}
+
+		statusAccepted := updatedCommand.Status == db.CommandResponseTypeACCEPTED
+		asyncKey := fmt.Sprintf(coreCommand.UNLOCK_CONNECTOR_ASYNC_KEY, updatedCommand.ID)
+		asyncResult := async.AsyncResult{
+			String: string(updatedCommand.Status),
+			Bool:   statusAccepted,
+		}
+
+		r.AsyncService.Set(asyncKey, asyncResult)
 	}
 }
 

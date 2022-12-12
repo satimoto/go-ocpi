@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -13,6 +14,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	coreCommand "github.com/satimoto/go-ocpi/internal/command"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/util"
@@ -45,6 +47,9 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 		log.Printf("OCPI044: Params=%#v", createCommandReservationParams)
 		return nil, errors.New("error requesting reservation")
 	}
+
+	asyncKey := fmt.Sprintf(coreCommand.RESERVE_NOW_ASYNC_KEY, command.ID)
+	asyncChan := r.AsyncService.Add(asyncKey)
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 	commandDto := r.CreateCommandReservationDto(ctx, command)
@@ -82,7 +87,10 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 
 		updateCommandReservationParams := param.NewUpdateCommandReservationParams(command)
 		updateCommandReservationParams.Status = db.CommandResponseTypeREJECTED
-		r.Repository.UpdateCommandReservation(ctx, updateCommandReservationParams)
+		
+		if command, err := r.Repository.UpdateCommandReservation(ctx, updateCommandReservationParams); err == nil {
+			return &command, nil
+		}
 
 		return nil, errors.New("error requesting reservation")
 	}
@@ -94,6 +102,24 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 		if command, err = r.Repository.UpdateCommandReservation(ctx, updateCommandReservationParams); err == nil {
 			return &command, nil
 		}
+	}
+
+	select {
+	case <-asyncChan:
+		log.Printf("Reserve command response received: %v", asyncKey)
+		r.AsyncService.Remove(asyncKey)
+
+		command, err := r.Repository.GetCommandReservation(ctx, command.ID)
+
+		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
+			log.Printf("Reserve command response: %v", command.Status)
+			return nil, errors.New("could not reserve")
+		}
+	case <-time.After(90 * time.Second):
+		log.Printf("Reserve command response timeout: %v", asyncKey)
+		r.AsyncService.Remove(asyncKey)
+
+		return nil, errors.New("charge point unresponsive")
 	}
 
 	return &command, nil
@@ -125,6 +151,9 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		log.Printf("OCPI051: Params=%#v", createCommandStartParams)
 		return nil, errors.New("error starting session")
 	}
+
+	asyncKey := fmt.Sprintf(coreCommand.START_COMMAND_ASYNC_KEY, command.ID)
+	asyncChan := r.AsyncService.Add(asyncKey)
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 	commandDto := r.CreateCommandStartDto(ctx, command)
@@ -162,7 +191,10 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 
 		updateCommandStartParams := param.NewUpdateCommandStartParams(command)
 		updateCommandStartParams.Status = db.CommandResponseTypeREJECTED
-		r.Repository.UpdateCommandStart(ctx, updateCommandStartParams)
+
+		if command, err := r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err == nil  {
+			return &command, nil
+		}
 
 		return nil, errors.New("error starting session")
 	}
@@ -174,6 +206,24 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		if command, err = r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err == nil {
 			return &command, nil
 		}
+	}
+
+	select {
+	case <-asyncChan:
+		log.Printf("Start command response received: %v", asyncKey)
+		r.AsyncService.Remove(asyncKey)
+
+		command, err := r.Repository.GetCommandStart(ctx, command.ID)
+
+		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
+			log.Printf("Start command response: %v", command.Status)
+			return nil, errors.New("could not start")
+		}
+	case <-time.After(90 * time.Second):
+		log.Printf("Start command response timeout: %v", asyncKey)
+		r.AsyncService.Remove(asyncKey)
+
+		return nil, errors.New("charge point unresponsive")
 	}
 
 	return &command, nil
@@ -205,6 +255,9 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 		log.Printf("OCPI058: Params=%#v", createCommandStopParams)
 		return nil, errors.New("error stopping session")
 	}
+
+	asyncKey := fmt.Sprintf(coreCommand.STOP_COMMAND_ASYNC_KEY, command.ID)
+	asyncChan := r.AsyncService.Add(asyncKey)
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 	commandDto := r.CreateCommandStopDto(ctx, command)
@@ -263,6 +316,24 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 		}
 	}
 
+	select {
+	case <-asyncChan:
+		log.Printf("Stop command response received: %v", asyncKey)
+		r.AsyncService.Remove(asyncKey)
+
+		command, err := r.Repository.GetCommandStop(ctx, command.ID)
+
+		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
+			log.Printf("Stop command response: %v", command.Status)
+			return nil, errors.New("could not stop")
+		}
+	case <-time.After(90 * time.Second):
+		log.Printf("Stop command response timeout: %v", asyncKey)
+		r.AsyncService.Remove(asyncKey)
+
+		return nil, errors.New("charge point unresponsive")
+	}
+
 	return &command, nil
 }
 
@@ -292,6 +363,9 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		log.Printf("OCPI066: Params=%#v", createCommandUnlockParams)
 		return nil, errors.New("error unlocking connector")
 	}
+
+	asyncKey := fmt.Sprintf(coreCommand.UNLOCK_CONNECTOR_ASYNC_KEY, command.ID)
+	asyncChan := r.AsyncService.Add(asyncKey)
 
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, nil, nil)
 	commandDto := r.CreateCommandUnlockDto(ctx, command)
@@ -329,7 +403,10 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 
 		updateCommandUnlockParams := param.NewUpdateCommandUnlockParams(command)
 		updateCommandUnlockParams.Status = db.CommandResponseTypeREJECTED
-		r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams)
+		
+		if command, err := r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams); err == nil {
+			return &command, nil
+		}
 
 		return nil, errors.New("error unlocking connector")
 	}
@@ -341,6 +418,24 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		if command, err = r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams); err == nil {
 			return &command, nil
 		}
+	}
+
+	select {
+	case <-asyncChan:
+		log.Printf("Unlock command response received: %v", asyncKey)
+		r.AsyncService.Remove(asyncKey)
+
+		command, err := r.Repository.GetCommandUnlock(ctx, command.ID)
+
+		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
+			log.Printf("Unlock command response: %v", command.Status)
+			return nil, errors.New("could not unlock")
+		}
+	case <-time.After(90 * time.Second):
+		log.Printf("Unlock command response timeout: %v", asyncKey)
+		r.AsyncService.Remove(asyncKey)
+
+		return nil, errors.New("charge point unresponsive")
 	}
 
 	return &command, nil
