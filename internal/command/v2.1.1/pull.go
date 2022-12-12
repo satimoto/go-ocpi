@@ -88,8 +88,8 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 		updateCommandReservationParams := param.NewUpdateCommandReservationParams(command)
 		updateCommandReservationParams.Status = db.CommandResponseTypeREJECTED
 		
-		if command, err := r.Repository.UpdateCommandReservation(ctx, updateCommandReservationParams); err == nil {
-			return &command, nil
+		if updatedCommand, err := r.Repository.UpdateCommandReservation(ctx, updateCommandReservationParams); err == nil {
+			return &updatedCommand, nil
 		}
 
 		return nil, errors.New("error requesting reservation")
@@ -99,8 +99,8 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 		updateCommandReservationParams := param.NewUpdateCommandReservationParams(command)
 		updateCommandReservationParams.Status = *pullDto.Data.Result
 
-		if command, err = r.Repository.UpdateCommandReservation(ctx, updateCommandReservationParams); err == nil {
-			return &command, nil
+		if updatedCommand, err := r.Repository.UpdateCommandReservation(ctx, updateCommandReservationParams); err == nil {
+			return &updatedCommand, nil
 		}
 	}
 
@@ -109,7 +109,7 @@ func (r *CommandResolver) ReserveNow(ctx context.Context, credential db.Credenti
 		log.Printf("Reserve command response received: %v", asyncKey)
 		r.AsyncService.Remove(asyncKey)
 
-		command, err := r.Repository.GetCommandReservation(ctx, command.ID)
+		command, err = r.Repository.GetCommandReservation(ctx, command.ID)
 
 		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
 			log.Printf("Reserve command response: %v", command.Status)
@@ -192,8 +192,8 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		updateCommandStartParams := param.NewUpdateCommandStartParams(command)
 		updateCommandStartParams.Status = db.CommandResponseTypeREJECTED
 
-		if command, err := r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err == nil  {
-			return &command, nil
+		if updatedCommand, err := r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err == nil  {
+			return &updatedCommand, nil
 		}
 
 		return nil, errors.New("error starting session")
@@ -203,8 +203,8 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		updateCommandStartParams := param.NewUpdateCommandStartParams(command)
 		updateCommandStartParams.Status = *pullDto.Data.Result
 
-		if command, err = r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err == nil {
-			return &command, nil
+		if updatedCommand, err := r.Repository.UpdateCommandStart(ctx, updateCommandStartParams); err == nil {
+			return &updatedCommand, nil
 		}
 	}
 
@@ -213,7 +213,7 @@ func (r *CommandResolver) StartSession(ctx context.Context, credential db.Creden
 		log.Printf("Start command response received: %v", asyncKey)
 		r.AsyncService.Remove(asyncKey)
 
-		command, err := r.Repository.GetCommandStart(ctx, command.ID)
+		command, err = r.Repository.GetCommandStart(ctx, command.ID)
 
 		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
 			log.Printf("Start command response: %v", command.Status)
@@ -300,8 +300,8 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 			updateCommandStopParams.Status = db.CommandResponseTypeUNKNOWNSESSION
 		}
 
-		if command, err := r.Repository.UpdateCommandStop(ctx, updateCommandStopParams); err == nil {
-			return &command, nil
+		if updatedCommand, err := r.Repository.UpdateCommandStop(ctx, updateCommandStopParams); err == nil {
+			return &updatedCommand, nil
 		}
 
 		return nil, errors.New("error stopping session")
@@ -311,8 +311,8 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 		updateCommandStopParams := param.NewUpdateCommandStopParams(command)
 		updateCommandStopParams.Status = *pullDto.Data.Result
 
-		if command, err = r.Repository.UpdateCommandStop(ctx, updateCommandStopParams); err == nil {
-			return &command, nil
+		if updatedCommand, err := r.Repository.UpdateCommandStop(ctx, updateCommandStopParams); err == nil {
+			return &updatedCommand, nil
 		}
 	}
 
@@ -321,7 +321,7 @@ func (r *CommandResolver) StopSession(ctx context.Context, credential db.Credent
 		log.Printf("Stop command response received: %v", asyncKey)
 		r.AsyncService.Remove(asyncKey)
 
-		command, err := r.Repository.GetCommandStop(ctx, command.ID)
+		command, err = r.Repository.GetCommandStop(ctx, command.ID)
 
 		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
 			log.Printf("Stop command response: %v", command.Status)
@@ -404,8 +404,8 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		updateCommandUnlockParams := param.NewUpdateCommandUnlockParams(command)
 		updateCommandUnlockParams.Status = db.CommandResponseTypeREJECTED
 		
-		if command, err := r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams); err == nil {
-			return &command, nil
+		if updatedCommand, err := r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams); err == nil {
+			return &updatedCommand, nil
 		}
 
 		return nil, errors.New("error unlocking connector")
@@ -415,8 +415,8 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		updateCommandUnlockParams := param.NewUpdateCommandUnlockParams(command)
 		updateCommandUnlockParams.Status = *pullDto.Data.Result
 
-		if command, err = r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams); err == nil {
-			return &command, nil
+		if updatedCommand, err := r.Repository.UpdateCommandUnlock(ctx, updateCommandUnlockParams); err == nil {
+			return &updatedCommand, nil
 		}
 	}
 
@@ -425,7 +425,7 @@ func (r *CommandResolver) UnlockConnector(ctx context.Context, credential db.Cre
 		log.Printf("Unlock command response received: %v", asyncKey)
 		r.AsyncService.Remove(asyncKey)
 
-		command, err := r.Repository.GetCommandUnlock(ctx, command.ID)
+		command, err = r.Repository.GetCommandUnlock(ctx, command.ID)
 
 		if err != nil || command.Status != db.CommandResponseTypeACCEPTED {
 			log.Printf("Unlock command response: %v", command.Status)
