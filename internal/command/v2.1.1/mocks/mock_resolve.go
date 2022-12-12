@@ -14,6 +14,7 @@ func NewResolver(repositoryService *mocks.MockRepositoryService, services *servi
 	return &command.CommandResolver{
 		Repository:            commandMocks.NewRepository(repositoryService),
 		OcpiService:           services.OcpiService,
+		AsyncService:          services.AsyncService,
 		EvseResolver:          evse.NewResolver(repositoryService, services),
 		TokenResolver:         token.NewResolver(repositoryService, services),
 		VersionDetailResolver: versiondetail.NewResolver(repositoryService, services),

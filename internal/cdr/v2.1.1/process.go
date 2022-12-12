@@ -133,6 +133,8 @@ func (r *CdrResolver) ReplaceCdrByIdentifier(ctx context.Context, credential db.
 					metrics.RecordError("OCPI283", "Error updating session", err)
 					log.Printf("OCPI283: Params=%#v", sessionParams)
 				}
+
+				r.updateCommand(cdr, session)
 			} else {
 				// A session was never received for this cdr, create it
 				createSessionParams := db.CreateSessionParams{
