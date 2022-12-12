@@ -157,7 +157,7 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.StopSessionRequest) (*ocpirpc.StopSessionResponse, error) {
 	if input != nil {
 		defaultResponse := ocpirpc.StopSessionResponse{
-			Status: string(db.CommandResponseTypeACCEPTED),
+			Status:          string(db.CommandResponseTypeACCEPTED),
 			AuthorizationId: input.AuthorizationId,
 		}
 
@@ -174,26 +174,18 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 		}
 
 		if session, err := r.SessionResolver.Repository.GetSessionByAuthorizationID(ctx, input.AuthorizationId); err == nil {
-			if session.Uid == session.AuthorizationID.String {
-				// This was a manually created session
+			if session.Uid == session.AuthorizationID.String || session.Status == db.SessionStatusTypePENDING {
+				// This was a manually created session or the status is still pending
 				updateSessionByUidParams := param.NewUpdateSessionByUidParams(session)
 				updateSessionByUidParams.Status = db.SessionStatusTypeINVALID
 
 				if _, err := r.SessionResolver.Repository.UpdateSessionByUid(ctx, updateSessionByUidParams); err != nil {
 					metrics.RecordError("OCPI309", "Error updating session", err)
-					log.Printf("OCPI309: Params=%#v", updateSessionByUidParams)	
+					log.Printf("OCPI309: Params=%#v", updateSessionByUidParams)
 				}
 
-				return &defaultResponse, nil
-			}
-
-			if session.Status == db.SessionStatusTypePENDING {
-				updateSessionByUidParams := param.NewUpdateSessionByUidParams(session)
-				updateSessionByUidParams.Status = db.SessionStatusTypeINVALID
-
-				if _, err := r.SessionResolver.Repository.UpdateSessionByUid(ctx, updateSessionByUidParams); err != nil {
-					metrics.RecordError("OCPI309", "Error updating session", err)
-					log.Printf("OCPI309: Params=%#v", updateSessionByUidParams)	
+				if session.Uid == session.AuthorizationID.String {
+					return &defaultResponse, nil
 				}
 			}
 
@@ -204,15 +196,15 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 				log.Printf("OCPI154: CredentialID=%v", session.CredentialID)
 				return nil, errors.New("credential not found")
 			}
-	
+
 			if !credential.ClientToken.Valid || len(credential.ClientToken.String) == 0 {
 				metrics.RecordError("OCPI155", "Error invalid credential", err)
 				log.Printf("OCPI155: CredentialID=%v, Token=%v", credential.ID, credential.ClientToken)
 				return nil, errors.New("invalid credential token")
 			}
-	
+
 			command, err := r.CommandResolver.StopSession(ctx, credential, session.Uid)
-	
+
 			if err != nil {
 				metrics.RecordError("OCPI156", "Error requesting stop", err)
 				log.Printf("OCPI156: Input=%#v", input)
