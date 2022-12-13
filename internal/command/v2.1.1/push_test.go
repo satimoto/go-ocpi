@@ -251,6 +251,8 @@ func TestCommandStartRequest(t *testing.T) {
 			"status_code": 1000,
 			"status_message": "Success"
 		}`), jsondiff.SupersetMatch)
+
+		t.Fatal("Creating 'POST /START_SESSION/{command_id}' request failed!")
 	})
 }
 

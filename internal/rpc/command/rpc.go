@@ -63,7 +63,7 @@ func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *ocpirpc.Rese
 		if err != nil {
 			metrics.RecordError("OCPI145", "Error requesting reservation", err)
 			log.Printf("OCPI145: Input=%#v", input)
-			return nil, errors.New("error requesting reservation")
+			return nil, err
 		}
 
 		reserveNowResponse := ocpiCommand.NewCommandReservationResponse(*command)
@@ -143,7 +143,7 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 		if err != nil {
 			metrics.RecordError("OCPI152", "Error requesting start", err)
 			log.Printf("OCPI152: Input=%#v", input)
-			return nil, errors.New("error starting session")
+			return nil, err
 		}
 
 		startResponse := ocpiCommand.NewCommandStartResponse(*command, verificationKey)
@@ -208,7 +208,7 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 			if err != nil {
 				metrics.RecordError("OCPI156", "Error requesting stop", err)
 				log.Printf("OCPI156: Input=%#v", input)
-				return nil, errors.New("error stopping session")
+				return nil, err
 			}
 
 			stopResponse := ocpiCommand.NewCommandStopResponse(*command)
@@ -251,7 +251,7 @@ func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *ocpirpc
 		if err != nil {
 			metrics.RecordError("OCPI160", "Error requesting unlock", err)
 			log.Printf("OCPI160: Input=%#v", input)
-			return nil, errors.New("error unlocking connector")
+			return nil, err
 		}
 
 		unlockResponse := ocpiCommand.NewCommandUnlockResponse(*command)
