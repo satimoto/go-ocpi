@@ -39,7 +39,23 @@ func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.C
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, countryCode, partyID)
 	query := requestUrl.Query()
 
-	if !fullSync {
+	if fullSync {
+		if countryCode != nil && partyID != nil {
+			log.Printf("Setting all locations to removed")
+			updateLocationsRemovedByPartyAndCountryCodeParams := db.UpdateLocationsRemovedByPartyAndCountryCodeParams{
+				CountryCode: util.SqlNullString(countryCode),
+				PartyID:     util.SqlNullString(partyID),
+				IsRemoved:   true,
+			}
+
+			err := r.Repository.UpdateLocationsRemovedByPartyAndCountryCode(ctx, updateLocationsRemovedByPartyAndCountryCodeParams)
+
+			if err != nil {
+				metrics.RecordError("OCPI331", "Error updating locations", err)
+				log.Printf("OCPI331: Param=%#v", updateLocationsRemovedByPartyAndCountryCodeParams)	
+			}
+		}
+	} else {
 		if lastUpdated != nil {
 			query.Set("date_from", lastUpdated.UTC().Format(time.RFC3339))
 		} else if location, err := r.GetLastLocationByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {

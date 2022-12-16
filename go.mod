@@ -13,11 +13,9 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/nsf/jsondiff v0.0.0-20210926074059-1e845ec5d249
 	github.com/prometheus/client_golang v1.13.1
-	github.com/satimoto/go-datastore v0.3.1-0.20221211215042-d5318660b0e1
+	github.com/satimoto/go-datastore v0.3.1-0.20221215215552-467363aef4a9
 	google.golang.org/grpc v1.47.0
 )
-
-require github.com/satimoto/go-lsp v0.2.1-0.20221115190646-b981e98c7ba4 // indirect
 
 require (
 	github.com/99designs/gqlgen v0.17.2 // indirect
