@@ -17,13 +17,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, credential db.
 		publish := connectorDto.TariffID != nil
 
 		if !publish {
-			getPartyByCredentialParams := db.GetPartyByCredentialParams{
-				CredentialID: credential.ID,
-				CountryCode:  dbUtil.DefaultString(location.CountryCode, credential.CountryCode),
-				PartyID:      dbUtil.DefaultString(location.PartyID, credential.PartyID),
-			}
-
-			if party, err := r.PartyRepository.GetPartyByCredential(ctx, getPartyByCredentialParams); err == nil {
+			if party, err := r.PartyResolver.GetParty(ctx, credential, dbUtil.NilString(location.CountryCode), dbUtil.NilString(location.PartyID)); err == nil {
 				publish = party.PublishNullTariff
 			}
 		}
