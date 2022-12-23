@@ -12,7 +12,7 @@ func (s *OcpiService) UpdateTokenAuthorization(ctx context.Context, in *ocpirpc.
 }
 
 func (s *OcpiService) getTokenAuthorizationClient() ocpirpc.TokenAuthorizationServiceClient {
-	if s.tokenClient == nil {
+	if s.tokenAuthorizationClient == nil {
 		client := ocpirpc.NewTokenAuthorizationServiceClient(s.clientConn)
 		s.tokenAuthorizationClient = &client
 	}
