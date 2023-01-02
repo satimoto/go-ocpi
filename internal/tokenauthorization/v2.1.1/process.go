@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	secp "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
@@ -40,7 +39,6 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 
 	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
 	tokenAuthorizationParams.Authorized = token.Type == db.TokenTypeOTHER
-	tokenAuthorizationParams.SigningKey = r.createTokenAuthorizationSigningKey()
 
 	if locationReferencesDto != nil {
 		tokenAuthorizationParams.LocationID = util.SqlNullString(locationReferencesDto.LocationID)
@@ -148,19 +146,6 @@ func (r *TokenAuthorizationResolver) createTokenAuthorizationRelations(ctx conte
 			}
 		}
 	}
-}
-
-func (r *TokenAuthorizationResolver) createTokenAuthorizationSigningKey() []byte {
-	var privateKey *secp.PrivateKey
-	var err error
-
-	for {
-		if privateKey, err = secp.GeneratePrivateKey(); err == nil {
-			break
-		}
-	}
-
-	return privateKey.Serialize()
 }
 
 func (r *TokenAuthorizationResolver) waitForEvsesStatus(credential db.Credential, token db.Token, tokenAuthorization db.TokenAuthorization, locationReferencesDto *dto.LocationReferencesDto, evseStatus db.EvseStatus, timeoutSeconds int) {
