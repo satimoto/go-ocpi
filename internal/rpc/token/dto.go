@@ -1,23 +1,33 @@
 package token
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
-	token "github.com/satimoto/go-ocpi/internal/token/v2.1.1"
+	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	"github.com/satimoto/go-ocpi/internal/util"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
-func NewCreateTokenDto(input *ocpirpc.CreateTokenRequest) *token.TokenDto {
-	return &token.TokenDto{
-		Uid:         util.NilString(uuid.NewString()),
+func NewCreateTokenDto(input *ocpirpc.CreateTokenRequest) *dto.TokenDto {
+	lastUpdated := util.NewTimeUTC()
+
+	return &dto.TokenDto{
+		Uid:         NilUid(input.Uid),
 		Type:        NilTokenType(input.Type),
-		Valid:       util.NilBool(true),
+		Valid:       dbUtil.NilBool(true),
 		Whitelist:   NilTokenWhitelistType(input.Whitelist),
-		LastUpdated: util.NilTime(time.Now()),
+		LastUpdated: ocpitype.NilOcpiTime(&lastUpdated),
 	}
+}
+
+func NilUid(uid string) *string {
+	if len(uid) > 0 {
+		return &uid
+	}
+
+	return dbUtil.NilString(uuid.NewString())
 }
 
 func NilTokenType(i interface{}) *db.TokenType {

@@ -3,21 +3,22 @@ package session
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-func NewCreateSessionParams(dto *SessionDto) db.CreateSessionParams {
+func NewCreateSessionParams(sessionDto *dto.SessionDto) db.CreateSessionParams {
 	return db.CreateSessionParams{
-		Uid:             *dto.ID,
-		AuthorizationID: util.SqlNullString(dto.AuthorizationID),
-		StartDatetime:   *dto.StartDatetime,
-		EndDatetime:     util.SqlNullTime(dto.EndDatetime),
-		Kwh:             *dto.Kwh,
-		AuthID:          *dto.AuthID,
-		AuthMethod:      *dto.AuthMethod,
-		MeterID:         util.SqlNullString(dto.MeterID),
-		Currency:        *dto.Currency,
-		TotalCost:       util.SqlNullFloat64(dto.TotalCost),
-		Status:          *dto.Status,
-		LastUpdated:     *dto.LastUpdated,
+		Uid:             *sessionDto.ID,
+		AuthorizationID: util.SqlNullString(sessionDto.AuthorizationID),
+		StartDatetime:   sessionDto.StartDatetime.Time(),
+		EndDatetime:     util.SqlNullTime(sessionDto.EndDatetime),
+		Kwh:             *sessionDto.Kwh,
+		AuthID:          *sessionDto.AuthID,
+		AuthMethod:      *sessionDto.AuthMethod,
+		MeterID:         util.SqlNullString(sessionDto.MeterID),
+		Currency:        *sessionDto.Currency,
+		TotalCost:       util.SqlNullFloat64(sessionDto.TotalCost),
+		Status:          *sessionDto.Status,
+		LastUpdated:     sessionDto.LastUpdated.Time(),
 	}
 }

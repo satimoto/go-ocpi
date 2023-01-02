@@ -3,23 +3,24 @@ package tariffrestriction
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 )
 
-func NewCreateTariffRestrictionParams(dto *TariffRestrictionDto) db.CreateTariffRestrictionParams {
+func NewCreateTariffRestrictionParams(tariffRestrictionDto *coreDto.TariffRestrictionDto) db.CreateTariffRestrictionParams {
 	return db.CreateTariffRestrictionParams{
-		StartTime:  *dto.StartTime,
-		EndTime:    *dto.EndTime,
-		StartTime2: util.SqlNullString(dto.StartTime2),
-		EndTime2:   util.SqlNullString(dto.EndTime2),
+		StartTime:  *tariffRestrictionDto.StartTime,
+		EndTime:    *tariffRestrictionDto.EndTime,
+		StartTime2: util.SqlNullString(tariffRestrictionDto.StartTime2),
+		EndTime2:   util.SqlNullString(tariffRestrictionDto.EndTime2),
 	}
 }
 
-func NewUpdateTariffRestrictionParams(id int64, dto *TariffRestrictionDto) db.UpdateTariffRestrictionParams {
+func NewUpdateTariffRestrictionParams(id int64, tariffRestrictionDto *coreDto.TariffRestrictionDto) db.UpdateTariffRestrictionParams {
 	return db.UpdateTariffRestrictionParams{
 		ID:         id,
-		StartTime:  *dto.StartTime,
-		EndTime:    *dto.EndTime,
-		StartTime2: util.SqlNullString(dto.StartTime2),
-		EndTime2:   util.SqlNullString(dto.EndTime2),
+		StartTime:  *tariffRestrictionDto.StartTime,
+		EndTime:    *tariffRestrictionDto.EndTime,
+		StartTime2: util.SqlNullString(tariffRestrictionDto.StartTime2),
+		EndTime2:   util.SqlNullString(tariffRestrictionDto.EndTime2),
 	}
 }

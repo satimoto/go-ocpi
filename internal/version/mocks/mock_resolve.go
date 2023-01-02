@@ -7,13 +7,9 @@ import (
 	"github.com/satimoto/go-ocpi/internal/version"
 )
 
-func NewResolver(repositoryService *mocks.MockRepositoryService) *version.VersionResolver {
-	return NewResolverWithServices(repositoryService, transportation.NewOcpiRequester())
-}
-
-func NewResolverWithServices(repositoryService *mocks.MockRepositoryService, ocpiRequester *transportation.OcpiRequester) *version.VersionResolver {
+func NewResolver(repositoryService *mocks.MockRepositoryService, ocpiService *transportation.OcpiService) *version.VersionResolver {
 	return &version.VersionResolver{
-		Repository:    versionMocks.NewRepository(repositoryService),
-		OcpiRequester: ocpiRequester,
+		Repository:  versionMocks.NewRepository(repositoryService),
+		OcpiService: ocpiService,
 	}
 }

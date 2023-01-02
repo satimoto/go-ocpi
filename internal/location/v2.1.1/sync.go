@@ -10,25 +10,28 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreLocation "github.com/satimoto/go-ocpi/internal/location"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string) {
+func (r *LocationResolver) SyncByIdentifier(ctx context.Context, credential db.Credential, fullSync bool, lastUpdated *time.Time, countryCode *string, partyID *string) {
+	log.Printf("Sync locations Url=%v LastUpdated=%v CountryCode=%v PartyID=%v",
+		credential.Url, lastUpdated, util.DefaultString(countryCode, ""), util.DefaultString(partyID, ""))
 	limit, offset, retries := 500, 0, 0
-	identifier := "locations"
 
-	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, identifier, credential.CountryCode, credential.PartyID)
+	versionEndpoint, err := r.VersionDetailResolver.GetVersionEndpointByIdentity(ctx, coreLocation.IDENTIFIER, credential.CountryCode, credential.PartyID)
 
 	if err != nil {
-		util.LogOnError("OCPI125", "Error retrieving version endpoint", err)
-		log.Printf("OCPI125: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, identifier)
+		metrics.RecordError("OCPI125", "Error retrieving version endpoint", err)
+		log.Printf("OCPI125: CountryCode=%v, PartyID=%v, Identifier=%v", credential.CountryCode, credential.PartyID, coreLocation.IDENTIFIER)
 		return
 	}
 
 	requestUrl, err := url.Parse(versionEndpoint.Url)
 
 	if err != nil {
-		util.LogOnError("OCPI126", "Error parsing url", err)
+		metrics.RecordError("OCPI126", "Error parsing url", err)
 		log.Printf("OCPI126: Url=%v", versionEndpoint.Url)
 		return
 	}
@@ -36,8 +39,12 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 	header := transportation.NewOcpiRequestHeader(&credential.ClientToken.String, countryCode, partyID)
 	query := requestUrl.Query()
 
-	if location, err := r.GetLastLocationByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
-		query.Set("date_from", location.LastUpdated.Format(time.RFC3339))
+	if !fullSync {
+		if lastUpdated != nil {
+			query.Set("date_from", lastUpdated.UTC().Format(time.RFC3339))
+		} else if location, err := r.GetLastLocationByIdentity(ctx, &credential.ID, countryCode, partyID); err == nil {
+			query.Set("date_from", location.LastUpdated.Format(time.RFC3339))
+		}
 	}
 
 	for {
@@ -45,10 +52,10 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 		query.Set("offset", fmt.Sprintf("%d", offset))
 		requestUrl.RawQuery = query.Encode()
 
-		response, err := r.OcpiRequester.Do(http.MethodGet, requestUrl.String(), header, nil)
+		response, err := r.OcpiService.Do(http.MethodGet, requestUrl.String(), header, nil)
 
 		if err != nil {
-			util.LogOnError("OCPI127", "Error making request", err)
+			metrics.RecordError("OCPI127", "Error making request", err)
 			log.Printf("OCPI127: Method=%v, Url=%v, Header=%#v", http.MethodGet, requestUrl.String(), header)
 			retries++
 
@@ -63,7 +70,7 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 		defer response.Body.Close()
 
 		if err != nil {
-			util.LogOnError("OCPI128", "Error unmarshalling response", err)
+			metrics.RecordError("OCPI128", "Error unmarshaling response", err)
 			util.LogHttpResponse("OCPI128", requestUrl.String(), response, true)
 			break
 		}
@@ -71,7 +78,7 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 		limit = transportation.GetXLimitHeader(response, limit)
 
 		if dto.StatusCode != transportation.STATUS_CODE_OK {
-			util.LogOnError("OCPI129", "Error response failure", err)
+			metrics.RecordError("OCPI129", "Error response failure", err)
 			util.LogHttpRequest("OCPI129", versionEndpoint.Url, response.Request, true)
 			util.LogHttpResponse("OCPI129", requestUrl.String(), response, true)
 			log.Printf("OCPI129: StatusCode=%v, StatusMessage=%v", dto.StatusCode, dto.StatusMessage)
@@ -81,10 +88,13 @@ func (r *LocationResolver) PullLocationsByIdentifier(ctx context.Context, creden
 		retries = 0
 
 		if dto.StatusCode == transportation.STATUS_CODE_OK {
+			count := len(dto.Data)
+
+			log.Printf("Page limit=%v offset=%v count=%v", limit, offset, count)
 			r.ReplaceLocations(ctx, credential, dto.Data)
 			offset += limit
 
-			if len(dto.Data) < limit {
+			if limit == 0 || count == 0 || count < limit {
 				break
 			}
 		}

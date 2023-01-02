@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestLocationUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		dto := location.LocationDto{}
+		locationDto := dto.LocationDto{}
 		response := []byte(`{
 			"id": null,
 			"type": null,
@@ -19,24 +19,18 @@ func TestLocationUnmarshal(t *testing.T) {
 			"postal_code": null,
 			"country": null,
 			"coordinates": null,
-			"related_locations": null,
-			"evses": null,
-			"directions": null,
-			"facilities": null,
 			"charging_when_closed": null,
-			"images": null,
-			"energy_mix": null,
 			"last_updated": null
 		}`)
 
-		json.Unmarshal([]byte(`{}`), &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal([]byte(`{}`), &locationDto)
+		responseJson, _ := json.Marshal(locationDto)
 
 		mocks.CompareJson(t, responseJson, response)
 	})
 
 	t.Run("With Evse", func(t *testing.T) {
-		dto := location.LocationDto{}
+		locationDto := dto.LocationDto{}
 		request := []byte(`{
 			"id": "LOC1",
 			"type": "ON_STREET",
@@ -46,7 +40,6 @@ func TestLocationUnmarshal(t *testing.T) {
 			"postal_code": "9000",
 			"country": "BEL",
 			"coordinates": null,
-			"related_locations": [],
 			"evses": [{
 				"uid": "3257",
 				"evse_id": "BE-BEC-E041503002",
@@ -85,30 +78,23 @@ func TestLocationUnmarshal(t *testing.T) {
 				}],
 				"physical_reference": "2",
 				"floor_level": "-2",
-				"directions": [],
-				"parking_restrictions": [],
-				"images": [],
 				"last_updated": "2015-06-29T20:39:09Z"
 			}],
-			"directions": [],
 			"operator": {
 				"name": "BeCharged"
 			},
-			"facilities": [],
 			"charging_when_closed": false,
-			"images": [],
-			"energy_mix": null,
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &locationDto)
+		responseJson, _ := json.Marshal(locationDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Directions, Facilities", func(t *testing.T) {
-		dto := location.LocationDto{}
+		locationDto := dto.LocationDto{}
 		request := []byte(`{
 			"id": "LOC2",
 			"type": "UNDERGROUND_GARAGE",
@@ -118,8 +104,6 @@ func TestLocationUnmarshal(t *testing.T) {
 			"postal_code": "9000",
 			"country": "BEL",
 			"coordinates": null,
-			"related_locations": [],
-			"evses": [],
 			"directions": [{
 				"text": "Go Left",
 				"language": "en"
@@ -129,19 +113,17 @@ func TestLocationUnmarshal(t *testing.T) {
 			}],
 			"facilities": ["BUS_STOP", "TAXI_STAND", "TRAIN_STATION"],
 			"charging_when_closed": true,
-			"images": [],
-			"energy_mix": null,
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &locationDto)
+		responseJson, _ := json.Marshal(locationDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With Coordinates, Related locations, Images", func(t *testing.T) {
-		dto := location.LocationDto{}
+		locationDto := dto.LocationDto{}
 		request := []byte(`{
 			"id": "LOC2",
 			"type": "PARKING_LOT",
@@ -165,9 +147,6 @@ func TestLocationUnmarshal(t *testing.T) {
 					"text": "Bloemenspeciaalzaak Bergmans (Store)"
 				}
 			}],
-			"evses": [],
-			"directions": [],
-			"facilities": [],
 			"charging_when_closed": true,
 			"images": [{
 				"url": "https://business.com/logo.png",
@@ -181,12 +160,11 @@ func TestLocationUnmarshal(t *testing.T) {
 				"width": 180,
 				"height": 180
 			}],
-			"energy_mix": null,
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &locationDto)
+		responseJson, _ := json.Marshal(locationDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

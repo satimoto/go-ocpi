@@ -9,6 +9,8 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	tariffMocks "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
@@ -20,7 +22,11 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mockServices)
 
 		loc := db.Tariff{}
 
@@ -31,14 +37,18 @@ func TestCreateTariffDto(t *testing.T) {
 			"id": "",
 			"currency": "",
 			"elements": [],
-			"last_updated": "0001-01-01T00:00:00Z"
+			"last_updated": null
 		}`))
 	})
 
 	t.Run("With alt text and element", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mockServices)
 
 		tariffAltTexts := []db.DisplayText{}
 		tariffAltTexts = append(tariffAltTexts, db.DisplayText{
@@ -102,7 +112,11 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With element and rounding", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mockServices)
 
 		priceRound := db.PriceComponentRounding{
 			ID:          12,
@@ -158,7 +172,11 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With multiple elements", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mockServices)
 
 		// 1
 		priceComponents1 := []db.PriceComponent{}
@@ -227,7 +245,11 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With energy mix", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mockServices)
 
 		energySources := []db.EnergySource{}
 		energySources = append(energySources, db.EnergySource{
@@ -321,7 +343,11 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With restriction", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mockServices)
 
 		restriction := db.TariffRestriction{
 			ID:        1,
@@ -357,7 +383,11 @@ func TestCreateTariffDto(t *testing.T) {
 	t.Run("With restriction", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		tariffResolver := tariffMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tariffResolver := tariffMocks.NewResolver(mockRepository, mockServices)
 
 		restriction := db.TariffRestriction{
 			ID:         1,

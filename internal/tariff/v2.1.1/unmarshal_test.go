@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestTariffUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		dto := tariff.TariffDto{}
+		tariffDto := dto.TariffDto{}
 		response := []byte(`{
 			"id": null,
 			"currency": null,
@@ -18,14 +18,14 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": null
 		}`)
 
-		json.Unmarshal([]byte(`{}`), &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal([]byte(`{}`), &tariffDto)
+		responseJson, _ := json.Marshal(tariffDto)
 
 		mocks.CompareJson(t, responseJson, response)
 	})
 
 	t.Run("Base data", func(t *testing.T) {
-		dto := tariff.TariffDto{}
+		tariffDto := dto.TariffDto{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -34,14 +34,14 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &tariffDto)
+		responseJson, _ := json.Marshal(tariffDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With alt text and element", func(t *testing.T) {
-		dto := tariff.TariffDto{}
+		tariffDto := dto.TariffDto{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -60,14 +60,14 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &tariffDto)
+		responseJson, _ := json.Marshal(tariffDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With multiple elements", func(t *testing.T) {
-		dto := tariff.TariffDto{}
+		tariffDto := dto.TariffDto{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -133,14 +133,14 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &tariffDto)
+		responseJson, _ := json.Marshal(tariffDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("With energy mix", func(t *testing.T) {
-		dto := tariff.TariffDto{}
+		tariffDto := dto.TariffDto{}
 		request := []byte(`{
 			"id": "TARIFF01",
 			"currency": "EUR",
@@ -177,8 +177,8 @@ func TestTariffUnmarshal(t *testing.T) {
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &tariffDto)
+		responseJson, _ := json.Marshal(tariffDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

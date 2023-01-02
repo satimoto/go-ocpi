@@ -9,10 +9,12 @@ import (
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/geom"
 	"github.com/satimoto/go-datastore/pkg/util"
-	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
-	"github.com/satimoto/go-ocpi/internal/geolocation"
-	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	locationMocks "github.com/satimoto/go-ocpi/internal/location/v2.1.1/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	"github.com/satimoto/go-ocpi/internal/ocpitype"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
@@ -23,11 +25,15 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Create Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 
-		dto := location.LocationDto{
+		locationDto := dto.LocationDto{
 			ID:         util.NilString("LOC1"),
 			Type:       &locationTypeONSTREET,
 			Name:       util.NilString("Gent Zuid"),
@@ -35,12 +41,12 @@ func TestReplaceLocation(t *testing.T) {
 			City:       util.NilString("Gent"),
 			PostalCode: util.NilString("9000"),
 			Country:    util.NilString("BEL"),
-			Coordinates: &geolocation.GeoLocationDto{
+			Coordinates: &coreDto.GeoLocationDto{
 				Latitude:  "31.3434",
 				Longitude: "-62.6996",
 			},
 			ChargingWhenClosed: util.NilBool(true),
-			LastUpdated:        util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated:        ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		}
 
 		cred := db.Credential{
@@ -51,7 +57,7 @@ func TestReplaceLocation(t *testing.T) {
 
 		countryCode := "DE"
 		partyID := "ABC"
-		locationResolver.ReplaceLocationByIdentifier(ctx, cred, &countryCode, &partyID, *dto.ID, &dto)
+		locationResolver.ReplaceLocationByIdentifier(ctx, cred, &countryCode, &partyID, *locationDto.ID, &locationDto)
 
 		params, _ := mockRepository.GetCreateLocationMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -100,7 +106,11 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Update Location", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := geom.NewPoint("31.3434", "-62.6996")
@@ -126,7 +136,7 @@ func TestReplaceLocation(t *testing.T) {
 
 		locationTypePARKINGGARAGE := db.LocationTypePARKINGGARAGE
 
-		dto := location.LocationDto{
+		locationDto := dto.LocationDto{
 			Type: &locationTypePARKINGGARAGE,
 		}
 
@@ -138,7 +148,7 @@ func TestReplaceLocation(t *testing.T) {
 
 		countryCode := "DE"
 		partyID := "ABC"
-		locationResolver.ReplaceLocationByIdentifier(ctx, cred, &countryCode, &partyID, "LOC1", &dto)
+		locationResolver.ReplaceLocationByIdentifier(ctx, cred, &countryCode, &partyID, "LOC1", &locationDto)
 
 		params, _ := mockRepository.GetUpdateLocationByUidMockData()
 		paramsJson, _ := json.Marshal(params)
@@ -176,7 +186,11 @@ func TestReplaceLocation(t *testing.T) {
 	t.Run("Update Location with Evses", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		locationTypeONSTREET := db.LocationTypeONSTREET
 		point, _ := geom.NewPoint("31.3434", "-62.6996")
@@ -202,17 +216,17 @@ func TestReplaceLocation(t *testing.T) {
 
 		evseStatusRESERVED := db.EvseStatusRESERVED
 
-		evsesDto := []*evse.EvseDto{}
-		evsesDto = append(evsesDto, &evse.EvseDto{
+		evsesDto := []*dto.EvseDto{}
+		evsesDto = append(evsesDto, &dto.EvseDto{
 			Uid:               util.NilString("3257"),
 			EvseID:            util.NilString("BE-BEC-E04150300-8"),
 			Status:            &evseStatusRESERVED,
 			PhysicalReference: util.NilString("2"),
 			FloorLevel:        util.NilString("-2"),
-			LastUpdated:       util.ParseTime("2015-03-16T10:10:02Z", nil),
+			LastUpdated:       ocpitype.ParseOcpiTime("2015-03-16T10:10:02Z", nil),
 		})
 
-		dto := location.LocationDto{
+		locationDto := dto.LocationDto{
 			Evses: evsesDto,
 		}
 
@@ -222,7 +236,7 @@ func TestReplaceLocation(t *testing.T) {
 			PartyID:     "GER",
 		}
 
-		locationResolver.ReplaceLocation(ctx, cred, "LOC1", &dto)
+		locationResolver.ReplaceLocation(ctx, cred, "LOC1", &locationDto)
 
 		params, _ := mockRepository.GetUpdateLocationByUidMockData()
 		paramsJson, _ := json.Marshal(params)

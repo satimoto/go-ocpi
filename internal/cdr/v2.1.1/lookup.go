@@ -8,11 +8,11 @@ import (
 
 func (r *CdrResolver) GetLastCdrByIdentity(ctx context.Context, credentialID *int64, countryCode *string, partyID *string) (db.Cdr, error) {
 	params := db.GetCdrByLastUpdatedParams{
-		CredentalID: -1,
+		CredentialID: -1,
 	}
 
 	if credentialID != nil {
-		params.CredentalID = *credentialID
+		params.CredentialID = *credentialID
 	}
 
 	if countryCode != nil {

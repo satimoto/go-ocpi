@@ -9,6 +9,8 @@ import (
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
 	cdrMocks "github.com/satimoto/go-ocpi/internal/cdr/v2.1.1/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
@@ -19,7 +21,11 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		cdrResolver := cdrMocks.NewResolver(mockRepository, mockServices)
 
 		sess := db.Cdr{
 			ID: 1,
@@ -30,7 +36,7 @@ func TestCreateCdrDto(t *testing.T) {
 
 		mocks.CompareJson(t, responseJson, []byte(`{
 			"id": "",
-			"start_date_time": "0001-01-01T00:00:00Z",
+			"start_date_time": null,
 			"auth_id": "",
 			"auth_method": "",
 			"location": null,
@@ -40,14 +46,18 @@ func TestCreateCdrDto(t *testing.T) {
 			"total_cost": 0,
 			"total_energy": 0,
 			"total_time": 0,
-			"last_updated": "0001-01-01T00:00:00Z"
+			"last_updated": null
 		}`))
 	})
 
 	t.Run("Simple", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		cdrResolver := cdrMocks.NewResolver(mockRepository, mockServices)
 
 		c := db.Cdr{
 			ID:            1,
@@ -86,7 +96,11 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("With charge periods", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		cdrResolver := cdrMocks.NewResolver(mockRepository, mockServices)
 
 		chargingPeriods := []db.ChargingPeriod{}
 		chargingPeriods = append(chargingPeriods, db.ChargingPeriod{
@@ -153,7 +167,11 @@ func TestCreateCdrDto(t *testing.T) {
 	t.Run("With charge periods", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		cdrResolver := cdrMocks.NewResolver(mockRepository, mockServices)
 
 		calibration := db.Calibration{
 			EncodingMethod: "Alfen Eichrecht",

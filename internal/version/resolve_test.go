@@ -26,7 +26,7 @@ func TestPullVersions(t *testing.T) {
 	t.Run("Success request", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolver(mockRepository, transportationMocks.NewOcpiService(mockHTTPRequester))
 
 		bodyBytes := `{
 			"data": [{

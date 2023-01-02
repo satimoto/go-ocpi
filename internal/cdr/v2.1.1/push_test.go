@@ -10,13 +10,15 @@ import (
 	"os"
 	"testing"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/nsf/jsondiff"
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
 	cdr "github.com/satimoto/go-ocpi/internal/cdr/v2.1.1"
 	cdrMocks "github.com/satimoto/go-ocpi/internal/cdr/v2.1.1/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
@@ -47,7 +49,11 @@ func TestCdrRequest(t *testing.T) {
 	t.Run("Invalid route", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		cdrResolver := cdrMocks.NewResolver(mockRepository, mockServices)
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -67,7 +73,11 @@ func TestCdrRequest(t *testing.T) {
 	t.Run("Get cdr 1", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		cdrResolver := cdrMocks.NewResolver(mockRepository, mockServices)
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -118,7 +128,11 @@ func TestCdrRequest(t *testing.T) {
 	t.Run("Get cdr 2", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		cdrResolver := cdrMocks.NewResolver(mockRepository, mockServices)
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -197,7 +211,11 @@ func TestCdrRequest(t *testing.T) {
 	t.Run("Post cdr", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		cdrResolver := cdrMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		cdrResolver := cdrMocks.NewResolver(mockRepository, mockServices)
 		cdrRoutes := setupRoutes(cdrResolver)
 		responseRecorder := httptest.NewRecorder()
 
@@ -247,7 +265,7 @@ func TestCdrRequest(t *testing.T) {
                     }],
                     "last_updated": "2022-04-07T03:09:30Z",
                     "physical_reference": "AL106",
-                    "evse_id": "NL*EVN*E30332*9785",
+                    "evse_id": "NL*EVN*E30332*978",
                     "parking_restrictions": [
                         "EV_ONLY"
                     ]

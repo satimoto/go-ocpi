@@ -3,20 +3,22 @@ package location
 import (
 	"encoding/json"
 	"io"
+
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 )
 
-func (r *LocationResolver) UnmarshalPushDto(body io.ReadCloser) (*LocationDto, error) {
-	dto := LocationDto{}
+func (r *LocationResolver) UnmarshalPushDto(body io.ReadCloser) (*dto.LocationDto, error) {
+	locationDto := dto.LocationDto{}
 
-	if err := json.NewDecoder(body).Decode(&dto); err != nil {
+	if err := json.NewDecoder(body).Decode(&locationDto); err != nil {
 		return nil, err
 	}
 
-	return &dto, nil
+	return &locationDto, nil
 }
 
-func (r *LocationResolver) UnmarshalPullDto(body io.ReadCloser) (*OcpiLocationsDto, error) {
-	response := OcpiLocationsDto{}
+func (r *LocationResolver) UnmarshalPullDto(body io.ReadCloser) (*dto.OcpiLocationsDto, error) {
+	response := dto.OcpiLocationsDto{}
 
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		return nil, err

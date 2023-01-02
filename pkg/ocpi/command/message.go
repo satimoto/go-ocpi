@@ -1,6 +1,7 @@
 package command
 
 import (
+	"encoding/hex"
 	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
@@ -18,11 +19,12 @@ func NewCommandReservationResponse(command db.CommandReservation) *ocpirpc.Reser
 	}
 }
 
-func NewCommandStartResponse(command db.CommandStart) *ocpirpc.StartSessionResponse {
+func NewCommandStartResponse(command db.CommandStart, verificationKey []byte) *ocpirpc.StartSessionResponse {
 	return &ocpirpc.StartSessionResponse{
 		Id:              command.ID,
 		Status:          string(command.Status),
 		AuthorizationId: command.AuthorizationID.String,
+		VerificationKey: hex.EncodeToString(verificationKey),
 		LocationUid:     command.LocationID,
 		EvseUid:         command.EvseUid.String,
 	}

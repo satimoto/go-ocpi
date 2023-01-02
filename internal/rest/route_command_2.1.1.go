@@ -1,13 +1,18 @@
 package rest
 
 import (
+	"time"
+
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	command "github.com/satimoto/go-ocpi/internal/command/v2.1.1"
 )
 
 func (rs *RestService) mountCommands() *chi.Mux {
-	commandResolver := command.NewResolver(rs.RepositoryService)
+	commandResolver := command.NewResolver(rs.RepositoryService, rs.ServiceResolver)
+
 	router := chi.NewRouter()
+	router.Use(middleware.Timeout(30 * time.Second))
 	router.Use(rs.CredentialContextByToken)
 
 	router.Route("/RESERVE_NOW/{command_id}", func(commandRouter chi.Router) {

@@ -5,10 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
+	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
@@ -18,7 +22,7 @@ func (r *ConnectorResolver) GetConnector(rw http.ResponseWriter, request *http.R
 	dto := r.CreateConnectorDto(ctx, connector)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
-		util.LogOnError("OCPI081", "Error rendering response", err)
+		metrics.RecordError("OCPI081", "Error rendering response", err)
 		util.LogHttpRequest("OCPI081", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
@@ -27,19 +31,21 @@ func (r *ConnectorResolver) GetConnector(rw http.ResponseWriter, request *http.R
 
 func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
+	cred := middleware.GetCredential(ctx)
+	location := ctx.Value("location").(db.Location)
 	evse := ctx.Value("evse").(db.Evse)
 	uid := chi.URLParam(request, "connector_id")
-	dto := ConnectorDto{}
+	connectorDto := dto.ConnectorDto{}
 
-	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
-		util.LogOnError("OCPI082", "Error unmarshalling request", err)
+	if err := json.NewDecoder(request.Body).Decode(&connectorDto); err != nil {
+		metrics.RecordError("OCPI082", "Error unmarshaling request", err)
 		util.LogHttpRequest("OCPI082", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 		return
 	}
 
-	connector := r.ReplaceConnector(ctx, evse, uid, &dto)
+	connector := r.ReplaceConnector(ctx, *cred, location, evse, uid, &connectorDto)
 
 	if connector != nil {
 		updateEvseLastUpdatedParams := db.UpdateEvseLastUpdatedParams{
@@ -49,21 +55,20 @@ func (r *ConnectorResolver) UpdateConnector(rw http.ResponseWriter, request *htt
 		err := r.Repository.UpdateEvseLastUpdated(ctx, updateEvseLastUpdatedParams)
 
 		if err != nil {
-			util.LogOnError("OCPI083", "Error updating evse", err)
+			metrics.RecordError("OCPI083", "Error updating evse", err)
 			log.Printf("OCPI083: Params=%#v", updateEvseLastUpdatedParams)
 
 			render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 			return
 		}
 
-		updateLocationLastUpdatedParams := db.UpdateLocationLastUpdatedParams{
-			ID:          evse.LocationID,
-			LastUpdated: connector.LastUpdated,
-		}
+		updateLocationLastUpdatedParams := param.NewUpdateLocationLastUpdatedParams(location)
+		updateEvseLastUpdatedParams.LastUpdated = connector.LastUpdated
+
 		err = r.Repository.UpdateLocationLastUpdated(ctx, updateLocationLastUpdatedParams)
 
 		if err != nil {
-			util.LogOnError("OCPI084", "Error updating location", err)
+			metrics.RecordError("OCPI084", "Error updating location", err)
 			log.Printf("OCPI084: Params=%#v", updateEvseLastUpdatedParams)
 
 			render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))

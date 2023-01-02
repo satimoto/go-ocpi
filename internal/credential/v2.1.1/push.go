@@ -1,40 +1,39 @@
 package credential
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/render"
-	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
-	"github.com/satimoto/go-datastore/pkg/util"
+	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/middleware"
 	"github.com/satimoto/go-ocpi/internal/transportation"
+	"github.com/satimoto/go-ocpi/internal/util"
 )
 
 func (r *CredentialResolver) DeleteCredential(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
-	cred, err := middleware.GetCredentialByToken(r.Repository, ctx, request)
+	cred := middleware.GetCredential(ctx)
 
-	if err != nil || !cred.ClientToken.Valid {
-		util.LogOnError("OCPI085", "Error retrieving credential", err)
-		util.LogHttpRequest("OCPI085", request.URL.String(), request, true)
+	if !cred.ClientToken.Valid {
+		log.Print("OCPI085", "Error credentials are not registered")
+		dbUtil.LogHttpRequest("OCPI085", request.URL.String(), request, true)
 
 		http.Error(rw, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 
-	updateCredentialParams := param.NewUpdateCredentialParams(cred)
-	updateCredentialParams.ClientToken = util.SqlNullString(nil)
-	updateCredentialParams.LastUpdated = time.Now()
+	updateCredentialParams := param.NewUpdateCredentialParams(*cred)
+	updateCredentialParams.ClientToken = dbUtil.SqlNullString(nil)
+	updateCredentialParams.LastUpdated = util.NewTimeUTC()
 
-	cred, err = r.Repository.UpdateCredential(ctx, updateCredentialParams)
+	_, err := r.Repository.UpdateCredential(ctx, updateCredentialParams)
 
 	if err != nil {
 		log.Print("OCPI086", "Error updating credential")
-		util.LogHttpRequest("OCPI086", request.URL.String(), request, true)
+		dbUtil.LogHttpRequest("OCPI086", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 		return
@@ -45,12 +44,12 @@ func (r *CredentialResolver) DeleteCredential(rw http.ResponseWriter, request *h
 
 func (r *CredentialResolver) GetCredential(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
-	cred := ctx.Value("credential").(db.Credential)
-	dto := r.CreateCredentialDto(ctx, cred)
+	cred := middleware.GetCredential(ctx)
+	dto := r.CreateCredentialDto(ctx, *cred)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
-		util.LogOnError("OCPI087", "Error rendering response", err)
-		util.LogHttpRequest("OCPI087", request.URL.String(), request, true)
+		metrics.RecordError("OCPI087", "Error rendering response", err)
+		dbUtil.LogHttpRequest("OCPI087", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 	}
@@ -58,36 +57,45 @@ func (r *CredentialResolver) GetCredential(rw http.ResponseWriter, request *http
 
 func (r *CredentialResolver) UpdateCredential(rw http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
-	cred, err := middleware.GetCredentialByToken(r.Repository, ctx, request)
-	dto := CredentialDto{}
+	cred := middleware.GetCredential(ctx)
 
-	if err != nil || !cred.ClientToken.Valid {
-		util.LogOnError("OCPI088", "Error retrieving credential", err)
-		util.LogHttpRequest("OCPI088", request.URL.String(), request, true)
+	if request.Method == http.MethodPost && cred.ClientToken.Valid {
+		log.Printf("OCPI088: Error credentials are registered")
+		dbUtil.LogHttpRequest("OCPI088", request.URL.String(), request, true)
 
 		http.Error(rw, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 
-	if err := json.NewDecoder(request.Body).Decode(&dto); err != nil {
-		util.LogOnError("OCPI089", "Error unmarshalling request", err)
-		util.LogHttpRequest("OCPI089", request.URL.String(), request, true)
+	if request.Method == http.MethodPut && !cred.ClientToken.Valid {
+		log.Printf("OCPI019: Error credentials are not registered")
+		dbUtil.LogHttpRequest("OCPI019", request.URL.String(), request, true)
+
+		http.Error(rw, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+
+	dto, err := r.UnmarshalPushDto(request.Body)
+
+	if err != nil {
+		metrics.RecordError("OCPI089", "Error unmarshaling request", err)
+		dbUtil.LogHttpRequest("OCPI089", request.URL.String(), request, true)
 
 		render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
 		return
 	}
 
-	c, err := r.ReplaceCredential(ctx, cred, &dto)
+	c, err := r.ReplaceCredential(ctx, *cred, dto)
 
 	if err != nil {
-		util.LogOnError("OCPI090", "Error replacing credential", err)
-		util.LogHttpRequest("OCPI090", request.URL.String(), request, true)
+		metrics.RecordError("OCPI090", "Error replacing credential", err)
+		dbUtil.LogHttpRequest("OCPI090", request.URL.String(), request, true)
 
 		errResponse := err.(*transportation.OcpiResponse)
 		render.Render(rw, request, errResponse)
 		return
 	}
 
-	credentialDto := r.CreateCredentialDto(ctx, *c)
-	render.Render(rw, request, transportation.OcpiSuccess(credentialDto))
+	createCredentialDto := r.CreateCredentialDto(ctx, *c)
+	render.Render(rw, request, transportation.OcpiSuccess(createCredentialDto))
 }

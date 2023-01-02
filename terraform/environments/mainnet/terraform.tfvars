@@ -18,6 +18,8 @@ service_desired_count = 1
 
 service_container_port = 9001
 
+service_metric_port = 9101
+
 task_network_mode = "awsvpc"
 
 task_cpu = 256
@@ -36,10 +38,16 @@ subdomain_name = "ocpi"
 
 env_country_code = "DE"
 
-env_party_id = "SAT"
+env_party_id = "BTC"
 
 env_issuer = "Satimoto"
 
+env_fcm_api_key = "AAAA3ZJBhzw:APA91bHCxjgYChy0QnDfUihevkVyni_klXxH5GkVLdHAdcjgnWbSAxnpeP9b0GmMiUTPbStB8uAzNw147CPUWbbBlCMUDiFOCMp9Mqp9YGNZhYHTiv0AMSV3BAAmWn6_vQraENT4CTQ8"
+
 env_rpc_port = 50000
 
+env_record_evse_status_periods = false
+
 env_shutdown_timeout = 20
+
+env_token_authorization_timeout = 5

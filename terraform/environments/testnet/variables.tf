@@ -38,6 +38,10 @@ variable "service_container_port" {
   description = "The port on the container to associate with the load balancer"
 }
 
+variable "service_metric_port" {
+  description = "The port to associate with metric collection"
+}
+
 variable "task_network_mode" {
   description = "The Docker networking mode to use for the containers in the task"
 }
@@ -82,10 +86,22 @@ variable "env_issuer" {
   description = "The environment variable to set the issuer"
 }
 
+variable "env_fcm_api_key" {
+  description = "The environment variable to set the FCM API key"
+}
+
 variable "env_rpc_port" {
   description = "The environment variable to set the RPC port"
 }
 
+variable "env_record_evse_status_periods" {
+  description = "The environment variable to set if EVSE status periods are recorded"
+}
+
 variable "env_shutdown_timeout" {
   description = "The environment variable to set the shutdown timeout"
+}
+
+variable "env_token_authorization_timeout" {
+  description = "The environment variable to set the token authorization timeout"
 }
