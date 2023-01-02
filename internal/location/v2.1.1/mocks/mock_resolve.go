@@ -11,6 +11,7 @@ import (
 	image "github.com/satimoto/go-ocpi/internal/image/mocks"
 	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
 	openingtime "github.com/satimoto/go-ocpi/internal/openingtime/mocks"
+	party "github.com/satimoto/go-ocpi/internal/party/mocks"
 	"github.com/satimoto/go-ocpi/internal/service"
 	tariff "github.com/satimoto/go-ocpi/internal/tariff/v2.1.1/mocks"
 	versiondetail "github.com/satimoto/go-ocpi/internal/versiondetail/mocks"
@@ -21,12 +22,13 @@ func NewResolver(repositoryService *mocks.MockRepositoryService, services *servi
 		Repository:             locationMocks.NewRepository(repositoryService),
 		OcpiService:            services.OcpiService,
 		BusinessDetailResolver: businessdetail.NewResolver(repositoryService),
-		EnergyMixResolver:      energymix.NewResolver(repositoryService),
-		EvseResolver:           evse.NewResolver(repositoryService),
 		DisplayTextResolver:    displaytext.NewResolver(repositoryService),
+		EnergyMixResolver:      energymix.NewResolver(repositoryService),
+		EvseResolver:           evse.NewResolver(repositoryService, services),
 		GeoLocationResolver:    geolocation.NewResolver(repositoryService),
 		ImageResolver:          image.NewResolver(repositoryService),
 		OpeningTimeResolver:    openingtime.NewResolver(repositoryService),
+		PartyResolver:          party.NewResolver(repositoryService),
 		TariffResolver:         tariff.NewResolver(repositoryService, services),
 		VersionDetailResolver:  versiondetail.NewResolver(repositoryService, services),
 	}

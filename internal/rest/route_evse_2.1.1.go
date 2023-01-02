@@ -9,7 +9,7 @@ import (
 )
 
 func (rs *RestService) mountEvses() *chi.Mux {
-	evseResolver := evse.NewResolver(rs.RepositoryService)
+	evseResolver := evse.NewResolver(rs.RepositoryService, rs.ServiceResolver)
 
 	router := chi.NewRouter()
 	router.Use(middleware.Timeout(30 * time.Second))

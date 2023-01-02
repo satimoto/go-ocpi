@@ -42,6 +42,8 @@ func TestTokenRequest(t *testing.T) {
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
 
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
+
 		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
@@ -67,6 +69,8 @@ func TestTokenRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
@@ -119,6 +123,8 @@ func TestTokenRequest(t *testing.T) {
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
 
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
+
 		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
 		responseRecorder := httptest.NewRecorder()
@@ -142,6 +148,8 @@ func TestTokenRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
@@ -167,6 +175,8 @@ func TestTokenRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
@@ -209,6 +219,8 @@ func TestTokenRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
@@ -256,6 +268,8 @@ func TestTokenRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)
@@ -304,6 +318,8 @@ func TestTokenRequest(t *testing.T) {
 		mockNotificationService := notificationMocks.NewService()
 		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
 		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		mockRepository.SetGetCredentialByServerTokenMockData(dbMocks.CredentialMockData{Credential: db.Credential{ID: 1}})
 
 		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
 		tokenRoutes := setupRoutes(tokenResolver)

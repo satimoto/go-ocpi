@@ -124,13 +124,7 @@ func (r *LocationResolver) ReplaceLocationByIdentifier(ctx context.Context, cred
 			isIntermediateCdrCapable := false
 			publish := false
 
-			getPartyByCredentialParams := db.GetPartyByCredentialParams{
-				CredentialID: credential.ID,
-				CountryCode: util.DefaultString(countryCode, credential.CountryCode),
-				PartyID: util.DefaultString(partyID, credential.PartyID),
-			}
-
-			if party, err := r.PartyRepository.GetPartyByCredential(ctx, getPartyByCredentialParams); err == nil {
+			if party, err := r.PartyResolver.GetParty(ctx, credential, countryCode, partyID); err == nil {
 				isIntermediateCdrCapable = party.IsIntermediateCdrCapable
 				publish = party.PublishLocation
 			}

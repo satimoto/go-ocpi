@@ -14,20 +14,6 @@ import (
 
 func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, credential db.Credential, location db.Location, evse db.Evse, uid string, connectorDto *dto.ConnectorDto) *db.Connector {
 	if connectorDto != nil {
-		publish := connectorDto.TariffID != nil
-
-		if !publish {
-			getPartyByCredentialParams := db.GetPartyByCredentialParams{
-				CredentialID: credential.ID,
-				CountryCode:  dbUtil.DefaultString(location.CountryCode, credential.CountryCode),
-				PartyID:      dbUtil.DefaultString(location.PartyID, credential.PartyID),
-			}
-
-			if party, err := r.PartyRepository.GetPartyByCredential(ctx, getPartyByCredentialParams); err == nil {
-				publish = party.PublishNullTariff
-			}
-		}
-
 		connector, err := r.Repository.GetConnectorByEvse(ctx, db.GetConnectorByEvseParams{
 			EvseID: evse.ID,
 			Uid:    uid,
@@ -58,6 +44,7 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, credential db.
 
 			if connectorDto.TariffID != nil {
 				connectorParams.TariffID = dbUtil.SqlNullString(connectorDto.TariffID)
+				connectorParams.IsPublished = true
 			}
 
 			if connectorDto.LastUpdated != nil {
@@ -65,7 +52,6 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, credential db.
 			}
 
 			connectorParams.Identifier = dbUtil.SqlNullString(GetConnectorIdentifier(evse, connectorDto))
-			connectorParams.IsPublished = publish
 			connectorParams.Wattage = util.CalculateWattage(connectorParams.PowerType, connectorParams.Voltage, connectorParams.Amperage)
 			updatedConnector, err := r.Repository.UpdateConnectorByEvse(ctx, connectorParams)
 
@@ -77,6 +63,14 @@ func (r *ConnectorResolver) ReplaceConnector(ctx context.Context, credential db.
 
 			connector = updatedConnector
 		} else {
+			publish := connectorDto.TariffID != nil
+
+			if !publish {
+				if party, err := r.PartyResolver.GetParty(ctx, credential, dbUtil.NilString(location.CountryCode), dbUtil.NilString(location.PartyID)); err == nil {
+					publish = party.PublishNullTariff
+				}
+			}
+
 			connectorParams := NewCreateConnectorParams(evse, connectorDto)
 			connectorParams.IsPublished = publish
 			connector, err = r.Repository.CreateConnector(ctx, connectorParams)

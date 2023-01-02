@@ -18,6 +18,8 @@ import (
 
 func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.CreateTokenRequest) (*ocpirpc.CreateTokenResponse, error) {
 	if request != nil {
+		// TODO: Handle if a token is linked by another user
+		//       Should the token be voided for both users?
 		tokenDto := NewCreateTokenDto(request)
 		tokenAllowed := db.TokenAllowedTypeNOCREDIT
 		authID, err := r.TokenResolver.GenerateAuthID(ctx)
