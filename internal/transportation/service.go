@@ -10,17 +10,17 @@ type HTTPRequester interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-type OcpiRequester struct {
+type OcpiService struct {
 	HTTPRequester
 }
 
-func NewOcpiRequester() *OcpiRequester {
-	return &OcpiRequester{
+func NewOcpiService() *OcpiService {
+	return &OcpiService{
 		HTTPRequester: &http.Client{},
 	}
 }
 
-func (r *OcpiRequester) Do(method, url string, header OcpiRequestHeader, body io.Reader) (*http.Response, error) {
+func (r *OcpiService) Do(method, url string, header OcpiRequestHeader, body io.Reader) (*http.Response, error) {
 	request, err := http.NewRequest(method, url, body)
 
 	if err != nil {

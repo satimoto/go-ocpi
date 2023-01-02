@@ -1,13 +1,21 @@
 package rest
 
 import (
+	"time"
+
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	coreCdr "github.com/satimoto/go-ocpi/internal/cdr"
 	cdr "github.com/satimoto/go-ocpi/internal/cdr/v2.1.1"
+	"github.com/satimoto/go-ocpi/internal/version"
 )
 
 func (rs *RestService) mountCdrs() *chi.Mux {
-	cdrResolver := cdr.NewResolver(rs.RepositoryService)
+	cdrResolver := cdr.NewResolver(rs.RepositoryService, rs.ServiceResolver)
+	rs.ServiceResolver.SyncService.AddHandler(version.VERSION_2_1_1, coreCdr.IDENTIFIER, cdrResolver)
+
 	router := chi.NewRouter()
+	router.Use(middleware.Timeout(30 * time.Second))
 	router.Use(rs.CredentialContextByToken)
 
 	router.Route("/", func(credentialRouter chi.Router) {

@@ -11,9 +11,12 @@ import (
 	"syscall"
 
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	"github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/rest"
 	"github.com/satimoto/go-ocpi/internal/rpc"
+	"github.com/satimoto/go-ocpi/internal/service"
 )
 
 var (
@@ -46,11 +49,19 @@ func main() {
 	shutdownCtx, cancelFunc := context.WithCancel(context.Background())
 	waitGroup := &sync.WaitGroup{}
 
-	restService := rest.NewRest(database)
+	repositoryService := db.NewRepositoryService(database)
+	services := service.NewService(repositoryService)
+	
+	metricsService := metrics.NewMetrics()
+	metricsService.StartMetrics(shutdownCtx, waitGroup)
+
+	restService := rest.NewRest(repositoryService, services)
 	restService.StartRest(shutdownCtx, waitGroup)
 
-	rpcService := rpc.NewRpc(database)
+	rpcService := rpc.NewRpc(repositoryService, services)
 	rpcService.StartRpc(shutdownCtx, waitGroup)
+
+	services.SyncService.StartService(shutdownCtx, waitGroup)
 
 	sigtermChan := make(chan os.Signal)
 	signal.Notify(sigtermChan, syscall.SIGINT, syscall.SIGTERM)

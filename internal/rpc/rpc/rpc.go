@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 	"github.com/satimoto/go-ocpi/pkg/ocpi"
 )
@@ -21,13 +21,13 @@ func (r *RpcResolver) TestConnection(ctx context.Context, input *ocpirpc.TestCon
 		})
 
 		if err != nil {
-			util.LogOnError("OCPI261", "Error testing connection", err)
+			metrics.RecordError("OCPI261", "Error testing connection", err)
 			log.Printf("OCPI260: Addr=%v", input.Addr)
 			return nil, errors.New("Connection test failed")
 		}
 
 		if testMessageReponse.Message != message {
-			util.LogOnError("OCPI262", "Error message response mismatch", err)
+			metrics.RecordError("OCPI262", "Error message response mismatch", err)
 			log.Printf("OCPI262: Message=%v, Response=%v", message, testMessageReponse.Message)
 		}
 

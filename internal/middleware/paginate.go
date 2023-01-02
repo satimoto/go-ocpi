@@ -16,7 +16,7 @@ func Paginate(next http.Handler) http.Handler {
 			dateFrom := util.ParseTime(dateFromParam, nil)
 
 			if dateFrom != nil {
-				ctx = context.WithValue(ctx, "date_from", dateFrom)
+				ctx = context.WithValue(ctx, "date_from", dateFromParam)
 			}
 		}
 
@@ -24,7 +24,7 @@ func Paginate(next http.Handler) http.Handler {
 			dateTo := util.ParseTime(dateToParam, nil)
 
 			if dateTo != nil {
-				ctx = context.WithValue(ctx, "date_to", dateTo)
+				ctx = context.WithValue(ctx, "date_to", dateToParam)
 			}
 		}
 
@@ -72,7 +72,7 @@ func GetLimit(ctx context.Context, defaultValue int64) int64 {
 	limit := ctx.Value("limit")
 
 	if limit != nil {
-		return limit.(int64)
+		return int64(limit.(int))
 	}
 
 	return defaultValue
@@ -82,7 +82,7 @@ func GetOffset(ctx context.Context, defaultValue int64) int64 {
 	limit := ctx.Value("offset")
 
 	if limit != nil {
-		return limit.(int64)
+		return int64(limit.(int))
 	}
 
 	return defaultValue

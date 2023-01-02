@@ -7,11 +7,13 @@ import (
 
 func NewCreateTokenResponse(token db.Token) *ocpirpc.CreateTokenResponse {
 	return &ocpirpc.CreateTokenResponse{
-		Id:        token.ID,
-		Type:      string(token.Type),
-		AuthId:    token.AuthID,
-		Allowed:   string(token.Allowed),
-		Whitelist: string(token.Whitelist),
+		Id:           token.ID,
+		Uid:          token.Uid,
+		Type:         string(token.Type),
+		AuthId:       token.AuthID,
+		VisualNumber: token.VisualNumber.String,
+		Allowed:      string(token.Allowed),
+		Whitelist:    string(token.Whitelist),
 	}
 }
 

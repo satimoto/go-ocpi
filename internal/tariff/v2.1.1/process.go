@@ -8,74 +8,96 @@ import (
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/internal/displaytext"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
-func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, dto *TariffDto) *db.Tariff {
-	if dto != nil {
-		tariff, err := r.Repository.GetTariffByUid(ctx, uid)
-		energyMixID := util.SqlNullInt64(tariff.EnergyMixID)
-		tariffRestrictionID := util.SqlNullInt64(tariff.TariffRestrictionID)
+func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, uid string, cdrID *int64, tariffDto *dto.TariffDto) *db.Tariff {
+	if tariffDto != nil {
+		var tariff db.Tariff
+		var err error 
 
-		if dto.EnergyMix != nil {
-			r.EnergyMixResolver.ReplaceEnergyMix(ctx, &energyMixID, dto.EnergyMix)
+		if cdrID == nil {
+			tariff, err = r.Repository.GetTariffByUid(ctx, uid)
 		}
 
-		if dto.Restriction != nil {
-			r.TariffRestrictionResolver.ReplaceTariffByIdentifierRestriction(ctx, &tariffRestrictionID, dto.Restriction)
+		energyMixID := util.SqlNullZeroInt64(tariff.EnergyMixID)
+		tariffRestrictionID := util.SqlNullZeroInt64(tariff.TariffRestrictionID)
+
+		if tariffDto.EnergyMix != nil {
+			r.EnergyMixResolver.ReplaceEnergyMix(ctx, &energyMixID, tariffDto.EnergyMix)
 		}
 
-		if err == nil {
+		if tariffDto.Restriction != nil {
+			r.TariffRestrictionResolver.ReplaceTariffByIdentifierRestriction(ctx, &tariffRestrictionID, tariffDto.Restriction)
+		}
+
+		if err == nil && cdrID == nil {
 			tariffParams := param.NewUpdateTariffByUidParams(tariff)
 			tariffParams.CountryCode = util.SqlNullString(countryCode)
 			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.EnergyMixID = energyMixID
 			tariffParams.TariffRestrictionID = tariffRestrictionID
 
-			if dto.Currency != nil {
-				tariffParams.Currency = *dto.Currency
+			if tariffDto.CountryCode != nil {
+				tariffParams.CountryCode = util.SqlNullString(tariffDto.CountryCode)
 			}
 
-			if dto.LastUpdated != nil {
-				tariffParams.LastUpdated = *dto.LastUpdated
+			if tariffDto.PartyID != nil {
+				tariffParams.PartyID = util.SqlNullString(tariffDto.PartyID)
 			}
 
-			if dto.TariffAltUrl != nil {
-				tariffParams.TariffAltUrl = util.SqlNullString(dto.TariffAltUrl)
+			if tariffDto.Currency != nil {
+				tariffParams.Currency = *tariffDto.Currency
+			}
+
+			if tariffDto.LastUpdated != nil {
+				tariffParams.LastUpdated = tariffDto.LastUpdated.Time()
+			}
+
+			if tariffDto.TariffAltUrl != nil {
+				tariffParams.TariffAltUrl = util.SqlNullString(tariffDto.TariffAltUrl)
 			}
 
 			updatedTariff, err := r.Repository.UpdateTariffByUid(ctx, tariffParams)
 
 			if err != nil {
-				util.LogOnError("OCPI178", "Error updating tariff", err)
+				metrics.RecordError("OCPI178", "Error updating tariff", err)
 				log.Printf("OCPI178: Params=%#v", tariffParams)
 				return nil
 			}
 
 			tariff = updatedTariff
 		} else {
-			tariffParams := NewCreateTariffParams(dto)
+			tariffParams := NewCreateTariffParams(tariffDto)
 			tariffParams.CredentialID = credential.ID
-			tariffParams.CountryCode = util.SqlNullString(countryCode)
-			tariffParams.PartyID = util.SqlNullString(partyID)
 			tariffParams.CdrID = util.SqlNullInt64(cdrID)
 			tariffParams.EnergyMixID = energyMixID
 			tariffParams.TariffRestrictionID = tariffRestrictionID
 
+			if !tariffParams.CountryCode.Valid {
+				tariffParams.CountryCode = util.SqlNullString(countryCode)
+			}
+
+			if !tariffParams.PartyID.Valid {
+				tariffParams.PartyID = util.SqlNullString(partyID)
+			}
+
 			tariff, err = r.Repository.CreateTariff(ctx, tariffParams)
 
 			if err != nil {
-				util.LogOnError("OCPI179", "Error creating tariff", err)
+				metrics.RecordError("OCPI179", "Error creating tariff", err)
 				log.Printf("OCPI179: Params=%#v", tariffParams)
 				return nil
 			}
 		}
 
-		if dto.TariffAltText != nil {
-			r.replaceTariffAltText(ctx, tariff.ID, dto)
+		if tariffDto.TariffAltText != nil {
+			r.replaceTariffAltText(ctx, tariff.ID, tariffDto)
 		}
 
-		if dto.Elements != nil {
-			r.replaceElements(ctx, tariff, dto)
+		if tariffDto.Elements != nil {
+			r.replaceElements(ctx, tariff, tariffDto)
 		}
 
 		return &tariff
@@ -84,21 +106,21 @@ func (r *TariffResolver) ReplaceTariffByIdentifier(ctx context.Context, credenti
 	return nil
 }
 
-func (r *TariffResolver) ReplaceTariffsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrID *int64, dto []*TariffDto) {
-	for _, tariffDto := range dto {
+func (r *TariffResolver) ReplaceTariffsByIdentifier(ctx context.Context, credential db.Credential, countryCode *string, partyID *string, cdrID *int64, tariffsDto []*dto.TariffDto) {
+	for _, tariffDto := range tariffsDto {
 		r.ReplaceTariffByIdentifier(ctx, credential, countryCode, partyID, *tariffDto.ID, cdrID, tariffDto)
 	}
 }
 
-func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int64, dto *TariffDto) {
+func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int64, tariffDto *dto.TariffDto) {
 	r.Repository.DeleteTariffAltTexts(ctx, tariffID)
 
-	for _, displayTextDto := range dto.TariffAltText {
+	for _, displayTextDto := range tariffDto.TariffAltText {
 		displayTextParams := displaytext.NewCreateDisplayTextParams(displayTextDto)
 		displayText, err := r.DisplayTextResolver.Repository.CreateDisplayText(ctx, displayTextParams)
 
 		if err != nil {
-			util.LogOnError("OCPI180", "Error creating display text", err)
+			metrics.RecordError("OCPI180", "Error creating display text", err)
 			log.Printf("OCPI180: Params=%#v", displayTextParams)
 		}
 
@@ -109,12 +131,12 @@ func (r *TariffResolver) replaceTariffAltText(ctx context.Context, tariffID int6
 		err = r.Repository.SetTariffAltText(ctx, setTariffAltTextParams)
 
 		if err != nil {
-			util.LogOnError("OCPI181", "Error setting tariff alt text", err)
+			metrics.RecordError("OCPI181", "Error setting tariff alt text", err)
 			log.Printf("OCPI181: Params=%#v", setTariffAltTextParams)
 		}
 	}
 }
 
-func (r *TariffResolver) replaceElements(ctx context.Context, tariff db.Tariff, dto *TariffDto) {
-	r.ElementResolver.ReplaceElements(ctx, tariff, dto.Elements)
+func (r *TariffResolver) replaceElements(ctx context.Context, tariff db.Tariff, tariffDto *dto.TariffDto) {
+	r.ElementResolver.ReplaceElements(ctx, tariff, tariffDto.Elements)
 }

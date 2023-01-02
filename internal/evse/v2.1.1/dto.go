@@ -3,15 +3,11 @@ package evse
 import (
 	"context"
 	"log"
-	"net/http"
-	"time"
 
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/util"
-	connector "github.com/satimoto/go-ocpi/internal/connector/v2.1.1"
-	"github.com/satimoto/go-ocpi/internal/displaytext"
-	"github.com/satimoto/go-ocpi/internal/geolocation"
-	"github.com/satimoto/go-ocpi/internal/image"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
 func (r *EvseResolver) CreateCapabilityListDto(ctx context.Context, capabilities []db.Capability) []*string {
@@ -24,44 +20,13 @@ func (r *EvseResolver) CreateCapabilityListDto(ctx context.Context, capabilities
 	return list
 }
 
-type EvseDto struct {
-	Uid                 *string                       `json:"uid"`
-	EvseID              *string                       `json:"evse_id,omitempty"`
-	Status              *db.EvseStatus                `json:"status"`
-	StatusSchedule      []*StatusScheduleDto          `json:"status_schedule"`
-	Capabilities        []*string                     `json:"capabilities"`
-	Connectors          []*connector.ConnectorDto     `json:"connectors"`
-	FloorLevel          *string                       `json:"floor_level,omitempty"`
-	Coordinates         *geolocation.GeoLocationDto   `json:"coordinates,omitempty"`
-	PhysicalReference   *string                       `json:"physical_reference,omitempty"`
-	Directions          []*displaytext.DisplayTextDto `json:"directions"`
-	ParkingRestrictions []*string                     `json:"parking_restrictions"`
-	Images              []*image.ImageDto             `json:"images"`
-	LastUpdated         *time.Time                    `json:"last_updated"`
-}
-
-func (r *EvseDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	return nil
-}
-
-func NewEvseDto(evse db.Evse) *EvseDto {
-	return &EvseDto{
-		Uid:               &evse.Uid,
-		EvseID:            util.NilString(evse.EvseID),
-		Status:            &evse.Status,
-		FloorLevel:        util.NilString(evse.FloorLevel),
-		PhysicalReference: util.NilString(evse.PhysicalReference),
-		LastUpdated:       &evse.LastUpdated,
-	}
-}
-
-func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto {
-	response := NewEvseDto(evse)
+func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *dto.EvseDto {
+	response := dto.NewEvseDto(evse)
 
 	statusSchedules, err := r.Repository.ListStatusSchedules(ctx, evse.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI231", "Error listing status schedules", err)
+		metrics.RecordError("OCPI231", "Error listing status schedules", err)
 		log.Printf("OCPI231: EvseID=%v", evse.ID)
 	} else {
 		response.StatusSchedule = r.CreateStatusScheduleListDto(ctx, statusSchedules)
@@ -70,7 +35,7 @@ func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto
 	capabilities, err := r.Repository.ListEvseCapabilities(ctx, evse.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI232", "Error listing evse capabilities", err)
+		metrics.RecordError("OCPI232", "Error listing evse capabilities", err)
 		log.Printf("OCPI232: EvseID=%v", evse.ID)
 	} else {
 		response.Capabilities = r.CreateCapabilityListDto(ctx, capabilities)
@@ -79,7 +44,7 @@ func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto
 	connectors, err := r.Repository.ListConnectors(ctx, evse.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI233", "Error listing connectors", err)
+		metrics.RecordError("OCPI233", "Error listing connectors", err)
 		log.Printf("OCPI233: EvseID=%v", evse.ID)
 	} else {
 		response.Connectors = r.ConnectorResolver.CreateConnectorListDto(ctx, connectors)
@@ -89,7 +54,7 @@ func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto
 		geoLocation, err := r.Repository.GetGeoLocation(ctx, evse.GeoLocationID.Int64)
 
 		if err != nil {
-			util.LogOnError("OCPI234", "Error listing connectors", err)
+			metrics.RecordError("OCPI234", "Error listing connectors", err)
 			log.Printf("OCPI234: GeoLocationID=%#v", evse.GeoLocationID)
 		} else {
 			response.Coordinates = r.GeoLocationResolver.CreateGeoLocationDto(ctx, geoLocation)
@@ -99,7 +64,7 @@ func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto
 	directions, err := r.Repository.ListEvseDirections(ctx, evse.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI235", "Error listing evse directions", err)
+		metrics.RecordError("OCPI235", "Error listing evse directions", err)
 		log.Printf("OCPI235: EvseID=%v", evse.ID)
 	} else {
 		response.Directions = r.DisplayTextResolver.CreateDisplayTextListDto(ctx, directions)
@@ -108,7 +73,7 @@ func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto
 	parkingRestrictions, err := r.Repository.ListEvseParkingRestrictions(ctx, evse.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI236", "Error listing evse parking restrictions", err)
+		metrics.RecordError("OCPI236", "Error listing evse parking restrictions", err)
 		log.Printf("OCPI236: EvseID=%v", evse.ID)
 	} else {
 		response.ParkingRestrictions = r.CreateParkingRestrictionListDto(ctx, parkingRestrictions)
@@ -117,7 +82,7 @@ func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto
 	images, err := r.Repository.ListEvseImages(ctx, evse.ID)
 
 	if err != nil {
-		util.LogOnError("OCPI237", "Error listing evse images", err)
+		metrics.RecordError("OCPI237", "Error listing evse images", err)
 		log.Printf("OCPI237: EvseID=%v", evse.ID)
 	} else {
 		response.Images = r.ImageResolver.CreateImageListDto(ctx, images)
@@ -126,8 +91,8 @@ func (r *EvseResolver) CreateEvseDto(ctx context.Context, evse db.Evse) *EvseDto
 	return response
 }
 
-func (r *EvseResolver) CreateEvseListDto(ctx context.Context, evses []db.Evse) []*EvseDto {
-	list := []*EvseDto{}
+func (r *EvseResolver) CreateEvseListDto(ctx context.Context, evses []db.Evse) []*dto.EvseDto {
+	list := []*dto.EvseDto{}
 
 	for _, evse := range evses {
 		list = append(list, r.CreateEvseDto(ctx, evse))
@@ -147,34 +112,12 @@ func (r *EvseResolver) CreateParkingRestrictionListDto(ctx context.Context, park
 	return list
 }
 
-type StatusScheduleDto struct {
-	PeriodBegin *time.Time    `json:"period_begin"`
-	PeriodEnd   *time.Time    `json:"period_end,omitempty"`
-	Status      db.EvseStatus `json:"status"`
+func (r *EvseResolver) CreateStatusScheduleDto(ctx context.Context, statusSchedule db.StatusSchedule) *coreDto.StatusScheduleDto {
+	return coreDto.NewStatusScheduleDto(statusSchedule)
 }
 
-func (r *StatusScheduleDto) Render(writer http.ResponseWriter, request *http.Request) error {
-	if r.PeriodEnd.IsZero() {
-		r.PeriodEnd = nil
-	}
-
-	return nil
-}
-
-func NewStatusScheduleDto(statusSchedule db.StatusSchedule) *StatusScheduleDto {
-	return &StatusScheduleDto{
-		PeriodBegin: &statusSchedule.PeriodBegin,
-		PeriodEnd:   util.NilTime(statusSchedule.PeriodEnd.Time),
-		Status:      statusSchedule.Status,
-	}
-}
-
-func (r *EvseResolver) CreateStatusScheduleDto(ctx context.Context, statusSchedule db.StatusSchedule) *StatusScheduleDto {
-	return NewStatusScheduleDto(statusSchedule)
-}
-
-func (r *EvseResolver) CreateStatusScheduleListDto(ctx context.Context, statusSchedules []db.StatusSchedule) []*StatusScheduleDto {
-	list := []*StatusScheduleDto{}
+func (r *EvseResolver) CreateStatusScheduleListDto(ctx context.Context, statusSchedules []db.StatusSchedule) []*coreDto.StatusScheduleDto {
+	list := []*coreDto.StatusScheduleDto{}
 
 	for _, statusSchedule := range statusSchedules {
 		list = append(list, r.CreateStatusScheduleDto(ctx, statusSchedule))

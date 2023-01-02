@@ -11,17 +11,20 @@ service TokenService {
 
 message CreateTokenRequest {
   int64 user_id = 1;
-  string type = 2;
-  string allowed = 3;
-  string whitelist = 4;
+  string uid = 2;
+  string type = 3;
+  string allowed = 4;
+  string whitelist = 5;
 };
 
 message CreateTokenResponse {
   int64 id = 1;
-  string type = 2;
-  string auth_id = 3;
-  string allowed = 4;
-  string whitelist = 5;
+  string uid = 2;
+  string type = 3;
+  string auth_id = 4;
+  string visual_number = 5;
+  string allowed = 6;
+  string whitelist = 7;
 }
 
 message UpdateTokensRequest {

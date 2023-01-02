@@ -3,22 +3,24 @@ package connector
 import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/util"
 )
 
-func NewCreateConnectorParams(evse db.Evse, dto *ConnectorDto) db.CreateConnectorParams {
+func NewCreateConnectorParams(evse db.Evse, connectorDto *dto.ConnectorDto) db.CreateConnectorParams {
 	return db.CreateConnectorParams{
 		EvseID:             evse.ID,
-		Uid:                *dto.Id,
-		Identifier:         dbUtil.SqlNullString(GetConnectorIdentifier(evse, dto)),
-		Standard:           *dto.Standard,
-		Format:             *dto.Format,
-		PowerType:          *dto.PowerType,
-		Voltage:            *dto.Voltage,
-		Amperage:           *dto.Amperage,
-		Wattage:            util.CalculateWattage(*dto.PowerType, *dto.Voltage, *dto.Amperage),
-		TariffID:           dbUtil.SqlNullString(dto.TariffID),
-		TermsAndConditions: dbUtil.SqlNullString(dto.TermsAndConditions),
-		LastUpdated:        *dto.LastUpdated,
+		Uid:                *connectorDto.Id,
+		Identifier:         dbUtil.SqlNullString(GetConnectorIdentifier(evse, connectorDto)),
+		Standard:           *connectorDto.Standard,
+		Format:             *connectorDto.Format,
+		PowerType:          *connectorDto.PowerType,
+		Voltage:            *connectorDto.Voltage,
+		Amperage:           *connectorDto.Amperage,
+		Wattage:            util.CalculateWattage(*connectorDto.PowerType, *connectorDto.Voltage, *connectorDto.Amperage),
+		TariffID:           dbUtil.SqlNullString(connectorDto.TariffID),
+		TermsAndConditions: dbUtil.SqlNullString(connectorDto.TermsAndConditions),
+		IsPublished:        true,
+		LastUpdated:        connectorDto.LastUpdated.Time(),
 	}
 }

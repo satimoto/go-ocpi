@@ -6,15 +6,17 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
-func (r *ElementResolver) ReplaceElements(ctx context.Context, tariff db.Tariff, dto []*ElementDto) {
-	if dto != nil {
+func (r *ElementResolver) ReplaceElements(ctx context.Context, tariff db.Tariff, elementsDto []*coreDto.ElementDto) {
+	if elementsDto != nil {
 		r.PriceComponentResolver.Repository.DeletePriceComponents(ctx, tariff.ID)
 		r.Repository.DeleteElements(ctx, tariff.ID)
 		r.ElementRestrictionResolver.Repository.DeleteElementRestrictions(ctx, tariff.ID)
 
-		for _, elementDto := range dto {
+		for _, elementDto := range elementsDto {
 			elementParams := NewCreateElementParams(elementDto)
 			elementParams.TariffID = tariff.ID
 
@@ -24,15 +26,15 @@ func (r *ElementResolver) ReplaceElements(ctx context.Context, tariff db.Tariff,
 				elementParams.ElementRestrictionID = restrictionID
 			}
 
-			element, err := r.Repository.CreateElement(ctx, elementParams)
+			ele, err := r.Repository.CreateElement(ctx, elementParams)
 
 			if err != nil {
-				util.LogOnError("OCPI091", "Error creating element", err)
+				metrics.RecordError("OCPI091", "Error creating element", err)
 				log.Printf("OCPI091: Params=%#v", elementParams)
 				continue
 			}
-	
-			r.PriceComponentResolver.CreatePriceComponents(ctx, element.ID, tariff, elementDto.PriceComponents)
+
+			r.PriceComponentResolver.CreatePriceComponents(ctx, ele.ID, tariff, elementDto.PriceComponents)
 		}
 	}
 }

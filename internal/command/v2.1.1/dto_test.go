@@ -10,6 +10,8 @@ import (
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
 	commandMocks "github.com/satimoto/go-ocpi/internal/command/v2.1.1/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
@@ -26,7 +28,11 @@ func TestCreateCommandReservationDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 
 		tok := db.Token{}
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
@@ -43,13 +49,13 @@ func TestCreateCommandReservationDto(t *testing.T) {
 			"token": {
 				"auth_id": "",
 				"issuer": "",
-				"last_updated": "0001-01-01T00:00:00Z",
+				"last_updated": null,
 				"type": "",
 				"uid": "",
 				"valid": false,
 				"whitelist": ""
 			},
-			"expiry_date": "0001-01-01T00:00:00Z",
+			"expiry_date": null,
 			"reservation_id": 0,
 			"location_id": ""
 		}`))
@@ -58,7 +64,11 @@ func TestCreateCommandReservationDto(t *testing.T) {
 	t.Run("Command reservation", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 
 		tok := db.Token{
 			Uid:          "TOKEN00001",
@@ -114,7 +124,11 @@ func TestCreateCommandStartDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 
 		tok := db.Token{}
 		mockRepository.SetGetTokenMockData(dbMocks.TokenMockData{Token: tok, Error: nil})
@@ -131,7 +145,7 @@ func TestCreateCommandStartDto(t *testing.T) {
 			"token": {
 				"auth_id": "",
 				"issuer": "",
-				"last_updated": "0001-01-01T00:00:00Z",
+				"last_updated": null,
 				"type": "",
 				"uid": "",
 				"valid": false,
@@ -144,7 +158,11 @@ func TestCreateCommandStartDto(t *testing.T) {
 	t.Run("Command start", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 
 		tok := db.Token{
 			Uid:          "TOKEN00001",
@@ -196,7 +214,11 @@ func TestCreateCommandStopDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 
 		cr := db.CommandStop{}
 
@@ -212,7 +234,11 @@ func TestCreateCommandStopDto(t *testing.T) {
 	t.Run("Command stop", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 
 		cr := db.CommandStop{
 			ID:        1,
@@ -238,7 +264,11 @@ func TestCreateCommandUnlockDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 
 		cr := db.CommandUnlock{}
 
@@ -256,7 +286,11 @@ func TestCreateCommandUnlockDto(t *testing.T) {
 	t.Run("Command unlock", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		commandResolver := commandMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		commandResolver := commandMocks.NewResolver(mockRepository, mockServices)
 
 		cr := db.CommandUnlock{
 			ID:          1,

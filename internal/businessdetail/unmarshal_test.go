@@ -4,50 +4,50 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/satimoto/go-ocpi/internal/businessdetail"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
 
 func TestBusinessDetailUnmarshal(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		dto := businessdetail.BusinessDetailDto{}
+		businessDetailDto := coreDto.BusinessDetailDto{}
 		response := []byte(`{
 			"name": ""
 		}`)
 
-		json.Unmarshal([]byte(`{}`), &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal([]byte(`{}`), &businessDetailDto)
+		responseJson, _ := json.Marshal(businessDetailDto)
 
 		mocks.CompareJson(t, responseJson, response)
 	})
 
 	t.Run("Name only", func(t *testing.T) {
-		dto := businessdetail.BusinessDetailDto{}
+		businessDetailDto := coreDto.BusinessDetailDto{}
 		request := []byte(`{
 			"name": "Business Name"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &businessDetailDto)
+		responseJson, _ := json.Marshal(businessDetailDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("Name and Website", func(t *testing.T) {
-		dto := businessdetail.BusinessDetailDto{}
+		businessDetailDto := coreDto.BusinessDetailDto{}
 		request := []byte(`{
 			"name": "Business Name",
 			"website": "https://business.com"
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &businessDetailDto)
+		responseJson, _ := json.Marshal(businessDetailDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})
 
 	t.Run("Name, Website and Logo", func(t *testing.T) {
-		dto := businessdetail.BusinessDetailDto{}
+		businessDetailDto := coreDto.BusinessDetailDto{}
 		request := []byte(`{
 			"name": "Business Name",
 			"website": "https://business.com",
@@ -58,8 +58,8 @@ func TestBusinessDetailUnmarshal(t *testing.T) {
 			}
 		}`)
 
-		json.Unmarshal(request, &dto)
-		responseJson, _ := json.Marshal(dto)
+		json.Unmarshal(request, &businessDetailDto)
+		responseJson, _ := json.Marshal(businessDetailDto)
 
 		mocks.CompareJson(t, responseJson, request)
 	})

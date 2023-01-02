@@ -10,6 +10,8 @@ import (
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
 	locationMocks "github.com/satimoto/go-ocpi/internal/location/v2.1.1/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
@@ -20,7 +22,11 @@ func TestCreateLocationDto(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		loc := db.Location{}
 
@@ -35,21 +41,19 @@ func TestCreateLocationDto(t *testing.T) {
 			"postal_code": "",
 			"country": "",
 			"coordinates": null,
-			"related_locations": [],
-			"evses": [],
-			"directions": [],
-			"facilities": [],
 			"charging_when_closed": false,
-			"images": [],
-			"energy_mix": null,
-			"last_updated": "0001-01-01T00:00:00Z"
+			"last_updated": null
 		}`))
 	})
 
 	t.Run("With Evse", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		statusSchedules := []db.StatusSchedule{}
 		statusSchedules = append(statusSchedules, db.StatusSchedule{
@@ -137,7 +141,6 @@ func TestCreateLocationDto(t *testing.T) {
 			"postal_code": "9000",
 			"country": "BEL",
 			"coordinates": null,
-			"related_locations": [],
 			"evses": [{
 				"uid": "3257",
 				"evse_id": "BE-BEC-E041503002",
@@ -176,19 +179,12 @@ func TestCreateLocationDto(t *testing.T) {
 				}],
 				"physical_reference": "2",
 				"floor_level": "-2",
-				"directions": [],
-				"parking_restrictions": [],
-				"images": [],
 				"last_updated": "2015-06-29T20:39:09Z"
 			}],
-			"directions": [],
 			"operator": {
 				"name": "BeCharged"
 			},
-			"facilities": [],
 			"charging_when_closed": false,
-			"images": [],
-			"energy_mix": null,
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`))
 	})
@@ -196,7 +192,11 @@ func TestCreateLocationDto(t *testing.T) {
 	t.Run("With Directions, Facilities", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		directions := []db.DisplayText{}
 		directions = append(directions, db.DisplayText{
@@ -245,8 +245,6 @@ func TestCreateLocationDto(t *testing.T) {
 			"postal_code": "9000",
 			"country": "BEL",
 			"coordinates": null,
-			"related_locations": [],
-			"evses": [],
 			"directions": [{
 				"text": "Go Left",
 				"language": "en"
@@ -256,8 +254,6 @@ func TestCreateLocationDto(t *testing.T) {
 			}],
 			"facilities": ["BUS_STOP", "TAXI_STAND", "TRAIN_STATION"],
 			"charging_when_closed": true,
-			"images": [],
-			"energy_mix": null,
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`))
 	})
@@ -265,7 +261,11 @@ func TestCreateLocationDto(t *testing.T) {
 	t.Run("With Coordinates, Related locations, Images", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		locationResolver := locationMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		locationResolver := locationMocks.NewResolver(mockRepository, mockServices)
 
 		coordinates := db.GeoLocation{
 			Latitude:  "50.770774",
@@ -344,9 +344,6 @@ func TestCreateLocationDto(t *testing.T) {
 					"text": "Bloemenspeciaalzaak Bergmans (Store)"
 				}
 			}],
-			"evses": [],
-			"directions": [],
-			"facilities": [],
 			"charging_when_closed": true,
 			"images": [{
 				"url": "https://business.com/logo.png",
@@ -360,7 +357,6 @@ func TestCreateLocationDto(t *testing.T) {
 				"width": 180,
 				"height": 180
 			}],
-			"energy_mix": null,
 			"last_updated": "2015-06-29T20:39:09Z"
 		}`))
 	})

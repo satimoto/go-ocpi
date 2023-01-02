@@ -9,6 +9,8 @@ import (
 	dbMocks "github.com/satimoto/go-datastore/pkg/db/mocks"
 	"github.com/satimoto/go-datastore/pkg/util"
 	credentialMocks "github.com/satimoto/go-ocpi/internal/credential/mocks"
+	notificationMocks "github.com/satimoto/go-ocpi/internal/notification/mocks"
+	serviceMocks "github.com/satimoto/go-ocpi/internal/service/mocks"
 	transportationMocks "github.com/satimoto/go-ocpi/internal/transportation/mocks"
 	"github.com/satimoto/go-ocpi/test/mocks"
 )
@@ -19,7 +21,11 @@ func TestRegisterCredential(t *testing.T) {
 	t.Run("Empty token", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		credentialResolver := credentialMocks.NewResolver(mockRepository, mockServices)
 
 		credential := db.Credential{
 			ClientToken: util.SqlNullString(nil),
@@ -38,7 +44,11 @@ func TestRegisterCredential(t *testing.T) {
 	t.Run("No versions", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		credentialResolver := credentialMocks.NewResolver(mockRepository, mockServices)
 
 		credential := db.Credential{
 			ClientToken: util.SqlNullString("1802EC4A-2A34-4573-803E-1E142CF7BC1C"),
@@ -57,7 +67,11 @@ func TestRegisterCredential(t *testing.T) {
 	t.Run("Unsupported version", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		credentialResolver := credentialMocks.NewResolver(mockRepository, mockServices)
 
 		token := "1802EC4A-2A34-4573-803E-1E142CF7BC1C"
 		credential := db.Credential{
@@ -85,7 +99,11 @@ func TestRegisterCredential(t *testing.T) {
 	t.Run("Unsupported version", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		credentialResolver := credentialMocks.NewResolver(mockRepository, mockServices)
 
 		token := "1802EC4A-2A34-4573-803E-1E142CF7BC1C"
 		pushToken := "9528DF0E-348F-4ED8-B235-1FD15E0FD835"
@@ -176,7 +194,11 @@ func TestUnregisterCredential(t *testing.T) {
 	t.Run("Empty token", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		credentialResolver := credentialMocks.NewResolver(mockRepository, mockServices)
 
 		credential := db.Credential{
 			ServerToken: util.SqlNullString("D501D324-A33A-41E0-91DF-34A73BB8F8A7"),
@@ -195,7 +217,11 @@ func TestUnregisterCredential(t *testing.T) {
 	t.Run("No version endpoint", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		credentialResolver := credentialMocks.NewResolver(mockRepository, mockServices)
 
 		credential := db.Credential{
 			ClientToken: util.SqlNullString("1802EC4A-2A34-4573-803E-1E142CF7BC1C"),
@@ -215,7 +241,11 @@ func TestUnregisterCredential(t *testing.T) {
 	t.Run("Bad response", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		credentialResolver := credentialMocks.NewResolver(mockRepository, mockServices)
 
 		credential := db.Credential{
 			ClientToken: util.SqlNullString("1802EC4A-2A34-4573-803E-1E142CF7BC1C"),
@@ -234,15 +264,19 @@ func TestUnregisterCredential(t *testing.T) {
 
 		_, err := credentialResolver.UnregisterCredential(ctx, credential)
 
-		if err == nil || err.Error() != "error unmarshalling response" {
-			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error unmarshalling response")
+		if err == nil || err.Error() != "error unmarshaling response" {
+			t.Errorf("Error mismatch: '%v' expecting '%v'", err, "Error unmarshaling response")
 		}
 	})
 
 	t.Run("Unsuccessful response", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		credentialResolver := credentialMocks.NewResolver(mockRepository, mockServices)
 
 		credential := db.Credential{
 			ClientToken: util.SqlNullString("1802EC4A-2A34-4573-803E-1E142CF7BC1C"),
@@ -273,7 +307,11 @@ func TestUnregisterCredential(t *testing.T) {
 	t.Run("Successful response", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		credentialResolver := credentialMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		credentialResolver := credentialMocks.NewResolver(mockRepository, mockServices)
 
 		credential := db.Credential{
 			ClientToken: util.SqlNullString("1802EC4A-2A34-4573-803E-1E142CF7BC1C"),

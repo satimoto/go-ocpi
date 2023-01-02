@@ -7,6 +7,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 	"github.com/satimoto/go-ocpi/pkg/ocpi"
 	ocpiCredential "github.com/satimoto/go-ocpi/pkg/ocpi/credential"
@@ -29,7 +30,7 @@ func (r *RpcCredentialResolver) CreateCredential(ctx context.Context, request *o
 		credential, err := r.CredentialResolver.Repository.CreateCredential(ctx, params)
 
 		if err != nil {
-			util.LogOnError("OCPI002", "Error creating business detail", err)
+			metrics.RecordError("OCPI002", "Error creating business detail", err)
 			log.Printf("OCPI002: Params=%#v", params)
 			return nil, errors.New("error creating business detail")
 		}
@@ -45,7 +46,7 @@ func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request 
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)
 
 		if err != nil {
-			util.LogOnError("OCPI005", "Error retrieving credential", err)
+			metrics.RecordError("OCPI005", "Error retrieving credential", err)
 			log.Printf("OCPI005: CredentialID=%v", request.Id)
 			return nil, errors.New("error registering credential")
 		}
@@ -59,7 +60,7 @@ func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request 
 		_, err = r.CredentialResolver.RegisterCredential(ctx, credential, token)
 
 		if err != nil {
-			util.LogOnError("OCPI006", "Error registering credential", err)
+			metrics.RecordError("OCPI006", "Error registering credential", err)
 			log.Printf("OCPI006: CredentialID=%v, Token=%v", credential.ID, token)
 			return nil, errors.New("error registering credential")
 		}
@@ -70,12 +71,40 @@ func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request 
 	return nil, errors.New("Missing request")
 }
 
+func (r *RpcCredentialResolver) SyncCredential(ctx context.Context, request *ocpirpc.SyncCredentialRequest) (*ocpirpc.SyncCredentialResponse, error) {
+	if request != nil {
+		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)
+
+		if err != nil {
+			metrics.RecordError("OCPI284", "Error retrieving credential", err)
+			log.Printf("OCPI284: CredentialID=%v", request.Id)
+			return nil, errors.New("error syncing credential")
+		}
+
+		fullSync := true
+		lastUpdated := util.ParseTime(request.FromDate, nil)
+		countryCode := util.NilString(request.CountryCode)
+		partyID := util.NilString(request.PartyId)
+		withTariffs := request.WithTariffs
+
+		if lastUpdated != nil {
+			fullSync = false
+		}
+
+		go r.CredentialResolver.SyncService.SynchronizeCredential(credential, fullSync, withTariffs, lastUpdated, countryCode, partyID)
+
+		return &ocpirpc.SyncCredentialResponse{Id: credential.ID}, nil
+	}
+
+	return nil, errors.New("Missing request")
+}
+
 func (r *RpcCredentialResolver) UnregisterCredential(ctx context.Context, request *ocpirpc.UnregisterCredentialRequest) (*ocpirpc.UnregisterCredentialResponse, error) {
 	if request != nil {
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)
 
 		if err != nil {
-			util.LogOnError("OCPI007", "Error retrieving credential", err)
+			metrics.RecordError("OCPI007", "Error retrieving credential", err)
 			log.Printf("OCPI007: CredentialID=%v", request.Id)
 			return nil, errors.New("error unregistering credential")
 		}
@@ -83,7 +112,7 @@ func (r *RpcCredentialResolver) UnregisterCredential(ctx context.Context, reques
 		_, err = r.CredentialResolver.UnregisterCredential(ctx, credential)
 
 		if err != nil {
-			util.LogOnError("OCPI008", "Error unregistering credential", err)
+			metrics.RecordError("OCPI008", "Error unregistering credential", err)
 			log.Printf("OCPI008: CredentialID=%v", credential.ID)
 			return nil, errors.New("error unregistering credential")
 		}
@@ -111,7 +140,7 @@ func (r *RpcCredentialResolver) createBusinessDetail(ctx context.Context, reques
 		businessDetail, err := r.BusinessDetailResolver.Repository.CreateBusinessDetail(ctx, params)
 
 		if err != nil {
-			util.LogOnError("OCPI003", "Error creating business detail", err)
+			metrics.RecordError("OCPI003", "Error creating business detail", err)
 			log.Printf("OCPI003: Params=%#v", params)
 			return nil, errors.New("error creating business detail")
 		}
@@ -128,7 +157,7 @@ func (r *RpcCredentialResolver) createImage(ctx context.Context, request *ocpirp
 		image, err := r.ImageResolver.Repository.CreateImage(ctx, params)
 
 		if err != nil {
-			util.LogOnError("OCPI004", "Error creating image", err)
+			metrics.RecordError("OCPI004", "Error creating image", err)
 			log.Printf("OCPI004: Params=%#v", params)
 			return nil, errors.New("error creating image")
 		}

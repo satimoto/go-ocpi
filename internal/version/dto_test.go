@@ -21,7 +21,7 @@ func TestCreateDto(t *testing.T) {
 	t.Run("Create dto", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}
-		versionResolver := versionMocks.NewResolverWithServices(mockRepository, transportationMocks.NewOcpiRequester(mockHTTPRequester))
+		versionResolver := versionMocks.NewResolver(mockRepository, transportationMocks.NewOcpiService(mockHTTPRequester))
 
 		response := versionResolver.CreateVersionListDto(ctx)
 		responseJson, _ := json.Marshal(response)

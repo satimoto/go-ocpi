@@ -7,21 +7,23 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int64, dto []*VersionDto) []*db.Version {
+func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int64, versionsDto []*coreDto.VersionDto) []*db.Version {
 	versions := []*db.Version{}
 
-	if dto != nil {
+	if versionsDto != nil {
 		r.Repository.DeleteVersions(ctx, credentialID)
 
-		for _, versionDto := range dto {
+		for _, versionDto := range versionsDto {
 			versionParams := NewCreateVersionParams(credentialID, versionDto)
 			version, err := r.Repository.CreateVersion(ctx, versionParams)
 
 			if err != nil {
-				util.LogOnError("OCPI211", "Error creating version", err)
+				metrics.RecordError("OCPI211", "Error creating version", err)
 				log.Printf("OCPI211: Params=%#v", versionParams)
 				continue
 			}
@@ -34,10 +36,10 @@ func (r *VersionResolver) ReplaceVersions(ctx context.Context, credentialID int6
 }
 
 func (r *VersionResolver) PullVersions(ctx context.Context, url string, header transportation.OcpiRequestHeader, credentialID int64) []*db.Version {
-	response, err := r.OcpiRequester.Do(http.MethodGet, url, header, nil)
+	response, err := r.OcpiService.Do(http.MethodGet, url, header, nil)
 
 	if err != nil {
-		util.LogOnError("OCPI212", "Error making request", err)
+		metrics.RecordError("OCPI212", "Error making request", err)
 		log.Printf("OCPI212: Method=%v, Url=%v, Header=%#v", http.MethodGet, url, header)
 		return []*db.Version{}
 	}
@@ -46,13 +48,13 @@ func (r *VersionResolver) PullVersions(ctx context.Context, url string, header t
 	defer response.Body.Close()
 
 	if err != nil {
-		util.LogOnError("OCPI213", "Error unmarshalling response", err)
+		metrics.RecordError("OCPI213", "Error unmarshaling response", err)
 		util.LogHttpResponse("OCPI213", url, response, true)
 		return []*db.Version{}
 	}
 
 	if pullDto.StatusCode != transportation.STATUS_CODE_OK {
-		util.LogOnError("OCPI214", "Error response failure", err)
+		metrics.RecordError("OCPI214", "Error response failure", err)
 		util.LogHttpRequest("OCPI214", url, response.Request, true)
 		util.LogHttpResponse("OCPI214", url, response, true)
 		log.Printf("OCPI214: StatusCode=%v, StatusMessage=%v", pullDto.StatusCode, pullDto.StatusMessage)

@@ -1,7 +1,10 @@
 package element
 
-import "github.com/satimoto/go-datastore/pkg/db"
+import (
+	"github.com/satimoto/go-datastore/pkg/db"
+	coreDto "github.com/satimoto/go-ocpi/internal/dto"
+)
 
-func NewCreateElementParams(dto *ElementDto) db.CreateElementParams {
+func NewCreateElementParams(elementDto *coreDto.ElementDto) db.CreateElementParams {
 	return db.CreateElementParams{}
 }

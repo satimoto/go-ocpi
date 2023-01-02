@@ -15,7 +15,7 @@ import (
 func TestOcpiResponse(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		ocpiResponse := transportation.OcpiResponse{
-			Timestamp:     ocpitype.NewTime(util.ParseTime("2015-06-29T20:39:09Z", nil)),
+			Timestamp:     ocpitype.NewOcpiTime(util.ParseTime("2015-06-29T20:39:09Z", nil)),
 			StatusCode:    1000,
 			StatusMessage: "Success",
 		}
@@ -46,7 +46,7 @@ func TestOcpiResponse(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		ocpiResponse := transportation.OcpiResponse{
-			Timestamp:     ocpitype.NewTime(util.ParseTime("2015-06-29T20:39:09Z", nil)),
+			Timestamp:     ocpitype.NewOcpiTime(util.ParseTime("2015-06-29T20:39:09Z", nil)),
 			StatusCode:    1000,
 			StatusMessage: "Success",
 		}
@@ -54,7 +54,7 @@ func TestOcpiResponse(t *testing.T) {
 		marshalledOcpiResponse := []byte(`{
 			"status_code": 1000,
 			"status_message": "Success",
-			"timestamp": "2015-06-29T20:39:09"
+			"timestamp": "2015-06-29T20:39:09Z"
 		}`)
 
 		readerCloser := io.NopCloser(strings.NewReader(string(marshalledOcpiResponse)))
