@@ -2,10 +2,12 @@ package cdr
 
 import (
 	"github.com/satimoto/go-datastore/pkg/cdr"
+	"github.com/satimoto/go-datastore/pkg/command"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/node"
 	"github.com/satimoto/go-datastore/pkg/session"
 	"github.com/satimoto/go-datastore/pkg/token"
+	"github.com/satimoto/go-ocpi/internal/async"
 	"github.com/satimoto/go-ocpi/internal/calibration"
 	"github.com/satimoto/go-ocpi/internal/chargingperiod"
 	location "github.com/satimoto/go-ocpi/internal/location/v2.1.1"
@@ -18,8 +20,10 @@ import (
 type CdrResolver struct {
 	Repository             cdr.CdrRepository
 	OcpiService            *transportation.OcpiService
+	AsyncService           *async.AsyncService
 	CalibrationResolver    *calibration.CalibrationResolver
 	ChargingPeriodResolver *chargingperiod.ChargingPeriodResolver
+	CommandRepository      command.CommandRepository
 	LocationResolver       *location.LocationResolver
 	NodeRepository         node.NodeRepository
 	SessionRepository      session.SessionRepository
@@ -32,8 +36,10 @@ func NewResolver(repositoryService *db.RepositoryService, services *service.Serv
 	return &CdrResolver{
 		Repository:             cdr.NewRepository(repositoryService),
 		OcpiService:            services.OcpiService,
+		AsyncService:           services.AsyncService,
 		CalibrationResolver:    calibration.NewResolver(repositoryService),
 		ChargingPeriodResolver: chargingperiod.NewResolver(repositoryService),
+		CommandRepository:      command.NewRepository(repositoryService),
 		LocationResolver:       location.NewResolver(repositoryService, services),
 		NodeRepository:         node.NewRepository(repositoryService),
 		SessionRepository:      session.NewRepository(repositoryService),

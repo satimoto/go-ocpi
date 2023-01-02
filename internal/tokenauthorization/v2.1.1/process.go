@@ -14,7 +14,7 @@ import (
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
 )
 
-func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, token db.Token, locationReferencesDto *dto.LocationReferencesDto) (*db.TokenAuthorization, error) {
+func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, credential db.Credential, token db.Token, locationReferencesDto *dto.LocationReferencesDto) (*db.TokenAuthorization, error) {
 	if token.Type == db.TokenTypeRFID {
 		// Check if user is restricted, has a node and has been active
 		user, err := r.UserRepository.GetUserByTokenID(ctx, token.ID)
@@ -96,11 +96,13 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		updateTokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(tokenAuthorization)
 		updateTokenAuthorizationParams.Authorized = true
 
-		r.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationParams)
+		updatedTokenAuthorization, err := r.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationParams)
 
 		if err != nil {
 			metrics.RecordError("OCPI287", "Error updating token authorization", err)
 			log.Printf("OCPI287: Params=%#v", updateTokenAuthorizationParams)
+		} else {
+			tokenAuthorization = updatedTokenAuthorization
 		}
 	}
 
@@ -159,4 +161,17 @@ func (r *TokenAuthorizationResolver) createTokenAuthorizationSigningKey() []byte
 	}
 
 	return privateKey.Serialize()
+}
+
+func (r *TokenAuthorizationResolver) waitForEvsesStatus(credential db.Credential, token db.Token, tokenAuthorization db.TokenAuthorization, locationReferencesDto *dto.LocationReferencesDto, evseStatus db.EvseStatus, timeoutSeconds int) {
+	if locationReferencesDto != nil && locationReferencesDto.LocationID != nil && len(locationReferencesDto.EvseUids) > 0 {
+		cancelCtx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		for _, evseUid := range locationReferencesDto.EvseUids {
+			go r.EvseResolver.WaitForEvseStatus(credential, token, tokenAuthorization, *locationReferencesDto.LocationID, *evseUid, evseStatus, cancelCtx, cancel, timeoutSeconds)
+		}
+
+		<-cancelCtx.Done()
+	}
 }

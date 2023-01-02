@@ -305,6 +305,7 @@ func (r *EvseResolver) updateLocationAvailability(ctx context.Context, location 
 		IsIntermediateCdrCapable: location.IsIntermediateCdrCapable,
 		IsRemoteCapable:          false,
 		IsRfidCapable:            false,
+		IsRemoved:                true,
 		LastUpdated:              location.LastUpdated,
 	}
 
@@ -318,6 +319,7 @@ func (r *EvseResolver) updateLocationAvailability(ctx context.Context, location 
 
 	for _, evse := range evses {
 		if evse.Status != db.EvseStatusREMOVED {
+			updateLocationAvailabilityParams.IsRemoved = false
 			updateLocationAvailabilityParams.TotalEvses++
 
 			if evse.Status == db.EvseStatusAVAILABLE {

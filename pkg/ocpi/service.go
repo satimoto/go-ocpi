@@ -2,6 +2,8 @@ package ocpi
 
 import (
 	"context"
+	"log"
+	"time"
 
 	"github.com/satimoto/go-datastore/pkg/util"
 	"github.com/satimoto/go-ocpi/ocpirpc"
@@ -44,8 +46,12 @@ type OcpiService struct {
 }
 
 func NewService(address string) Ocpi {
+	timerStart := time.Now()
 	clientConn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	timerStop := time.Now()
+
 	util.PanicOnError("OCPI001", "Error connecting to OCPI RPC address", err)
+	log.Printf("OCPI %v dialed in %f seconds", address, timerStop.Sub(timerStart).Seconds())
 
 	return &OcpiService{
 		clientConn: clientConn,

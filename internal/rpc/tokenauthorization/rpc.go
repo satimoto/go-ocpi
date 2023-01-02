@@ -29,6 +29,8 @@ func (r *RpcTokenAuthorizationResolver) UpdateTokenAuthorization(ctx context.Con
 			return &ocpirpc.UpdateTokenAuthorizationResponse{Ok: false}, nil
 		}
 
+		log.Printf("Update token authorization: %v", request.AuthorizationId)
+
 		if token.Type == db.TokenTypeRFID {
 			// Update token authorization using async channel
 			asyncResult := async.AsyncResult{
@@ -38,6 +40,8 @@ func (r *RpcTokenAuthorizationResolver) UpdateTokenAuthorization(ctx context.Con
 
 			ok := r.AsyncService.Set(request.AuthorizationId, asyncResult)
 
+			log.Printf("Async result authorize=%v ok=%v", request.Authorize, ok)
+
 			return &ocpirpc.UpdateTokenAuthorizationResponse{Ok: ok}, nil
 		} else if _, err := r.SessionRepository.GetSessionByAuthorizationID(ctx, tokenAuthorization.AuthorizationID); err != nil {
 			// Only update token authorization if session is not yet created
@@ -45,6 +49,8 @@ func (r *RpcTokenAuthorizationResolver) UpdateTokenAuthorization(ctx context.Con
 				AuthorizationID: request.AuthorizationId,
 				Authorized:      request.Authorize,
 			}
+
+			log.Printf("Token authorise=%v", request.Authorize)
 
 			_, err := r.TokenAuthorizationRepository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationParams)
 

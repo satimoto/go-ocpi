@@ -6,6 +6,7 @@ import (
 
 	"github.com/satimoto/go-datastore/pkg/credential"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/party"
 	"github.com/satimoto/go-ocpi/internal/sync/htb"
 	"github.com/satimoto/go-ocpi/internal/sync/nlcon"
 	"github.com/satimoto/go-ocpi/internal/transportation"
@@ -19,6 +20,7 @@ type SyncService struct {
 	HtbService           *htb.HtbService
 	NlConService         *nlcon.NlConService
 	CredentialRepository credential.CredentialRepository
+	PartyRepository      party.PartyRepository
 	VersionResolver      *version.VersionResolver
 	syncerHandlers       []*SyncerHandler
 	shutdownCtx          context.Context
@@ -35,6 +37,7 @@ func NewService(repositoryService *db.RepositoryService, ocpiService *transporta
 		HtbService:           htb.NewService(repositoryService),
 		NlConService:         nlcon.NewService(repositoryService),
 		CredentialRepository: credential.NewRepository(repositoryService),
+		PartyRepository:      party.NewRepository(repositoryService),
 		VersionResolver:      version.NewResolver(repositoryService, ocpiService),
 		activeSyncs:          make(map[string]bool),
 		tariffsSyncing:       false,
