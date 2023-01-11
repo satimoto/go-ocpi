@@ -13,8 +13,9 @@ import (
 	ocpiCredential "github.com/satimoto/go-ocpi/pkg/ocpi/credential"
 )
 
-func (r *RpcCredentialResolver) CreateCredential(ctx context.Context, request *ocpirpc.CreateCredentialRequest) (*ocpirpc.CreateCredentialResponse, error) {
+func (r *RpcCredentialResolver) CreateCredential(reqCtx context.Context, request *ocpirpc.CreateCredentialRequest) (*ocpirpc.CreateCredentialResponse, error) {
 	if request != nil {
+		ctx := context.Background()
 		params := ocpiCredential.NewCreateCredentialParams(*request)
 
 		if request.BusinessDetail != nil {
@@ -41,8 +42,9 @@ func (r *RpcCredentialResolver) CreateCredential(ctx context.Context, request *o
 	return nil, errors.New("Missing request")
 }
 
-func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request *ocpirpc.RegisterCredentialRequest) (*ocpirpc.RegisterCredentialResponse, error) {
+func (r *RpcCredentialResolver) RegisterCredential(reqCtx context.Context, request *ocpirpc.RegisterCredentialRequest) (*ocpirpc.RegisterCredentialResponse, error) {
 	if request != nil {
+		ctx := context.Background()
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)
 
 		if err != nil {
@@ -71,8 +73,9 @@ func (r *RpcCredentialResolver) RegisterCredential(ctx context.Context, request 
 	return nil, errors.New("Missing request")
 }
 
-func (r *RpcCredentialResolver) SyncCredential(ctx context.Context, request *ocpirpc.SyncCredentialRequest) (*ocpirpc.SyncCredentialResponse, error) {
+func (r *RpcCredentialResolver) SyncCredential(reqCtx context.Context, request *ocpirpc.SyncCredentialRequest) (*ocpirpc.SyncCredentialResponse, error) {
 	if request != nil {
+		ctx := context.Background()
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)
 
 		if err != nil {
@@ -99,8 +102,9 @@ func (r *RpcCredentialResolver) SyncCredential(ctx context.Context, request *ocp
 	return nil, errors.New("Missing request")
 }
 
-func (r *RpcCredentialResolver) UnregisterCredential(ctx context.Context, request *ocpirpc.UnregisterCredentialRequest) (*ocpirpc.UnregisterCredentialResponse, error) {
+func (r *RpcCredentialResolver) UnregisterCredential(reqCtx context.Context, request *ocpirpc.UnregisterCredentialRequest) (*ocpirpc.UnregisterCredentialResponse, error) {
 	if request != nil {
+		ctx := context.Background()
 		credential, err := r.CredentialResolver.Repository.GetCredential(ctx, request.Id)
 
 		if err != nil {
