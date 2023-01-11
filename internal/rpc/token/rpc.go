@@ -16,10 +16,11 @@ import (
 	ocpiToken "github.com/satimoto/go-ocpi/pkg/ocpi/token"
 )
 
-func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.CreateTokenRequest) (*ocpirpc.CreateTokenResponse, error) {
+func (r *RpcTokenResolver) CreateToken(reqCtx context.Context, request *ocpirpc.CreateTokenRequest) (*ocpirpc.CreateTokenResponse, error) {
 	if request != nil {
 		// TODO: Handle if a token is linked by another user
 		//       Should the token be voided for both users?
+		ctx := context.Background()
 		tokenDto := NewCreateTokenDto(request)
 		tokenAllowed := db.TokenAllowedTypeNOCREDIT
 		authID, err := r.TokenResolver.GenerateAuthID(ctx)
@@ -65,8 +66,9 @@ func (r *RpcTokenResolver) CreateToken(ctx context.Context, request *ocpirpc.Cre
 	return nil, errors.New("error creating token")
 }
 
-func (r *RpcTokenResolver) UpdateTokens(ctx context.Context, request *ocpirpc.UpdateTokensRequest) (*ocpirpc.UpdateTokensResponse, error) {
+func (r *RpcTokenResolver) UpdateTokens(reqCtx context.Context, request *ocpirpc.UpdateTokensRequest) (*ocpirpc.UpdateTokensResponse, error) {
 	if request != nil {
+		ctx := context.Background()
 		tokens, err := r.TokenResolver.Repository.ListTokensByUserID(ctx, request.UserId)
 
 		if err != nil {
