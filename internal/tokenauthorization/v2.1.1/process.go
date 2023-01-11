@@ -37,24 +37,37 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		}
 	}
 
-	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
-	tokenAuthorizationParams.Authorized = token.Type == db.TokenTypeOTHER
+	if lastTokenAuthorization, err := r.Repository.GetLastTokenAuthorizationByTokenID(ctx, token.ID); err == nil {
+		// Last token authorization for this token has no session, unauthorise the token authorization
+		updateTokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(lastTokenAuthorization)
+		updateTokenAuthorizationParams.Authorized = false
 
-	if locationReferencesDto != nil {
-		tokenAuthorizationParams.LocationID = util.SqlNullString(locationReferencesDto.LocationID)
+		_, err = r.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationParams)
+
+		if err != nil {
+			metrics.RecordError("OCPI332", "Error updating token authorization", err)
+			log.Printf("OCPI332: Params=%#v", updateTokenAuthorizationParams)
+		}
 	}
 
-	tokenAuthorization, err := r.Repository.CreateTokenAuthorization(ctx, tokenAuthorizationParams)
+	createTokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
+	createTokenAuthorizationParams.Authorized = token.Type == db.TokenTypeOTHER
+
+	if locationReferencesDto != nil {
+		createTokenAuthorizationParams.LocationID = util.SqlNullString(locationReferencesDto.LocationID)
+	}
+
+	tokenAuthorization, err := r.Repository.CreateTokenAuthorization(ctx, createTokenAuthorizationParams)
 
 	if err != nil {
 		metrics.RecordError("OCPI206", "Error creating token authorization", err)
-		log.Printf("OCPI206: Params=%#v", tokenAuthorizationParams)
+		log.Printf("OCPI206: Params=%#v", createTokenAuthorizationParams)
 		return nil, errors.New("Authorization error")
 	}
 
 	r.createTokenAuthorizationRelations(ctx, tokenAuthorization.ID, locationReferencesDto)
 
-	if !tokenAuthorizationParams.Authorized {
+	if !createTokenAuthorizationParams.Authorized {
 		// Token authentication is not authorized because its initiated
 		// by an RFID card. The request needs to be forwarded to the user's
 		// device, which then responds if it is authorized or not.
@@ -72,21 +85,21 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 			return nil, errors.New("Please enable notifications in your Satimoto application")
 		}
 
-		asyncChan := r.AsyncService.Add(tokenAuthorizationParams.AuthorizationID)
-		r.SendNotification(user, tokenAuthorizationParams.AuthorizationID)
+		asyncChan := r.AsyncService.Add(createTokenAuthorizationParams.AuthorizationID)
+		r.SendNotification(user, createTokenAuthorizationParams.AuthorizationID)
 		timeout := util.GetEnvInt32("TOKEN_AUTHORIZATION_TIMEOUT", 5)
 
 		select {
 		case asyncResult := <-asyncChan:
-			log.Printf("Token authorization received: %v", tokenAuthorizationParams.AuthorizationID)
-			r.AsyncService.Remove(tokenAuthorizationParams.AuthorizationID)
+			log.Printf("Token authorization received: %v", createTokenAuthorizationParams.AuthorizationID)
+			r.AsyncService.Remove(createTokenAuthorizationParams.AuthorizationID)
 
 			if !asyncResult.Bool {
 				return nil, errors.New("Please fund your Satimoto application and try again")
 			}
 		case <-time.After(time.Duration(timeout) * time.Second):
-			log.Printf("Token authorization timeout: %v", tokenAuthorizationParams.AuthorizationID)
-			r.AsyncService.Remove(tokenAuthorizationParams.AuthorizationID)
+			log.Printf("Token authorization timeout: %v", createTokenAuthorizationParams.AuthorizationID)
+			r.AsyncService.Remove(createTokenAuthorizationParams.AuthorizationID)
 
 			return nil, errors.New("Authorization timeout")
 		}
