@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
+	"github.com/satimoto/go-datastore/pkg/util"
 	coreDto "github.com/satimoto/go-ocpi/internal/dto"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	"github.com/satimoto/go-ocpi/internal/middleware"
@@ -40,7 +41,9 @@ func (r *TokenAuthorizationResolver) AuthorizeToken(rw http.ResponseWriter, requ
 		authorizationInfoDto = r.CreateAuthorizationInfoDto(ctx, token, tokenAuthorization, locationReferencesDto, displayText)
 
 		if tokenAuthorization != nil && tokenAuthorization.Authorized {
-			go r.waitForEvsesStatus(*cred, token, *tokenAuthorization, locationReferencesDto, db.EvseStatusCHARGING, 150)
+			timeout := int(util.GetEnvInt32("WAIT_FOR_EVSE_STATUS_TIMEOUT", 180))
+			
+			go r.waitForEvsesStatus(*cred, token, *tokenAuthorization, locationReferencesDto, db.EvseStatusCHARGING, timeout)
 		}
 	}
 

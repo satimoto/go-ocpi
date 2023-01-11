@@ -93,6 +93,10 @@
       {
         "name": "TOKEN_AUTHORIZATION_TIMEOUT",
         "value": "${env_token_authorization_timeout}"
+      },
+      {
+        "name": "WAIT_FOR_EVSE_STATUS_TIMEOUT",
+        "value": "${env_wait_for_evse_status_timeout}"
       }
     ]
   }

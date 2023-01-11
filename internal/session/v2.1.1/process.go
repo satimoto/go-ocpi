@@ -185,7 +185,9 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 		}
 
 		if sessionCreated && session.Status == db.SessionStatusTypePENDING {
-			go r.waitForEvseStatus(credential, session.LocationID, session.EvseID, db.EvseStatusCHARGING, session, session.Status, db.SessionStatusTypeACTIVE, 150)
+			timeout := int(util.GetEnvInt32("WAIT_FOR_EVSE_STATUS_TIMEOUT", 180))
+			
+			go r.waitForEvseStatus(credential, session.LocationID, session.EvseID, db.EvseStatusCHARGING, session, session.Status, db.SessionStatusTypeACTIVE, timeout)
 		}
 
 		return &session
