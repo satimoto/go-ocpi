@@ -15,8 +15,9 @@ import (
 	ocpiTokenAuthorization "github.com/satimoto/go-ocpi/pkg/ocpi/tokenauthorization"
 )
 
-func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *ocpirpc.ReserveNowRequest) (*ocpirpc.ReserveNowResponse, error) {
+func (r *RpcCommandResolver) ReserveNow(reqCtx context.Context, input *ocpirpc.ReserveNowRequest) (*ocpirpc.ReserveNowResponse, error) {
 	if input != nil {
+		ctx := context.Background()
 		expiryDate := util.ParseTime(input.ExpiryDate, nil)
 		getTokenByUserIDParams := db.GetTokenByUserIDParams{
 			UserID: input.UserId,
@@ -74,8 +75,9 @@ func (r *RpcCommandResolver) ReserveNow(ctx context.Context, input *ocpirpc.Rese
 	return nil, errors.New("missing request")
 }
 
-func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.StartSessionRequest) (*ocpirpc.StartSessionResponse, error) {
+func (r *RpcCommandResolver) StartSession(reqCtx context.Context, input *ocpirpc.StartSessionRequest) (*ocpirpc.StartSessionResponse, error) {
 	if input != nil {
+		ctx := context.Background()
 		getTokenByUserIDParams := db.GetTokenByUserIDParams{
 			UserID: input.UserId,
 			Type:   db.TokenTypeOTHER,
@@ -154,8 +156,9 @@ func (r *RpcCommandResolver) StartSession(ctx context.Context, input *ocpirpc.St
 	return nil, errors.New("missing request")
 }
 
-func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.StopSessionRequest) (*ocpirpc.StopSessionResponse, error) {
+func (r *RpcCommandResolver) StopSession(reqCtx context.Context, input *ocpirpc.StopSessionRequest) (*ocpirpc.StopSessionResponse, error) {
 	if input != nil {
+		ctx := context.Background()
 		defaultResponse := ocpirpc.StopSessionResponse{
 			Status:          string(db.CommandResponseTypeACCEPTED),
 			AuthorizationId: input.AuthorizationId,
@@ -222,8 +225,9 @@ func (r *RpcCommandResolver) StopSession(ctx context.Context, input *ocpirpc.Sto
 	return nil, errors.New("missing request")
 }
 
-func (r *RpcCommandResolver) UnlockConnector(ctx context.Context, input *ocpirpc.UnlockConnectorRequest) (*ocpirpc.UnlockConnectorResponse, error) {
+func (r *RpcCommandResolver) UnlockConnector(reqCtx context.Context, input *ocpirpc.UnlockConnectorRequest) (*ocpirpc.UnlockConnectorResponse, error) {
 	if input != nil {
+		ctx := context.Background()
 		location, err := r.LocationResolver.Repository.GetLocationByUid(ctx, input.LocationUid)
 
 		if err != nil {

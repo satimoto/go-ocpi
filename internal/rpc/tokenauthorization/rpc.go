@@ -11,8 +11,9 @@ import (
 	"github.com/satimoto/go-ocpi/ocpirpc"
 )
 
-func (r *RpcTokenAuthorizationResolver) UpdateTokenAuthorization(ctx context.Context, request *ocpirpc.UpdateTokenAuthorizationRequest) (*ocpirpc.UpdateTokenAuthorizationResponse, error) {
+func (r *RpcTokenAuthorizationResolver) UpdateTokenAuthorization(reqCtx context.Context, request *ocpirpc.UpdateTokenAuthorizationRequest) (*ocpirpc.UpdateTokenAuthorizationResponse, error) {
 	if request != nil {
+		ctx := context.Background()
 		tokenAuthorization, err := r.TokenAuthorizationRepository.GetTokenAuthorizationByAuthorizationID(ctx, request.AuthorizationId)
 
 		if err != nil {
