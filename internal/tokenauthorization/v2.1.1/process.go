@@ -25,6 +25,8 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		}
 
 		if user.IsRestricted || !user.NodeID.Valid || !user.LastActiveDate.Valid {
+			r.SendContentNotification(user, "Card Authorization Failed", "Please fund your Satimoto application and try again")
+
 			return nil, errors.New("Please fund your Satimoto application and try again")
 		}
 
@@ -32,7 +34,8 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		fiveDaysAgo := time.Now().Add(time.Hour * 24 * -5)
 
 		if fiveDaysAgo.After(user.LastActiveDate.Time) {
-			// TODO: Send a notification
+			r.SendContentNotification(user, "Card Authorization Failed", "Please open your Satimoto application and try again")
+
 			return nil, errors.New("Please open your Satimoto application and try again")
 		}
 	}
@@ -86,7 +89,7 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		}
 
 		asyncChan := r.AsyncService.Add(createTokenAuthorizationParams.AuthorizationID)
-		r.SendNotification(user, createTokenAuthorizationParams.AuthorizationID)
+		r.SendDataNotification(user, createTokenAuthorizationParams.AuthorizationID)
 		timeout := util.GetEnvInt32("TOKEN_AUTHORIZATION_TIMEOUT", 5)
 
 		select {
