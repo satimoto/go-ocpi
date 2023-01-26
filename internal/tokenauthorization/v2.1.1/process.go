@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	secp "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
@@ -15,17 +14,36 @@ import (
 )
 
 func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Context, credential db.Credential, token db.Token, locationReferencesDto *dto.LocationReferencesDto) (*db.TokenAuthorization, error) {
+	user, err := r.UserRepository.GetUser(ctx, token.UserID)
+
+	if err != nil {
+		metrics.RecordError("OCPI288", "Error retrieving user", err)
+		log.Printf("OCPI288: UserID=%v", token.UserID)
+		return nil, errors.New("Authorization error")
+	}
+
+	if !user.DeviceToken.Valid {
+		return nil, errors.New("Please enable notifications in your Satimoto application")
+	}
+
+	listSessionInvoicesParams := db.ListSessionInvoicesByUserIDParams{
+		ID:        user.ID,
+		IsSettled: false,
+		IsExpired: false,
+	}
+
+	// Check if there are unsettled invoices from a previous session
+	if sessionInvoices, err := r.SessionRepository.ListSessionInvoicesByUserID(ctx, listSessionInvoicesParams); err == nil && len(sessionInvoices) > 0 {
+		r.SendContentNotification(user, "Authorization Failed", "Please fund your Satimoto application and try again")
+
+		return nil, errors.New("Please fund your Satimoto application and try again")
+	}
+
 	if token.Type == db.TokenTypeRFID {
 		// Check if user is restricted, has a node and has been active
-		user, err := r.UserRepository.GetUserByTokenID(ctx, token.ID)
-
-		if err != nil {
-			metrics.RecordError("OCPI288", "Error retrieving user", err)
-			log.Printf("OCPI288: UserID=%v", token.UserID)
-			return nil, nil
-		}
-
 		if user.IsRestricted || !user.NodeID.Valid || !user.LastActiveDate.Valid {
+			r.SendContentNotification(user, "Card Authorization Failed", "Please fund your Satimoto application and try again")
+
 			return nil, errors.New("Please fund your Satimoto application and try again")
 		}
 
@@ -33,62 +51,65 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		fiveDaysAgo := time.Now().Add(time.Hour * 24 * -5)
 
 		if fiveDaysAgo.After(user.LastActiveDate.Time) {
-			// TODO: Send a notification
+			r.SendContentNotification(user, "Card Authorization Failed", "Please open your Satimoto application and try again")
+
 			return nil, errors.New("Please open your Satimoto application and try again")
 		}
 	}
 
-	tokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
-	tokenAuthorizationParams.Authorized = token.Type == db.TokenTypeOTHER
-	tokenAuthorizationParams.SigningKey = r.createTokenAuthorizationSigningKey()
+	if lastTokenAuthorization, err := r.Repository.GetLastTokenAuthorizationByTokenID(ctx, token.ID); err == nil {
+		// Last token authorization for this token has no session, unauthorise the token authorization
+		updateTokenAuthorizationParams := param.NewUpdateTokenAuthorizationParams(lastTokenAuthorization)
+		updateTokenAuthorizationParams.Authorized = false
 
-	if locationReferencesDto != nil {
-		tokenAuthorizationParams.LocationID = util.SqlNullString(locationReferencesDto.LocationID)
+		_, err = r.Repository.UpdateTokenAuthorizationByAuthorizationID(ctx, updateTokenAuthorizationParams)
+
+		if err != nil {
+			metrics.RecordError("OCPI332", "Error updating token authorization", err)
+			log.Printf("OCPI332: Params=%#v", updateTokenAuthorizationParams)
+		}
 	}
 
-	tokenAuthorization, err := r.Repository.CreateTokenAuthorization(ctx, tokenAuthorizationParams)
+	createTokenAuthorizationParams := param.NewCreateTokenAuthorizationParams(token.ID)
+	createTokenAuthorizationParams.Authorized = token.Type == db.TokenTypeOTHER
+
+	if locationReferencesDto != nil {
+		createTokenAuthorizationParams.LocationID = util.SqlNullString(locationReferencesDto.LocationID)
+	}
+
+	tokenAuthorization, err := r.Repository.CreateTokenAuthorization(ctx, createTokenAuthorizationParams)
 
 	if err != nil {
 		metrics.RecordError("OCPI206", "Error creating token authorization", err)
-		log.Printf("OCPI206: Params=%#v", tokenAuthorizationParams)
+		log.Printf("OCPI206: Params=%#v", createTokenAuthorizationParams)
 		return nil, errors.New("Authorization error")
 	}
 
 	r.createTokenAuthorizationRelations(ctx, tokenAuthorization.ID, locationReferencesDto)
 
-	if !tokenAuthorizationParams.Authorized {
+	if !createTokenAuthorizationParams.Authorized {
 		// Token authentication is not authorized because its initiated
 		// by an RFID card. The request needs to be forwarded to the user's
 		// device, which then responds if it is authorized or not.
 		// If there is a timeout in waiting for the response, the token
 		// authorize request is rejected.
-		user, err := r.UserRepository.GetUser(ctx, token.UserID)
-
-		if err != nil {
-			metrics.RecordError("OCPI285", "Error retrieving user", err)
-			log.Printf("OCPI285: UserID=%v", token.UserID)
-			return nil, nil
-		}
-
-		if !user.DeviceToken.Valid {
-			return nil, errors.New("Please enable notifications in your Satimoto application")
-		}
-
-		asyncChan := r.AsyncService.Add(tokenAuthorizationParams.AuthorizationID)
-		r.SendNotification(user, tokenAuthorizationParams.AuthorizationID)
+		asyncChan := r.AsyncService.Add(createTokenAuthorizationParams.AuthorizationID)
+		r.SendDataNotification(user, createTokenAuthorizationParams.AuthorizationID)
 		timeout := util.GetEnvInt32("TOKEN_AUTHORIZATION_TIMEOUT", 5)
 
 		select {
 		case asyncResult := <-asyncChan:
-			log.Printf("Token authorization received: %v", tokenAuthorizationParams.AuthorizationID)
-			r.AsyncService.Remove(tokenAuthorizationParams.AuthorizationID)
+			log.Printf("Token authorization received: %v", createTokenAuthorizationParams.AuthorizationID)
+			r.AsyncService.Remove(createTokenAuthorizationParams.AuthorizationID)
 
 			if !asyncResult.Bool {
 				return nil, errors.New("Please fund your Satimoto application and try again")
 			}
 		case <-time.After(time.Duration(timeout) * time.Second):
-			log.Printf("Token authorization timeout: %v", tokenAuthorizationParams.AuthorizationID)
-			r.AsyncService.Remove(tokenAuthorizationParams.AuthorizationID)
+			log.Printf("Token authorization timeout: %v", createTokenAuthorizationParams.AuthorizationID)
+			r.AsyncService.Remove(createTokenAuthorizationParams.AuthorizationID)
+
+			r.SendContentNotification(user, "Card Authorization Failed", "Please open your Satimoto application and try again")
 
 			return nil, errors.New("Authorization timeout")
 		}
@@ -148,19 +169,6 @@ func (r *TokenAuthorizationResolver) createTokenAuthorizationRelations(ctx conte
 			}
 		}
 	}
-}
-
-func (r *TokenAuthorizationResolver) createTokenAuthorizationSigningKey() []byte {
-	var privateKey *secp.PrivateKey
-	var err error
-
-	for {
-		if privateKey, err = secp.GeneratePrivateKey(); err == nil {
-			break
-		}
-	}
-
-	return privateKey.Serialize()
 }
 
 func (r *TokenAuthorizationResolver) waitForEvsesStatus(credential db.Credential, token db.Token, tokenAuthorization db.TokenAuthorization, locationReferencesDto *dto.LocationReferencesDto, evseStatus db.EvseStatus, timeoutSeconds int) {

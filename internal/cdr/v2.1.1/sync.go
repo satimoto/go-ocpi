@@ -11,6 +11,7 @@ import (
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
 	coreCdr "github.com/satimoto/go-ocpi/internal/cdr"
+	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
@@ -59,40 +60,19 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 	}
 
 	for {
+		if retries >= 5 {
+			break
+		}
+		
 		query.Set("limit", fmt.Sprintf("%d", limit))
 		query.Set("offset", fmt.Sprintf("%d", offset))
 		requestUrl.RawQuery = query.Encode()
 
-		response, err := r.OcpiService.Do(http.MethodGet, requestUrl.String(), header, nil)
+		dto, limit := r.sendRequest(requestUrl.String(), header, limit)
 
-		if err != nil {
-			metrics.RecordError("OCPI030", "Error making request", err)
-			log.Printf("OCPI030: Method=%v, Url=%v, Header=%#v", http.MethodGet, requestUrl.String(), header)
+		if dto == nil {
 			retries++
-
-			if retries >= 5 {
-				break
-			}
-
 			continue
-		}
-
-		dto, err := r.UnmarshalPullDto(response.Body)
-		defer response.Body.Close()
-
-		if err != nil {
-			metrics.RecordError("OCPI031", "Error unmarshaling response", err)
-			util.LogHttpResponse("OCPI031", requestUrl.String(), response, true)
-			break
-		}
-
-		limit = transportation.GetXLimitHeader(response, limit)
-
-		if dto.StatusCode != transportation.STATUS_CODE_OK {
-			metrics.RecordError("OCPI032", "Error response failure", err)
-			util.LogHttpRequest("OCPI032", requestUrl.String(), response.Request, true)
-			util.LogHttpResponse("OCPI032", requestUrl.String(), response, true)
-			break
 		}
 
 		retries = 0
@@ -109,4 +89,36 @@ func (r *CdrResolver) SyncByIdentifier(ctx context.Context, credential db.Creden
 			}
 		}
 	}
+}
+
+func (r *CdrResolver) sendRequest(url string, header transportation.OcpiRequestHeader, limit int) (*dto.OcpiCdrsDto, int) {
+	response, err := r.OcpiService.Do(http.MethodGet, url, header, nil)
+
+	if err != nil {
+		metrics.RecordError("OCPI030", "Error making request", err)
+		log.Printf("OCPI030: Method=%v, Url=%v, Header=%#v", http.MethodGet, url, header)
+		
+		return nil, limit
+	}
+
+	dto, err := r.UnmarshalPullDto(response.Body)
+	defer response.Body.Close()
+
+	if err != nil {
+		metrics.RecordError("OCPI031", "Error unmarshaling response", err)
+		util.LogHttpResponse("OCPI031", url, response, true)
+		
+		return nil, limit
+	}
+
+	if dto.StatusCode != transportation.STATUS_CODE_OK {
+		metrics.RecordError("OCPI032", "Error response failure", err)
+		util.LogHttpRequest("OCPI032", url, response.Request, true)
+		util.LogHttpResponse("OCPI032", url, response, true)
+		log.Printf("OCPI032: StatusCode=%v, StatusMessage=%v", dto.StatusCode, dto.StatusMessage)
+		
+		return nil, limit
+	}
+
+	return dto, transportation.GetXLimitHeader(response, limit)
 }

@@ -12,7 +12,6 @@ import (
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/ocpirpc"
 	ocpiCommand "github.com/satimoto/go-ocpi/pkg/ocpi/command"
-	ocpiTokenAuthorization "github.com/satimoto/go-ocpi/pkg/ocpi/tokenauthorization"
 )
 
 func (r *RpcCommandResolver) ReserveNow(reqCtx context.Context, input *ocpirpc.ReserveNowRequest) (*ocpirpc.ReserveNowResponse, error) {
@@ -132,14 +131,6 @@ func (r *RpcCommandResolver) StartSession(reqCtx context.Context, input *ocpirpc
 			return nil, errors.New("error starting session")
 		}
 
-		verificationKey, err := ocpiTokenAuthorization.CreateVerificationKey(*tokenAuthorization)
-
-		if err != nil {
-			metrics.RecordError("OCPI282", "Error creating verification key", err)
-			log.Printf("OCPI282: TokenAuthorization=%#v", tokenAuthorization)
-			return nil, errors.New("error starting session")
-		}
-
 		command, err := r.CommandResolver.StartSession(ctx, credential, *tokenAuthorization, &input.EvseUid)
 
 		if err != nil {
@@ -148,7 +139,7 @@ func (r *RpcCommandResolver) StartSession(reqCtx context.Context, input *ocpirpc
 			return nil, err
 		}
 
-		startResponse := ocpiCommand.NewCommandStartResponse(*command, verificationKey)
+		startResponse := ocpiCommand.NewCommandStartResponse(*command)
 
 		return startResponse, nil
 	}
