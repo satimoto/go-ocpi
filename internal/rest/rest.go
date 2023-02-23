@@ -16,6 +16,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/util"
+	evse "github.com/satimoto/go-ocpi/internal/evse/v2.1.1"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
 	"github.com/satimoto/go-ocpi/internal/service"
 )
@@ -28,6 +29,7 @@ type RestService struct {
 	RepositoryService *db.RepositoryService
 	ServiceResolver   *service.ServiceResolver
 	Server            *http.Server
+	evseRestService   *evse.EvseRestService
 	shutdownCtx       context.Context
 	waitGroup         *sync.WaitGroup
 }
@@ -77,6 +79,8 @@ func (rs *RestService) shutdown() {
 	timeout := util.GetEnvInt32("SHUTDOWN_TIMEOUT", 20)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
 	defer cancel()
+
+	rs.evseRestService.Stop()
 
 	err := rs.Server.Shutdown(ctx)
 

@@ -121,5 +121,6 @@ module "service-ocpi" {
     env_shutdown_timeout             = var.env_shutdown_timeout
     env_token_authorization_timeout  = var.env_token_authorization_timeout
     env_wait_for_evse_status_timeout = var.env_wait_for_evse_status_timeout
+    env_evse_job_workers             = var.env_evse_job_workers
   })
 }
