@@ -109,3 +109,7 @@ variable "env_token_authorization_timeout" {
 variable "env_wait_for_evse_status_timeout" {
   description = "The environment variable to set the wait for evse status timeout"
 }
+
+variable "env_evse_job_workers" {
+  description = "The environment variable to set the evse job worker number"
+}
