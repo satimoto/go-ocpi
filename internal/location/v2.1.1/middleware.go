@@ -32,7 +32,7 @@ func (r *LocationResolver) LocationContext(syncService *sync.SyncService) func(h
 				partyID := util.NilString(chi.URLParam(request, "party_id"))
 				credential := middleware.GetCredential(requestCtx)
 
-				go syncService.SynchronizeCredential(*credential, true, true, nil, countryCode, partyID)
+				go syncService.SynchronizeCredential(*credential, true, false, nil, countryCode, partyID)
 			}
 
 			render.Render(rw, request, transportation.OcpiErrorUnknownResource(nil))
