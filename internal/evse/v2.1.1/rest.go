@@ -31,6 +31,7 @@ func NewRestService(evseResolver *EvseResolver) *EvseRestService {
 }
 
 func (s *EvseRestService) GetEvse(rw http.ResponseWriter, request *http.Request) {
+	defer request.Body.Close()
 	ctx := request.Context()
 	evse := ctx.Value("evse").(db.Evse)
 	dto := s.EvseResolver.CreateEvseDto(ctx, evse)
@@ -44,6 +45,7 @@ func (s *EvseRestService) GetEvse(rw http.ResponseWriter, request *http.Request)
 }
 
 func (s *EvseRestService) UpdateEvse(rw http.ResponseWriter, request *http.Request) {
+	defer request.Body.Close()
 	ctx := request.Context()
 	cred := middleware.GetCredential(ctx)
 	location := ctx.Value("location").(db.Location)
