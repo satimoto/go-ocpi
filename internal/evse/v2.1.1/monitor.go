@@ -73,6 +73,16 @@ waitLoop:
 			break waitLoop
 		}
 
+		// Check the local evse status
+		if evse, err := r.Repository.GetEvseByUid(ctx, evseUid); err == nil && evse.Status == evseStatus {
+			log.Printf("Local Evse status is %v: LocationUid=%v, EvseUid=%v", evse.Status, locationUid, evseUid)
+			log.Printf("Manually creating session %v", tokenAuthorization.AuthorizationID)
+			r.createSession(ctx, credential, token, tokenAuthorization, db.SessionStatusTypeACTIVE, locationUid, evseUid)
+
+			break waitLoop
+		}
+
+		// Check the remote evse status
 		response, err := r.OcpiService.Do(http.MethodGet, requestUrl.String(), header, nil)
 
 		if err != nil {
