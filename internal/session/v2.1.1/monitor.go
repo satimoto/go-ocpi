@@ -172,6 +172,21 @@ waitLoop:
 			}
 		}
 
+		// Check the local evse status
+		if evse, err = r.LocationResolver.Repository.GetEvse(ctx, evseID); err == nil && evse.Status == evseStatus {
+			log.Printf("Local Evse status is %v: LocationID=%v, EvseID=%v", evse.Status, locationID, evseID)
+			log.Printf("Manually updating session status to %v: SessionUid=%v", sessionToStatus, sess.Uid)
+
+			sessionDto := dto.SessionDto{
+				Status: &sessionToStatus,
+			}
+
+			r.ReplaceSessionByIdentifier(ctx, credential, util.NilString(sess.CountryCode), util.NilString(sess.PartyID), sess.Uid, &sessionDto)
+
+			break waitLoop
+		}
+
+		// Check the remote evse status
 		response, err := r.OcpiService.Do(http.MethodGet, requestUrl.String(), header, nil)
 
 		if err != nil {
@@ -192,7 +207,7 @@ waitLoop:
 		if evseDto.StatusCode == transportation.STATUS_CODE_OK && evseDto.Data.Status != nil {
 			responseEvseStatus := *evseDto.Data.Status
 
-			log.Printf("Evse status is %v: LocationID=%v, EvseID=%v", responseEvseStatus, locationID, evseID)
+			log.Printf("Remote Evse status is %v: LocationID=%v, EvseID=%v", responseEvseStatus, locationID, evseID)
 
 			if responseEvseStatus == evseStatus {
 				log.Printf("Manually updating session status to %v: SessionUid=%v", sessionToStatus, sess.Uid)
