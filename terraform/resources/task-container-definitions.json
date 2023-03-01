@@ -97,6 +97,10 @@
       {
         "name": "WAIT_FOR_EVSE_STATUS_TIMEOUT",
         "value": "${env_wait_for_evse_status_timeout}"
+      },
+      {
+        "name": "EVSE_JOB_WORKERS",
+        "value": "${env_evse_job_workers}"
       }
     ]
   }

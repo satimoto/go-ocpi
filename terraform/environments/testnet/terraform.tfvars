@@ -53,3 +53,5 @@ env_shutdown_timeout = 20
 env_token_authorization_timeout = 5
 
 env_wait_for_evse_status_timeout = 180
+
+env_evse_job_workers = 20

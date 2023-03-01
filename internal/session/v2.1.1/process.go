@@ -174,6 +174,14 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			r.replaceChargingPeriods(ctx, session.ID, sessionDto)
 		}
 
+		sessionUpdateParams := param.NewCreateSessionUpdateParams(session)
+		_, err = r.Repository.CreateSessionUpdate(ctx, sessionUpdateParams)
+
+		if err != nil {
+			metrics.RecordError("OCPI334", "Error creating session update", err)
+			log.Printf("OCPI334: Params=%#v", sessionUpdateParams)
+		}
+
 		// Metrics
 		go r.updateMetrics(session, sessionCreated)
 
@@ -186,7 +194,7 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 
 		if sessionCreated && session.Status == db.SessionStatusTypePENDING {
 			timeout := int(util.GetEnvInt32("WAIT_FOR_EVSE_STATUS_TIMEOUT", 180))
-			
+
 			go r.waitForEvseStatus(credential, session.LocationID, session.EvseID, db.EvseStatusCHARGING, session, session.Status, db.SessionStatusTypeACTIVE, timeout)
 		}
 

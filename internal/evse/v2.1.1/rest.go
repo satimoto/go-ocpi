@@ -2,13 +2,11 @@ package evse
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/satimoto/go-datastore/pkg/db"
-	"github.com/satimoto/go-datastore/pkg/param"
 	"github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
 	metrics "github.com/satimoto/go-ocpi/internal/metric"
@@ -16,10 +14,27 @@ import (
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-func (r *EvseResolver) GetEvse(rw http.ResponseWriter, request *http.Request) {
+type EvseRestService struct {
+	EvseResolver    *EvseResolver
+	DispatchService *Dispatcher
+}
+
+func NewRestService(evseResolver *EvseResolver) *EvseRestService {
+	maxWorkers := int(util.GetEnvInt32("EVSE_JOB_WORKERS", 5))
+	dispatchService := NewDispatcher(maxWorkers)
+	dispatchService.Start()
+
+	return &EvseRestService{
+		EvseResolver:    evseResolver,
+		DispatchService: dispatchService,
+	}
+}
+
+func (s *EvseRestService) GetEvse(rw http.ResponseWriter, request *http.Request) {
+	defer request.Body.Close()
 	ctx := request.Context()
 	evse := ctx.Value("evse").(db.Evse)
-	dto := r.CreateEvseDto(ctx, evse)
+	dto := s.EvseResolver.CreateEvseDto(ctx, evse)
 
 	if err := render.Render(rw, request, transportation.OcpiSuccess(dto)); err != nil {
 		metrics.RecordError("OCPI110", "Error rendering response", err)
@@ -29,7 +44,8 @@ func (r *EvseResolver) GetEvse(rw http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request) {
+func (s *EvseRestService) UpdateEvse(rw http.ResponseWriter, request *http.Request) {
+	defer request.Body.Close()
 	ctx := request.Context()
 	cred := middleware.GetCredential(ctx)
 	location := ctx.Value("location").(db.Location)
@@ -44,29 +60,17 @@ func (r *EvseResolver) UpdateEvse(rw http.ResponseWriter, request *http.Request)
 		return
 	}
 
-	evse := r.ReplaceEvse(ctx, *cred, location, uid, &evseDto)
-
-	if evse != nil {
-		updateLocationLastUpdatedParams := param.NewUpdateLocationLastUpdatedParams(location)
-
-		if evseDto.Capabilities != nil || evseDto.Status != nil {
-			if locationAvailabilityParams, err := r.updateLocationAvailability(ctx, location); err == nil {
-				updateLocationLastUpdatedParams = locationAvailabilityParams
-			}
-		}
-
-		updateLocationLastUpdatedParams.LastUpdated = evse.LastUpdated
-
-		err := r.Repository.UpdateLocationLastUpdated(ctx, updateLocationLastUpdatedParams)
-
-		if err != nil {
-			metrics.RecordError("OCPI112", "Error updating evse", err)
-			log.Printf("OCPI112: Params=%#v", updateLocationLastUpdatedParams)
-
-			render.Render(rw, request, transportation.OcpiServerError(nil, err.Error()))
-			return
-		}
-	}
+	s.DispatchService.QueueJob(Job{
+		EvseResolver: s.EvseResolver,
+		Credential:   *cred,
+		Location:     location,
+		Uid:          uid,
+		Dto:          evseDto,
+	})
 
 	render.Render(rw, request, transportation.OcpiSuccess(nil))
+}
+
+func (s *EvseRestService) Stop() {
+	s.DispatchService.Stop()
 }
