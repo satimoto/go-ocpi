@@ -70,7 +70,7 @@ func (r *ItBecService) updateConnectors(ctx context.Context, credential db.Crede
 	}
 
 	for _, connector := range connectors {
-		tariffUid := fmt.Sprintf("%%%s", selectTariffUid(connector))
+		tariffUid := fmt.Sprintf(TARIFF_UID_TEMPLATE, selectTariffUid(connector))
 
 		if !connector.TariffID.Valid || connector.TariffID.String != tariffUid {
 			connectorParams := param.NewUpdateConnectorByEvseParams(connector)
