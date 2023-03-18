@@ -206,7 +206,7 @@ func (r *EvseResolver) sendOcpiRequest(session db.Session) {
 	}
 
 	// TODO: Handle failed RPC call more robustly
-	ocpiService := ocpi.NewService(node.LspAddr)
+	ocpiService := ocpi.NewService(node.RpcAddr)
 
 	sessionCreatedRequest := ocpiSession.NewSessionCreatedRequest(session)
 	sessionCreatedResponse, err := ocpiService.SessionCreated(ctx, sessionCreatedRequest)

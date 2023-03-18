@@ -31,7 +31,7 @@ func (r *SessionResolver) sendOcpiRequest(session db.Session, sessionCreated, st
 	}
 
 	// TODO: Handle failed RPC call more robustly
-	ocpiService := ocpi.NewService(node.LspAddr)
+	ocpiService := ocpi.NewService(node.RpcAddr)
 
 	if sessionCreated {
 		sessionCreatedRequest := ocpiSession.NewSessionCreatedRequest(session)
