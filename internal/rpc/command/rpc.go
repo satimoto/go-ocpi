@@ -174,7 +174,7 @@ func (r *RpcCommandResolver) StopSession(reqCtx context.Context, input *ocpirpc.
 				updateSessionByUidParams.Status = db.SessionStatusTypeINVALID
 
 				if session.Status == db.SessionStatusTypeACTIVE {
-					updateSessionByUidParams.Status = db.SessionStatusTypeCOMPLETED
+					updateSessionByUidParams.Status = db.SessionStatusTypeENDING
 				}
 
 				updatedSession, err := r.SessionResolver.Repository.UpdateSessionByUid(ctx, updateSessionByUidParams)
