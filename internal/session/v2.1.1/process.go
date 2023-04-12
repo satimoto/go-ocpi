@@ -67,9 +67,9 @@ func (r *SessionResolver) ReplaceSessionByIdentifier(ctx context.Context, creden
 			}
 
 			if sessionDto.Status != nil && session.Status != db.SessionStatusTypeINVOICED && session.Status != *sessionDto.Status {
-				if session.Status == db.SessionStatusTypeINVALID && *sessionDto.Status == db.SessionStatusTypeACTIVE {
-					// Session has already been set to INVALID
-					log.Printf("Session is already INVALID, not setting it to %v", *sessionDto.Status)
+				if (session.Status == db.SessionStatusTypeENDING || session.Status == db.SessionStatusTypeINVALID) && *sessionDto.Status == db.SessionStatusTypeACTIVE {
+					// Session has already been set to ENDING/INVALID
+					log.Printf("Session is already %v, not setting it to %v", session.Status, *sessionDto.Status)
 
 					if token, err := r.TokenRepository.GetToken(ctx, session.TokenID); err == nil && token.Type == db.TokenTypeOTHER {
 						_, err := r.CommandResolver.StopSession(ctx, credential, session.Uid)
