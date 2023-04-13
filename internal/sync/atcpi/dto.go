@@ -1,7 +1,7 @@
-package htb
+package atcpi
 
 type PriceInformationDto struct {
-	EvseID     string        `json:"evse_id"`
+	EvseID     string         `json:"evse_id"`
 	Conditions *ConditionsDto `json:"conditions"`
 }
 

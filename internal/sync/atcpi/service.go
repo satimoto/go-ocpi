@@ -1,4 +1,4 @@
-package htb
+package atcpi
 
 import (
 	"context"
@@ -20,33 +20,33 @@ const (
 	TARIFF_UID_TEMPLATE = "htb.solutions-%v"
 )
 
-func (r *HtbService) StartService(shutdownCtx context.Context, waitGroup *sync.WaitGroup) {
-	log.Printf("Starting HasToBe Service")
+func (r *AtCpiService) StartService(shutdownCtx context.Context, waitGroup *sync.WaitGroup) {
+	log.Printf("Starting AtCpi Service")
 	r.shutdownCtx = shutdownCtx
 	r.waitGroup = waitGroup
 }
 
-func (r *HtbService) Run(ctx context.Context, credential db.Credential, lastUpdated time.Time) {
+func (r *AtCpiService) Run(ctx context.Context, credential db.Credential, lastUpdated time.Time) {
 	/*
-	 * Update HasToBe tariffs
-	 * Get the HasToBe tariff list from the database and update the tariffs if changed.
-	 * Get the updated EVSE list from HasToBe.
+	 * Update AtCpi tariffs
+	 * Get the AtCpi tariff list from the database and update the tariffs if changed.
+	 * Get the updated EVSE list from AtCpi.
 	 * Loop through the EVSE list and update the connector tariffs.
 	 */
 
 	r.waitGroup.Add(1)
-	log.Printf("Start HasToBe Tariff sync")
+	log.Printf("Start AtCpi Tariff sync")
 
 	if ok := r.updateHtbTariffs(ctx, credential, lastUpdated); ok {
 		r.updateConnectors(ctx)
 	}
 
-	log.Printf("End HasToBe Tariff sync")
+	log.Printf("End AtCpi Tariff sync")
 	r.waitGroup.Done()
 }
 
-func (r *HtbService) updateConnectors(ctx context.Context) {
-	url := "https://smart.htb.solutions/api/community/price_information"
+func (r *AtCpiService) updateConnectors(ctx context.Context) {
+	url := "https://community.beenergised.cloud/api/community/price_information"
 
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 
@@ -107,7 +107,7 @@ func (r *HtbService) updateConnectors(ctx context.Context) {
 	}
 }
 
-func (r *HtbService) updateHtbTariffs(ctx context.Context, credential db.Credential, lastUpdated time.Time) bool {
+func (r *AtCpiService) updateHtbTariffs(ctx context.Context, credential db.Credential, lastUpdated time.Time) bool {
 	htbTariffs, err := r.DataImportRepository.ListHtbTariffs(ctx)
 
 	if err != nil {
@@ -125,7 +125,7 @@ func (r *HtbService) updateHtbTariffs(ctx context.Context, credential db.Credent
 
 }
 
-func (r *HtbService) updateTariff(ctx context.Context, credential db.Credential, htbTariff db.HtbTariff) {
+func (r *AtCpiService) updateTariff(ctx context.Context, credential db.Credential, htbTariff db.HtbTariff) {
 	tariffUid := fmt.Sprintf(TARIFF_UID_TEMPLATE, strings.Replace(htbTariff.Name, " ", "_", -1))
 	tariff, err := r.TariffRepository.GetTariffByUid(ctx, tariffUid)
 
