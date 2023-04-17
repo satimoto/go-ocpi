@@ -22,10 +22,6 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		return nil, errors.New("Authorization error")
 	}
 
-	if !user.DeviceToken.Valid {
-		return nil, errors.New("Please enable notifications in your Satimoto application")
-	}
-
 	listSessionInvoicesParams := db.ListSessionInvoicesByUserIDParams{
 		ID:        user.ID,
 		IsSettled: false,
@@ -45,6 +41,10 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 			r.SendContentNotification(user, "Card Authorization Failed", "Please fund your Satimoto application and try again")
 
 			return nil, errors.New("Please fund your Satimoto application and try again")
+		}
+
+		if !user.DeviceToken.Valid {
+			return nil, errors.New("Please enable notifications in your Satimoto application")
 		}
 	}
 
