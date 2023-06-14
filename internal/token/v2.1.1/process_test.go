@@ -21,6 +21,25 @@ func TestTokenProcess(t *testing.T) {
 
 	ctx := context.Background()
 
+	t.Run("Generate Uid", func(t *testing.T) {
+		mockRepository := dbMocks.NewMockRepositoryService()
+		mockHTTPRequester := &mocks.MockHTTPRequester{}
+		mockNotificationService := notificationMocks.NewService()
+		mockOcpiService := transportationMocks.NewOcpiService(mockHTTPRequester)
+		mockServices := serviceMocks.NewService(mockRepository, mockNotificationService, mockOcpiService)
+
+		tokenResolver := tokenMocks.NewResolver(mockRepository, mockServices)
+
+		for i := 0; i < 1000; i++ {
+			uid, err := tokenResolver.GenerateUid(ctx)
+			t.Logf("Uid: %v", uid)
+
+			if err != nil {
+				t.Errorf("Error: %v %v", uid, err)
+			}
+		}
+	})
+
 	t.Run("Generate AuthID", func(t *testing.T) {
 		mockRepository := dbMocks.NewMockRepositoryService()
 		mockHTTPRequester := &mocks.MockHTTPRequester{}

@@ -32,6 +32,7 @@ message UpdateTokensRequest {
   string uid = 2;
   string allowed = 3;
   string whitelist = 4;
+  bool valid = 5;
 };
 
 message UpdateTokensResponse {

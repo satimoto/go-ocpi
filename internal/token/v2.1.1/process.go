@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,6 +22,30 @@ import (
 	"github.com/satimoto/go-ocpi/internal/util"
 	"github.com/satimoto/go-ocpi/pkg/evid"
 )
+
+func (r * TokenResolver) GenerateUid(ctx context.Context) (string, error) {
+	uidBytes := make([]byte, 10)
+	attempts := 0
+
+	for {
+		rand.Read(uidBytes)
+		uid := hex.EncodeToString(uidBytes)
+
+		if _, err := r.Repository.GetTokenByUid(ctx, uid); err != nil {
+			return uid, nil
+		}
+
+		attempts++
+
+		if attempts > 1000000 {
+			break
+		}
+	}
+
+	log.Print("OCPI339", "Error generating Uid")
+	return "", errors.New("error generating Uid")
+
+}
 
 func (r *TokenResolver) GenerateAuthID(ctx context.Context) (string, error) {
 	countryCode := os.Getenv("COUNTRY_CODE")

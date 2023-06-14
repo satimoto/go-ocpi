@@ -1,7 +1,6 @@
 package token
 
 import (
-	"github.com/google/uuid"
 	"github.com/satimoto/go-datastore/pkg/db"
 	dbUtil "github.com/satimoto/go-datastore/pkg/util"
 	dto "github.com/satimoto/go-ocpi/internal/dto/v2.1.1"
@@ -27,7 +26,7 @@ func NilUid(uid string) *string {
 		return &uid
 	}
 
-	return dbUtil.NilString(uuid.NewString())
+	return nil
 }
 
 func NilTokenType(i interface{}) *db.TokenType {
