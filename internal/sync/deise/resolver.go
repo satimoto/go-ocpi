@@ -1,4 +1,4 @@
-package htb
+package deise
 
 import (
 	"context"
@@ -13,10 +13,10 @@ import (
 	"github.com/satimoto/go-ocpi/internal/transportation"
 )
 
-type HtbRepository interface{}
+type DeIseRepository interface{}
 
-type HtbService struct {
-	Repository           HtbRepository
+type DeIseService struct {
+	Repository           DeIseRepository
 	HTTPRequester        transportation.HTTPRequester
 	ConnectorRepository  connector.ConnectorRepository
 	DataImportRepository dataimport.DataImportRepository
@@ -26,10 +26,10 @@ type HtbService struct {
 	waitGroup            *sync.WaitGroup
 }
 
-func NewService(repositoryService *db.RepositoryService) *HtbService {
-	repo := HtbRepository(repositoryService)
+func NewService(repositoryService *db.RepositoryService) *DeIseService {
+	repo := DeIseRepository(repositoryService)
 
-	return &HtbService{
+	return &DeIseService{
 		Repository:           repo,
 		HTTPRequester:        &http.Client{},
 		ConnectorRepository:  connector.NewRepository(repositoryService),

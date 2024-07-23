@@ -227,7 +227,7 @@ func (r *CdrResolver) sendOcpiRequest(cdr db.Cdr) {
 		log.Printf("OCPI025: UserID=%v", cdr.UserID)
 	}
 
-	ocpiService := ocpi.NewService(node.LspAddr)
+	ocpiService := ocpi.NewService(node.RpcAddr)
 	cdrCreatedRequest := ocpiCdr.NewCdrCreatedRequest(cdr)
 	cdrCreatedResponse, err := ocpiService.CdrCreated(ctx, cdrCreatedRequest)
 

@@ -168,14 +168,28 @@ func (r *RpcCommandResolver) StopSession(reqCtx context.Context, input *ocpirpc.
 		}
 
 		if session, err := r.SessionResolver.Repository.GetSessionByAuthorizationID(ctx, input.AuthorizationId); err == nil {
-			if session.Uid == session.AuthorizationID.String || session.Status == db.SessionStatusTypePENDING {
-				// This was a manually created session or the status is still pending
+			if session.Uid == session.AuthorizationID.String || session.Status == db.SessionStatusTypeACTIVE || session.Status == db.SessionStatusTypePENDING {
+				// This was a manually created session or the status is active/pending
 				updateSessionByUidParams := param.NewUpdateSessionByUidParams(session)
 				updateSessionByUidParams.Status = db.SessionStatusTypeINVALID
 
-				if _, err := r.SessionResolver.Repository.UpdateSessionByUid(ctx, updateSessionByUidParams); err != nil {
+				if session.Status == db.SessionStatusTypeACTIVE {
+					updateSessionByUidParams.Status = db.SessionStatusTypeENDING
+				}
+
+				updatedSession, err := r.SessionResolver.Repository.UpdateSessionByUid(ctx, updateSessionByUidParams)
+
+				if err != nil {
 					metrics.RecordError("OCPI309", "Error updating session", err)
 					log.Printf("OCPI309: Params=%#v", updateSessionByUidParams)
+				} else {
+					sessionUpdateParams := param.NewCreateSessionUpdateParams(updatedSession)
+					
+					if _, err := r.SessionResolver.Repository.CreateSessionUpdate(ctx, sessionUpdateParams); err != nil {
+						metrics.RecordError("OCPI338", "Error creating session update", err)
+						log.Printf("OCPI338: Params=%#v", sessionUpdateParams)
+
+					}
 				}
 
 				if session.Uid == session.AuthorizationID.String {

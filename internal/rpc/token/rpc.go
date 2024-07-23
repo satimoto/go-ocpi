@@ -52,6 +52,18 @@ func (r *RpcTokenResolver) CreateToken(reqCtx context.Context, request *ocpirpc.
 			tokenDto.Whitelist = NilTokenWhitelistType(db.TokenWhitelistTypeNEVER)
 		}
 
+		if len(request.Uid) == 0 {
+			uid, err := r.TokenResolver.GenerateUid(ctx)
+
+			if err != nil {
+				metrics.RecordError("OCPI340", "Error generating Uid", err)
+				log.Printf("OCPI340: Request=%#v", request)
+				return nil, errors.New("error creating token")
+			}
+
+			tokenDto.Uid = &uid
+		}
+
 		t := r.TokenResolver.ReplaceToken(ctx, request.UserId, tokenAllowed, *tokenDto.Uid, tokenDto)
 
 		if t == nil {
@@ -81,6 +93,7 @@ func (r *RpcTokenResolver) UpdateTokens(reqCtx context.Context, request *ocpirpc
 			if len(request.Uid) == 0 || request.Uid == t.Uid {
 				lastUpdated := util.NewTimeUTC()
 				tokenDto := dto.NewTokenDto(t)
+				tokenDto.Valid = &request.Valid
 				tokenDto.LastUpdated = ocpitype.NilOcpiTime(&lastUpdated)
 
 				tokenAllowed := t.Allowed

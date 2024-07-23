@@ -9,7 +9,8 @@ import (
 
 func (r *SyncService) StartService(shutdownCtx context.Context, waitGroup *sync.WaitGroup) {
 	log.Printf("Starting Sync Service")
-	r.HtbService.StartService(shutdownCtx, waitGroup)
+	r.AtCpiService.StartService(shutdownCtx, waitGroup)
+	r.DeIseService.StartService(shutdownCtx, waitGroup)
 	r.ItBecService.StartService(shutdownCtx, waitGroup)
 	r.NlConService.StartService(shutdownCtx, waitGroup)
 	r.shutdownCtx = shutdownCtx
@@ -55,7 +56,8 @@ func (r *SyncService) startLoop() {
 			for _, credential := range credentials {
 				if credential.ClientToken.Valid {
 					if credential.CountryCode == "FR" && credential.PartyID == "007" {
-						r.HtbService.Run(ctx, credential, lastUpdated)
+						r.AtCpiService.Run(ctx, credential, lastUpdated)
+						r.DeIseService.Run(ctx, credential, lastUpdated)
 						r.ItBecService.Run(ctx, credential, lastUpdated)
 						r.NlConService.Run(ctx, credential, lastUpdated)
 					}

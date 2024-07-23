@@ -7,8 +7,9 @@ import (
 	"github.com/satimoto/go-datastore/pkg/credential"
 	"github.com/satimoto/go-datastore/pkg/db"
 	"github.com/satimoto/go-datastore/pkg/party"
-	"github.com/satimoto/go-ocpi/internal/sync/htb"
+	"github.com/satimoto/go-ocpi/internal/sync/atcpi"
 	"github.com/satimoto/go-ocpi/internal/sync/itbec"
+	"github.com/satimoto/go-ocpi/internal/sync/deise"
 	"github.com/satimoto/go-ocpi/internal/sync/nlcon"
 	"github.com/satimoto/go-ocpi/internal/transportation"
 	"github.com/satimoto/go-ocpi/internal/version"
@@ -18,7 +19,8 @@ type SyncRepository interface{}
 
 type SyncService struct {
 	Repository           SyncRepository
-	HtbService           *htb.HtbService
+	AtCpiService         *atcpi.AtCpiService
+	DeIseService         *deise.DeIseService
 	ItBecService         *itbec.ItBecService
 	NlConService         *nlcon.NlConService
 	CredentialRepository credential.CredentialRepository
@@ -36,7 +38,8 @@ func NewService(repositoryService *db.RepositoryService, ocpiService *transporta
 
 	return &SyncService{
 		Repository:           repo,
-		HtbService:           htb.NewService(repositoryService),
+		AtCpiService:         atcpi.NewService(repositoryService),
+		DeIseService:         deise.NewService(repositoryService),
 		ItBecService:         itbec.NewService(repositoryService),
 		NlConService:         nlcon.NewService(repositoryService),
 		CredentialRepository: credential.NewRepository(repositoryService),

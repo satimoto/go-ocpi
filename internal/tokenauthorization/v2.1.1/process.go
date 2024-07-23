@@ -22,10 +22,6 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 		return nil, errors.New("Authorization error")
 	}
 
-	if !user.DeviceToken.Valid {
-		return nil, errors.New("Please enable notifications in your Satimoto application")
-	}
-
 	listSessionInvoicesParams := db.ListSessionInvoicesByUserIDParams{
 		ID:        user.ID,
 		IsSettled: false,
@@ -41,19 +37,14 @@ func (r *TokenAuthorizationResolver) CreateTokenAuthorization(ctx context.Contex
 
 	if token.Type == db.TokenTypeRFID {
 		// Check if user is restricted, has a node and has been active
-		if user.IsRestricted || !user.NodeID.Valid || !user.LastActiveDate.Valid {
+		if user.IsRestricted || !user.NodeID.Valid {
 			r.SendContentNotification(user, "Card Authorization Failed", "Please fund your Satimoto application and try again")
 
 			return nil, errors.New("Please fund your Satimoto application and try again")
 		}
 
-		// Check if the use has been active in the last 5 days
-		fiveDaysAgo := time.Now().Add(time.Hour * 24 * -5)
-
-		if fiveDaysAgo.After(user.LastActiveDate.Time) {
-			r.SendContentNotification(user, "Card Authorization Failed", "Please open your Satimoto application and try again")
-
-			return nil, errors.New("Please open your Satimoto application and try again")
+		if !user.DeviceToken.Valid {
+			return nil, errors.New("Please enable notifications in your Satimoto application")
 		}
 	}
 

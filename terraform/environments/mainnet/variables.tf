@@ -22,7 +22,6 @@ variable "forbidden_account_ids" {
 # Module service-ocpi
 # -----------------------------------------------------------------------------
 
-
 variable "rds_satimoto_db_password_ssm_key" {
   description = "Systems Manager key where the password for the satimoto DB is stored"
 }
